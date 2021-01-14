@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "kG2soTkUPOFB4FMQhvX9x05FG9gpoTUH0pSPIp8YR0qTivg0eMxwTHjpdpNHcOuKnQrrZkDmC6vrq4N5CASGcA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\mohamed\\Desktop\\Projects\\Streaming\\MoviesAPI\\MoviesAPI\\MoviesAPI.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\mohamed\\.nuget\\packages\\htmlagilitypack\\1.11.29\\htmlagilitypack.1.11.29.nupkg.sha512",
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512",
+    "C:\\Users\\mohamed\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,19 @@
+.video-player-window-container{
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000000c9;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.video-player-container{
+    width: 80%;
+    height: 70%;
+    margin: 10px auto;
+}
+

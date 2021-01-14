@@ -1,0 +1,87 @@
+.floating-navigation-btn{
+    position: absolute; 
+    top: 40%; 
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background-color: #5757575d;
+    padding:5px 5px 5px 8px;
+    width: 40px;
+    height: 40px;
+    z-index: 3;
+}
+
+.floating-navigation-btn:hover{
+   cursor: pointer;
+   background-color: #8b79797a;
+}
+
+.floating-navigation-btn:active{
+    background-color: #dadada7a;
+}
+
+.floating-navigation-btn.right{
+    right: 0;
+}
+
+.floating-navigation-btn.left{
+    left: 0;
+}
+
+.standard-button{
+    border-radius: 10px;
+    padding: 7px 10px;
+    box-shadow: 0px 5px 6px 0px #101010c9;
+    width: fit-content;
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.standard-button.center{
+    margin: 7px auto;
+}
+
+.standard-button:active{
+    transform: translateY(2px);
+    box-shadow:none;
+}
+
+.standard-button.red{
+    color: white;
+    background-color: #E50914;
+    font-weight: 'bold'
+}
+
+.standard-button.red:hover{
+    background-color: #b30710;
+    cursor: pointer;
+}
+
+.round-btn{
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    box-shadow: 0px 5px 6px 0px #101010c9;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+
+.round-btn:hover{
+    cursor: pointer;
+}
+
+.round-btn.grey{
+    background-color: rgb(88, 88, 88);
+}
+
+.round-btn.grey:active{
+    background-color: rgb(119, 119, 119)!important;
+}
+
+.round-btn.grey:hover{
+    background-color: rgb(70, 70, 70);
+}
+
+

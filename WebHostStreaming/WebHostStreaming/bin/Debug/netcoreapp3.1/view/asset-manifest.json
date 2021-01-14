@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "./static/css/main.0233581e.chunk.css",
+    "main.js": "./static/js/main.a995bf11.chunk.js",
+    "main.js.map": "./static/js/main.a995bf11.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.12a7c79a.js",
+    "runtime-main.js.map": "./static/js/runtime-main.12a7c79a.js.map",
+    "static/js/2.48d142ab.chunk.js": "./static/js/2.48d142ab.chunk.js",
+    "static/js/2.48d142ab.chunk.js.map": "./static/js/2.48d142ab.chunk.js.map",
+    "static/js/3.22f44a9c.chunk.js": "./static/js/3.22f44a9c.chunk.js",
+    "static/js/3.22f44a9c.chunk.js.map": "./static/js/3.22f44a9c.chunk.js.map",
+    "index.html": "./index.html",
+    "static/css/main.0233581e.chunk.css.map": "./static/css/main.0233581e.chunk.css.map",
+    "static/js/2.48d142ab.chunk.js.LICENSE.txt": "./static/js/2.48d142ab.chunk.js.LICENSE.txt",
+    "static/media/medflix.d071a10c.png": "./static/media/medflix.d071a10c.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.12a7c79a.js",
+    "static/js/2.48d142ab.chunk.js",
+    "static/css/main.0233581e.chunk.css",
+    "static/js/main.a995bf11.chunk.js"
+  ]
+}

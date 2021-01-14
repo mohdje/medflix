@@ -1,0 +1,29 @@
+.list-genres-view-container{
+    width: 70%;
+    margin: auto auto;
+}
+
+.list-genres{
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.list-genres > .genre{
+   font-size: 2.4rem;
+   margin: 15px 25px;
+   color: white;
+}
+
+.list-genres> .genre:hover{
+    cursor: pointer;
+    transform: translateY(-10px);
+    transition: transform 0.5s ease;
+ }
+
+ .list-genres > .genre:active{
+    font-size: 3rem;
+    color: rgb(207, 175, 175);
+ }

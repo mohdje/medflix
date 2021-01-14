@@ -1,0 +1,63 @@
+.movies-list-container{
+    position: relative;
+    width: 98%;
+    margin: 0 auto;
+}
+
+.movies-list-container.full{
+    height: 90%;
+}
+
+.movies-list{
+    display: flex;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.movies-list.center{
+    justify-content: center;
+}
+
+.movies-list.wrap-content{
+    flex-flow: row wrap;
+    overflow-y: scroll;
+    height: 100%;
+}
+
+.movies-list-header{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.movies-list-by-genre-container{
+    height: 100%;
+}
+
+.movies-list-by-genre-header{
+    padding: 10px 10px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.movies-list-genre{
+    color: white;
+    font-size: 1.8rem;
+    text-align: start;
+    padding-left: 10px;
+    margin: 0 30px 0 10px;
+}
+
+
+.movies-list-more{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    margin: auto 0;
+    min-height: 220px;
+}
+
+.movies-list-genre-container{
+    margin: 20px auto;
+}

@@ -1,0 +1,30 @@
+.movie-services-menu-container{
+    border-radius: 10px;
+    background-color: rgb(41, 41, 41);
+    padding: 7px 10px;
+    box-shadow: 0px 5px 10px 0px #bebebec9;
+}
+
+.movie-service{
+    font-size: 1.1rem;
+    margin: 3px 7px;
+    color: rgb(216, 216, 216);
+}
+
+.movie-service.selected{
+    font-weight: bold;
+    color:white;
+}
+
+.movie-service:hover{
+    cursor: pointer;
+    color:white;
+}
+
+
+.movie-service:active{
+    cursor: pointer;
+    font-weight: bold;
+    color:white;
+}
+

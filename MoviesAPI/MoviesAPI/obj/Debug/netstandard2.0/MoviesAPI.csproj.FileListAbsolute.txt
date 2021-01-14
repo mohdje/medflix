@@ -1,0 +1,9 @@
+C:\Users\mohamed\Desktop\Projects\Streaming\MoviesAPI\MoviesAPI\bin\Debug\netstandard2.0\MoviesAPI.deps.json
+C:\Users\mohamed\Desktop\Projects\Streaming\MoviesAPI\MoviesAPI\bin\Debug\netstandard2.0\MoviesAPI.dll
+C:\Users\mohamed\Desktop\Projects\Streaming\MoviesAPI\MoviesAPI\bin\Debug\netstandard2.0\MoviesAPI.pdb
+C:\Users\mohamed\Desktop\Projects\Streaming\MoviesAPI\MoviesAPI\obj\Debug\netstandard2.0\MoviesAPI.csprojAssemblyReference.cache
+C:\Users\mohamed\Desktop\Projects\Streaming\MoviesAPI\MoviesAPI\obj\Debug\netstandard2.0\MoviesAPI.AssemblyInfoInputs.cache
+C:\Users\mohamed\Desktop\Projects\Streaming\MoviesAPI\MoviesAPI\obj\Debug\netstandard2.0\MoviesAPI.AssemblyInfo.cs
+C:\Users\mohamed\Desktop\Projects\Streaming\MoviesAPI\MoviesAPI\obj\Debug\netstandard2.0\MoviesAPI.csproj.CoreCompileInputs.cache
+C:\Users\mohamed\Desktop\Projects\Streaming\MoviesAPI\MoviesAPI\obj\Debug\netstandard2.0\MoviesAPI.dll
+C:\Users\mohamed\Desktop\Projects\Streaming\MoviesAPI\MoviesAPI\obj\Debug\netstandard2.0\MoviesAPI.pdb

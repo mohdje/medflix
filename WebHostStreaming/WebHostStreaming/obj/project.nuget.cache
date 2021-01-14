@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "s0St1D3530v4C1lTvJ+VPxs30MeAnSHbcRlA1wz9v75YOOwdgDl7vEtCsGq7AJJZyZM0QiVAJ9GZRrkp9UWfsg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\mohamed\\Desktop\\Projects\\Streaming\\WebHostStreaming\\WebHostStreaming\\WebHostStreaming.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\mohamed\\.nuget\\packages\\htmlagilitypack\\1.11.29\\htmlagilitypack.1.11.29.nupkg.sha512",
+    "C:\\Users\\mohamed\\.nuget\\packages\\mono.nat\\3.0.1\\mono.nat.3.0.1.nupkg.sha512",
+    "C:\\Users\\mohamed\\.nuget\\packages\\monotorrent\\1.0.28\\monotorrent.1.0.28.nupkg.sha512",
+    "C:\\Users\\mohamed\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512",
+    "C:\\Users\\mohamed\\.nuget\\packages\\reusabletasks\\2.0.0\\reusabletasks.2.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

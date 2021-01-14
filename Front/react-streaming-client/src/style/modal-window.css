@@ -1,0 +1,44 @@
+.modal-window-container{
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000000ec;
+    z-index: 5;
+}
+
+.modal-window-content{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.modal-window-close-btn{
+    position: absolute;
+    right: 3%;
+    top: 1%;
+    border-radius: 50%;
+    background-color: #808080bd;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-window-close-btn:active{
+    background-color: #c4c4c4bd;
+}
+
+.modal-window-close-btn:hover{
+   cursor: pointer;
+}
+
+
+.modal-window-close-btn .close-cross{
+    color: white;
+    font-size: 30px !important;
+}

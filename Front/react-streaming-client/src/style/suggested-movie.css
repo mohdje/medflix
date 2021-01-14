@@ -1,0 +1,136 @@
+.suggested-movies-container{
+    position: relative;
+    height: 300px;
+    margin: 0 auto;
+    width: 98%;
+    max-width: 1200px;   
+}
+
+.suggested-movie{
+    display: flex;
+    align-items: flex-start;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    width: 70%;
+    margin: 0 auto;
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 1s, opacity 1s linear;
+    position: absolute;
+    left: 50%; 
+    transform: translateX(-50%);
+    height: 300px;
+    box-shadow: 0px 1px 15px 12px #101010c9;
+}
+
+.suggested-movie.hidden{
+    visibility: hidden;
+    opacity: 0;
+}
+
+.suggested-movie-cover-image{
+    width: 150px;
+    height:  225px; 
+}
+
+.suggested-movie-rating{
+    border-radius: 50%;
+    background-color: rgb(71, 50, 50);
+    color:white;
+    width: 40px;
+    height: 40px;
+    margin: 7px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 1px 1px 6px 3px #101010c9;
+}
+
+.suggested-movie-infos{
+    margin: 20px 10px;
+    color: white;
+}
+
+.suggested-movie-title{
+    font-size: 1.6rem;
+    font-weight: bold;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.suggested-movie-year{
+    font-style: italic;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.suggested-movie-summary{
+    background-color: #414141b0;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: left;
+    overflow: hidden;       
+    text-overflow: ellipsis;
+    max-height: 100px;
+    line-height: 1;
+}
+
+.suggested-movies-play-pause{
+    position: absolute;
+    left: 81%;
+    bottom: 0;
+    transform: translateX(-50%);
+    z-index: 2;
+    background-color: rgb(32, 28, 28);
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px 0;
+}
+
+.suggested-movies-play-pause > .icon{
+    color: white;
+    width: 30px;
+    height: 30px;
+}
+
+.suggested-movies-play-pause:hover{
+    background-color: rgb(95, 90, 90);
+    cursor: pointer;
+}
+
+.suggested-movies-play-pause:active{
+    background-color: rgb(146, 142, 142)!important;
+}
+
+.suggested-movies-nav{
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.suggested-movies-nav > .nav-elem{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #414141de;
+    margin: 5px 10px;
+}
+
+.suggested-movies-nav > .nav-elem.selected{
+    background-color: #e71919de;
+}
+
+.suggested-movies-nav > .nav-elem:hover{
+    background-color: #e45454de;
+    cursor: pointer;
+}
+
