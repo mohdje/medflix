@@ -15,10 +15,14 @@ namespace WebHostStreaming.Helpers
 
         public static void CreateTorrentsFolder()
         {
-            if (Directory.Exists(TorrentsFolder))
-                Directory.Delete(TorrentsFolder, true);
+            if (!Directory.Exists(TorrentsFolder))
+                Directory.CreateDirectory(TorrentsFolder);
+        }
 
-            Directory.CreateDirectory(TorrentsFolder);
+        public static void CleanTorrentsFolder(string folderNotToDelete)
+        {           
+            foreach (var folder in Directory.GetDirectories(TorrentsFolder).Where(f => f != folderNotToDelete))
+                Directory.Delete(folder, true);
         }
 
         public static void CreateViewFolders()

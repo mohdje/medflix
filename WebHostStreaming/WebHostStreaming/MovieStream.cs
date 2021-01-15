@@ -6,12 +6,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using WebHostStreaming.Extensions;
 
 namespace WebHostStreaming
 {
     public class MovieStream
     {
-        string torrentDownloadDirectory = Helpers.AppFolders.TorrentsFolder;
+        string torrentDownloadDirectory;
         ClientEngine clientEngine;
         StreamProvider streamProvider;
         Stream stream;
@@ -20,7 +21,9 @@ namespace WebHostStreaming
         string torrentUri;
 
         static MovieStream instance;
-        public static MovieStream Instance { get
+        public static MovieStream Instance
+        {
+            get
             {
                 if (instance == null)
                     instance = new MovieStream();
@@ -65,7 +68,14 @@ namespace WebHostStreaming
 
         private string GetTorrentFile(string torrentUri)
         {
-            var fileName = Path.Combine(Helpers.AppFolders.TorrentsFolder, torrentUri.GetHashCode().ToString());
+            torrentDownloadDirectory = Path.Combine(Helpers.AppFolders.TorrentsFolder, torrentUri.ToMD5Hash());
+
+            if (!Directory.Exists(torrentDownloadDirectory))
+                Directory.CreateDirectory(torrentDownloadDirectory);
+
+            Helpers.AppFolders.CleanTorrentsFolder(torrentDownloadDirectory);
+
+            var fileName = Path.Combine(torrentDownloadDirectory, "torrent");
 
             if (!File.Exists(fileName))
             {
