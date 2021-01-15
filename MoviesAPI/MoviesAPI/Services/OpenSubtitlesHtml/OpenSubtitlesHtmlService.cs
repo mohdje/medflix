@@ -26,17 +26,17 @@ namespace MoviesAPI.Services.OpenSubtitlesHtml
             if (doc == null)
                 return null;
 
-            var htmlTableResults = doc.DocumentNode.SelectSingleNode("//table[@id='search_results']")?.InnerHtml;
-            if (string.IsNullOrEmpty(htmlTableResults))
+            var htmlTableResults = doc.DocumentNode.SelectSingleNode("//table[@id='search_results']");
+            if (htmlTableResults == null)
                 return null;
 
-            var searchResultsHtml = new HtmlAgilityPack.HtmlDocument();
-            searchResultsHtml.LoadHtml(htmlTableResults);
+            var searchResultsHtml = new HtmlDocument();
+            searchResultsHtml.LoadHtml(htmlTableResults.InnerHtml);
 
             return new OpenSubtitlesDto()
             {
                 Language = languageLabel,
-                SubtitlesIds = searchResultsHtml.DocumentNode.SelectNodes("//a[contains(@onclick, '/subtitleserve/sub/')]")
+                SubtitlesIds = searchResultsHtml.DocumentNode.SelectNodes("//a[contains(@onclick, '/subtitleserve/sub/')]")?
                                                             .Select(n =>
                                                             {
                                                                 var values = n.Attributes["href"].Value.Split('/');
@@ -47,10 +47,8 @@ namespace MoviesAPI.Services.OpenSubtitlesHtml
 
         public IEnumerable<SubtitlesDto> GetSubtitles(string subtitleId, string extractionFolder)
         {
-            if (Directory.Exists(extractionFolder))
-                Directory.Delete(extractionFolder, true);
-
-            Directory.CreateDirectory(extractionFolder);
+            if (!Directory.Exists(extractionFolder))
+                Directory.CreateDirectory(extractionFolder);
 
             var url = "https://dl.opensubtitles.org/en/download/sub/" + subtitleId;
 
@@ -77,9 +75,15 @@ namespace MoviesAPI.Services.OpenSubtitlesHtml
             pamareters.Add("format", "json3");
             pamareters.Add("MovieName", imdbCode);
 
-            var dto = await HttpRequestHelper.GetAsync<List<OpenSubtitleMovieIdDto>>(url, pamareters);
-
-            return dto?.FirstOrDefault()?.OpenSubtitleMovieId;
+            try
+            {
+                var dto = await HttpRequestHelper.GetAsync<List<OpenSubtitleMovieIdDto>>(url, pamareters);
+                return dto?.FirstOrDefault()?.OpenSubtitleMovieId;
+            }
+            catch (Exception)
+            {
+                return null;
+            }          
         }
 
         private void DownloadSubtitle(string url, string destinationFileName)
@@ -115,11 +119,17 @@ namespace MoviesAPI.Services.OpenSubtitlesHtml
 
         private async Task<HtmlDocument> GetDocument(string url)
         {
-            var html = await HttpRequestHelper.GetAsync(url, null);
-
-            var doc = new HtmlAgilityPack.HtmlDocument();
-            doc.LoadHtml(html);
-            return doc;
+            try
+            {
+                var html = await HttpRequestHelper.GetAsync(url, null);
+                var doc = new HtmlDocument();
+                doc.LoadHtml(html);
+                return doc;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }
