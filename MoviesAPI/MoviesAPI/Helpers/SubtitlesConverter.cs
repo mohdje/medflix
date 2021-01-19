@@ -40,7 +40,12 @@ namespace MoviesAPI.Helpers
                     else
                     {
                         if (subtitlesDtos.Count > 0)
-                            subtitlesDtos[subtitlesDtos.Count - 1].Text = srtLine;
+                        {
+                            subtitlesDtos[subtitlesDtos.Count - 1].Text =
+                                string.IsNullOrEmpty(subtitlesDtos[subtitlesDtos.Count - 1].Text) ?
+                                srtLine : subtitlesDtos[subtitlesDtos.Count - 1].Text + " " + srtLine;
+                        }
+                            
                     }
                 }
 

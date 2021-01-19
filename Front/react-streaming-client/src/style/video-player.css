@@ -148,7 +148,7 @@
 
 /*# Video subtitles */
 .video-player-subtitles{
-    width: 100%;
+    max-width: 50%;
     color: white;
     margin: 0 auto 50px auto;
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;

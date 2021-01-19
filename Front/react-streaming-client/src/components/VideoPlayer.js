@@ -114,7 +114,7 @@ function VideoSubtitles({ videoPlayer, urlSource, size, subtitlesAdjustTime }) {
         if(subtitle?.text){
             var text = subtitle.text;
             setTextItalic(false);
-            if(text.startsWith('<i>')||text.endsWith('</i>')){
+            if(text.includes('<i>')||text.includes('</i>')){
                 setTextItalic(true);
                 text = text.replace('<i>','').replace('</i>','');
             }
