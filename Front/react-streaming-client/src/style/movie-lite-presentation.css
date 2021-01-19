@@ -1,7 +1,7 @@
 .movie-lite-presentation{
     margin: 10px;
     width: 150px;
-   
+    transition: all 400ms ease-in-out;
 }
 
 .movie-lite-presentation:hover{
@@ -12,7 +12,7 @@
 }
 
 .movie-lite-presentation:active{
-    transform: scale(1.1, 1.1);
+    transform: scale(1.02, 1.02);
     transition: transform 100ms ease-in-out;
     box-shadow: 0px 10px 10px 0px #bebebec9;
 }

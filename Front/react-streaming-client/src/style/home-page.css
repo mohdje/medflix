@@ -5,9 +5,19 @@
 
 .home-page-container .suggested-movies{
     height: 44%;
-    margin-bottom: 10px;
+    
+}
+
+.home-page-container .blur-divider {
+    background-color: black;
+    box-shadow: 0px 0px 9px 8px black;
+    width: 100%;
+    height: 1px;
+    position: relative;
+    z-index: 2;
 }
 
 .home-page-container .last-movies{
     height: 54%;
+    z-index: 1;
 }

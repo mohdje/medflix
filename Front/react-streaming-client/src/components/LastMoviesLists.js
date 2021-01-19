@@ -6,29 +6,36 @@ function LastMoviesLists({ onShowGenreFullList, onMovieClick }) {
     const genres = ['Thriller', 'Crime', 'Animation', 'Sci-Fi'];//'Comedy', 'Horror', 'Drama'
     const lastMoviesListRef = useRef(null);
     const [elementsVisible, setElementsVisible] = useState([]);
+    const [elementsOpacity, setElementsOpacity] = useState([]);
 
-    const isElementVisible = (elem, containerBoundings) => {
+
+    const isElementVisible = (elem, containerBoundings, bottomMargin, topMargin) => {
         const elemBoundings = elem.getBoundingClientRect();
-
-        return Math.floor(elemBoundings.top) <= Math.floor(containerBoundings.bottom - 100)
-            && Math.floor(elemBoundings.bottom) >= Math.floor(containerBoundings.top + 150);
+        return Math.floor(elemBoundings.bottom) >= Math.floor(containerBoundings.top + topMargin)
+            && Math.floor(elemBoundings.top) <= Math.floor(containerBoundings.bottom + bottomMargin);
     }
 
     const updateElementsVisibility = () => {
         var newElementsVisibility = [];
+        var newElementsOpacity = [];
         var listBoundings = lastMoviesListRef.current.getBoundingClientRect();
         for (let i = 0; i < lastMoviesListRef.current.children.length; i++) {
-            newElementsVisibility.push(isElementVisible(lastMoviesListRef.current.children[i], listBoundings));
+            newElementsVisibility.push(isElementVisible(lastMoviesListRef.current.children[i], listBoundings, 0, 80));
+            newElementsOpacity.push(!isElementVisible(lastMoviesListRef.current.children[i], listBoundings, 0, 200));
         }
         setElementsVisible(newElementsVisibility);
+        setElementsOpacity(newElementsOpacity);
     }
 
     useEffect(() => {
         var newElementsVisibility = [];
+        var newElementsOpacity = [];
         for (let i = 0; i < lastMoviesListRef.current.children.length; i++) {
             newElementsVisibility.push(true);
+            newElementsOpacity.push(false);
         }
         setElementsVisible(newElementsVisibility);
+        setElementsOpacity(newElementsOpacity);
     }, []);
 
     useEffect(() => {
@@ -47,6 +54,7 @@ function LastMoviesLists({ onShowGenreFullList, onMovieClick }) {
                 <MoviesListGenreLite
                     key={genre}
                     visible={elementsVisible[index]}
+                    opacity={elementsOpacity[index]}
                     genre={genre}
                     onMoreClick={() => onShowGenreFullList(genre)}
                     onMovieClick={(movieId) => onMovieClick(movieId)} />

@@ -38,6 +38,10 @@
     font-size: 30px !important;
 }
 
+.delete-text-cross:hover{
+    cursor: pointer;
+}
+
 
 .delete-text-cross:active{
     color: rgb(131, 131, 131);

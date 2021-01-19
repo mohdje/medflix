@@ -6,8 +6,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 14px;
-  background: rgb(134,134,134);
-  background: linear-gradient(27deg, rgba(134,134,134,1) 0%, rgba(0,0,0,1) 70%);
+  background:black;
   overflow:hidden;
    
 }

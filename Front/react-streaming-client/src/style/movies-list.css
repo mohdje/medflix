@@ -60,4 +60,23 @@
 
 .movies-list-genre-container{
     margin: 20px auto;
+    position: relative;
+}
+
+.opacity-filter{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    opacity: 0.5;
+    background-color: black;
+    z-index: 4;
+    transition: opacity 0.5s linear;
+}
+
+.opacity-filter.hidden{
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.5s, opacity 0.5s linear;
 }

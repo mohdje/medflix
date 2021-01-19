@@ -18,6 +18,7 @@ function HomePage({ onMovieClick, onShowGenreFullList }) {
                 <div className="suggested-movies">
                     <SuggestedMovies onMoreClick={(movieId) => onMovieClick(movieId)} onDataLoaded={()=>setDataLoaded(true)}/>
                 </div>
+                <div className="blur-divider"></div>
                 <div className="last-movies">
                     <LastMoviesLists
                         onShowGenreFullList={(genre) => onShowGenreFullList(genre)}

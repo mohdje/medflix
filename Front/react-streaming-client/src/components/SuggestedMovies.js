@@ -40,14 +40,17 @@ function SuggestedMovies({ onMoreClick, onDataLoaded }) {
 
     return (
         <div className="suggested-movies-container">
-            <SuggestMovieNavigation 
-                nbMovies={movies?.length} 
-                selectedIndex={movieIndexVisible}
-                onNavElementClick={(index)=>setMovieIndexVisible(index)}/>
-            <div className="suggested-movies-play-pause" onClick={() => setSuggestedMoviesPlay(!suggestedMoviesPlay)}>
-                <PlayArrowIcon className="icon" style={{ display: suggestedMoviesPlay ? 'none' : '' }} />
-                <PauseIcon className="icon" style={{ display: !suggestedMoviesPlay ? 'none' : '' }} />
+            <div className="suggested-movies-nav-controls">
+                <SuggestMovieNavigation 
+                    nbMovies={movies?.length} 
+                    selectedIndex={movieIndexVisible}
+                    onNavElementClick={(index)=>setMovieIndexVisible(index)}/>
+                <div className="suggested-movies-play-pause" onClick={() => setSuggestedMoviesPlay(!suggestedMoviesPlay)}>
+                    <PlayArrowIcon className="icon" style={{ display: suggestedMoviesPlay ? 'none' : '' }} />
+                    <PauseIcon className="icon" style={{ display: !suggestedMoviesPlay ? 'none' : '' }} />
+                </div>
             </div>
+           
             {movies.map((movie, index) =>
                 <SuggestedMovie
                     key={index}

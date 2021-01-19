@@ -21,18 +21,19 @@
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-     background-repeat: no-repeat;
+    background-repeat: no-repeat;
     background-size: 100% 100%;
 }
 
 .movie-full-presentation-header .cover-and-rating .cover{
     height: 350px;
     width: auto;
+    box-shadow: 1px 3px 9px 3px #101010c9;
 }
 
 .movie-full-presentation-header .cover-and-rating .rating{
     border-radius: 50%;
-    background-color: rgb(44, 44, 44);
+    background-color: rgb(0, 0, 0);
     color:white;
     width: 40px;
     height: 40px;
@@ -68,14 +69,17 @@
    margin: 15px 0;
    background-color: black;
    border: none;
+   box-shadow:1px 1px 14px 7px #101010c9;
 }
 
 .movie-full-presentation-play{
     display: flex;
-    background-color: rgb(31, 31, 31);
+    background-color: rgb(19, 19, 19);
     padding: 10px 20px;
     text-align: left;
     align-items: center;
+    box-shadow: 0px 7px 10px 0px #101010c9;
+    position: relative;
 }
 
 .movie-full-presentation-play .qualities{
