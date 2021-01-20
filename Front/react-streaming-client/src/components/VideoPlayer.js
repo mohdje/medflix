@@ -16,7 +16,7 @@ import RestoreIcon from '@material-ui/icons/Restore';
 import { useEffect, useState, useRef } from 'react';
 import { useOnClickOutside } from '../js/customHooks';
 
-function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions }) {
+function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVideo }) {
     const videoRef = useRef(null);
     const videoPlayerContainerRef = useRef(null);
 
@@ -65,7 +65,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions }) {
             const videoQuality = videoQualitiesOptions.find(op => op.selected);
             if (videoQuality?.data?.url) changeVideoSource(videoQuality.data.url);
         }
-    }, [videoQualitiesOptions])
+    }, [videoQualitiesOptions]);
 
     return (
         <div ref={videoPlayerContainerRef} className="video-player-content" >
@@ -82,7 +82,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions }) {
                 <div className="video-player-controls-container" style={{ display: showVideoControls ? '' : 'none' }}>
                     <TimeController videoPlayer={videoRef.current} />
                     <div className="video-player-controls">
-                        <LeftControlsGroup videoPlayer={videoRef.current} />
+                        <LeftControlsGroup videoPlayer={videoRef.current} mustPauseVideo={mustPauseVideo} />
                         <RightControlsGroup
                             videoPlayerContainer={videoPlayerContainerRef.current}
                             subtitlesOptions={videoSubtitlesOptions}
@@ -111,12 +111,12 @@ function VideoSubtitles({ videoPlayer, urlSource, size, subtitlesAdjustTime }) {
         var subtitle = subtitles.find(s =>
             (s.startTime + subtitlesAdjustTime) <= currentTime && currentTime <= (s.endTime + subtitlesAdjustTime));
 
-        if(subtitle?.text){
+        if (subtitle?.text) {
             var text = subtitle.text;
             setTextItalic(false);
-            if(text.includes('<i>')||text.includes('</i>')){
+            if (text.includes('<i>') || text.includes('</i>')) {
                 setTextItalic(true);
-                text = text.replace('<i>','').replace('</i>','');
+                text = text.replace('<i>', '').replace('</i>', '');
             }
             setCurrentSubtitles(text);
         }
@@ -149,12 +149,12 @@ function VideoSubtitles({ videoPlayer, urlSource, size, subtitlesAdjustTime }) {
     }, [videoPlayer, subtitles, subtitlesAdjustTime]);
 
     return (<div className="video-player-subtitles"
-                 style={{ fontSize: size + 'px', fontStyle: textItalic ? 'italic' : '' }}>
-                {currentSubtitles}
-            </div>);
+        style={{ fontSize: size + 'px', fontStyle: textItalic ? 'italic' : '' }}>
+        {currentSubtitles}
+    </div>);
 }
 
-function LeftControlsGroup({ videoPlayer }) {
+function LeftControlsGroup({ videoPlayer, mustPauseVideo }) {
     const [videoIsPlaying, setVideoIsPlaying] = useState(false);
 
     const playVideo = () => {
@@ -180,6 +180,9 @@ function LeftControlsGroup({ videoPlayer }) {
         }
     }, [videoPlayer]);
 
+    useEffect(() => {
+        if (mustPauseVideo) pauseVideo();
+    }, [mustPauseVideo]);
 
     return (
         <div className="controls-group">
@@ -230,26 +233,27 @@ function RightControlsGroup({
 
     return (
         <div className="controls-group">
+            <div className="controls-sub-group">
+                <VideoOptions options={subtitlesOptions}
+                    icon={<SubtitlesIcon className="icon" />}
+                    onOptionChanged={(option) => onSubtitlesChange(option?.data?.url ? option.data.url : '')}
+                />
+                <AdjustSubtitleTimeOption onAdjustSubtitleTimeChange={(time) => onAdjustSubtitleTimeChange(time)} />
+                <VideoOptionsButton icon={<SortByAlphaIcon className="icon big" />} onClick={() => onSubtitleSizeChange(2)} />
+                <VideoOptionsButton icon={<SortByAlphaIcon className="icon small" />} onClick={() => onSubtitleSizeChange(-2)} />
+            </div>
 
-            <AdjustSubtitleTimeOption onAdjustSubtitleTimeChange={(time)=> onAdjustSubtitleTimeChange(time)}/>
-
-            <SortByAlphaIcon className="icon big" onClick={() => onSubtitleSizeChange(2)} />
-            <SortByAlphaIcon className="icon small" onClick={() => onSubtitleSizeChange(-2)} />
-
-            <VideoOptions options={subtitlesOptions}
-                icon={<SubtitlesIcon className="icon" />}
-                onOptionChanged={(option) => onSubtitlesChange(option?.data?.url ? option.data.url : '')}
-            />
             <VideoOptions options={qualityOptions}
                 icon={<SettingsIcon className="icon" />}
                 onOptionChanged={(option) => onVideoQualityChange(option?.data?.url ? option.data.url : '')}
             />
-            <FullscreenIcon className="icon big" style={{ display: videoInFullscreen ? 'none' : '' }} onClick={() => toFullScreen()} />
-            <FullscreenExitIcon className="icon big" style={{ display: videoInFullscreen ? '' : 'none' }} onClick={() => leaveFullScreen()} />
+
+            <VideoOptionsButton icon={<FullscreenIcon className="icon big" />} hide={videoInFullscreen} onClick={() => toFullScreen()} />
+            <VideoOptionsButton icon={<FullscreenExitIcon className="icon big" />} hide={!videoInFullscreen} onClick={() => leaveFullScreen()} />
         </div>)
 }
 
-function AdjustSubtitleTimeOption({onAdjustSubtitleTimeChange}) {
+function AdjustSubtitleTimeOption({ onAdjustSubtitleTimeChange }) {
 
     const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef(null);
@@ -257,14 +261,14 @@ function AdjustSubtitleTimeOption({onAdjustSubtitleTimeChange}) {
     useOnClickOutside(menuRef, () => setShowMenu(false));
 
     return (
-        <div  ref={menuRef} className="adjust-subtitle-time-container">
+        <div ref={menuRef} className="adjust-subtitle-time-container">
             <div className={"video-options-menu" + (showMenu ? '' : ' hidden')}>
-                <div className="option">Adj. Sub.</div>
+                <div className="label">Adj. Sub.</div>
                 <div className="adjust-subtitle-time-input-container">
-                    <input type="number" step="0.01" onChange={(e)=> onAdjustSubtitleTimeChange(e.target.valueAsNumber) }/><span className="option"> s</span>
+                    <input type="number" step="0.01" onChange={(e) => onAdjustSubtitleTimeChange(e.target.valueAsNumber)} /><span className="label"> s</span>
                 </div>
             </div>
-            <RestoreIcon className="icon" onClick={() => setShowMenu(!showMenu)} />
+            <VideoOptionsButton icon={<RestoreIcon className="icon" />} onClick={() => setShowMenu(!showMenu)} />
         </div>
     );
 }
@@ -273,7 +277,7 @@ function TimeController({ videoPlayer }) {
     const [videoCurrentTimeLabel, setVideoCurrentTimeLabel] = useState('00:00');
     const [videoTotalTimeLabel, setVideoTotalTimeLabel] = useState('00:00');
     const [currentPourcentageTimeVideo, setcurrentPourcentageTimeVideo] = useState(0);
-
+    const [tooltip, setTooltip] = useState(null);
 
     const getTimeLabel = (duration) => {
         let hours = Math.floor(duration / 3600);
@@ -302,6 +306,15 @@ function TimeController({ videoPlayer }) {
         setcurrentPourcentageTimeVideo((videoPlayer.currentTime) * 100 / videoPlayer.duration);
     }
 
+    const setTimeControllerTooltip = (percentage) => {
+        if (videoPlayer.duration > 0) {
+            setTooltip({
+                text: getTimeLabel(Math.floor((percentage * videoPlayer.duration) / 100)),
+                position: percentage
+            })
+        }
+    }
+
     useEffect(() => {
         if (videoPlayer)
             videoPlayer.addEventListener('timeupdate', updateTimeVideo);
@@ -314,14 +327,15 @@ function TimeController({ videoPlayer }) {
     useEffect(() => {
         if (videoPlayer?.duration)
             setVideoTotalTimeLabel(getTimeLabel(videoPlayer.duration));
-
     }, [videoPlayer?.duration]);
 
     return (
         <div className="video-time-controller-container">
             <div className="video-time-label">{videoCurrentTimeLabel}</div>
             <VideoPlayerSlider value={currentPourcentageTimeVideo}
-                onCursorMoved={(percentage) => changeTimeVideo(percentage)}
+                onCursorEndMove={(percentage) => changeTimeVideo(percentage)}
+                onMouseOverSlider={(percentage) => setTimeControllerTooltip(percentage)}
+                tooltip={tooltip}
                 progressColor={'#ed0f0f'}
                 cursorColor={'#b59e9e'} />
             <div className="video-time-label">{videoTotalTimeLabel}</div>
@@ -472,15 +486,31 @@ function VideoOptions({ options, icon, onOptionChanged }) {
             <div className={"video-options-menu " + (showMenu ? '' : 'hidden')}>
                 {optionsDisplay}
             </div>
-            <div className="video-options-show-btn" onClick={() => setShowMenu(!showMenu)}>
-                {icon}
-            </div>
+            <VideoOptionsButton icon={icon} onClick={() => setShowMenu(!showMenu)} />
         </div>
     )
 }
 
-function VideoPlayerSlider({ value, onCursorMoved, width, height, progressColor, cursorColor }) {
+function VideoOptionsButton({ icon, hide, onClick }) {
+    return (
+        <div className="video-options-btn" style={{ display: hide ? 'none' : '' }} onClick={() => onClick()}>
+            {icon}
+        </div>
+    )
+}
+
+function VideoPlayerSlider({ value, width, height, progressColor, cursorColor, tooltip, onCursorMoved, onCursorEndMove, onMouseOverSlider }) {
     const [cursorPosition, setCursorPosition] = useState(0);
+    const [showToolTip, setShowToolTip] = useState(false);
+
+    const positionToPercentage = (XPosition, railBoundings) => {
+        if (XPosition < railBoundings.left)
+            return 0;
+        else if (XPosition > railBoundings.right)
+            return 100;
+        else
+            return (XPosition - railBoundings.left) * 100 / (railBoundings.right - railBoundings.left);
+    }
 
     const initiateCursorMove = () => {
         document.addEventListener('mousemove', moveCursor);
@@ -488,28 +518,52 @@ function VideoPlayerSlider({ value, onCursorMoved, width, height, progressColor,
     }
 
     const moveCursor = (event) => {
-        var mouseXPosition = event.clientX;
-        var railRect = event.target.parentElement.getBoundingClientRect();
-        if (mouseXPosition >= railRect.left && mouseXPosition <= railRect.right) {
-            var percentage = (mouseXPosition - railRect.left) * 100 / (railRect.right - railRect.left);
-            setCursorPosition(percentage);
-            onCursorMoved(percentage);
-        }
+        var percentage = positionToPercentage(event.clientX, event.target.parentElement.getBoundingClientRect());
+        setCursorPosition(percentage);
+        if (onCursorMoved) onCursorMoved(percentage);
     }
 
-    const endMove = () => {
+    const endMove = (event) => {
+        if (onCursorEndMove) {
+            var percentage = positionToPercentage(event.clientX, event.target.parentElement.getBoundingClientRect());
+            onCursorEndMove(percentage);
+        }
         document.removeEventListener('mouseup', endMove);
         document.removeEventListener('mousemove', moveCursor);
+    }
+
+    const onSliderClick = (event) => {
+        var percentage = positionToPercentage(event.clientX, event.target.parentElement.getBoundingClientRect());
+        setCursorPosition(percentage);
+        if (onCursorEndMove) onCursorEndMove(percentage);
+    }
+
+    const onMouseMoveOverSlider = (event) => {
+        var percentage = positionToPercentage(event.clientX, event.target.parentElement.getBoundingClientRect());
+        if (onMouseOverSlider) onMouseOverSlider(percentage);
+    }
+
+    const onMouseLeaveSlider = () => {
+        setShowToolTip(false);
     }
 
     useEffect(() => {
         setCursorPosition(value);
     }, [value])
 
+    useEffect(() => {
+        if (tooltip) setShowToolTip(true);
+    }, [tooltip])
+
     return (
-        <div className="video-player-slider-container" style={{ width: width, height: height }} onClick={(event) => moveCursor(event)}>
+        <div className="video-player-slider-container"
+            style={{ width: width, height: height }}
+            onClick={(event) => onSliderClick(event)}
+            onMouseMove={(event) => onMouseMoveOverSlider(event)}
+            onMouseLeave={() => onMouseLeaveSlider()}>
             <div className="complete-part" style={{ width: cursorPosition + "%", backgroundColor: progressColor }}></div>
             <div className="remaining-part" style={{ width: (100 - cursorPosition) + "%" }}></div>
             <div className="cursor" style={{ left: cursorPosition + '%', backgroundColor: cursorColor }} onMouseDown={() => initiateCursorMove()}></div>
+            <div className="tooltip" style={{ left: tooltip?.position + '%', display: showToolTip ? '' : 'none' }}>{tooltip?.text}</div>
         </div>)
 }

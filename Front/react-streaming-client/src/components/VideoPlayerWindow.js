@@ -60,21 +60,24 @@ function VideoPlayerWindow({ movie, visible, onCloseClick }) {
     }
 
     useEffect(() => {
-        if (movie?.imdbCode) {
+        if (visible && movie?.imdbCode) {
             MoviesAPI.getAvailableSubtitles(movie.imdbCode,
                 (availableSubtitles) => {
                     buildSubtitlesOptions(availableSubtitles);
                 })
             buildVideoQualitiesOptions(movie);
         }
-    }, [movie]);
+    }, [movie, visible]);
 
     useOnClickOutside(videoPlayerContainerRef, () => onCloseClick());
 
     return (
         <div style={fadeTransition(visible)} className="video-player-window-container">
             <div ref={videoPlayerContainerRef} className="video-player-container">
-                <VideoPlayer videoQualitiesOptions={videoQualitiesOptions} videoSubtitlesOptions={subtitlesOptions} />
+                <VideoPlayer 
+                    videoQualitiesOptions={videoQualitiesOptions} 
+                    videoSubtitlesOptions={subtitlesOptions}
+                    mustPauseVideo={!visible} />
             </div>
         </div>
     );

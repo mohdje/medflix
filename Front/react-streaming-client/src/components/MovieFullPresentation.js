@@ -45,7 +45,7 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
         <div style={{height: '100%'}}>
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />
             <div style={fadeTransition(dataLoaded)} className="movie-full-presentation-container">
-                <VideoPlayerWindow visible={showMoviePlayer} movie={showMoviePlayer ? movieDetails : {}} onCloseClick={() => setShowMoviePlayer(false)} />
+                <VideoPlayerWindow visible={showMoviePlayer} movie={movieDetails} onCloseClick={() => setShowMoviePlayer(false)} />
                 <div className="movie-full-presentation-close-btn" onClick={() => onCloseClick()}>
                     <ArrowBackIcon className="close-cross" />
                 </div>
