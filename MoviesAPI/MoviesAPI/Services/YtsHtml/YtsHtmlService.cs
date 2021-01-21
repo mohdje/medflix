@@ -168,7 +168,7 @@ namespace MoviesAPI.Services.YtsHtml
 
         public IEnumerable<string> GetMovieGenres()
         {
-            return new string[] { "Thriller", "Sci-Fi", "Horror", "Romance", "Action", "Drama", "Crime", "Animation", "Adventure", "Fantasy" };
+            return new string[] { "Thriller", "Sci-Fi", "Horror", "Romance", "Action", "Comedy", "Drama", "Crime", "Animation", "Adventure", "Fantasy" };
 
         }
     }
