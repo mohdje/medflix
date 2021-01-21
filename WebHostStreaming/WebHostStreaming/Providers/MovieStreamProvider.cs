@@ -8,9 +8,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebHostStreaming.Extensions;
 
-namespace WebHostStreaming
+namespace WebHostStreaming.Providers
 {
-    public class MovieStream
+    public class MovieStreamProvider
     {
         string torrentDownloadDirectory;
         ClientEngine clientEngine;
@@ -19,51 +19,64 @@ namespace WebHostStreaming
         Torrent torrent;
         TorrentFile movieFile;
         string torrentUri;
+        bool streamProviderIsReady;
 
-        static MovieStream instance;
-        public static MovieStream Instance
+        static MovieStreamProvider instance;
+        public static MovieStreamProvider Instance
         {
             get
             {
                 if (instance == null)
-                    instance = new MovieStream();
+                    instance = new MovieStreamProvider();
 
                 return instance;
             }
         }
 
-        private MovieStream()
+        private MovieStreamProvider()
         {
             clientEngine = CreateEngine();
         }
-
-        public async Task<Stream> StreamMovie(string torrentUri, long offset)
+        public async Task<Stream> GetMovieStreamAsync(string torrentUri, long offset)
         {
-            if(this.torrentUri != torrentUri)
+            if (this.torrentUri != torrentUri)
+                InitializeStreamProvider(torrentUri);
+
+            while (!streamProviderIsReady)           
+                await Task.Delay(1000);
+  
+            lock (streamProvider)
             {
-                this.torrentUri = torrentUri;
-                torrent = Torrent.Load(GetTorrentFile(torrentUri));
+                if (stream != null)
+                    stream.Dispose();
 
-                foreach(var file in torrent.Files)
-                   file.Priority = Priority.DoNotDownload;
-
-                movieFile = torrent.Files.FirstOrDefault(f => f.FullPath.EndsWith(".mp4"));
-                movieFile.Priority = Priority.Highest;
-
-                streamProvider = new StreamProvider(clientEngine, torrentDownloadDirectory, torrent);
-              
-                await streamProvider.StartAsync();
+                stream = streamProvider.CreateStreamAsync(movieFile).Result;
             }
 
-            if (stream != null)
-                stream.Dispose();
-
-            stream = await streamProvider.CreateStreamAsync(movieFile);
-
-            if (offset > 0)
+            if (stream != null && offset > 0)
                 stream.Seek(offset, SeekOrigin.Begin);
 
             return stream;
+        }
+        private void InitializeStreamProvider(string torrentUri)
+        {
+            streamProviderIsReady = false;
+
+            this.torrentUri = torrentUri;
+
+            torrent = Torrent.Load(GetTorrentFile(torrentUri));
+
+            foreach (var file in torrent.Files)
+                file.Priority = Priority.DoNotDownload;
+
+            movieFile = torrent.Files.FirstOrDefault(f => f.FullPath.EndsWith(".mp4"));
+            movieFile.Priority = Priority.Highest;
+
+            streamProvider = new StreamProvider(clientEngine, torrentDownloadDirectory, torrent);
+
+            streamProvider.StartAsync().Wait();
+
+            streamProviderIsReady = true;
         }
 
         private string GetTorrentFile(string torrentUri)
