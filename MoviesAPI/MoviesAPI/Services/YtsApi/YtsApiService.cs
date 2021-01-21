@@ -11,7 +11,7 @@ using MoviesAPI.Helpers;
 
 namespace MoviesAPI.Services.YtsApi
 {
-    public class YtsApiService: IMovieService
+    public class YtsApiService : IMovieService
     {
         IYtsApiUrlProvider ytsApiUrlProvider;
 
@@ -34,7 +34,7 @@ namespace MoviesAPI.Services.YtsApi
 
             var requestResult = await HttpRequestHelper.GetAsync<YtsResultDto>(ytsApiUrlProvider.GetBaseApiUrl() + listMovies, parameters);
 
-            return requestResult.Data.Movies.Where(m=> !string.IsNullOrEmpty(m.Summary))
+            return requestResult.Data.Movies.Where(m => !string.IsNullOrEmpty(m.Summary))
                                             .OrderBy(m => m.DateUploaded)
                                             .Reverse()
                                             .Take(nbMovies)
@@ -134,6 +134,7 @@ namespace MoviesAPI.Services.YtsApi
                 CoverImageUrl = ytsMovieDto.CoverImageUrl,
                 Genres = string.Join(", ", ytsMovieDto.Genres),
                 Id = ytsMovieDto.Id.ToString(),
+                Duration = ytsMovieDto.Runtime > 0 ? $"{TimeSpan.FromMinutes(ytsMovieDto.Runtime).Hours} h {TimeSpan.FromMinutes(ytsMovieDto.Runtime).Minutes} min" : string.Empty,
                 Rating = ytsMovieDto.Rating.ToString(),
                 Synopsis = ytsMovieDto.Summary,
                 Title = ytsMovieDto.Title,
@@ -149,7 +150,7 @@ namespace MoviesAPI.Services.YtsApi
 
         public IEnumerable<string> GetMovieGenres()
         {
-            return new string[] { "Thriller", "Sci-Fi", "Horror", "Romance", "Action", "Drama", "Crime", "Animation", "Adventure", "Fantasy"};
+            return new string[] { "Thriller", "Sci-Fi", "Horror", "Romance", "Action", "Drama", "Crime", "Animation", "Adventure", "Fantasy" };
         }
     }
 }

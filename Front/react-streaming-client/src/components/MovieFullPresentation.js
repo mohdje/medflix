@@ -34,15 +34,15 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
     }, [movieId]);
 
     const getVideoQualities = (torrents) => {
-        if(!torrents)
+        if (!torrents)
             return;
-       var qualities = torrents.map(t=> t.quality); //.join(", ")
-       var withoutDoublons = qualities.filter((q, index) => qualities.indexOf(q) === index);
-       return withoutDoublons.join(", ");
+        var qualities = torrents.map(t => t.quality);
+        var withoutDoublons = qualities.filter((q, index) => qualities.indexOf(q) === index);
+        return withoutDoublons.join(", ");
     }
 
     return (
-        <div style={{height: '100%'}}>
+        <div style={{ height: '100%' }}>
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />
             <div style={fadeTransition(dataLoaded)} className="movie-full-presentation-container">
                 <VideoPlayerWindow visible={showMoviePlayer} movie={movieDetails} onCloseClick={() => setShowMoviePlayer(false)} />
@@ -60,49 +60,39 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                         <iframe className="trailer" src={movieDetails.youtubeTrailerUrl}></iframe>
                     </div>
                 </div>
-                <div className="movie-full-presentation-play">
-                    <div className="qualities">
-                        <span className="title">Qualities </span>{getVideoQualities(movieDetails.torrents)}
-                    </div>
+                <div className="movie-full-presentation-video-info">
+                    <VideoInfo infoTitle={"Qualities"} infoContent={getVideoQualities(movieDetails.torrents)} />
+                    <VideoInfo infoTitle={"Duration"} infoContent={movieDetails.duration} />
                     <div className="standard-button red" onClick={() => setShowMoviePlayer(true)}>
-                        <PlayArrowIcon/>
-                        <div style={{marginLeft: '5px'}}>Play</div>
+                        <PlayArrowIcon />
+                        <div style={{ marginLeft: '5px' }}>Play</div>
                     </div>
                 </div>
                 <div className="movie-full-presentation-body">
-                    <div className="movie-full-presentation-info">
-                        <div className="title">Genre</div>
-                        <div className="content">{movieDetails.genres}</div>
-                    </div>
-                    <div className="movie-full-presentation-info">
-                        <div className="title">Synopsis</div>
-                        <div className="content">{movieDetails.synopsis}</div>
-                    </div>
-                    <div className="movie-full-presentation-info">
-                        <div className="title">Director</div>
-                        <div className="content">{movieDetails.director}</div>
-                    </div>
-                    <div className="movie-full-presentation-info">
-                        <div className="title">Cast</div>
-                        <div className="content">{movieDetails.cast}</div>
-                    </div>
+                    <MovieInfo infoTitle={"Genre"} infoContent={movieDetails.genres} />
+                    <MovieInfo infoTitle={"Synopsis"} infoContent={movieDetails.synopsis} />
+                    <MovieInfo infoTitle={"Director"} infoContent={movieDetails.director} />
+                    <MovieInfo infoTitle={"Cast"} infoContent={movieDetails.cast} />
                 </div>
             </div>
         </div>
-
     );
 }
 export default MovieFullPresentation;
 
-//override details for tests
-// details.imdbCode = "tt4154796";
-// details.torrents = [
-//     {
-//         quality: "720p",
-//         downloadUrl: 'https://cdn.fluidplayer.com/videos/valerian-1080p.mkv'
-//     },
-//     {
-//         quality: "1080p",
-//         downloadUrl: 'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4'
-//     }
-// ]
+function VideoInfo({ infoTitle, infoContent }) {
+    return (
+        <div className="video-info">
+            <span className="title">{infoTitle} </span>{infoContent}
+        </div>
+    )
+}
+
+function MovieInfo({ infoTitle, infoContent }) {
+    return (
+        <div className="movie-full-presentation-info">
+            <div className="title">{infoTitle}</div>
+            <div className="content">{infoContent}</div>
+        </div>
+    )
+}

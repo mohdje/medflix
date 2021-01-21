@@ -31,6 +31,8 @@ namespace MoviesAPI.Services.CommonDtos
         public string ImdbCode { get; set; }
 
         public string Id { get; set; }
+
+        public string Duration { get; set; }
     }
 
     public class MovieTorrent

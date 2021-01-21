@@ -38,6 +38,8 @@ namespace MoviesAPI.Services.YtsApi.DTOs
         public YtsTorrent[] Torrents { get; set; }
 
         public Cast[] Cast { get; set; }
+
+        public int Runtime { get; set; }
     }
 
     public class YtsTorrent

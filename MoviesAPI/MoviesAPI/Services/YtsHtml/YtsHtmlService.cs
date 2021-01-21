@@ -82,43 +82,22 @@ namespace MoviesAPI.Services.YtsHtml
         {
             var doc = await GetDocument(htmlUrlProvider.GetMovieDetailsUrl(movieId));
 
-            var movieInfos = doc.DocumentNode.SelectSingleNode("//div[@id='movie-info']");
-            var moviePoster = doc.DocumentNode.SelectSingleNode("//div[@id='movie-poster']");
-            var movieSynopsis = doc.DocumentNode.SelectSingleNode("//div[@id='synopsis']");
-            var movieDirector = doc.DocumentNode.SelectSingleNode("//div[@class='directors']");
-            var movieActors = doc.DocumentNode.SelectNodes("//span[@itemprop='actor']");
-            var movieScreenShot = doc.DocumentNode.SelectSingleNode("//a[contains(@class, 'screenshot-group')]");
-
-            var movieInfosHtml = new HtmlAgilityPack.HtmlDocument();
-            movieInfosHtml.LoadHtml(movieInfos.InnerHtml);
-
-            var moviePosterHtml = new HtmlAgilityPack.HtmlDocument();
-            moviePosterHtml.LoadHtml(moviePoster.InnerHtml);
-
-            var movieScreenShotHtml = new HtmlAgilityPack.HtmlDocument();
-            movieScreenShotHtml.LoadHtml(movieScreenShot.InnerHtml);
-
             var movieTorrents = doc.DocumentNode.SelectSingleNode("//p/em[contains(text(), 'Available in')]").ParentNode;
             var movieTorrentsHtml = new HtmlAgilityPack.HtmlDocument();
             movieTorrentsHtml.LoadHtml(movieTorrents.InnerHtml);
 
-            var movieSynopsisHtml = new HtmlAgilityPack.HtmlDocument();
-            movieSynopsisHtml.LoadHtml(movieSynopsis.InnerHtml);
-
-            var movieDirectorHtml = new HtmlAgilityPack.HtmlDocument();
-            movieDirectorHtml.LoadHtml(movieDirector.InnerHtml);
-
             return new MovieDto()
             {
-                Title = movieInfosHtml.DocumentNode.SelectSingleNode("//h1").InnerText,
-                Year = movieInfosHtml.DocumentNode.SelectNodes("//h2").First().InnerText,
-                Genres = movieInfosHtml.DocumentNode.SelectNodes("//h2").Last().InnerText.Replace("&nbsp;", string.Empty).Replace("/", ", "),
-                ImdbCode = movieInfosHtml.DocumentNode.SelectSingleNode("//a[@title='IMDb Rating']").Attributes["href"].Value.Split('/').Single(t => t.StartsWith("tt")),
+                Title = doc.DocumentNode.SelectSingleNode("//div[@id='movie-info']//h1")?.InnerText,
+                Year = doc.DocumentNode.SelectSingleNode("//div[@id='movie-info']//h2")?.InnerText,
+                Duration = doc.DocumentNode.SelectSingleNode("//span[@title='Runtime']")?.ParentNode?.InnerText.Trim(),
+                Genres = doc.DocumentNode.SelectNodes("//div[@id='movie-info']//h2")?.Last().InnerText.Replace("&nbsp;", string.Empty).Replace("/", ", "),
+                ImdbCode = doc.DocumentNode.SelectSingleNode("//div[@id='movie-info']//a[@title='IMDb Rating']")?.Attributes["href"].Value.Split('/').SingleOrDefault(t => t.StartsWith("tt")),
                 BackgroundImageUrl = htmlUrlProvider.GetImageUrl(doc.DocumentNode.SelectSingleNode("//a[contains(@class, 'screenshot-group')]").Attributes["href"].Value),
-                CoverImageUrl = htmlUrlProvider.GetImageUrl(moviePosterHtml.DocumentNode.SelectSingleNode("//img").Attributes["src"].Value),
+                CoverImageUrl = htmlUrlProvider.GetImageUrl(doc.DocumentNode.SelectSingleNode("//div[@id='movie-poster']//img")?.Attributes["src"].Value),
                 Rating = doc.DocumentNode.SelectSingleNode("//div[@class='rating-row']/a[@title='IMDb Rating']").ParentNode.InnerText.Trim().Split('\n').First(),
-                Synopsis = movieSynopsisHtml.DocumentNode.SelectNodes("//p").First().InnerText,
-                Director = movieDirectorHtml.DocumentNode.SelectSingleNode("//a[@class='name-cast']").InnerText,
+                Synopsis = doc.DocumentNode.SelectSingleNode("//div[@id='synopsis']//p")?.InnerText,
+                Director = doc.DocumentNode.SelectSingleNode("//div[@class='directors']//a[@class='name-cast']")?.InnerText,
                 Cast = doc.DocumentNode.SelectNodes("//div[@class='actors']//a[@class='name-cast']")?.Select(n => n.InnerText).Aggregate((a, b) => a + ", " + b),
                 YoutubeTrailerUrl = doc.DocumentNode.SelectSingleNode("//*[@id='playTrailer']")?.Attributes["href"].Value,
                 Torrents = movieTorrentsHtml.DocumentNode.SelectNodes("//a[contains(@title, 'torrent') or contains(@title, 'Torrent')]")
