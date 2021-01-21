@@ -105,7 +105,7 @@
 
 .suggested-movies-play-pause{
     z-index: 2;
-    background-color: rgb(32, 28, 28);
+    background-color: black;
     border-radius: 50%;
     height: 40px;
     width: 40px;
@@ -122,7 +122,7 @@
 }
 
 .suggested-movies-play-pause:hover{
-    background-color: rgb(95, 90, 90);
+    background-color:rgb(71, 71, 71);
     cursor: pointer;
 }
 
@@ -138,10 +138,10 @@
 }
 
 .suggested-movies-nav > .nav-elem{
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
     border-radius: 50%;
-    background-color: #414141de;
+    background-color: black;
     margin: 5px 10px;
 }
 
@@ -150,7 +150,7 @@
 }
 
 .suggested-movies-nav > .nav-elem:hover{
-    background-color: #e45454de;
+    background-color: #8f8f8fde;
     cursor: pointer;
 }
 
