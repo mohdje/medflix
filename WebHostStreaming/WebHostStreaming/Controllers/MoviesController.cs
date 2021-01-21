@@ -7,7 +7,7 @@ using MoviesAPI.Services.OpenSubtitlesHtml;
 using MoviesAPI.Services.OpenSubtitlesHtml.DTOs;
 using MoviesAPI.Services.CommonDtos;
 using MoviesAPI.Services;
-
+using WebHostStreaming.Providers;
 
 namespace WebHostStreaming.Controllers
 {
@@ -15,17 +15,15 @@ namespace WebHostStreaming.Controllers
     [ApiController]
     public class MoviesController : ControllerBase
     {
-        OpenSubtitlesHtmlService subtitlesService = new OpenSubtitlesHtmlService(); 
-      
         [HttpGet("services")]
         public  IEnumerable<object> GetAvailableMovieServices()
         {
-            return MovieServiceFactory.GetAvailableMovieServices()
-                                      .Select(s => new
-                                      {
-                                          Name = s,
-                                          Selected = s == MovieServiceProvider.ActiveServiceTypeName
-                                      }); 
+            return MovieServiceProvider.AvailableMovieServices
+                                        .Select(s => new
+                                        {
+                                            Name = s,
+                                            Selected = s == MovieServiceProvider.ActiveServiceTypeName
+                                        }); 
         }
 
         [HttpPost("services")]
@@ -33,7 +31,7 @@ namespace WebHostStreaming.Controllers
         {           
             try
             {
-                MovieServiceProvider.UpdateMovieService((MovieServiceType)Enum.Parse(typeof(MovieServiceType), serviceName));
+                MovieServiceProvider.UpdateActiveMovieService((MovieServiceType)Enum.Parse(typeof(MovieServiceType), serviceName));
             }
             catch (Exception)
             {
@@ -80,25 +78,22 @@ namespace WebHostStreaming.Controllers
             return await MovieServiceProvider.MovieService.GetMoviesDetailsAsync(id);
         }
 
-        // GET <MoviesController>/5
         [HttpGet("stream")]
         public async Task<FileStreamResult> GetStream([FromQuery(Name = "url")] string url)
         {
-            //url = "https://archive.org/download/ParadiseCanyon/ParadiseCanyon_archive.torrent";
-            //url = "https://archive.org/download/JungleBook/JungleBook_archive.torrent";
             var rangeHeaderValue = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "Range").Value.FirstOrDefault();
 
             long offset = 0;
             long.TryParse(rangeHeaderValue.Replace("bytes=", string.Empty).Split("-")[0], out offset);
 
-            return File(await MovieStream.Instance.StreamMovie(url, offset), "video/mp4", true);
-            //var stream = new System.IO.FileStream(@"C:\Users\mohamed\Desktop\Projects\Streaming\data\Sunrise In Empty Plaza del Zócalo In Mexico City.mp4", System.IO.FileMode.Open);
-            //return File(stream, "video/mp4", true);
+            return File(await MovieStreamProvider.Instance.GetMovieStreamAsync(url, offset), "video/mp4", true);         
         }
 
         [HttpGet("subtitles/available/{imdbCode}")]
         public async Task<IEnumerable<OpenSubtitlesDto>> GetAvailableSubtitles(string imdbCode)
         {
+            var subtitlesService = MovieServiceProvider.MovieSubtitlesService;
+
             var subtitlesDownloaders = new Task<OpenSubtitlesDto>[]
             {
                 subtitlesService.GetAvailableSubtitlesAsync(imdbCode, "fre", "French"),
@@ -124,39 +119,8 @@ namespace WebHostStreaming.Controllers
 
         [HttpGet("subtitles/{subtitlesId}")]
         public IEnumerable<SubtitlesDto> GetSubtitles(string subtitlesId)
-        {
-            
-            return subtitlesService.GetSubtitles(subtitlesId, Helpers.AppFolders.SubtitlesFolder);      
+        {           
+            return MovieServiceProvider.MovieSubtitlesService.GetSubtitles(subtitlesId, Helpers.AppFolders.SubtitlesFolder);      
         }
-
-        //var subtitles = new List<SubtitlesDto>();
-        //subtitles.Add(new SubtitlesDto()
-        //{
-        //    StartTime = 0.5,
-        //    EndTime = 2.5,
-        //    Text = "On voit le feu vert"
-        //});
-        //subtitles.Add(new SubtitlesDto()
-        //{
-        //    StartTime = 2,
-        //    EndTime = 4,
-        //    Text = "On le voit plus"
-        //});
-
-        //subtitles.Add(new SubtitlesDto()
-        //{
-        //    StartTime = 14,
-        //    EndTime = 16,
-        //    Text = "Un mec graille à droite"
-        //});
-        //subtitles.Add(new SubtitlesDto()
-        //{
-        //    StartTime = 16,
-        //    EndTime = 18,
-        //    Text = "On le voit plus"
-        //});
-
-        //return subtitles;
-
     }
 }
