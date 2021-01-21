@@ -1,8 +1,14 @@
 .movie-services-menu-container{
-    border-radius: 10px;
-    background-color: rgb(41, 41, 41);
+    background-color:black;
     padding: 7px 10px;
     box-shadow: 0px 5px 10px 0px #bebebec9;
+}
+
+.movie-services-menu-container .title{
+    color: white;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 7px;
 }
 
 .movie-service{

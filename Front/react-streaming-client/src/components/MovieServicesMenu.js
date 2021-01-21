@@ -39,6 +39,7 @@ function MovieServicesMenu({onClick, visible }) {
                 <CircularProgressBar color={'white'} size={'40px'} visible={true}/>      
             </div>          
            <div style={{display: !dataLoading ? '': 'none'}}>
+               <div className="title">Movies Services</div>
                 {services.map(service => (
                      <div 
                         key={service.name} 
@@ -52,20 +53,3 @@ function MovieServicesMenu({onClick, visible }) {
     );
 }
 export default MovieServicesMenu;
-
-// setTimeout(()=>{
-//     setServices([
-//         {
-//             name: "YtsAPIMtx",
-//             selected: true
-//         },
-//         {
-//             name: "YtsHtmlone",
-//             selected: false
-//         },
-//         {
-//             name: "YtsHtmlltd",
-//             selected: false
-//         }
-//     ]);
-// },3000);
