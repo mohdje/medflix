@@ -8,7 +8,7 @@ import fadeTransition from "../js/customStyles.js";
 
 import { useState } from 'react';
 
-function HomePage({ onMovieClick, onShowGenreFullList }) {
+function HomePage({ genres, onMovieClick }) {
     const [dataLoaded, setDataLoaded] = useState(false);
 
     return (
@@ -20,9 +20,7 @@ function HomePage({ onMovieClick, onShowGenreFullList }) {
                 </div>
                 <div className="blur-divider"></div>
                 <div className="last-movies">
-                    <LastMoviesLists
-                        onShowGenreFullList={(genre) => onShowGenreFullList(genre)}
-                        onMovieClick={(movieId) => onMovieClick(movieId)} />
+                    <LastMoviesLists genres={genres} onMovieClick={(movieId) => onMovieClick(movieId)} />
                 </div>
             </div>
         </div>

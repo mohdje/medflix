@@ -2,8 +2,7 @@
 import MoviesListGenreLite from "./MoviesListGenreLite";
 import { useRef, useEffect, useState } from 'react';
 
-function LastMoviesLists({ onShowGenreFullList, onMovieClick }) {
-    const genres = ['Thriller', 'Crime', 'Animation', 'Sci-Fi'];//'Comedy', 'Horror', 'Drama'
+function LastMoviesLists({ genres, onMovieClick }) {
     const lastMoviesListRef = useRef(null);
     const [elementsVisible, setElementsVisible] = useState([]);
     const [elementsOpacity, setElementsOpacity] = useState([]);
@@ -36,7 +35,7 @@ function LastMoviesLists({ onShowGenreFullList, onMovieClick }) {
         }
         setElementsVisible(newElementsVisibility);
         setElementsOpacity(newElementsOpacity);
-    }, []);
+    }, [genres]);
 
     useEffect(() => {
         if (lastMoviesListRef?.current)
@@ -56,7 +55,6 @@ function LastMoviesLists({ onShowGenreFullList, onMovieClick }) {
                     visible={elementsVisible[index]}
                     opacity={elementsOpacity[index]}
                     genre={genre}
-                    onMoreClick={() => onShowGenreFullList(genre)}
                     onMovieClick={(movieId) => onMovieClick(movieId)} />
             ))}
         </div>

@@ -1,13 +1,10 @@
 import "../style/list-genres-view.css";
-import MoviesAPI from "../js/moviesAPI.js";
 import ModalWindow from "./ModalWindow";
 import CircularProgressBar from "./CircularProgressBar";
 
 import { useEffect, useState } from 'react';
 
-function ModalListGenre({ visible, onCloseClick, onGenreClick }) {
-
-    const [genres, setGenres] = useState([]);
+function ModalListGenre({ genres, visible, onCloseClick, onGenreClick }) {
     const [loading, setLoading] = useState(true);
 
     const listGenresView = () => {
@@ -23,19 +20,12 @@ function ModalListGenre({ visible, onCloseClick, onGenreClick }) {
                         </div>)}
                 </div>
             </div>
-
         )
     }
 
     useEffect(() => {
-        setLoading(true);
-        MoviesAPI.getMoviesGenres(
-            (genres) => {
-                if (genres && genres.length > 0) setGenres(genres);
-                setLoading(false);
-            }
-        );
-    }, []);
+        setLoading(!genres || genres.length === 0);
+    }, [genres]);
 
     return (
         <ModalWindow visible={visible} content={listGenresView()} onCloseClick={() => onCloseClick()} />

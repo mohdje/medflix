@@ -1,5 +1,7 @@
 // import logo from './logo.svg';
 import './App.css';
+import MoviesAPI from "./js/moviesAPI.js";
+
 import NavBar from "./components/NavBar";
 
 import SplashScreen from "./components/SplashScreen";
@@ -22,7 +24,11 @@ function App() {
 
   const [splashscreenVisible, setSplashscreenVisible] = useState(true);
   const [modalSearchVisible, setModalSearchVisible] = useState(false);
+
   const [modalListGenresVisible, setModalListGenresVisible] = useState(false);
+  const [listGenres, setListGenres] = useState([]);
+  const [genresSelection, setGenresSelection] = useState([]);
+
 
   const [movieId, setMovieId] = useState('');
 
@@ -43,6 +49,20 @@ function App() {
     showComponent(routerIds.movieFullPresentation);
   }
 
+  const selectRandomGenres = (genres, count) =>{
+    var indexes = [];
+    while(indexes.length !== count){
+      var index = Math.floor(Math.random() * genres.length); 
+      if(!indexes.find( j => j === index)) indexes.push(index);
+    }
+
+    var selectedGenres = [];
+    for (let i = 0; i < indexes.length; i++) {
+      selectedGenres.push(genres[indexes[i]]);     
+    }   
+    setGenresSelection(selectedGenres);
+  }
+
   const goToPreviousComponent = () => {
     showComponent(routerPreviousComponentId);
   }
@@ -57,9 +77,9 @@ function App() {
     components: [
       {
         id: routerIds.homePage,
-        render: (<HomePage
-          onMovieClick={(movieId) => showMovieFullPresentation(movieId)}
-          onShowGenreFullList={(genre) => showMoviesFullListofGenre(genre)} />)
+        render: (<HomePage 
+          genres={genresSelection}
+          onMovieClick={(movieId) => showMovieFullPresentation(movieId)} />)
       },
       {
         id: routerIds.moviesGenreFullList,
@@ -80,7 +100,15 @@ function App() {
   const [routerPreviousComponentId, setRouterPreviousComponentId] = useState(routerIds.homePage);
 
   useEffect(()=>{
-    setTimeout(()=>{setSplashscreenVisible(false)}, 4000)
+    setTimeout(()=>{setSplashscreenVisible(false)}, 4000);
+    MoviesAPI.getMoviesGenres(
+          (genres) => {
+              if (genres && genres.length > 0){
+                setListGenres(genres);
+                selectRandomGenres(genres, 4);
+              } 
+          }
+      );
   }, []);
 
   return (
@@ -91,6 +119,7 @@ function App() {
         onCloseClick={() => setModalSearchVisible(false)}
         onMovieClick={(movieId) => showMovieFullPresentation(movieId)} />
       <ModalListGenre
+        genres={listGenres}
         visible={modalListGenresVisible}
         onGenreClick={(genre)=>{ setModalListGenresVisible(false); showMoviesFullListofGenre(genre)}}
         onCloseClick={() =>setModalListGenresVisible(false)}
