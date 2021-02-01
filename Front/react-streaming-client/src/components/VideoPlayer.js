@@ -425,9 +425,9 @@ function VideoOptions({ options, icon, onOptionChanged }) {
 
         setShowMenu(false);
 
-        var selectedOption = updatedOptions.find(op => op.selected);
-        if (selectedOption.subOptions) onOptionChanged(selectedOption.subOptions.find(subOp => subOp.selected));
-        else onOptionChanged(selectedOption);
+        var option = updatedOptions.find(op => op.selected);
+        if (option.subOptions) onOptionChanged(option.subOptions.find(subOp => subOp.selected));
+        else onOptionChanged(option);
     }
 
     const setSubOptionsVisibility = (option, visible) => {

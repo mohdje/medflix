@@ -6,10 +6,8 @@ import fadeTransition from "../js/customStyles.js";
 
 function MovieLitePresentation({ movie, onMovieClick }) {
     const [dataLoaded, setDataLoaded] = useState(false);
-    const [clicked, setClicked] = useState(false);
 
     const truncate = (text, maxLength) => {
-
         if (text && text.length > maxLength)
             return text.substring(0, maxLength) + '...';
         else return text;
@@ -20,7 +18,6 @@ function MovieLitePresentation({ movie, onMovieClick }) {
     }, [movie]);
 
     const handleClick = () => {
-        setClicked(true);
         setTimeout(()=>{
             
             onMovieClick(movie?.id);
