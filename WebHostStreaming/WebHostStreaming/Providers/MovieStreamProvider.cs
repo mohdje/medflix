@@ -62,6 +62,12 @@ namespace WebHostStreaming.Providers
         {
             streamProviderIsReady = false;
 
+            if (stream != null)
+                stream.Dispose();
+
+            if (streamProvider != null && streamProvider.Active)
+                streamProvider.StopAsync();               
+
             this.torrentUri = torrentUri;
 
             torrent = Torrent.Load(GetTorrentFile(torrentUri));
