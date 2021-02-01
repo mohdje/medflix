@@ -8,27 +8,19 @@
     transform: translateY(-10px);
     transition: transform 400ms ease-in-out;
     cursor: pointer;
-    box-shadow: 0px 5px 10px 0px #bebebec9;
 }
 
 .movie-lite-presentation:active{
     transform: scale(1.02, 1.02);
     transition: transform 100ms ease-in-out;
-    box-shadow: 0px 10px 10px 0px #bebebec9;
-}
-
-.movie-lite-presentation:active{
-    box-shadow: 0px 5px 20px 0px #f5f5f5c9;
 }
 
 .movie-lite-presentation .infos{
-    background-color: #130f0fcc;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: flex-start;
     align-items: flex-start;
     height: 80px;
-    box-shadow: 0px 5px 6px 0px #101010c9;
     text-align: left;
     width: 100%;
 }
@@ -39,19 +31,23 @@
     font-size: 1rem;
     text-overflow: ellipsis;
     padding-left: 10px;
+    margin-bottom: 5px;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 .movie-lite-presentation .year{
     color: rgb(185, 185, 185);
     font-style: italic;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     padding-left: 10px;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 .movie-lite-presentation .rating{
     color: white;
     font-size: 0.9rem;
     padding-right: 10px;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 .movie-lite-presentation-img{
@@ -62,6 +58,7 @@
 .movie-lite-presentation-img > img{
     width: 150px;
     height:  225px;
+    border-radius: 5px;
 }
 
 
