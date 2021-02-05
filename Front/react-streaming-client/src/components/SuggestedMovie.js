@@ -18,8 +18,9 @@ function SuggestedMovie({ movie, visible, onMoreClick }) {
                         <div className="suggested-movie-title">{movie.title}</div>
                         <div className="suggested-movie-year">{movie.year}</div>
                     </div>
-                    <div className="suggested-movie-rating">{movie.rating}</div>
+                    
                 </div>
+                <div className="suggested-movie-rating">{movie.rating}</div>
                 <div className="suggested-movie-summary">{truncateText(movie.synopsis)}</div>
                 <div className="standard-button red center" onClick={() => onMoreClick()}>More</div>
             </div>
