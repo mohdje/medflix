@@ -28,15 +28,12 @@ function MovieLitePresentation({ movie, onMovieClick }) {
     return (
         <div style={fadeTransition(dataLoaded)}>
             <div className={"movie-lite-presentation"} onClick={() => handleClick()}>
-                <div className={"movie-lite-presentation-img"}>
-                    <img alt="" src={movie.coverImageUrl} />
+                <div className={"movie-lite-presentation-img"}  style={{ backgroundImage: 'url(' + movie.coverImageUrl + ')' }}>
+                    <div className="rating">{movie.rating}</div>
                 </div>
                 <div className="infos">
-                    <div className="title">{truncate(movie.title, 35)}</div>
-                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-                        <div className="year">{movie.year}</div>
-                        <div className="rating">{movie.rating}</div>
-                    </div>
+                    <div className="title">{truncate(movie.title, 25)}</div>
+                    <div className="year">{movie.year}</div>
                 </div>
             </div>
         </div>
