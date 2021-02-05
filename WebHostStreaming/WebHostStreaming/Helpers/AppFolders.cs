@@ -13,19 +13,28 @@ namespace WebHostStreaming.Helpers
         public static string ViewFolder => Path.Combine(AppContext.BaseDirectory, "view");
         public static string CurrentFolder => AppContext.BaseDirectory;
 
-        public static void CreateTorrentsFolder()
+        public static void SetupTorrentsFolder()
         {
             if (!Directory.Exists(TorrentsFolder))
                 Directory.CreateDirectory(TorrentsFolder);
+            else
+            {
+                var directories = Directory.GetDirectories(TorrentsFolder);
+                foreach (var folder in directories)
+                {
+                    var oldestUsedFileDateTime = Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories)
+                                                   .Select(f => File.GetLastWriteTime(f))
+                                                   .OrderBy(f => f.Ticks)
+                                                   .Reverse()
+                                                   .First();
+
+                    if (DateTime.Now - oldestUsedFileDateTime >= TimeSpan.FromDays(2))                   
+                        Directory.Delete(folder, true);
+                }
+            }
         }
 
-        public static void CleanTorrentsFolder(string folderNotToDelete)
-        {           
-            foreach (var folder in Directory.GetDirectories(TorrentsFolder).Where(f => f != folderNotToDelete))
-                Directory.Delete(folder, true);
-        }
-
-        public static void CreateViewFolders()
+        public static void SetupViewFolder()
         {
             var viewZipFile = Path.Combine(CurrentFolder, "view.zip");
 

@@ -92,8 +92,6 @@ namespace WebHostStreaming.Providers
             if (!Directory.Exists(torrentDownloadDirectory))
                 Directory.CreateDirectory(torrentDownloadDirectory);
 
-            Helpers.AppFolders.CleanTorrentsFolder(torrentDownloadDirectory);
-
             var fileName = Path.Combine(torrentDownloadDirectory, "torrent");
 
             if (!File.Exists(fileName))

@@ -22,8 +22,11 @@ namespace WebHostStreaming
 
         private static void SetupBeforeRun()
         {
-            AppFolders.CreateViewFolders();
-            AppFolders.CreateTorrentsFolder();
+            System.Console.WriteLine("---- Setup view folder ----");
+            AppFolders.SetupViewFolder();
+
+            System.Console.WriteLine("---- Setup torrents folder ----");
+            AppFolders.SetupTorrentsFolder();
         }
     }
 }
