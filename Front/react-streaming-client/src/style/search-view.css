@@ -49,7 +49,7 @@
 
 .movies-search-result{
     width: 98%;
-    margin: 0 auto;
+    margin: 20px auto 0 auto;
 }
 
 .movies-search-result > .label-result{

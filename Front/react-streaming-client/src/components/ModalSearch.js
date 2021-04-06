@@ -8,14 +8,22 @@ import CircularProgressBar from "./CircularProgressBar";
 import MoviesAPI from "../js/moviesAPI.js";
 import fadeTransition from "../js/customStyles.js";
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useReducer } from 'react';
 
 function ModalSearch({ visible, onCloseClick, onMovieClick }) {
     const [searchValue, setSearchValue] = useState('');
     const [movies, setMovies] = useState([]);
     const [searchInProgress, setSearchInProgress] = useState(false);
-    const [searchResultLabel, setSearchResultLabel] = useState('');
+
     const searchValueRef = useRef(searchValue);
+
+    const searchResultLabelReducer = (state, moviesLength) => {
+        if (moviesLength === 0) return "No result found";
+        else if (moviesLength === 1) return "Only one movie found";
+        else if (moviesLength > 1) return moviesLength + " movies found";
+        else return "";
+    };
+    const [searchResultLabel, searchResultLabelDispatch] = useReducer(searchResultLabelReducer, '');
 
     useEffect(() => {
         if (!visible) setSearchValue('');
@@ -27,26 +35,24 @@ function ModalSearch({ visible, onCloseClick, onMovieClick }) {
             setTimeout(() => {
                 if (searchValue === searchValueRef.current) {
                     setSearchInProgress(true);
-                    setSearchResultLabel("");
+                    searchResultLabelDispatch(-1);
                     setMovies([]);
                     MoviesAPI.searchMovies(searchValue,
                         (movies) => {
                             setSearchInProgress(false);
-                            if (movies && movies.length > 0) {
-                                setSearchResultLabel(movies.length + " movies found");
-                                setMovies(movies);
-                            }
-                            else setSearchResultLabel("No result found");
+                            console.log("movies.length", movies.length);
+                            searchResultLabelDispatch(movies.length);
+                            if (movies && movies.length > 0) setMovies(movies);
                         },
                         () => {
                             setSearchInProgress(false);
-                            setSearchResultLabel("No result found");
+                            searchResultLabelDispatch(0);
                         });
                 }
             }, 1000);
         }
         else {
-            setSearchResultLabel("");
+            searchResultLabelDispatch(-1);
             setMovies([]);
         }
     }, [searchValue]);
@@ -70,7 +76,7 @@ function ModalSearch({ visible, onCloseClick, onMovieClick }) {
     }
 
     return (
-        <ModalWindow visible={visible} content={searchView()} onCloseClick={()=>onCloseClick()}/>
+        <ModalWindow visible={visible} content={searchView()} onCloseClick={() => onCloseClick()} />
     );
 }
 
