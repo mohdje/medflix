@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using WebHostStreaming.Middlewares;
 
 namespace WebHostStreaming
 {
@@ -71,6 +72,8 @@ namespace WebHostStreaming
             app.UseCors(ALLOW_SPECIFIC_ORIGIN);
 
             app.UseAuthorization();
+
+            app.UseMiddleware<ErrorLoggingMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
