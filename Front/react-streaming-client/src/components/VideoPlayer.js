@@ -20,6 +20,8 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
     const videoRef = useRef(null);
     const videoPlayerContainerRef = useRef(null);
 
+    const [showErrorMessage, setshowErrorMessage] = useState(false);
+
     const [videoSource, setVideoSource] = useState('');
     const [videoIsLoading, setVideoIsLoading] = useState(false);
 
@@ -37,6 +39,8 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
         videoRef.current.load();
         videoRef.current.currentTime = currentTime;
         if (videoPlaying) videoRef.current.play();
+        setVideoIsLoading(true);
+        setshowErrorMessage(false);
     }
 
     useEffect(() => {
@@ -57,7 +61,21 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
     }, [videoPlayerContainerRef]);
 
     useEffect(() => {
-        if (videoRef?.current) setVideoIsLoading(videoRef?.current?.readyState !== 4);
+        const videoErrorHandler = () => {
+            if (videoRef.current.childNodes[0].attributes.src.value) {
+                setshowErrorMessage(true);
+                setVideoIsLoading(false);
+            }
+        }
+        videoRef.current.addEventListener('error', videoErrorHandler, true);
+
+        return () => {
+            if (videoRef?.current) videoRef.current.removeEventListener("error", videoErrorHandler);
+        }
+    }, [videoRef]);
+
+    useEffect(() => {
+        if (videoRef?.current) setVideoIsLoading(videoRef.current.readyState < 3);   
     }, [videoRef?.current?.readyState]);
 
     useEffect(() => {
@@ -69,7 +87,8 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
 
     return (
         <div ref={videoPlayerContainerRef} className="video-player-content" >
-            <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={videoIsLoading} />
+            <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={videoSource && videoIsLoading} />
+            <div className="video-player-error-message" style={{ display: showErrorMessage ? '' : 'none' }}>An error occured during the loading</div>
             <video ref={videoRef} className="video-player">
                 <source src={videoSource} title='1080p' type='video/mp4' />
             </video>
@@ -371,6 +390,7 @@ function VolumeController({ videoPlayer }) {
         <VideoPlayerSlider
             value={currentVolume}
             onCursorMoved={(percentage) => changeVolume(percentage)}
+            onCursorEndMove={(percentage) => changeVolume(percentage)}
             width={'120px'}
             height={'4px'} />
     </div>)

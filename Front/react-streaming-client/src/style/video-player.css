@@ -16,6 +16,15 @@
     width: 100%;
 }
 
+.video-player-error-message{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+}
+
 /*# Video player controls */
 .video-player-controls-container{
     width: 100%;
