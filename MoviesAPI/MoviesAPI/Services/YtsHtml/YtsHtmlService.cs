@@ -88,6 +88,7 @@ namespace MoviesAPI.Services.YtsHtml
 
             return new MovieDto()
             {
+                Id = movieId,
                 Title = doc.DocumentNode.SelectSingleNode("//div[@id='movie-info']//h1")?.InnerText,
                 Year = doc.DocumentNode.SelectSingleNode("//div[@id='movie-info']//h2")?.InnerText,
                 Duration = doc.DocumentNode.SelectSingleNode("//span[@title='Runtime']")?.ParentNode?.InnerText.Trim(),

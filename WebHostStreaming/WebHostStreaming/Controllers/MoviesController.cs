@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MoviesAPI.Services.OpenSubtitlesHtml;
-using MoviesAPI.Services.OpenSubtitlesHtml.DTOs;
 using MoviesAPI.Services.CommonDtos;
 using MoviesAPI.Services;
 using WebHostStreaming.Providers;
+using System.IO;
+using WebHostStreaming.Models;
+using WebHostStreaming.Helpers;
 
 namespace WebHostStreaming.Controllers
 {
@@ -15,67 +16,51 @@ namespace WebHostStreaming.Controllers
     [ApiController]
     public class MoviesController : ControllerBase
     {
-        [HttpGet("services")]
-        public  IEnumerable<object> GetAvailableMovieServices()
+        IMovieServiceProvider movieServiceProvider;
+        IMovieService movieService;
+        IMovieStreamProvider movieStreamProvider;
+        IMovieBookmarkProvider movieBookmarkProvider;
+        public MoviesController(IMovieServiceProvider movieServiceProvider, IMovieStreamProvider movieStreamProvider, IMovieBookmarkProvider movieBookmarkProvider)
         {
-            return MovieServiceProvider.AvailableMovieServices
-                                        .Select(s => new
-                                        {
-                                            Name = s,
-                                            Selected = s == MovieServiceProvider.ActiveServiceTypeName
-                                        }); 
+            this.movieServiceProvider = movieServiceProvider;
+            this.movieService = movieServiceProvider.GetActiveMovieService();
+            this.movieStreamProvider = movieStreamProvider;
+            this.movieBookmarkProvider = movieBookmarkProvider;
         }
-
-        [HttpPost("services")]
-        public IActionResult ChangeMovieService([FromForm] string serviceName)
-        {           
-            try
-            {
-                MovieServiceProvider.UpdateActiveMovieService((MovieServiceType)Enum.Parse(typeof(MovieServiceType), serviceName));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
-
-            return StatusCode(200);
-        }
-
         [HttpGet("genres")]
         public IEnumerable<string> GetMoviesGenres()
         {
-            return MovieServiceProvider.MovieService.GetMovieGenres();
+            return movieService.GetMovieGenres();
         }
 
         [HttpGet("suggested")]
         public async Task<IEnumerable<MovieDto>> GetSuggestedMovies()
         {
-            return await MovieServiceProvider.MovieService.GetSuggestedMoviesAsync(5);
+            return await movieService.GetSuggestedMoviesAsync(5);
         }
-
 
         [HttpGet("genre/{genre}")]
         public async Task<IEnumerable<MovieDto>> GetLastMoviesByGenre(string genre)
         {
-            return await MovieServiceProvider.MovieService.GetLastMoviesByGenreAsync(15, genre);
+            return await movieService.GetLastMoviesByGenreAsync(15, genre);
         }
 
         [HttpGet("genre/{genre}/{page}")]
         public async Task<IEnumerable<MovieDto>> GetLastMoviesByGenre(string genre, int page)
         {
-            return await MovieServiceProvider.MovieService.GetMoviesByGenreAsync(genre, page);
+            return await movieService.GetMoviesByGenreAsync(genre, page);
         }
 
         [HttpGet("search/{text}")]
         public async Task<IEnumerable<MovieDto>> SearchMovies(string text)
         {
-            return await MovieServiceProvider.MovieService.GetMoviesByNameAsync(text);
+            return await movieService.GetMoviesByNameAsync(text);
         }
 
         [HttpGet("details/{id}")]
         public async Task<MovieDto> GetMovieDetails(string id)
         {
-            return await MovieServiceProvider.MovieService.GetMoviesDetailsAsync(id);
+            return await movieService.GetMoviesDetailsAsync(id);
         }
 
         [HttpGet("stream")]
@@ -86,41 +71,29 @@ namespace WebHostStreaming.Controllers
             long offset = 0;
             long.TryParse(rangeHeaderValue.Replace("bytes=", string.Empty).Split("-")[0], out offset);
 
-            return File(await MovieStreamProvider.Instance.GetMovieStreamAsync(url, offset), "video/mp4", true);         
+            return File(await movieStreamProvider.GetMovieStreamAsync(url, offset), "video/mp4", true);
+
         }
 
-        [HttpGet("subtitles/available/{imdbCode}")]
-        public async Task<IEnumerable<OpenSubtitlesDto>> GetAvailableSubtitles(string imdbCode)
+        [HttpGet("lastseenmovies")]
+        public IEnumerable<MovieBookmark> GetLastSeenMovies()
         {
-            var subtitlesService = MovieServiceProvider.MovieSubtitlesService;
+            var lastSeenMovies = movieBookmarkProvider.GetMovieBookmarks(AppFiles.LastSeenMovies);
+            return lastSeenMovies.Reverse();
+        }
 
-            var subtitlesDownloaders = new Task<OpenSubtitlesDto>[]
+        [HttpPut("lastseenmovies")]
+        public void SaveLastSeenMovie([FromBody] MovieDto movie)
+        {
+            var movieBookmark = new MovieBookmark()
             {
-                subtitlesService.GetAvailableSubtitlesAsync(imdbCode, "fre", "French"),
-                subtitlesService.GetAvailableSubtitlesAsync(imdbCode, "eng", "English")
+                Movie = movie,
+                ServiceName = movieServiceProvider.GetActiveServiceTypeName()
             };
 
-            var subtitles = new List<OpenSubtitlesDto>();
-
-            await Task.WhenAll(subtitlesDownloaders).ContinueWith(s =>
-            {
-                if (s?.Result != null)
-                {
-                    foreach (var openSubtitleDto in s.Result)
-                    {
-                        if(openSubtitleDto?.SubtitlesIds != null && openSubtitleDto.SubtitlesIds.Any())
-                            subtitles.Add(openSubtitleDto);
-                    }
-                }                    
-            });
-
-            return subtitles;
+            movieBookmarkProvider.SaveMovieBookmark(movieBookmark, AppFiles.LastSeenMovies);          
         }
 
-        [HttpGet("subtitles/{subtitlesId}")]
-        public IEnumerable<SubtitlesDto> GetSubtitles(string subtitlesId)
-        {           
-            return MovieServiceProvider.MovieSubtitlesService.GetSubtitles(subtitlesId, Helpers.AppFolders.SubtitlesFolder);      
-        }
+       
     }
 }
