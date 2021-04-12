@@ -1,12 +1,12 @@
-import "../style/movies-list.css";
-import "../style/button.css";
+import "../../../style/movies-list.css";
+import "../../../style/button.css";
 
-import MovieLitePresentation from "./MovieLitePresentation";
+import MovieLitePresentation from "../presentation/MovieLitePresentation";
 
 import ArrowForwardIosRounded from '@material-ui/icons/ArrowForwardIosRounded';
 import ArrowBackIosRounded from '@material-ui/icons/ArrowBackIosRounded';
 
-import fadeTransition from "../js/customStyles.js";
+import fadeTransition from "../../../js/customStyles.js";
 import { useEffect, useRef, useState } from 'react';
 
 function MoviesListLite({ movies, onMovieClick }) {
@@ -96,7 +96,7 @@ function MoviesListLite({ movies, onMovieClick }) {
         <ArrowForwardIosRounded style={{ fontSize: 40, color: 'white' }} />
       </div>
       <div ref={listRef} className={"movies-list"+ (hideBackArrow && hideForwardArrow ? ' center' : '')}>
-        {movies.map((movie, index) => (<MovieLitePresentation key={index} movie={movie} onMovieClick={(movieId)=>onMovieClick(movieId)}/>))}
+        {movies.map((movie, index) => (<MovieLitePresentation key={index} movie={movie} hoverEffect={true} onMovieClick={(movieId)=>onMovieClick(movieId)}/>))}
       </div>
     </div>
   );

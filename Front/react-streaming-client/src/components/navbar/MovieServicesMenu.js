@@ -1,10 +1,10 @@
 
-import "../style/movie-services-menu.css";
+import "../../style/movie-services-menu.css";
 
-import fadeTransition from "../js/customStyles.js";
-import MoviesAPI from "../js/moviesAPI.js";
+import fadeTransition from "../../js/customStyles.js";
+import MoviesAPI from "../../js/moviesAPI.js";
 
-import CircularProgressBar from "./CircularProgressBar";
+import CircularProgressBar from "../common/CircularProgressBar";
 import { useEffect, useState } from 'react';
 
 

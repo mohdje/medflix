@@ -1,12 +1,12 @@
 
-import "../style/video-player-window.css";
-import "../style/button.css";
-import MoviesAPI from "../js/moviesAPI";
+import "../../style/video-player-window.css";
+import "../../style/button.css";
+import MoviesAPI from "../../js/moviesAPI";
 import VideoPlayer from "./VideoPlayer";
 
 import { useEffect, useState, useRef } from 'react';
-import fadeTransition from "../js/customStyles.js";
-import { useOnClickOutside} from '../js/customHooks';
+import fadeTransition from "../../js/customStyles.js";
+import { useOnClickOutside} from '../../js/customHooks';
 
 function VideoPlayerWindow({ movie, visible, onCloseClick }) {
     const [subtitlesOptions, setSubtitlesOptions] = useState([]);

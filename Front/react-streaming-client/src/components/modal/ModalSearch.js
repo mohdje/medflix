@@ -1,12 +1,12 @@
 import TextField from '@material-ui/core/TextField';
 import ClearIcon from '@material-ui/icons/Clear';
-import "../style/search-view.css";
+import "../../style/search-view.css";
 
 import ModalWindow from "./ModalWindow";
-import MoviesListLite from "./MoviesListLite";
-import CircularProgressBar from "./CircularProgressBar";
-import MoviesAPI from "../js/moviesAPI.js";
-import fadeTransition from "../js/customStyles.js";
+import MoviesListLite from "../movies/list/MoviesListLite";
+import CircularProgressBar from "../common/CircularProgressBar";
+import MoviesAPI from "../../js/moviesAPI.js";
+import fadeTransition from "../../js/customStyles.js";
 
 import { useEffect, useState, useRef, useReducer } from 'react';
 
@@ -40,7 +40,6 @@ function ModalSearch({ visible, onCloseClick, onMovieClick }) {
                     MoviesAPI.searchMovies(searchValue,
                         (movies) => {
                             setSearchInProgress(false);
-                            console.log("movies.length", movies.length);
                             searchResultLabelDispatch(movies.length);
                             if (movies && movies.length > 0) setMovies(movies);
                         },

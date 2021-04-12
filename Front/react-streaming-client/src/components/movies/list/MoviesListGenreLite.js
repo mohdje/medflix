@@ -1,8 +1,8 @@
-import "../style/movies-list.css";
-import MoviesAPI from "../js/moviesAPI.js";
+import "../../../style/movies-list.css";
+import MoviesAPI from "../../../js/moviesAPI.js";
 import MoviesListLite from "./MoviesListLite";
 import { useEffect, useState } from 'react';
-import fadeTransition from "../js/customStyles.js";
+import fadeTransition from "../../../js/customStyles.js";
 
 function MoviesListGenreLite({ genre, visible, opacity, onMovieClick}) {
     const [movies, setMovies] = useState([]);

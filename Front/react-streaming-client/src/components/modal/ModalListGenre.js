@@ -1,6 +1,6 @@
-import "../style/list-genres-view.css";
+import "../../style/list-genres-view.css";
 import ModalWindow from "./ModalWindow";
-import CircularProgressBar from "./CircularProgressBar";
+import CircularProgressBar from "../common/CircularProgressBar";
 
 import { useEffect, useState } from 'react';
 

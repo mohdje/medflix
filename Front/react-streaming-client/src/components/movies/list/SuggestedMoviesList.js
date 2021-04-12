@@ -2,8 +2,8 @@
 
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import PauseIcon from '@material-ui/icons/Pause';
-import SuggestedMovie from "./SuggestedMovie";
-import MoviesAPI from "../js/moviesAPI.js";
+import SuggestedMovie from "../presentation/SuggestedMoviePresentation";
+import MoviesAPI from "../../../js/moviesAPI.js";
 import { useEffect, useState } from 'react';
 
 function SuggestedMovies({ onMoreClick, onDataLoaded }) {

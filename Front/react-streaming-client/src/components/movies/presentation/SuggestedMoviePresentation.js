@@ -1,5 +1,5 @@
-import "../style/suggested-movie.css";
-import "../style/button.css";
+import "../../../style/suggested-movie.css";
+import MoreButton from "../../common/MoreButton";
 
 
 function SuggestedMovie({ movie, visible, onMoreClick }) {
@@ -18,13 +18,13 @@ function SuggestedMovie({ movie, visible, onMoreClick }) {
                         <div className="suggested-movie-title">{movie.title}</div>
                         <div className="suggested-movie-year">{movie.year}</div>
                     </div>
-                    
+
                 </div>
                 <div className="suggested-movie-rating">{movie.rating}</div>
                 <div className="suggested-movie-summary">{truncateText(movie.synopsis)}</div>
-                <div className="standard-button red center" onClick={() => onMoreClick()}>More</div>
+                <MoreButton onClick={() => onMoreClick()} color="red" center={true} />
             </div>
-          
+
             <div className="suggested-movie-pictures" style={{ backgroundImage: 'url(' + movie.backgroundImageUrl + ')' }}>
                 <img alt="" className="suggested-movie-cover-image" src={movie.coverImageUrl} />
             </div>

@@ -1,6 +1,6 @@
-import "../style/video-player.css";
+import "../../style/video-player.css";
 
-import CircularProgressBar from "./CircularProgressBar";
+import CircularProgressBar from "../common/CircularProgressBar";
 
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import PauseIcon from '@material-ui/icons/Pause';
@@ -14,7 +14,7 @@ import SortByAlphaIcon from '@material-ui/icons/SortByAlpha';
 import RestoreIcon from '@material-ui/icons/Restore';
 
 import { useEffect, useState, useRef } from 'react';
-import { useOnClickOutside } from '../js/customHooks';
+import { useOnClickOutside } from '../../js/customHooks';
 
 function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVideo }) {
     const videoRef = useRef(null);

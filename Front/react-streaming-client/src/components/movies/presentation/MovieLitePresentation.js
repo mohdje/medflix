@@ -1,10 +1,10 @@
 
-import "../style/movie-lite-presentation.css";
+import "../../../style/movie-lite-presentation.css";
 
 import { useState, useEffect } from 'react';
-import fadeTransition from "../js/customStyles.js";
+import fadeTransition from "../../../js/customStyles.js";
 
-function MovieLitePresentation({ movie, onMovieClick }) {
+function MovieLitePresentation({ movie, onMovieClick, hoverEffect }) {
     const [dataLoaded, setDataLoaded] = useState(false);
 
     const truncate = (text, maxLength) => {
@@ -19,15 +19,13 @@ function MovieLitePresentation({ movie, onMovieClick }) {
 
     const handleClick = () => {
         setTimeout(()=>{
-            
             onMovieClick(movie?.id);
-        }, 150);
-        
+        }, 150);   
     }
 
     return (
         <div style={fadeTransition(dataLoaded)}>
-            <div className={"movie-lite-presentation"} onClick={() => handleClick()}>
+            <div className={"movie-lite-presentation " + (hoverEffect ? "hover-effect": "")} onClick={() => handleClick()}>
                 <div className={"movie-lite-presentation-img"}  style={{ backgroundImage: 'url(' + movie.coverImageUrl + ')' }}>
                     <div className="rating">{movie.rating}</div>
                 </div>
