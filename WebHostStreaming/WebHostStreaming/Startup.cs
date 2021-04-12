@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WebHostStreaming.Middlewares;
+using WebHostStreaming.StartupExtensions;
 
 namespace WebHostStreaming
 {
@@ -38,6 +39,8 @@ namespace WebHostStreaming
             });
 
             services.AddControllers();
+
+            services.AddProviders();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

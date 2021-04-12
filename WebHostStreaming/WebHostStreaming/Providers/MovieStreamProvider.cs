@@ -10,7 +10,7 @@ using WebHostStreaming.Extensions;
 
 namespace WebHostStreaming.Providers
 {
-    public class MovieStreamProvider
+    public class MovieStreamProvider : IMovieStreamProvider
     {
         string torrentDownloadDirectory;
         ClientEngine clientEngine;
@@ -21,19 +21,7 @@ namespace WebHostStreaming.Providers
         string torrentUri;
         bool streamProviderIsReady;
 
-        static MovieStreamProvider instance;
-        public static MovieStreamProvider Instance
-        {
-            get
-            {
-                if (instance == null)
-                    instance = new MovieStreamProvider();
-
-                return instance;
-            }
-        }
-
-        private MovieStreamProvider()
+        public MovieStreamProvider()
         {
             clientEngine = CreateEngine();
         }
@@ -63,20 +51,20 @@ namespace WebHostStreaming.Providers
             streamProviderIsReady = false;
 
             if (stream != null)
+            {
                 stream.Dispose();
-
-            if (streamProvider != null && streamProvider.Active)
-                streamProvider.StopAsync();               
+                if (streamProvider.Active)
+                    streamProvider.StopAsync().Wait();
+            }
 
             this.torrentUri = torrentUri;
 
             torrent = Torrent.Load(GetTorrentFile(torrentUri));
 
-            foreach (var file in torrent.Files)
-                file.Priority = Priority.DoNotDownload;
+            foreach (var file in torrent.Files)            
+                file.Priority = file.FullPath.IsMP4File() ? Priority.Highest : Priority.DoNotDownload;
 
-            movieFile = torrent.Files.FirstOrDefault(f => f.FullPath.EndsWith(".mp4"));
-            movieFile.Priority = Priority.Highest;
+            movieFile = torrent.Files.FirstOrDefault(f => f.FullPath.IsMP4File());
 
             streamProvider = new StreamProvider(clientEngine, torrentDownloadDirectory, torrent);
 

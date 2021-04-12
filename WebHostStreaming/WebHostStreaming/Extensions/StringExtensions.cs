@@ -25,5 +25,10 @@ namespace WebHostStreaming.Extensions
                 return sb.ToString();
             }
         }
+
+        public static bool IsMP4File(this string fileName)
+        {
+            return fileName.EndsWith(".mp4");
+        }
     }
 }
