@@ -1,8 +1,8 @@
 
 import "../style/home-page.css";
-import SuggestedMovies from "./SuggestedMovies";
-import LastMoviesLists from "./LastMoviesLists";
-import CircularProgressBar from "./CircularProgressBar";
+import SuggestedMovies from "./movies/list/SuggestedMoviesList";
+import LastMoviesLists from "./movies/list/LastMoviesLists";
+import CircularProgressBar from "./common/CircularProgressBar";
 
 import fadeTransition from "../js/customStyles.js";
 

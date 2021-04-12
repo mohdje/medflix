@@ -1,10 +1,13 @@
 .movie-lite-presentation{
     margin: 10px;
     width: 150px;
+}
+
+.movie-lite-presentation.hover-effect {
     transition: all 400ms ease-in-out;
 }
 
-.movie-lite-presentation:hover{
+.movie-lite-presentation.hover-effect:hover{
     transform: translateY(-10px);
     transition: transform 400ms ease-in-out;
     cursor: pointer;

@@ -2,16 +2,17 @@
 import './App.css';
 import MoviesAPI from "./js/moviesAPI.js";
 
-import NavBar from "./components/NavBar";
+import NavBar from "./components/navbar/NavBar";
 
 import SplashScreen from "./components/SplashScreen";
 
-import ModalSearch from "./components/ModalSearch";
-import ModalListGenre from "./components/ModalListGenre";
+import ModalSearch from "./components/modal/ModalSearch";
+import ModalListGenre from "./components/modal/ModalListGenre.js";
 
-import MoviesListGenreFull from "./components/MoviesListGenreFull";
-import MovieFullPresentation from "./components/MovieFullPresentation";
+import MoviesListGenreFull from "./components/movies/list/MoviesListGenreFull";
+import MovieFullPresentation from "./components/movies/presentation/MovieFullPresentation";
 import HomePage from "./components/HomePage";
+import SeenMoviesHistoryList from "./components/movies/list/SeenMoviesHistoryList";
 
 import Router from "./components/Router";
 import { useEffect, useState } from 'react';
@@ -28,7 +29,6 @@ function App() {
   const [modalListGenresVisible, setModalListGenresVisible] = useState(false);
   const [listGenres, setListGenres] = useState([]);
   const [genresSelection, setGenresSelection] = useState([]);
-
 
   const [movieId, setMovieId] = useState('');
 
@@ -49,17 +49,17 @@ function App() {
     showComponent(routerIds.movieFullPresentation);
   }
 
-  const selectRandomGenres = (genres, count) =>{
+  const selectRandomGenres = (genres, count) => {
     var indexes = [];
-    while(indexes.length !== count){
-      var index = Math.floor(Math.random() * genres.length); 
-      if(!indexes.find( j => j === index)) indexes.push(index);
+    while (indexes.length !== count) {
+      var index = Math.floor(Math.random() * genres.length);
+      if (!indexes.find(j => j === index)) indexes.push(index);
     }
 
     var selectedGenres = [];
     for (let i = 0; i < indexes.length; i++) {
-      selectedGenres.push(genres[indexes[i]]);     
-    }   
+      selectedGenres.push(genres[indexes[i]]);
+    }
     setGenresSelection(selectedGenres);
   }
 
@@ -70,14 +70,15 @@ function App() {
   const routerIds = {
     homePage: 'homePage',
     moviesGenreFullList: 'moviesOfGenre',
-    movieFullPresentation: 'movieFullPresentation'
+    movieFullPresentation: 'movieFullPresentation',
+    seenMoviesList: 'seenMoviesList'
   }
 
   const router = {
     components: [
       {
         id: routerIds.homePage,
-        render: (<HomePage 
+        render: (<HomePage
           genres={genresSelection}
           onMovieClick={(movieId) => showMovieFullPresentation(movieId)} />)
       },
@@ -93,27 +94,31 @@ function App() {
         render: (<MovieFullPresentation
           movieId={movieId}
           onCloseClick={() => { setLoadFullListGenrefromCache(true); goToPreviousComponent(); }} />)
-      }
+      },
+      {
+        id: routerIds.seenMoviesList,
+        render: (<SeenMoviesHistoryList onMoreClick={(movieId) => showMovieFullPresentation(movieId)} />)
+      },
     ]
   };
   const [routerActiveComponentId, setRouterActiveComponentId] = useState(routerIds.homePage);
   const [routerPreviousComponentId, setRouterPreviousComponentId] = useState(routerIds.homePage);
 
-  useEffect(()=>{
-    setTimeout(()=>{setSplashscreenVisible(false)}, 4000);
+  useEffect(() => {
+    setTimeout(() => { setSplashscreenVisible(false) }, 4000);
     MoviesAPI.getMoviesGenres(
-          (genres) => {
-              if (genres && genres.length > 0){
-                setListGenres(genres);
-                selectRandomGenres(genres, 4);
-              } 
-          }
-      );
+      (genres) => {
+        if (genres && genres.length > 0) {
+          setListGenres(genres);
+          selectRandomGenres(genres, 4);
+        }
+      }
+    );
   }, []);
 
   return (
     <div className="App">
-      <SplashScreen visible={splashscreenVisible}/>
+      <SplashScreen visible={splashscreenVisible} />
       <ModalSearch
         visible={modalSearchVisible}
         onCloseClick={() => setModalSearchVisible(false)}
@@ -121,13 +126,14 @@ function App() {
       <ModalListGenre
         genres={listGenres}
         visible={modalListGenresVisible}
-        onGenreClick={(genre)=>{ setModalListGenresVisible(false); showMoviesFullListofGenre(genre)}}
-        onCloseClick={() =>setModalListGenresVisible(false)}
+        onGenreClick={(genre) => { setModalListGenresVisible(false); showMoviesFullListofGenre(genre) }}
+        onCloseClick={() => setModalListGenresVisible(false)}
       />
       <NavBar
         onSearchClick={() => setModalSearchVisible(true)}
-        onHomeClick={() => setRouterActiveComponentId(routerIds.homePage)} 
-        onGenreMenuClick={()=> setModalListGenresVisible(true)}/>
+        onHomeClick={() => setRouterActiveComponentId(routerIds.homePage)}
+        onGenreMenuClick={() => setModalListGenresVisible(true)}
+        onLastSeenMoviesClick={() => setRouterActiveComponentId(routerIds.seenMoviesList)} />
       <div className="app-content" >
         <Router components={router.components} activeComponentId={routerActiveComponentId} />
       </div>

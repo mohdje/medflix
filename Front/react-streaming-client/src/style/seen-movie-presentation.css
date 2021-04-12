@@ -1,0 +1,31 @@
+.seen-movie-presentation-container{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.seen-movie-presentation-content{
+    margin-top: 20px;
+    margin-left: 10px;
+}
+
+.seen-movie-presentation-info{
+  
+    margin-bottom: 20px;
+    max-width: 500px;
+    text-align: left;
+}
+
+.seen-movie-presentation-info .info{
+   color: #aaaaaa;
+}
+
+.seen-movie-presentation-info .info-title{
+    font-weight: bold;
+}
+
+.seen-movie-presentation-actions{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: flex-start;
+}

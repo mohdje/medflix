@@ -58,6 +58,17 @@
     cursor: pointer;
 }
 
+.standard-button.grey{
+    color: white;
+    background-color: #252525;
+    font-weight: 'bold'
+}
+
+.standard-button.grey:hover{
+    background-color: #4d4d4d;
+    cursor: pointer;
+}
+
 .round-btn{
     width: 70px;
     height: 70px;
