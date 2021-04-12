@@ -26,7 +26,7 @@ namespace WebHostStreaming.Middlewares
             }
             catch (Exception e)
             {
-                using (StreamWriter sw = new StreamWriter(_loggingFile))
+                using (StreamWriter sw = new StreamWriter(_loggingFile, true))
                 {
                     await sw.WriteAsync(BuildErrorMessage(e, context));
                 }
@@ -38,6 +38,8 @@ namespace WebHostStreaming.Middlewares
         private string BuildErrorMessage(Exception e, HttpContext context)
         {
             StringBuilder stringBuilder = new StringBuilder();
+
+            stringBuilder.Append(Environment.NewLine);
 
             stringBuilder.Append($"-{DateTime.Now.ToString("MM/dd/yyyy H:mm")} : ");
 
