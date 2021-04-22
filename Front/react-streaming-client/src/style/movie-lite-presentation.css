@@ -13,7 +13,7 @@
     cursor: pointer;
 }
 
-.movie-lite-presentation:active{
+.movie-lite-presentation.hover-effect:active{
     transform: scale(1.02, 1.02);
     transition: transform 100ms ease-in-out;
 }

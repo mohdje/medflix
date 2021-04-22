@@ -19,7 +19,8 @@ function MovieLitePresentation({ movie, onMovieClick, hoverEffect }) {
 
     const handleClick = () => {
         setTimeout(()=>{
-            onMovieClick(movie?.id);
+            if(onMovieClick)
+                onMovieClick(movie?.id);
         }, 150);   
     }
 

@@ -1,5 +1,5 @@
 
-import MoviesListGenreLite from "./MoviesListGenreLite";
+import MoviesListGenreLite from "../list/MoviesListGenreLite";
 import { useRef, useEffect, useState } from 'react';
 
 function LastMoviesLists({ genres, onMovieClick }) {

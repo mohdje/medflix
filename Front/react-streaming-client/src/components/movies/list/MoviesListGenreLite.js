@@ -12,8 +12,7 @@ function MoviesListGenreLite({ genre, visible, opacity, onMovieClick}) {
             (moviesOfGenre) => {
                 if (moviesOfGenre && moviesOfGenre.length > 0)
                     setMovies(moviesOfGenre);
-            },
-            () => console.log('fail'));
+            });
     }, []);
 
     return (

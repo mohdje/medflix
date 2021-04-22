@@ -20,16 +20,14 @@ function MovieServicesMenu({onClick, visible }) {
                     setDataLoading(false);
                     if (services && services.length > 0)
                         setServices(services);
-                },
-                () => console.log('fail'));
+                });
         }
     },[visible]);
 
     const handleServiceClick= (serviceName)=>{
         setDataLoading(true);
         MoviesAPI.changeMovieService(serviceName,
-            ()=> {window.location.reload()},
-            () => console.log('fail'));
+            ()=> {window.location.reload()});
         onClick();
     }
     

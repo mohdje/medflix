@@ -24,6 +24,7 @@
     width: 40px;
     height: 40px;
     padding: 5px;
+    transition: transform 0.5s ease-in-out;
 }
 
 .nav-bar-btn:hover{

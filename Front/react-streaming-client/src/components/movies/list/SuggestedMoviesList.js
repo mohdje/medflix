@@ -18,8 +18,7 @@ function SuggestedMovies({ onMoreClick, onDataLoaded }) {
                     setMovies(suggestedMovies);
                     onDataLoaded();
                 }
-            },
-            () => console.log('fail'));
+            })
     }, []);
 
     useEffect(() => {
