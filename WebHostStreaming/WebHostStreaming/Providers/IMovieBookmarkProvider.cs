@@ -9,7 +9,8 @@ namespace WebHostStreaming.Providers
     public interface IMovieBookmarkProvider
     {
         IEnumerable<MovieBookmark> GetMovieBookmarks(string filePath);
-
-        void SaveMovieBookmark(MovieBookmark movieBookmark, string filePath);
+        void SaveMovieBookmark(MovieBookmark movieBookmark, string filePath, int? maxLimit = null);
+        void DeleteMovieBookmark(string movieId, string serviceName, string filePath);
+        bool MovieBookmarkExists(string movieId, string serviceName, string filePath);
     }
 }

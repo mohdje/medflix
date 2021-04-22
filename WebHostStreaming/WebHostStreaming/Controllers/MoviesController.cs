@@ -9,6 +9,7 @@ using WebHostStreaming.Providers;
 using System.IO;
 using WebHostStreaming.Models;
 using WebHostStreaming.Helpers;
+using System.Net;
 
 namespace WebHostStreaming.Controllers
 {
@@ -72,14 +73,13 @@ namespace WebHostStreaming.Controllers
             long.TryParse(rangeHeaderValue.Replace("bytes=", string.Empty).Split("-")[0], out offset);
 
             return File(await movieStreamProvider.GetMovieStreamAsync(url, offset), "video/mp4", true);
-
         }
 
         [HttpGet("lastseenmovies")]
         public IEnumerable<MovieBookmark> GetLastSeenMovies()
         {
             var lastSeenMovies = movieBookmarkProvider.GetMovieBookmarks(AppFiles.LastSeenMovies);
-            return lastSeenMovies.Reverse();
+            return lastSeenMovies?.Reverse();
         }
 
         [HttpPut("lastseenmovies")]
@@ -91,9 +91,58 @@ namespace WebHostStreaming.Controllers
                 ServiceName = movieServiceProvider.GetActiveServiceTypeName()
             };
 
-            movieBookmarkProvider.SaveMovieBookmark(movieBookmark, AppFiles.LastSeenMovies);          
+            movieBookmarkProvider.SaveMovieBookmark(movieBookmark, AppFiles.LastSeenMovies, 7);
         }
 
-       
+        [HttpGet("bookmarks")]
+        public IEnumerable<MovieBookmark> GetBookmarkedMovies()
+        {
+            var lastSeenMovies = movieBookmarkProvider.GetMovieBookmarks(AppFiles.BookmarkedMovies);
+            return lastSeenMovies?.Reverse();
+        }
+
+        [HttpPut("bookmarks")]
+        public IActionResult BookmarkMovie([FromBody] MovieDto movie)
+        {
+            var movieBookmark = new MovieBookmark()
+            {
+                Movie = movie,
+                ServiceName = movieServiceProvider.GetActiveServiceTypeName()
+            };
+
+            try
+            {
+                movieBookmarkProvider.SaveMovieBookmark(movieBookmark, AppFiles.BookmarkedMovies);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode((int)HttpStatusCode.InternalServerError);
+            }
+
+            return StatusCode((int)HttpStatusCode.OK);
+        }
+
+        [HttpDelete("bookmarks")]
+        public IActionResult DeleteBookmarkMovie([FromBody] MovieBookmark movieBookmark)
+        {
+            try
+            {
+                movieBookmarkProvider.DeleteMovieBookmark(movieBookmark.Movie.Id, movieBookmark.ServiceName, AppFiles.BookmarkedMovies);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode((int)HttpStatusCode.InternalServerError);
+            }
+
+            return StatusCode((int)HttpStatusCode.OK);
+        }
+
+        [HttpGet("bookmarks/exists")]
+        public bool MovieBookmarkExists([FromQuery] string movieId, [FromQuery] string serviceName)
+        {
+            return movieBookmarkProvider.MovieBookmarkExists(movieId, serviceName, AppFiles.BookmarkedMovies);
+        }
     }
 }
