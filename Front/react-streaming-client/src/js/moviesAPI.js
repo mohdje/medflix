@@ -194,6 +194,7 @@ const MoviesAPI = {
     extractObjectFromResult(result) {
         if (result.data?.movies) return result.data?.movies.map(m => this.toMovieDto(m));
         else if (result.data?.movie) return this.toMovieDto(result.data.movie);
+        else if (result.data?.movie_count === 0) return [];
         else return result;
     },
     toMovieDto(baseMovieObject) {
