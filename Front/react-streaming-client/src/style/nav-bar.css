@@ -8,9 +8,21 @@
     z-index: 4;
 }
 
+.nav-bar-label{
+    color: white;
+    font-size: 1.1rem;
+}
+
+
 .nav-bar-logo{
     width: 150px;
     height: auto;
+}
+
+.nav-bar-left{
+    position: absolute;
+    left: 2%;
+    display: flex;
 }
 
 .nav-bar-right{

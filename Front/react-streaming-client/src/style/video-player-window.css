@@ -17,3 +17,12 @@
     margin: 10px auto;
 }
 
+.demo-version-info{
+    color: white;
+    text-align: center;
+    margin: 0 10px;
+}
+
+.demo-version-info > a{
+    color: white;
+}

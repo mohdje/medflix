@@ -7,6 +7,7 @@ import VideoPlayer from "./VideoPlayer";
 import { useEffect, useState, useRef } from 'react';
 import fadeTransition from "../../js/customStyles.js";
 import { useOnClickOutside} from '../../js/customHooks';
+import { VideoQualities } from "../../js/fakeData";
 
 function VideoPlayerWindow({ movie, visible, onCloseClick }) {
     const [subtitlesOptions, setSubtitlesOptions] = useState([]);
@@ -14,22 +15,7 @@ function VideoPlayerWindow({ movie, visible, onCloseClick }) {
     const videoPlayerContainerRef = useRef(null);
 
     const buildVideoQualitiesOptions = (movie) => {
-        var options = [];
-       if(!movie.torrents) return;
-        movie.torrents.forEach(t => {
-            var qualities = options.filter(o => o.label.startsWith(t.quality));
-
-            var option = {
-                label: qualities && qualities.length > 0 ? t.quality + ' (' + (qualities.length + 1) + ')': t.quality,
-                selected: false,
-                data: {
-                    url: MoviesAPI.apiStreamUrl + t.downloadUrl
-                }
-            }
-            options.push(option);
-        });
-        options[0].selected = true;
-        setVideoQualitiesOptions(options);
+        setVideoQualitiesOptions(VideoQualities);
     }
 
     const buildSubtitlesOptions = (subtitles) => {
@@ -73,6 +59,10 @@ function VideoPlayerWindow({ movie, visible, onCloseClick }) {
 
     return (
         <div style={fadeTransition(visible)} className="video-player-window-container">
+             <div className="demo-version-info">This is a demo version. For this version, a free short video is played (to test the video player) instead of the movie you selected. 
+                If you want to watch movies you have to use the .NetCore application available here <a href="https://github.com/mohdje/medflix">https://github.com/mohdje/medflix</a>.
+                This application embeds the full version of this react front end app.
+            </div>
             <div ref={videoPlayerContainerRef} className="video-player-container">
                 <VideoPlayer 
                     videoQualitiesOptions={videoQualitiesOptions} 

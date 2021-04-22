@@ -32,12 +32,10 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                         setDataLoaded(true);
                     }
                 });
-            MoviesAPI.getActiveMovieServiceName((serviceName) => {
-                MoviesAPI.isMovieBookmarked(movieId, serviceName, (isMovieBookmarked) => {
+                MoviesAPI.isMovieBookmarked(movieId, 'YtsApiMx', (isMovieBookmarked) => {
                     isMovieBookmarked = isMovieBookmarked === 'true';
                     setAddBookmarkButtonVisible(!isMovieBookmarked);
                 });
-            });
         }
     }, [movieId]);
 

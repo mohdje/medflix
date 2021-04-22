@@ -27,6 +27,9 @@ function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onLastSeenMovies
 
     return (
         <div className="nav-bar-container">
+            <div className="nav-bar-left">
+                <div className="nav-bar-label">Demo version</div>
+            </div>
             <img className="nav-bar-logo" alt="" src={logo} />
             <div className="nav-bar-right">
                 <div className="nav-bar-btn" onClick={() => onHomeClick()}>
@@ -43,15 +46,7 @@ function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onLastSeenMovies
                 </div>
                 <div className="nav-bar-btn" onClick={() => onSearchClick()}>
                     <SearchIcon style={navBarIconStyle} />
-                </div>
-                <div ref={movieServicesMenuRef} style={{ position: 'relative' }}>
-                    <div className="nav-bar-btn" onClick={() => setShowMovieServicesMenu(!showMovieServicesMenu)}>
-                        <SettingsIcon style={navBarIconStyle} />
-                    </div>
-                    <div style={{ position: 'absolute', top: '100%', right: '0' }}>
-                        <MovieServicesMenu visible={showMovieServicesMenu} onClick={() => setShowMovieServicesMenu(false)} />
-                    </div>
-                </div>
+                </div>                
             </div>
         </div>
     );

@@ -1,137 +1,174 @@
-import { movies } from "./fakeData";
+import { LastSeenMovies, BookmarkedMovies } from "./fakeData"
+
 const MoviesAPI = {
-    apiMoviesUrl: 'https://localhost:5001/movies/',
-    apiStreamUrl: 'https://localhost:5001/movies/stream?url=',
-    apiSubtitlesUrl: 'https://localhost:5001/subtitles/',
-    apiServicesUrl: 'https://localhost:5001/services/',
-    apiLastSeenMoviesUrl: 'https://localhost:5001/movies/lastseenmovies/',
-    apiBookmarkedMoviesUrl: 'https://localhost:5001/movies/bookmarks/',
+    apiBaseUrl: 'https://yts.mx/api/v2/list_movies.json',
+    apiSubtitlesUrl: '',
 
     getMoviesGenres(onSuccess, onFail) {
-        var url = this.apiMoviesUrl + 'genres';
-        this.sendRequest(url, [], true, onSuccess, onFail);
+        onSuccess(["Thriller", "Sci-Fi", "Horror", "Romance", "Action", "Comedy", "Drama", "Crime", "Animation", "Adventure", "Fantasy"]);
     },
 
     getLastMoviesByGenre(genre, onSuccess, onFail) {
-        var url = this.apiMoviesUrl + 'genre/' + genre;
-        this.sendRequest(url, [], true, onSuccess, onFail);
+        var parameters = [
+            {
+                name: 'genre',
+                value: genre
+            },
+            {
+                name: 'limit',
+                value: 15
+            },
+            {
+                name: 'minimum_rating',
+                value: 7
+            },
+            {
+                name: 'with_rt_ratings',
+                value: 'true'
+            }
+        ];
+        this.sendRequest(this.apiBaseUrl, parameters, onSuccess, onFail);
     },
 
     getSuggestedMovies(onSuccess, onFail) {
-        var url = this.apiMoviesUrl + 'suggested'
-        this.sendRequest(url, [], true, onSuccess, onFail);
+        var parameters = [
+
+            {
+                name: 'limit',
+                value: 5
+            },
+            {
+                name: 'minimum_rating',
+                value: 8
+            }
+        ];
+        this.sendRequest(this.apiBaseUrl, parameters, onSuccess, onFail);
     },
 
     getMoviesByGenre(genre, page, onSuccess, onFail) {
-        var url = this.apiMoviesUrl + 'genre/' + genre + '/' + page;
-        this.sendRequest(url, [], true, onSuccess, onFail);
+        var parameters = [
+            {
+                name: 'genre',
+                value: genre
+            },
+            {
+                name: 'limit',
+                value: 20
+            },
+            {
+                name: 'page',
+                value: page
+            },
+            {
+                name: 'with_rt_ratings',
+                value: 'true'
+            },
+            {
+                name: 'sort_by',
+                value: 'year'
+            }
+        ];
+        this.sendRequest(this.apiBaseUrl, parameters, onSuccess, onFail);
     },
     getMovieDetails(id, onSuccess, onFail) {
-        var url = this.apiMoviesUrl + 'details/' + id;
-        this.sendRequest(url, [], true, onSuccess, onFail);
+        var parameters = [
+            {
+                name: 'movie_id',
+                value: id
+            },
+            {
+                name: 'with_cast',
+                value: true
+            }
+        ];
+        this.sendRequest("https://yts.mx/api/v2/movie_details.json", parameters, onSuccess, onFail);
     },
 
     searchMovies(text, onSuccess, onFail) {
-        var url = this.apiMoviesUrl + 'search/' + text
-        this.sendRequest(url, [], true, onSuccess, onFail);
+        var parameters = [
+            {
+                name: 'query_term',
+                value: text
+            },
+            {
+                name: 'sort_by',
+                value: 'year'
+            }
+        ];
+        this.sendRequest(this.apiBaseUrl, parameters, onSuccess, onFail);
     },
 
     getAvailableSubtitles(imdbId, onSuccess, onFail) {
-        var url = this.apiSubtitlesUrl + 'available/' + imdbId;
-        this.sendRequest(url, [], true, onSuccess, onFail);
-    },
-
-    getAvailableMovieServices(onSuccess, onFail) {
-        this.sendRequest(this.apiServicesUrl, [], true, onSuccess, onFail);
-    },
-
-    getActiveMovieServiceName(onSuccess, onFail){
-        this.sendRequest(this.apiServicesUrl + "active", [], false, onSuccess, onFail);
-    },
-
-    changeMovieService(serviceName, onSuccess, onFail) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState === 4) {
-                if (this.status === 200) {
-                    if (onSuccess)
-                        onSuccess();
-                }
-                else {
-                    if (onFail)
-                        onFail();
-                }
+        var subtitles = [
+            {
+                language: "French",
+                subtitlesIds: ['fr_1', 'fr_2']
+            },
+            {
+                language: "English",
+                subtitlesIds: ['eng_1', 'eng_2']
             }
-        };
-        xhttp.open("POST", this.apiServicesUrl, true);
-        xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhttp.send("serviceName=" + serviceName);
+        ]
+        onSuccess(subtitles);
+    },
+
+    changeMovieService(serviceName, onSuccess) {
+        onSuccess();
     },
 
     getLastSeenMovies(onSuccess, onFail) {
-        this.sendRequest(this.apiLastSeenMoviesUrl, [], true, onSuccess, onFail);
+        console.log("LastSeenMovies", LastSeenMovies);
+        onSuccess(LastSeenMovies);
     },
 
     saveLastSeenMovie(movie) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("PUT", this.apiLastSeenMoviesUrl, true);
-        xhttp.setRequestHeader("Content-Type", "application/json");
-        xhttp.send(JSON.stringify(movie));
+        var index = LastSeenMovies.findIndex(m => m.movie.id === movie.id);
+
+        if(index === -1){
+            LastSeenMovies.push({
+                movie: movie,
+                serviceName: "YtsApiMx"
+            });
+        }
     },
 
-    getBookmarkedMovies(onSuccess, onFail){
-        this.sendRequest(this.apiBookmarkedMoviesUrl, [], true, onSuccess, onFail);
+    getBookmarkedMovies(onSuccess, onFail) {
+        onSuccess(BookmarkedMovies);
     },
 
     addBookmarkedMovie(movie, onSuccess) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("PUT", this.apiBookmarkedMoviesUrl, true);
-        xhttp.setRequestHeader("Content-Type", "application/json");
-        xhttp.send(JSON.stringify(movie));
+        var index = BookmarkedMovies.findIndex(m => m.movie.id === movie.id);
 
-        xhttp.onreadystatechange = function () {
-            if (this.readyState === 4) 
-                if (this.status === 200) 
-                    onSuccess();
-            }
+        if(index === -1){
+            BookmarkedMovies.push({
+                movie: movie,
+                serviceName: "YtsApiMx"
+            });
+        }
+      
+        onSuccess();
     },
 
     deleteBookmarkedMovie(movieBookmark, onSuccess) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("DELETE", this.apiBookmarkedMoviesUrl, true);
-        xhttp.setRequestHeader("Content-Type", "application/json");
-        xhttp.send(JSON.stringify(movieBookmark));
-
-        xhttp.onreadystatechange = function () {
-            if (this.readyState === 4) 
-                if (this.status === 200) 
-                    onSuccess();
-            }
+        var index = BookmarkedMovies.findIndex(m => m.movie.id === movieBookmark.movie.id);
+        BookmarkedMovies.splice(index, 1);
+        onSuccess();
     },
 
-    isMovieBookmarked(movieId, serviceName, onSuccess, onFail){
-        var parameters = [
-            {
-                name: 'movieId',
-                value: movieId
-            },
-            {
-                name: 'serviceName',
-                value: serviceName
-            }
-        ];
-
-        this.sendRequest(this.apiBookmarkedMoviesUrl + 'exists', parameters, false, onSuccess, onFail);
+    isMovieBookmarked(movieId, serviceName, onSuccess, onFail) {
+        var index = BookmarkedMovies.findIndex(m => m.movie.id === movieId);
+        onSuccess(index > -1 ? 'true' : 'false');
     },
 
-    sendRequest(url, parameters, deserializeResult, onSuccess, onFail) {
+    sendRequest(url, parameters, onSuccess, onFail) {
         var xhttp = new XMLHttpRequest();
+        const self = this;
         xhttp.onreadystatechange = function () {
             if (this.readyState === 4) {
                 if (this.status === 200) {
-                    var result = deserializeResult ? JSON.parse(this.response) : this.response;
+                    var result = JSON.parse(this.response);
                     if (onSuccess)
-                        onSuccess(result);
+                        onSuccess(self.extractObjectFromResult(result));
                 }
                 else {
                     if (onFail)
@@ -152,9 +189,32 @@ const MoviesAPI = {
 
         xhttp.open("GET", url, true);
         xhttp.send();
+    },
+
+    extractObjectFromResult(result) {
+        if (result.data?.movies) return result.data?.movies.map(m => this.toMovieDto(m));
+        else if (result.data?.movie) return this.toMovieDto(result.data.movie);
+        else return result;
+    },
+    toMovieDto(baseMovieObject) {
+        return {
+            id: baseMovieObject.id,
+            coverImageUrl: baseMovieObject.medium_cover_image,
+            title: baseMovieObject.title,
+            year: baseMovieObject.year,
+            rating: baseMovieObject.rating,
+            synopsis: baseMovieObject.description_full,
+            backgroundImageUrl: baseMovieObject.background_image,
+            genres: baseMovieObject.genres?.join(", "),
+            duration: baseMovieObject.runtime + " min.",
+            torrents: baseMovieObject.torrents,
+            cast: baseMovieObject.cast?.map(c => c.name).join(", "),
+            director: baseMovieObject.cast?.map(c => c.name)[0],
+            youtubeTrailerUrl: 'https://www.youtube.com/embed/' + baseMovieObject.yt_trailer_code,
+            imdbCode: 'tt_000'
+        }
     }
 }
 
-
-
 export default MoviesAPI;
+

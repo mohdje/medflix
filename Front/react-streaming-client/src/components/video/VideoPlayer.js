@@ -16,6 +16,8 @@ import RestoreIcon from '@material-ui/icons/Restore';
 import { useEffect, useState, useRef } from 'react';
 import { useOnClickOutside } from '../../js/customHooks';
 
+import { FakeSubtitles } from "../../js/fakeData";
+
 function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVideo }) {
     const videoRef = useRef(null);
     const videoPlayerContainerRef = useRef(null);
@@ -62,10 +64,10 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
 
     useEffect(() => {
         const videoErrorHandler = () => {
-            if (videoRef.current.childNodes[0].attributes.src.value) {
-                setshowErrorMessage(true);
-                setVideoIsLoading(false);
-            }
+            // if (videoRef.current.childNodes[0].attributes.src.value) {
+            //     setshowErrorMessage(true);
+            //     setVideoIsLoading(false);
+            // }
         }
         videoRef.current.addEventListener('error', videoErrorHandler, true);
 
@@ -144,14 +146,7 @@ function VideoSubtitles({ videoPlayer, urlSource, size, subtitlesAdjustTime }) {
 
     useEffect(() => {
         if (urlSource) {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200 && this.responseText) {
-                    setSubtitles(JSON.parse(this.response));
-                }
-            };
-            xhttp.open("GET", urlSource, true);
-            xhttp.send();
+            setSubtitles(FakeSubtitles.getSubtitles(urlSource));
         }
 
         return () => {
