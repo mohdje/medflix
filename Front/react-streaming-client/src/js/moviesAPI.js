@@ -4,53 +4,52 @@ const MoviesAPI = {
     apiStreamUrl: 'https://localhost:5001/movies/stream?url=',
     apiSubtitlesUrl: 'https://localhost:5001/subtitles/',
     apiServicesUrl: 'https://localhost:5001/services/',
-    apiLastSeenMoviesUrl: 'https://localhost:5001/lastseenmovies/',
-
+    apiLastSeenMoviesUrl: 'https://localhost:5001/movies/lastseenmovies/',
+    apiBookmarkedMoviesUrl: 'https://localhost:5001/movies/bookmarks/',
 
     getMoviesGenres(onSuccess, onFail) {
         var url = this.apiMoviesUrl + 'genres';
-        this.sendRequest(url, [], onSuccess, onFail);
+        this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
     getLastMoviesByGenre(genre, onSuccess, onFail) {
         var url = this.apiMoviesUrl + 'genre/' + genre;
-        this.sendRequest(url, [], onSuccess, onFail);
+        this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
     getSuggestedMovies(onSuccess, onFail) {
         var url = this.apiMoviesUrl + 'suggested'
-        this.sendRequest(url, [], onSuccess, onFail);
+        this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
     getMoviesByGenre(genre, page, onSuccess, onFail) {
         var url = this.apiMoviesUrl + 'genre/' + genre + '/' + page;
-        this.sendRequest(url, [], onSuccess, onFail);
+        this.sendRequest(url, [], true, onSuccess, onFail);
     },
     getMovieDetails(id, onSuccess, onFail) {
         var url = this.apiMoviesUrl + 'details/' + id;
-        this.sendRequest(url, [], onSuccess, onFail);
+        this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
     searchMovies(text, onSuccess, onFail) {
         var url = this.apiMoviesUrl + 'search/' + text
-        this.sendRequest(url, [], onSuccess, onFail);
+        this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
     getAvailableSubtitles(imdbId, onSuccess, onFail) {
         var url = this.apiSubtitlesUrl + 'available/' + imdbId;
-        this.sendRequest(url, [], onSuccess, onFail);
+        this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
     getAvailableMovieServices(onSuccess, onFail) {
-        this.sendRequest(this.apiServicesUrl, [], onSuccess, onFail);
+        this.sendRequest(this.apiServicesUrl, [], true, onSuccess, onFail);
+    },
+
+    getActiveMovieServiceName(onSuccess, onFail){
+        this.sendRequest(this.apiServicesUrl + "active", [], false, onSuccess, onFail);
     },
 
     changeMovieService(serviceName, onSuccess, onFail) {
-
-        // setTimeout(()=>{
-        //     onSuccess();
-        // },3000);
-
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState === 4) {
@@ -70,26 +69,67 @@ const MoviesAPI = {
     },
 
     getLastSeenMovies(onSuccess, onFail) {
-
-        // setTimeout(()=>{
-        //     onSuccess(movies);
-        // },5000);
-        this.sendRequest(this.apiMoviesUrl + "lastseenmovies", [], onSuccess, onFail);
+        this.sendRequest(this.apiLastSeenMoviesUrl, [], true, onSuccess, onFail);
     },
 
     saveLastSeenMovie(movie) {
         var xhttp = new XMLHttpRequest();
-        xhttp.open("PUT", this.apiMoviesUrl + "lastseenmovies", true);
+        xhttp.open("PUT", this.apiLastSeenMoviesUrl, true);
         xhttp.setRequestHeader("Content-Type", "application/json");
         xhttp.send(JSON.stringify(movie));
     },
 
-    sendRequest(url, parameters, onSuccess, onFail) {
+    getBookmarkedMovies(onSuccess, onFail){
+        this.sendRequest(this.apiBookmarkedMoviesUrl, [], true, onSuccess, onFail);
+    },
+
+    addBookmarkedMovie(movie, onSuccess) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("PUT", this.apiBookmarkedMoviesUrl, true);
+        xhttp.setRequestHeader("Content-Type", "application/json");
+        xhttp.send(JSON.stringify(movie));
+
+        xhttp.onreadystatechange = function () {
+            if (this.readyState === 4) 
+                if (this.status === 200) 
+                    onSuccess();
+            }
+    },
+
+    deleteBookmarkedMovie(movieBookmark, onSuccess) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("DELETE", this.apiBookmarkedMoviesUrl, true);
+        xhttp.setRequestHeader("Content-Type", "application/json");
+        xhttp.send(JSON.stringify(movieBookmark));
+
+        xhttp.onreadystatechange = function () {
+            if (this.readyState === 4) 
+                if (this.status === 200) 
+                    onSuccess();
+            }
+    },
+
+    isMovieBookmarked(movieId, serviceName, onSuccess, onFail){
+        var parameters = [
+            {
+                name: 'movieId',
+                value: movieId
+            },
+            {
+                name: 'serviceName',
+                value: serviceName
+            }
+        ];
+
+        this.sendRequest(this.apiBookmarkedMoviesUrl + 'exists', parameters, false, onSuccess, onFail);
+    },
+
+    sendRequest(url, parameters, deserializeResult, onSuccess, onFail) {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState === 4) {
                 if (this.status === 200) {
-                    var result = JSON.parse(this.response);
+                    var result = deserializeResult ? JSON.parse(this.response) : this.response;
                     if (onSuccess)
                         onSuccess(result);
                 }
