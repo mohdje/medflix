@@ -64,18 +64,18 @@ function MoviesListGenreFull({ genre, loadFromCache, onMovieClick }) {
 
 
     useEffect(() => {
-        if (loadFromCache) {
-            const cacheMovies = cache.get(genre);
+        const cacheMovies = cache.get(genre);
+        if (loadFromCache && cacheMovies) {
             setPageIndex(cacheMovies.pageIndex);
         }
-        else {           
-            setPageIndex(1); 
-            if(pageIndex === 1) performSearch(); 
+        else {
+            setPageIndex(1);
+            if (pageIndex === 1) performSearch();
         }
     }, [genre]);
 
     useEffect(() => {
-        if (pageIndex > 0) {       
+        if (pageIndex > 0) {
             const cacheMovies = cache.get(genre);
             if (cacheMovies) setMovies(cacheMovies.movies);
             else performSearch();
@@ -91,7 +91,7 @@ function MoviesListGenreFull({ genre, loadFromCache, onMovieClick }) {
                     cache.clear();
                 }
             }
-            else if(pageIndex === 1)  scrollToMovie("movielite0");
+            else if (pageIndex === 1) scrollToMovie("movielite0");
         }
     }, [movies]);
 
