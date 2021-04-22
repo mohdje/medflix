@@ -5,13 +5,14 @@ import HomeIcon from '@material-ui/icons/Home';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ViewModuleIcon from '@material-ui/icons/ViewModule';
 import VisibilityIcon from '@material-ui/icons/Visibility';
+import BookmarkIcon from '@material-ui/icons/Bookmark';
 
 import MovieServicesMenu from './MovieServicesMenu';
 
 import { useState, useRef } from 'react';
 import { useOnClickOutside } from '../../js/customHooks';
 
-function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onLastSeenMoviesClick }) {
+function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onLastSeenMoviesClick, onBookmarkedMoviesClick }) {
 
     const [showMovieServicesMenu, setShowMovieServicesMenu] = useState(false);
     const movieServicesMenuRef = useRef(null);
@@ -33,6 +34,9 @@ function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onLastSeenMovies
                 </div>
                 <div className="nav-bar-btn" onClick={() => onLastSeenMoviesClick()}>
                     <VisibilityIcon style={navBarIconStyle} />
+                </div>
+                <div className="nav-bar-btn" onClick={() => onBookmarkedMoviesClick()}>
+                    <BookmarkIcon style={navBarIconStyle} />
                 </div>
                 <div className="nav-bar-btn" onClick={() => onGenreMenuClick()}>
                     <ViewModuleIcon style={navBarIconStyle} />

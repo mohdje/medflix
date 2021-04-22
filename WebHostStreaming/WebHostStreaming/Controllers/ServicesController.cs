@@ -31,6 +31,12 @@ namespace WebHostStreaming.Controllers
                                         });
         }
 
+        [HttpGet("active")]
+        public string GetActiveServiceName()
+        {
+           return movieServiceProvider.GetActiveServiceTypeName();
+        }
+
         [HttpPost]
         public IActionResult ChangeMovieService([FromForm] string serviceName)
         {

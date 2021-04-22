@@ -36,6 +36,7 @@
     font-weight: bold;
     display: flex;
     align-items: center;
+    margin: 0 5px;
 }
 
 .standard-button.center{
@@ -55,6 +56,17 @@
 
 .standard-button.red:hover{
     background-color: #b30710;
+    cursor: pointer;
+}
+
+.standard-button.dark-red{
+    color: white;
+    background-color: #880b11;
+    font-weight: 'bold'
+}
+
+.standard-button.dark-red:hover{
+    background-color: #5e0b0f;
     cursor: pointer;
 }
 

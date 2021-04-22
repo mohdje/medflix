@@ -6,7 +6,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import VideoPlayerWindow from '../../video/VideoPlayerWindow';
 import CircularProgressBar from "../../common/CircularProgressBar";
 import PlayButton from "../../common/PlayButton";
-
+import BookmarkButton from "../../common/BookmarkButton";
 
 import MoviesAPI from "../../../js/moviesAPI.js";
 import fadeTransition from "../../../js/customStyles.js";
@@ -19,6 +19,8 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
     const [movieDetails, setMovieDetails] = useState({});
     const [dataLoaded, setDataLoaded] = useState(false);
     const [showMoviePlayer, setShowMoviePlayer] = useState(false);
+    const [addBookmarkButtonVisible, setAddBookmarkButtonVisible] = useState(true);
+
 
     useEffect(() => {
         setDataLoaded(false);
@@ -29,7 +31,13 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                         setMovieDetails(details);
                         setDataLoaded(true);
                     }
-                })
+                });
+            MoviesAPI.getActiveMovieServiceName((serviceName) => {
+                MoviesAPI.isMovieBookmarked(movieId, serviceName, (isMovieBookmarked) => {
+                    isMovieBookmarked = isMovieBookmarked === 'true';
+                    setAddBookmarkButtonVisible(!isMovieBookmarked);
+                });
+            });
         }
     }, [movieId]);
 
@@ -42,7 +50,13 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
             return;
         var qualities = torrents.map(t => t.quality);
         var withoutDoublons = qualities.filter((q, index) => qualities.indexOf(q) === index);
-        return withoutDoublons.join(", ");
+        return withoutDoublons.length > 3 ? withoutDoublons.slice(0, 3).join(", ") + "..." : withoutDoublons.join(", ");
+    }
+
+    const bookmarkMovie = () => {
+        MoviesAPI.addBookmarkedMovie(movieDetails, () => {
+            setAddBookmarkButtonVisible(false);
+        });
     }
 
     return (
@@ -68,6 +82,7 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                     <VideoInfo infoTitle={"Qualities"} infoContent={getVideoQualities(movieDetails.torrents)} />
                     <VideoInfo infoTitle={"Duration"} infoContent={movieDetails.duration} />
                     <PlayButton onClick={() => setShowMoviePlayer(true)} />
+                    <BookmarkButton onClick={() => bookmarkMovie()} visible={addBookmarkButtonVisible} />
                 </div>
                 <div className="movie-full-presentation-body">
                     <MovieInfo infoTitle={"Genre"} infoContent={movieDetails.genres} />
