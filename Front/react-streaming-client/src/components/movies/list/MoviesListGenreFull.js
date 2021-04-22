@@ -64,10 +64,9 @@ function MoviesListGenreFull({ genre, loadFromCache, onMovieClick }) {
 
 
     useEffect(() => {
-        if (loadFromCache) {
-            const cacheMovies = cache.get(genre);
+        const cacheMovies = cache.get(genre);
+        if (loadFromCache && cacheMovies) 
             setPageIndex(cacheMovies.pageIndex);
-        }
         else {           
             setPageIndex(1); 
             if(pageIndex === 1) performSearch(); 
