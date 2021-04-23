@@ -1,6 +1,6 @@
 # MEDFLIX
 
-Medflix is a streaming platform I made to have fun with react and .Net Core. With this web application you can watch movies for free. 
+Medflix is a streaming platform I made to have fun with React and .Net Core. With this web application you can watch movies for free. 
 There are three parts in this project :
 * Frontend: it is made in react and you can see here https://medflix-mohdje.vercel.app/ a demo version. You wont be able to watch movies on this link but you can browse into the app to test it.
 * Backend: I implemented it in .Net Core. It provides APIs so the Frontend can interact with it to get information about movies, doing search operations and to get a stream to read to watch movies. This backend appliation uses a home-made library (MoviesAPI) to do all those operations.
