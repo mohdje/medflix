@@ -12,6 +12,7 @@ I did not deploy the backend on a server in order to not expose myself to legal 
 # How to use it
 If you want to use the full version of Medflix to watch movies, pull the backend project and build it in Release mode. Then run the Medflix.exe file that will be generated in the Release folder. A console will open (this is the backend application launching)  and then your default browser will open a window that will load the frontend part of the application. 
 
+# How it looks
 ![Movies genre page](/Screenshots/movies_of_genre.PNG)
 ![Movies search](/Screenshots/movies_search.PNG)
 ![Movie presentation](/Screenshots/spiderman_presentation.PNG)
