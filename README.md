@@ -14,7 +14,7 @@ If you want to use the full version of Medflix to watch movies, pull the backend
 
 # How it looks
 ![Movies genre page](/Screenshots/movies_of_genre.PNG)
-![Movies search](/Screenshots/movies_search.PNG)
+![Movies search](/Screenshots/movie_search.PNG)
 ![Movie presentation](/Screenshots/spiderman_presentation.PNG)
 ![Movie player](/Screenshots/video_player.PNG)
 
