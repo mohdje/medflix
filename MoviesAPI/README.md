@@ -12,7 +12,7 @@ Having several services allows you to switch from one to another if one of them 
 
 # How to use it
 
-It is pretty simple. In your project add a reference to this library. Use the static method GetMovieService of the MovieServiceFactory class. As a parameter pass the MovieServiceType you want. It will retrieves an IMovieService corresponding to the MovieServiceType.
+It is pretty simple. In your project add a reference to this library. Use the static method GetMovieService of the MovieServiceFactory class. As a parameter pass the MovieServiceType you want. It will retrieves an IMovieService corresponding to the MovieServiceType. 
 
 ```C#
 
@@ -23,3 +23,14 @@ public IMovieService GetMovieService()
     return MovieServiceFactory.GetMovieService(MovieServiceType.YtsApiMx);
 }
 ```
+
+IMovieService exposes few methods to search movies and to have details about a movie. 
+
+```C#
+
+var movieService = MovieServiceFactory.GetMovieService(MovieServiceType.YtsApiMx);
+var movies = await movieService.GetMoviesByNameAsync(text);
+var movieDetails = await movieService.GetMoviesDetailsAsync(id);
+
+```
+ 
