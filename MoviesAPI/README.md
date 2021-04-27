@@ -10,6 +10,8 @@ This library provides services that you can use to do different search operation
 
 Having several services allows you to switch from one to another if one of them is down for a moment (these endpoints provide non legal torrents links to download movies, so the servers could be down sometimes for different reasons). Moreover, you can find movies on a service that are not present on another.
 
+MoviesAPI also provides a service to get subtitles for a movie. Behind the scene it searchs throw https://www.opensubtitles.org for available English and French subtitles of a given movie. It provides then a method to get a SubtitlesDto object from a subtitles .srt file.
+
 # How to use it
 
 It is pretty simple. In your project add a reference to this library. Use the static method GetMovieService of the MovieServiceFactory class. As a parameter pass the MovieServiceType you want. It will retrieves an IMovieService corresponding to the MovieServiceType. 
