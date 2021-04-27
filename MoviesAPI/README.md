@@ -2,7 +2,7 @@
 I implemented this library in .Net Standard in order to use it in every kind of projects (web server, mobile app and desktop). 
 This library provides services that you can use to do different search operations to find movies. These are the available services :
 * YtsApiMx : it uses the public api https://yts.mx/api to search movies and provides torrents url
-* YtsApiLtd : it uses the public api "https://yts.unblockit.ltd/api/v2/ to search movies and provides torrents url
+* YtsApiLtd : it uses the public api https://yts.unblockit.ltd/api/v2/ to search movies and provides torrents url
 * YtsHtmlMx : it performs searches throw the web site https://yts.mx to search movies and provides torrents url
 * YtsHtmlLtd : it performs searches throw the web site https://yts.unblockit.ltd to search movies and provides torrents url
 * YtsHtmlOne : it performs searches throw the web site https://yts.one to search movies and provides torrents url
