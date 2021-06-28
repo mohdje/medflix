@@ -61,18 +61,42 @@ namespace WebHostStreaming.Controllers
         [HttpGet("details/{id}")]
         public async Task<MovieDto> GetMovieDetails(string id)
         {
-            return await movieService.GetMoviesDetailsAsync(id);
+            return await movieService.GetMovieDetailsAsync(id);
         }
 
         [HttpGet("stream")]
-        public async Task<FileStreamResult> GetStream([FromQuery(Name = "url")] string url)
+        public IActionResult GetStream([FromQuery(Name = "url")] string url)
         {
             var rangeHeaderValue = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "Range").Value.FirstOrDefault();
 
-            long offset = 0;
-            long.TryParse(rangeHeaderValue.Replace("bytes=", string.Empty).Split("-")[0], out offset);
+            int offset = 0;
+            if(!string.IsNullOrEmpty(rangeHeaderValue))
+                int.TryParse(rangeHeaderValue.Replace("bytes=", string.Empty).Split("-")[0], out offset);
 
-            return File(await movieStreamProvider.GetMovieStreamAsync(url, offset), "video/mp4", true);
+            try
+            {
+                var stream = movieStreamProvider.GetStream(url, offset);
+              
+                if (stream != null)
+                    return File(stream, "video/mp4", true);
+                else
+                    return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return NoContent();
+            }
+        }
+
+        [HttpGet("streamdownloadstate")]
+        public IActionResult GetStreamDownloadState([FromQuery(Name = "torrentUrl")] string torrentUrl)
+        {
+            var state = movieStreamProvider.GetStreamDownloadingState(torrentUrl);
+
+            if (string.IsNullOrEmpty(state))
+                return NoContent();
+            else
+                return Ok(state);
         }
 
         [HttpGet("lastseenmovies")]

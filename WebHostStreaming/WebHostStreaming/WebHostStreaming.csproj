@@ -8,13 +8,17 @@
 
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.29" />
-    <PackageReference Include="MonoTorrent" Version="1.0.28" />
+    <PackageReference Include="Mono.Nat" Version="3.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="ReusableTasks" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="MonoTorrent">
+      <HintPath>..\..\..\MonoTorrent\src\MonoTorrent\bin\Release\netstandard2.0\MonoTorrent.dll</HintPath>
+    </Reference>
     <Reference Include="MoviesAPI">
-      <HintPath>..\..\MoviesAPI\MoviesAPI\bin\Debug\netstandard2.0\MoviesAPI.dll</HintPath>
+      <HintPath>..\..\MoviesAPI\MoviesAPI\bin\Release\netstandard2.1\MoviesAPI.dll</HintPath>
     </Reference>
   </ItemGroup>
 
