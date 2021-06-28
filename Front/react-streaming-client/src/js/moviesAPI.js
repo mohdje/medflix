@@ -6,6 +6,8 @@ const MoviesAPI = {
     apiServicesUrl: 'https://localhost:5001/services/',
     apiLastSeenMoviesUrl: 'https://localhost:5001/movies/lastseenmovies/',
     apiBookmarkedMoviesUrl: 'https://localhost:5001/movies/bookmarks/',
+    apiMovieDownloadStateUrl: 'https://localhost:5001/movies/streamdownloadstate/',
+
 
     getMoviesGenres(onSuccess, onFail) {
         var url = this.apiMoviesUrl + 'genres';
@@ -124,6 +126,17 @@ const MoviesAPI = {
         this.sendRequest(this.apiBookmarkedMoviesUrl + 'exists', parameters, false, onSuccess, onFail);
     },
 
+    getMovieDownloadState(streamUrl, onSuccess, onFail){
+        var parameters = [
+            {
+                name: 'torrentUrl',
+                value: streamUrl.replace(this.apiStreamUrl, '')
+            }
+        ];
+
+        this.sendRequest(this.apiMovieDownloadStateUrl, parameters, false, onSuccess, onFail);
+    },
+
     sendRequest(url, parameters, deserializeResult, onSuccess, onFail) {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
@@ -154,7 +167,5 @@ const MoviesAPI = {
         xhttp.send();
     }
 }
-
-
 
 export default MoviesAPI;
