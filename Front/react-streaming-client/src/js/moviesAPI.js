@@ -2,7 +2,6 @@ import { LastSeenMovies, BookmarkedMovies } from "./fakeData"
 
 const MoviesAPI = {
     apiBaseUrl: 'https://yts.mx/api/v2/list_movies.json',
-    apiSubtitlesUrl: '',
 
     getMoviesGenres(onSuccess, onFail) {
         onSuccess(["Thriller", "Sci-Fi", "Horror", "Romance", "Action", "Comedy", "Drama", "Crime", "Animation", "Adventure", "Fantasy"]);
@@ -98,7 +97,7 @@ const MoviesAPI = {
         this.sendRequest(this.apiBaseUrl, parameters, onSuccess, onFail);
     },
 
-    getAvailableSubtitles(imdbId, onSuccess, onFail) {
+    getAvailableSubtitles(onSuccess) {
         var subtitles = [
             {
                 language: "French",
