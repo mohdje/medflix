@@ -6,23 +6,23 @@ using System.Threading.Tasks;
 
 namespace WebHostStreaming.Providers
 {
-    public class MovieServiceProvider : IMovieServiceProvider
+    public class VOMovieSearcherProvider : IVOMovieSearcherProvider
     {  
         private MovieServiceType movieServiceType = MovieServiceType.YtsApiMx;
-        public IMovieService GetActiveMovieService()
+        public IVOMovieSearcher GetActiveVOMovieSearcher()
         {
-            return MovieServiceFactory.GetMovieService(movieServiceType);
+            return VOMovieSearcherFactory.GetMovieService(movieServiceType);
         }
         public string GetActiveServiceTypeName()
         {
             return movieServiceType.ToString();
         }
-        public IEnumerable<string> GetAvailableMovieServices()
+        public IEnumerable<string> GetAvailableVOMovieSearchers()
         {
-            return MovieServiceFactory.GetAvailableMovieServices();
+            return VOMovieSearcherFactory.GetAvailableMovieServices();
         }
 
-        public void UpdateActiveMovieService(MovieServiceType newMovieServiceType)
+        public void UpdateActiveVOMovieSearcher(MovieServiceType newMovieServiceType)
         {
             movieServiceType = newMovieServiceType;
         }

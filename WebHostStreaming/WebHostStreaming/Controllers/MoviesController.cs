@@ -17,51 +17,68 @@ namespace WebHostStreaming.Controllers
     [ApiController]
     public class MoviesController : ControllerBase
     {
-        IMovieServiceProvider movieServiceProvider;
-        IMovieService movieService;
+        IVOMovieSearcherProvider voMovieSearcherProvider;
+        IVOMovieSearcher voMovieSearcher;
         IMovieStreamProvider movieStreamProvider;
         IMovieBookmarkProvider movieBookmarkProvider;
-        public MoviesController(IMovieServiceProvider movieServiceProvider, IMovieStreamProvider movieStreamProvider, IMovieBookmarkProvider movieBookmarkProvider)
+        public MoviesController(
+            IVOMovieSearcherProvider voMovieSearcherProvider,
+            IMovieStreamProvider movieStreamProvider,
+            IMovieBookmarkProvider movieBookmarkProvider)
         {
-            this.movieServiceProvider = movieServiceProvider;
-            this.movieService = movieServiceProvider.GetActiveMovieService();
+            this.voMovieSearcherProvider = voMovieSearcherProvider;
+            this.voMovieSearcher = voMovieSearcherProvider.GetActiveVOMovieSearcher();
             this.movieStreamProvider = movieStreamProvider;
             this.movieBookmarkProvider = movieBookmarkProvider;
         }
         [HttpGet("genres")]
         public IEnumerable<string> GetMoviesGenres()
         {
-            return movieService.GetMovieGenres();
+            return voMovieSearcher.GetMovieGenres();
         }
 
         [HttpGet("suggested")]
         public async Task<IEnumerable<MovieDto>> GetSuggestedMovies()
         {
-            return await movieService.GetSuggestedMoviesAsync(5);
+            return await voMovieSearcher.GetSuggestedMoviesAsync(5);
         }
 
         [HttpGet("genre/{genre}")]
         public async Task<IEnumerable<MovieDto>> GetLastMoviesByGenre(string genre)
         {
-            return await movieService.GetLastMoviesByGenreAsync(15, genre);
+            return await voMovieSearcher.GetLastMoviesByGenreAsync(15, genre);
         }
 
         [HttpGet("genre/{genre}/{page}")]
         public async Task<IEnumerable<MovieDto>> GetLastMoviesByGenre(string genre, int page)
         {
-            return await movieService.GetMoviesByGenreAsync(genre, page);
+            return await voMovieSearcher.GetMoviesByGenreAsync(genre, page);
         }
 
         [HttpGet("search/{text}")]
         public async Task<IEnumerable<MovieDto>> SearchMovies(string text)
         {
-            return await movieService.GetMoviesByNameAsync(text);
+            return await voMovieSearcher.GetMoviesByNameAsync(text);
         }
 
         [HttpGet("details/{id}")]
         public async Task<MovieDto> GetMovieDetails(string id)
         {
-            return await movieService.GetMovieDetailsAsync(id);
+            return await voMovieSearcher.GetMovieDetailsAsync(id);
+        }
+
+        [HttpGet("vf")]
+        public async Task<object> SearchVFMovies([FromQuery(Name = "title")] string title, [FromQuery(Name = "year")] string year)
+        {
+            var vfSearcher = new VfTorrentSearcher.MonTorrentMovieSearcher();
+
+            var movies = await vfSearcher.SearchVfAsync(title);
+
+            return movies?.Where(m => m.Year == year).Select(m => new
+            {
+                DownloadUrl = m.DownloadUrl,
+                Quality = m.Quality,
+            });
         }
 
         [HttpGet("stream")]
@@ -70,13 +87,13 @@ namespace WebHostStreaming.Controllers
             var rangeHeaderValue = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "Range").Value.FirstOrDefault();
 
             int offset = 0;
-            if(!string.IsNullOrEmpty(rangeHeaderValue))
+            if (!string.IsNullOrEmpty(rangeHeaderValue))
                 int.TryParse(rangeHeaderValue.Replace("bytes=", string.Empty).Split("-")[0], out offset);
 
             try
             {
                 var stream = movieStreamProvider.GetStream(url, offset);
-              
+
                 if (stream != null)
                     return File(stream, "video/mp4", true);
                 else
@@ -93,8 +110,8 @@ namespace WebHostStreaming.Controllers
         {
             var state = movieStreamProvider.GetStreamDownloadingState(torrentUrl);
 
-            if (string.IsNullOrEmpty(state))
-                return NoContent();
+            if (state == null)
+                return BadRequest();
             else
                 return Ok(state);
         }
@@ -112,7 +129,7 @@ namespace WebHostStreaming.Controllers
             var movieBookmark = new MovieBookmark()
             {
                 Movie = movie,
-                ServiceName = movieServiceProvider.GetActiveServiceTypeName()
+                ServiceName = voMovieSearcherProvider.GetActiveServiceTypeName()
             };
 
             movieBookmarkProvider.SaveMovieBookmark(movieBookmark, AppFiles.LastSeenMovies, 7);
@@ -131,7 +148,7 @@ namespace WebHostStreaming.Controllers
             var movieBookmark = new MovieBookmark()
             {
                 Movie = movie,
-                ServiceName = movieServiceProvider.GetActiveServiceTypeName()
+                ServiceName = voMovieSearcherProvider.GetActiveServiceTypeName()
             };
 
             try

@@ -38,6 +38,22 @@ const MoviesAPI = {
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
+    searchVFSources(title, year, onSuccess, onFail){
+        var url = this.apiMoviesUrl + 'vf';
+        var parameters = [
+            {
+                name: 'title',
+                value: title
+            },
+            {
+                name: 'year',
+                value: year
+            }
+        ];
+
+        this.sendRequest(url, parameters, true, onSuccess, onFail);
+    },
+
     getAvailableSubtitles(imdbId, onSuccess, onFail) {
         var url = this.apiSubtitlesUrl + 'available/' + imdbId;
         this.sendRequest(url, [], true, onSuccess, onFail);

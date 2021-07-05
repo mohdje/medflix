@@ -13,17 +13,17 @@ namespace WebHostStreaming.Controllers
     [ApiController]
     public class ServicesController : ControllerBase
     {
-        IMovieServiceProvider movieServiceProvider;
-        public ServicesController(IMovieServiceProvider movieServiceProvider)
+        IVOMovieSearcherProvider voMovieSearcherProvider;
+        public ServicesController(IVOMovieSearcherProvider movieServiceProvider)
         {
-            this.movieServiceProvider = movieServiceProvider;
+            this.voMovieSearcherProvider = movieServiceProvider;
         }
         [HttpGet]
         public IEnumerable<object> GetAvailableMovieServices()
         {
-            var activeServiceTypeName = movieServiceProvider.GetActiveServiceTypeName();
+            var activeServiceTypeName = voMovieSearcherProvider.GetActiveServiceTypeName();
 
-            return movieServiceProvider.GetAvailableMovieServices()
+            return voMovieSearcherProvider.GetAvailableVOMovieSearchers()
                                         .Select(s => new
                                         {
                                             Name = s,
@@ -34,7 +34,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("active")]
         public string GetActiveServiceName()
         {
-           return movieServiceProvider.GetActiveServiceTypeName();
+           return voMovieSearcherProvider.GetActiveServiceTypeName();
         }
 
         [HttpPost]
@@ -42,7 +42,7 @@ namespace WebHostStreaming.Controllers
         {
             try
             {
-                movieServiceProvider.UpdateActiveMovieService((MovieServiceType)Enum.Parse(typeof(MovieServiceType), serviceName));
+                voMovieSearcherProvider.UpdateActiveVOMovieSearcher((MovieServiceType)Enum.Parse(typeof(MovieServiceType), serviceName));
             }
             catch (Exception)
             {

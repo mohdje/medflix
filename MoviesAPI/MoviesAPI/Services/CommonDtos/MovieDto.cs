@@ -34,12 +34,4 @@ namespace MoviesAPI.Services.CommonDtos
 
         public string Duration { get; set; }
     }
-
-    public class MovieTorrent
-    {
-        public string DownloadUrl { get; set; }
-
-        public string Quality { get; set; }
-
-    }
 }

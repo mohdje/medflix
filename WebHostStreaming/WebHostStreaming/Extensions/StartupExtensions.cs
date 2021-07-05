@@ -11,7 +11,7 @@ namespace WebHostStreaming.StartupExtensions
     {
         public static void AddProviders(this IServiceCollection services)
         {
-            services.AddSingleton<IMovieServiceProvider, MovieServiceProvider>();
+            services.AddSingleton<IVOMovieSearcherProvider, VOMovieSearcherProvider>();
             services.AddSingleton<IMovieStreamProvider, MovieStreamProvider>();
             services.AddSingleton<IMovieBookmarkProvider, MovieBookmarkProvider>();
         }

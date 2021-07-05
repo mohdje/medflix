@@ -11,7 +11,7 @@ using MoviesAPI.Helpers;
 namespace MoviesAPI.Services.YtsHtml
 {
 
-    public class YtsHtmlService : IMovieService
+    public class YtsHtmlService : IVOMovieSearcher
     {
         IYtsHtmlUrlProvider htmlUrlProvider;
 
@@ -78,7 +78,7 @@ namespace MoviesAPI.Services.YtsHtml
             return moviesSearchResult;
         }
 
-        public async Task<MovieDto> GetMoviesDetailsAsync(string movieId)
+        public async Task<MovieDto> GetMovieDetailsAsync(string movieId)
         {
             var doc = await GetDocument(htmlUrlProvider.GetMovieDetailsUrl(movieId));
 

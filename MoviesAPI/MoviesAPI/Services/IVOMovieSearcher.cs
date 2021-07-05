@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MoviesAPI.Services
 {
-    public interface IMovieService
+    public interface IVOMovieSearcher
     {
         Task<IEnumerable<MovieDto>> GetSuggestedMoviesAsync(int nbMovies);
 
@@ -16,7 +16,7 @@ namespace MoviesAPI.Services
 
         Task<IEnumerable<MovieDto>> GetMoviesByNameAsync(string name);
 
-        Task<MovieDto> GetMoviesDetailsAsync(string movieId);
+        Task<MovieDto> GetMovieDetailsAsync(string movieId);
 
         IEnumerable<string> GetMovieGenres();
     }

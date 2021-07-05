@@ -1,8 +1,10 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net;
 using System.Net.Http;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -11,6 +13,16 @@ namespace MoviesAPI.Helpers
 {
     internal static class HttpRequestHelper
     {
+        static HttpClient client;
+        public static void InitHttpClient()
+        {
+            if (client == null)
+            {
+                var userAgent = "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36";             
+                client = new HttpClient();
+                client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+            }
+        }
         #region Get
         public static async Task<string> GetAsync(Uri url)
         {
@@ -40,7 +52,7 @@ namespace MoviesAPI.Helpers
         {
             var uriBuilder = new UriBuilder(url);
 
-            if(parameters != null)
+            if (parameters != null)
             {
                 var query = HttpUtility.ParseQueryString(uriBuilder.Query);
                 query.Add(parameters);
@@ -50,68 +62,18 @@ namespace MoviesAPI.Helpers
             return new Uri(uriBuilder.ToString());
         }
 
-       
+
         private static async Task<string> PerformGetCallAsync(Uri url)
         {
-            string result = null;
             try
             {
-                using (var client = new HttpClient())
-                {
-                    var userAgent = "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36";
-                    client.DefaultRequestHeaders.Add("User-Agent", userAgent);
-                    result = await client.GetStringAsync(url);
-                }
-                    
+                InitHttpClient();
+                return await client.GetStringAsync(url);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-
-            return result;
-        }
-        #endregion
-
-        #region Post
-
-
-        public static string Post(Uri url, byte[] input)
-        {
-            var result = PerformPostCall(url, input);
-            return System.Text.Encoding.UTF8.GetString(result);
-        }
-
-        public static T Post<T>(Uri url, byte[] input) where T : class
-        {
-            var result = PerformPostCall(url, input);
-            var text = System.Text.Encoding.UTF8.GetString(result);
-
-            return JsonHelper.ToObject<T>(text);
-        }
-
-        private static byte[] PerformPostCall(Uri url, byte[] input)
-        {
-            if (url == null || input == null)
-                return null;
-
-            byte[] data = null;
-
-            using (WebClient webClient = new WebClient())
-            {
-                webClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
-                try
-                {
-                    data = webClient.UploadData(url, input);
-
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-
-            return data;
         }
         #endregion
 

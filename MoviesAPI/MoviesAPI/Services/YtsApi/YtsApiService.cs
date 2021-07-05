@@ -11,7 +11,7 @@ using MoviesAPI.Helpers;
 
 namespace MoviesAPI.Services.YtsApi
 {
-    public class YtsApiService : IMovieService
+    public class YtsApiService : IVOMovieSearcher
     {
         IYtsApiUrlProvider ytsApiUrlProvider;
 
@@ -82,7 +82,7 @@ namespace MoviesAPI.Services.YtsApi
             return requestResult.Data.Movies?.Select(m => ToMovieDto(m));
         }
 
-        public async Task<MovieDto> GetMoviesDetailsAsync(string movieId)
+        public async Task<MovieDto> GetMovieDetailsAsync(string movieId)
         {
             var parameters = new NameValueCollection();
             parameters.Add("movie_id", movieId);

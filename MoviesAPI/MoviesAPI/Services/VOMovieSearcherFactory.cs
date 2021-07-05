@@ -14,14 +14,9 @@ namespace MoviesAPI.Services
         YtsHtmlPm = 5
     }
 
-    public class MovieService
+    public class VOMovieSearcherFactory
     {
-        public string Name { get; set; }
-        public int Id { get; set; }
-    }
-    public class MovieServiceFactory
-    {
-        public static IMovieService GetMovieService(MovieServiceType movieServiceType)
+        public static IVOMovieSearcher GetMovieService(MovieServiceType movieServiceType)
         {
             switch (movieServiceType)
             {

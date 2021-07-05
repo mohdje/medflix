@@ -22,13 +22,19 @@ namespace WebHostStreaming.Helpers
                 var directories = Directory.GetDirectories(TorrentsFolder);
                 foreach (var folder in directories)
                 {
-                    var oldestUsedFileDateTime = Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories)
-                                                   .Select(f => File.GetLastWriteTime(f))
-                                                   .OrderBy(f => f.Ticks)
-                                                   .Reverse()
-                                                   .First();
+                    var files = Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories);
 
-                    if (DateTime.Now - oldestUsedFileDateTime >= TimeSpan.FromDays(2))                   
+                    if (files.Length > 0)
+                    {
+                        var oldestUsedFileDateTime = files.Select(f => File.GetLastWriteTime(f))
+                                .OrderBy(f => f.Ticks)
+                                .Reverse()
+                                .First();
+
+                        if (DateTime.Now - oldestUsedFileDateTime >= TimeSpan.FromDays(2))
+                            Directory.Delete(folder, true);
+                    }
+                    else
                         Directory.Delete(folder, true);
                 }
             }

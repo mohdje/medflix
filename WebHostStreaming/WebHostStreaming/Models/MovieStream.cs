@@ -11,11 +11,21 @@ using MonoTorrent;
 using MonoTorrent.Client;
 using MonoTorrent.Streaming;
 using WebHostStreaming.Extensions;
+using Chromium;
 
 namespace WebHostStreaming.Models
 {
     public class MovieStream 
     {
+        private enum DownloadingState
+        {
+            SearchResources,
+            PrepareDownload,
+            DownloadWillStart,
+            DownloadStarted,
+            DownloadInProgress,
+            NoValidFileFound
+        }
         public string TorrentUri { get; }
 
         private TorrentManager torrentManager;
@@ -24,24 +34,24 @@ namespace WebHostStreaming.Models
 
         private ITorrentFileInfo movieFileInfo;
 
-        private static WebClient client;
+        private static ChromiumWebClient client;
         private string torrentDownloadDirectory => Path.Combine(Helpers.AppFolders.TorrentsFolder, TorrentUri.ToMD5Hash());
+
+        private DownloadingState downloadingState;
+
+        private bool watchDownloadProgress;
 
         public MovieStream(ClientEngine clientEngine, string torrentUri)
         {
-            if(client == null)
-            {
-                client = new WebClient();
-                client.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36");
-            }
-           
             TorrentUri = torrentUri;
-            torrentManager = clientEngine.AddStreamingAsync(GetTorrentFile(TorrentUri), torrentDownloadDirectory).Result;
+            downloadingState = DownloadingState.SearchResources;
+            torrentManager = clientEngine.AddStreamingAsync(GetTorrentFile(TorrentUri), torrentDownloadDirectory).Result;         
             movieFileInfo = GetMovieFile(torrentManager);      
         }
 
         public async void PauseDownloadAsync()
         {
+            watchDownloadProgress = false;
             await torrentManager.PauseAsync();
         }
 
@@ -51,7 +61,10 @@ namespace WebHostStreaming.Models
                 return null;
 
             if (torrentManager.State == TorrentState.Paused || torrentManager.State == TorrentState.Stopped)
+            {
+                ListenTorrentManagerEvents();
                 torrentManager.StartAsync().Wait();
+            }
 
             if (cancellationTokenSource != null)
                 cancellationTokenSource.Cancel();
@@ -71,24 +84,61 @@ namespace WebHostStreaming.Models
 
         public string GetDownloadingState()
         {
-            var defaultStep = "Searching resources for download (step 1/5)";
+            if (!watchDownloadProgress)
+                return null;
 
-            if (torrentManager == null)
-                return defaultStep;
+            switch (downloadingState)
+            {
+                case DownloadingState.SearchResources:
+                   return "Searching resources for download (step 1/5)";
+                case DownloadingState.PrepareDownload:
+                    return "Preparing download (step 2/5)";
+                case DownloadingState.DownloadWillStart:
+                    return "Download will start soon (step 3/5)";
+                case DownloadingState.DownloadStarted:
+                    return "Download has started (step 4/5)";
+                case DownloadingState.DownloadInProgress:
+                    return "Download in progress, video will be ready to play soon (step 5/5)";
+                case DownloadingState.NoValidFileFound:
+                    return null;
+                default:
+                    break;
+            }
 
-            if (torrentManager.PartialProgress > 0.3)
-                return "Download in progress, video will be ready to play soon (step 5/5)";
+            return null;
+        }
 
-            if (torrentManager.PartialProgress > 0)
-                return "Download has started (step 4/5)";
+        private void ListenTorrentManagerEvents()
+        {
+            watchDownloadProgress = true;
+            torrentManager.PeersFound += TorrentManager_PeersFound;
+            torrentManager.TorrentStateChanged += TorrentManager_TorrentStateChanged;
+        }
+        private void TorrentManager_PeersFound(object sender, PeersAddedEventArgs e)
+        {
+            torrentManager.PeersFound -= TorrentManager_PeersFound;
+            downloadingState = DownloadingState.DownloadWillStart;
+        }
 
-            if(Directory.Exists(torrentDownloadDirectory) && Directory.GetFiles(torrentDownloadDirectory, Path.GetFileName(movieFileInfo.FullPath), SearchOption.AllDirectories).Any())
-                return "Download will start soon (step 3/5)";
+        private void TorrentManager_TorrentStateChanged(object sender, TorrentStateChangedEventArgs e)
+        {          
+            if (e.NewState == TorrentState.Downloading)
+            {
+                torrentManager.TorrentStateChanged -= TorrentManager_TorrentStateChanged;
 
-            if (File.Exists(Path.Combine(torrentDownloadDirectory, "torrent")))
-                return "Preparing download (step 2/5)";
+                while (watchDownloadProgress)
+                {
+                    if (e.TorrentManager.PartialProgress > 0.5)
+                    {
+                        downloadingState = DownloadingState.DownloadInProgress;
+                        watchDownloadProgress = false;
+                    }
+                    else if (e.TorrentManager.PartialProgress > 0)
+                        downloadingState = DownloadingState.DownloadStarted;
 
-            return defaultStep;
+                    Task.Delay(3000).Wait();
+                }
+            }
         }
 
         private string GetTorrentFile(string torrentUri)
@@ -98,13 +148,20 @@ namespace WebHostStreaming.Models
 
             var fileName = Path.Combine(torrentDownloadDirectory, "torrent");
 
+            if (client == null)
+                client = new ChromiumWebClient();
+
             lock (client)
-            {
+            {              
                 if (!File.Exists(fileName))
-                {        
-                    client.DownloadFile(torrentUri, fileName);
+                {
+                    client.DownloadFileAsync(torrentUri, fileName).Wait();
+                    client.Dispose();
+                    client = null;
                 }
             }
+
+            downloadingState = DownloadingState.PrepareDownload;
 
             return fileName;
         }
@@ -117,7 +174,12 @@ namespace WebHostStreaming.Models
             
             torrentFileInfo = torrentManager.Files.FirstOrDefault(f => f.FullPath.IsMP4File());
             if (torrentFileInfo != null)
+            {
+                ListenTorrentManagerEvents();
                 torrentManager.SetFilePriorityAsync(torrentFileInfo, Priority.Highest);
+            }
+            else
+                downloadingState = DownloadingState.NoValidFileFound;
 
             return torrentFileInfo;
         }

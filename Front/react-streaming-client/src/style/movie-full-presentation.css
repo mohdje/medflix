@@ -85,12 +85,15 @@
 .movie-full-presentation-video-info .video-info{
     font-size: 1.2rem;
     color: white;
-    margin-right: 50px;
+    margin-right: 25px;
+    display: flex;
+    align-items: center;
 }
 
 
 .movie-full-presentation-video-info .video-info .title{
     font-weight: bold;
+    margin-right: 5px;
 }
 
 
@@ -131,7 +134,6 @@
     justify-content: center;
 }
 
-
 .movie-full-presentation-close-btn:hover{
     cursor: pointer;
    background-color: rgba(163, 156, 156, 0.493);
@@ -148,3 +150,26 @@
     font-size: 30px !important;
     border-radius: 50%;
 }
+
+.movie-version-selector{
+    display: flex;
+    align-items: center;
+}
+
+.movie-version-selector .version{
+    margin: 0 15px;
+  
+}
+
+.movie-version-selector .version.loading{
+    position: relative;
+    color: grey;
+}
+
+.movie-version-selector .version.loading > div{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%)
+}
+

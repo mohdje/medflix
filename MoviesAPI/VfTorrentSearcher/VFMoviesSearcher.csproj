@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="91.1.211" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.34" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ChromiumWebClient">
+      <HintPath>..\..\..\..\ChromiumWebClient\ChromiumWebClient\bin\Release\netcoreapp3.1\ChromiumWebClient.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
