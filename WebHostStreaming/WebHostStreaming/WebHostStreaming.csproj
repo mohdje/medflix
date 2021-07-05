@@ -7,18 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.29" />
+    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="91.1.211" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.34" />
     <PackageReference Include="Mono.Nat" Version="3.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="ReusableTasks" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="ChromiumWebClient">
+      <HintPath>..\..\..\..\ChromiumWebClient\ChromiumWebClient\bin\Release\netcoreapp3.1\ChromiumWebClient.dll</HintPath>
+    </Reference>
     <Reference Include="MonoTorrent">
       <HintPath>..\..\..\MonoTorrent\src\MonoTorrent\bin\Release\netstandard2.0\MonoTorrent.dll</HintPath>
     </Reference>
-    <Reference Include="MoviesAPI">
-      <HintPath>..\..\MoviesAPI\MoviesAPI\bin\Release\netstandard2.1\MoviesAPI.dll</HintPath>
+    <Reference Include="VFMoviesSearcher">
+      <HintPath>..\..\MoviesAPI\VfTorrentSearcher\bin\Release\netcoreapp3.1\VFMoviesSearcher.dll</HintPath>
+    </Reference>
+    <Reference Include="VOMoviesSearcher">
+      <HintPath>..\..\MoviesAPI\MoviesAPI\bin\Release\netstandard2.1\VOMoviesSearcher.dll</HintPath>
     </Reference>
   </ItemGroup>
 
