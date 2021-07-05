@@ -8,22 +8,22 @@ import { useEffect, useState, useRef } from 'react';
 import fadeTransition from "../../js/customStyles.js";
 import { useOnClickOutside} from '../../js/customHooks';
 
-function VideoPlayerWindow({ movie, visible, onCloseClick }) {
+function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick }) {
     const [subtitlesOptions, setSubtitlesOptions] = useState([]);
     const [videoQualitiesOptions, setVideoQualitiesOptions] = useState([]);
     const videoPlayerContainerRef = useRef(null);
 
-    const buildVideoQualitiesOptions = (movie) => {
+    const buildVideoQualitiesOptions = (sources) => {
         var options = [];
-       if(!movie.torrents) return;
-        movie.torrents.forEach(t => {
-            var qualities = options.filter(o => o.label.startsWith(t.quality));
+       if(!sources) return;
+       sources.forEach(source => {
+            var qualities = options.filter(o => o.label.startsWith(source.quality));
 
             var option = {
-                label: qualities && qualities.length > 0 ? t.quality + ' (' + (qualities.length + 1) + ')': t.quality,
+                label: qualities && qualities.length > 0 ? source.quality + ' (' + (qualities.length + 1) + ')': source.quality,
                 selected: false,
                 data: {
-                    url: MoviesAPI.apiStreamUrl + t.downloadUrl
+                    url: MoviesAPI.apiStreamUrl + source.downloadUrl
                 }
             }
             options.push(option);
@@ -60,14 +60,16 @@ function VideoPlayerWindow({ movie, visible, onCloseClick }) {
     }
 
     useEffect(() => {
-        if (visible && movie?.imdbCode) {
-            MoviesAPI.getAvailableSubtitles(movie.imdbCode,
-                (availableSubtitles) => {
-                    buildSubtitlesOptions(availableSubtitles);
-                })
-            buildVideoQualitiesOptions(movie);
+        if (visible && sources && sources.length > 0) {
+            buildVideoQualitiesOptions(sources);
         }
-    }, [movie, visible]);
+    }, [sources, visible]);
+
+    useEffect(() => {
+        if (visible && subtitles && subtitles.length > 0) {
+            buildSubtitlesOptions(subtitles);
+        }
+    }, [subtitles, visible]);
 
     useOnClickOutside(videoPlayerContainerRef, () => onCloseClick());
 

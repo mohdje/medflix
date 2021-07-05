@@ -40,9 +40,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
                 setTimeout(() => {
                     checkMovieDownloadState(url);
                 }, 3000);
-            }, () => {
-                checkMovieDownloadState(url);
-            });
+            })
         }
     };
 
@@ -125,8 +123,6 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
         if (videoRef.current)
             videoRef.current.addEventListener('timeupdate', onTimeUpdated);
 
-            
-
         return () => {
             if (videoRef.current) videoRef.current.removeEventListener('timeupdate', onTimeUpdated);
         }
@@ -142,8 +138,11 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
         return () => {
             if (videoPlayerContainerRef.current) videoPlayerContainerRef.current.removeEventListener('fullscreenchange', onFullScreenChange);
         }
-    });
+    },[]);
 
+    useEffect(()=>{
+        if(mustPauseVideo) onPauseClick();
+    },[mustPauseVideo]);
 
     useEffect(() => {
         if (videoQualitiesOptions) {
@@ -162,22 +161,21 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
             else if (videoPlayerContainerRef.current.msRequestFullscreen) videoPlayerContainerRef.current.msRequestFullscreen();
         }
         else
-            document.exitFullscreen();
-      
+            document.exitFullscreen();     
     }
 
     const onPlayClick =()=>{
-        if(videoRef.current)
+        if(videoRef?.current)
             videoRef.current.play();
     }
 
     const onPauseClick = ()=>{
-        if(videoRef.current)
+        if(videoRef?.current)
             videoRef.current.pause();
     }
 
     const changeVideoVolume = (newVolume) => {
-        if(videoRef.current)
+        if(videoRef?.current)
             videoRef.current.volume = newVolume;
     }
     
@@ -199,10 +197,10 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
                         videoCurrentTime={currentTime}
                         onTimeChanged={(newTime) => changeVideoTime(newTime)} />
                     <Controls
+                        videoPaused={mustPauseVideo}
                         onPlayClick={() => onPlayClick()}
                         onPauseClick={() => onPauseClick()}
                         onVolumeChanged={(newVolume)=> changeVideoVolume(newVolume)}
-                        mustPauseVideo={mustPauseVideo}
                         videoSubtitlesOptions={videoSubtitlesOptions}
                         videoQualitiesOptions={videoQualitiesOptions}
                         onSubtitleSizeChange={(pixelsToAdd) => setSubtitlesSize(subtitlesSize + pixelsToAdd <= 60 && subtitlesSize + pixelsToAdd >= 20 ? subtitlesSize + pixelsToAdd : subtitlesSize)}

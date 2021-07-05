@@ -17,6 +17,13 @@ import { useEffect, useState } from 'react';
 function MovieFullPresentation({ movieId, onCloseClick }) {
 
     const [movieDetails, setMovieDetails] = useState({});
+
+    const [selectedVersion, setSelectedVersion] = useState("VO");
+    const [vfState, setVfState] = useState("not available");
+    const [availableMovieSources, setAvailableMovieSources] = useState([]);
+    const [selectedMovieSources, setSelectedMovieSources] = useState([]);
+    const [movieSubtitles, setMovieSubtitles] = useState([]);
+
     const [dataLoaded, setDataLoaded] = useState(false);
     const [showMoviePlayer, setShowMoviePlayer] = useState(false);
     const [addBookmarkButtonVisible, setAddBookmarkButtonVisible] = useState(true);
@@ -28,7 +35,11 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
             MoviesAPI.getMovieDetails(movieId,
                 (details) => {
                     if (details) {
+                        details.torrents.forEach(t => {
+                            t.version = "VO";
+                        });
                         setMovieDetails(details);
+                        setAvailableMovieSources(details.torrents);
                         setDataLoaded(true);
                     }
                 });
@@ -40,6 +51,42 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
             });
         }
     }, [movieId]);
+
+    useEffect(() => {
+       
+        if (movieDetails.title) {
+            setVfState('loading');
+            MoviesAPI.searchVFSources(movieDetails.title, movieDetails.year,
+                (sources) => {
+                    if (sources && sources.length > 0) {
+                        sources.forEach(source => {
+                            source.version = "VF";
+                        });
+                        setAvailableMovieSources(sources);
+                        setVfState('available');
+                    }
+                    else
+                        setVfState('not available');
+                }, () => {
+                    setVfState('not available');
+                }
+            );
+        }
+
+        if (movieDetails.imdbCode) {
+            MoviesAPI.getAvailableSubtitles(movieDetails.imdbCode,
+                (availableSubtitles) => {
+                    setMovieSubtitles(availableSubtitles);
+                })
+        }
+    }, [movieDetails]);
+
+    useEffect(()=>{
+        if (availableMovieSources && availableMovieSources.length > 0) {           
+            setSelectedMovieSources(availableMovieSources.filter(t => t.version === selectedVersion));
+        }
+
+    },[selectedVersion, availableMovieSources]);
 
     useEffect(() => {
         if (showMoviePlayer && movieDetails) MoviesAPI.saveLastSeenMovie(movieDetails);
@@ -59,11 +106,17 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
         });
     }
 
+    const versionSelector = () => {
+        return (
+            <VersionSelector vfState={vfState} onVersionSelected={(version) => setSelectedVersion(version)}/>
+        );
+    }
+
     return (
         <div style={{ height: '100%' }}>
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />
             <div style={fadeTransition(dataLoaded)} className="movie-full-presentation-container">
-                <VideoPlayerWindow visible={showMoviePlayer} movie={movieDetails} onCloseClick={() => setShowMoviePlayer(false)} />
+                <VideoPlayerWindow visible={showMoviePlayer} sources={selectedMovieSources} subtitles={movieSubtitles} onCloseClick={() => setShowMoviePlayer(false)} />
                 <div className="movie-full-presentation-close-btn" onClick={() => onCloseClick()}>
                     <ArrowBackIcon className="close-cross" />
                 </div>
@@ -79,6 +132,7 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                     </div>
                 </div>
                 <div className="movie-full-presentation-video-info">
+                    <VideoInfo infoTitle={"Versions"} infoContent={versionSelector()} />
                     <VideoInfo infoTitle={"Qualities"} infoContent={getVideoQualities(movieDetails.torrents)} />
                     <VideoInfo infoTitle={"Duration"} infoContent={movieDetails.duration} />
                     <PlayButton onClick={() => setShowMoviePlayer(true)} />
@@ -111,4 +165,44 @@ function MovieInfo({ infoTitle, infoContent }) {
             <div className="content">{infoContent}</div>
         </div>
     )
+}
+
+function VersionSelector({ vfState, onVersionSelected }) {
+
+    const [selectedVersion, setSelectedVersion] = useState("VO");
+
+    const toggleSelection = (selectedVersion)=>{
+        setSelectedVersion(selectedVersion);
+        onVersionSelected(selectedVersion);
+    }
+
+    if(vfState === 'available'){
+        return (
+            <div className="movie-version-selector">
+                <div className={"standard-button " + (selectedVersion === "VO" ? 'red' : 'grey')} onClick={()=> toggleSelection("VO")}>VO</div>
+                <div className={"standard-button " + (selectedVersion === "VF" ? 'red' : 'grey')} onClick={()=> toggleSelection("VF")}>VF</div>
+            </div>
+        );
+    }
+    else if(vfState === 'loading'){
+
+        return (
+            <div className="movie-version-selector">
+            <div className="version">VO</div>
+            <div className="version loading">
+                <div>VF</div>
+                <CircularProgressBar color={'white'} size={'15px'}  visible={true} />
+            </div>
+        </div>
+        );
+           
+    }
+    else{
+        return (
+            <div className="movie-version-selector">
+                <div className="version">VO</div>
+            </div>
+        )
+    }
+    
 }

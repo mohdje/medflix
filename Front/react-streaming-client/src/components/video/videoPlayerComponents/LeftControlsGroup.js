@@ -7,7 +7,7 @@ import Slider from './Slider';
 
 import { useEffect, useState } from 'react';
 
-function LeftControlsGroup({ onPlayClick, onPauseClick, onVolumeChanged }) {
+function LeftControlsGroup({ videoPaused, onPlayClick, onPauseClick, onVolumeChanged }) {
     const [showPlayButton, setShowPlayButton] = useState(true);
 
     const togglePlayButton = (play) => {
@@ -15,6 +15,10 @@ function LeftControlsGroup({ onPlayClick, onPauseClick, onVolumeChanged }) {
         if (play) onPlayClick();
         else onPauseClick();
     }
+
+    useEffect(() => {
+        if (videoPaused) setShowPlayButton(true);
+    }, [videoPaused]);
 
     return (
         <div className="controls-group">
