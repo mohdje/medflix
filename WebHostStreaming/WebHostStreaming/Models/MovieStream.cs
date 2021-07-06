@@ -41,12 +41,12 @@ namespace WebHostStreaming.Models
 
         private bool watchDownloadProgress;
 
-        public MovieStream(ClientEngine clientEngine, string torrentUri)
+        public MovieStream(ClientEngine clientEngine, string torrentUri, string videoFormat)
         {
             TorrentUri = torrentUri;
             downloadingState = DownloadingState.SearchResources;
             torrentManager = clientEngine.AddStreamingAsync(GetTorrentFile(TorrentUri), torrentDownloadDirectory).Result;         
-            movieFileInfo = GetMovieFile(torrentManager);      
+            movieFileInfo = GetMovieFile(torrentManager, videoFormat);      
         }
 
         public async void PauseDownloadAsync()
@@ -55,7 +55,7 @@ namespace WebHostStreaming.Models
             await torrentManager.PauseAsync();
         }
 
-        public Stream GetStream(int offset)
+        public StreamDto GetStream(int offset)
         {
             if (movieFileInfo == null)
                 return null;
@@ -79,7 +79,7 @@ namespace WebHostStreaming.Models
                 torrentManager.StreamProvider.ActiveStream.ReadAsync(new byte[1], 0, 1, cancellationTokenSource.Token).Wait();
             }
 
-           return torrentManager.StreamProvider.ActiveStream; 
+            return new StreamDto(torrentManager.StreamProvider.ActiveStream, Path.GetExtension(movieFileInfo.FullPath));
         }
 
         public string GetDownloadingState()
@@ -166,13 +166,13 @@ namespace WebHostStreaming.Models
             return fileName;
         }
 
-        private ITorrentFileInfo GetMovieFile(TorrentManager torrentManager)
+        private ITorrentFileInfo GetMovieFile(TorrentManager torrentManager, string videoFormat)
         {
             ITorrentFileInfo torrentFileInfo = null;
             foreach (var torrentFile in torrentManager.Files)           
                torrentManager.SetFilePriorityAsync(torrentFile, Priority.DoNotDownload);
             
-            torrentFileInfo = torrentManager.Files.FirstOrDefault(f => f.FullPath.IsMP4File());
+            torrentFileInfo = torrentManager.Files.FirstOrDefault(f => f.FullPath.MatchVideoFormat(videoFormat));
             if (torrentFileInfo != null)
             {
                 ListenTorrentManagerEvents();

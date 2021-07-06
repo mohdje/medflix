@@ -85,6 +85,7 @@ namespace WebHostStreaming.Controllers
         public IActionResult GetStream([FromQuery(Name = "url")] string url)
         {
             var rangeHeaderValue = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "Range").Value.FirstOrDefault();
+            var userAgent = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "User-Agent").Value.FirstOrDefault();
 
             int offset = 0;
             if (!string.IsNullOrEmpty(rangeHeaderValue))
@@ -92,10 +93,11 @@ namespace WebHostStreaming.Controllers
 
             try
             {
-                var stream = movieStreamProvider.GetStream(url, offset);
+                var acceptedFormat = userAgent.StartsWith("VLC") ? "*" : ".mp4";
+                var streamDto = movieStreamProvider.GetStream(url, offset, acceptedFormat);
 
-                if (stream != null)
-                    return File(stream, "video/mp4", true);
+                if (streamDto != null)
+                    return File(streamDto.Stream, streamDto.ContentType, true); 
                 else
                     return NoContent();
             }

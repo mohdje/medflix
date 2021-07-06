@@ -30,9 +30,9 @@ namespace WebHostStreaming.Providers
             return new ClientEngine(settingsBuilder.ToSettings());
         }
 
-        public Stream GetStream(string torrentUri, int offset)
+        public StreamDto GetStream(string torrentUri, int offset, string videoFormat)
         {
-            var movieStream = GetMovieStream(torrentUri);
+            var movieStream = GetMovieStream(torrentUri, videoFormat);
 
             return movieStream.GetStream(offset);
         }
@@ -47,7 +47,7 @@ namespace WebHostStreaming.Providers
             return movieStream.GetDownloadingState();
         }
 
-        private MovieStream GetMovieStream(string torrentUri)
+        private MovieStream GetMovieStream(string torrentUri, string videoFormat)
         {
             foreach (var stream in movieStreams.Where(m => m.TorrentUri != torrentUri))
                 stream.PauseDownloadAsync();
@@ -56,7 +56,7 @@ namespace WebHostStreaming.Providers
 
             if (movieStream == null)
             {
-                movieStream = new MovieStream(clientEngine, torrentUri);
+                movieStream = new MovieStream(clientEngine, torrentUri, videoFormat);
                 movieStreams.Add(movieStream);
             }
 

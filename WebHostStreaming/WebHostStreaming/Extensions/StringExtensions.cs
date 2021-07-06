@@ -26,9 +26,12 @@ namespace WebHostStreaming.Extensions
             }
         }
 
-        public static bool IsMP4File(this string fileName)
+        public static bool MatchVideoFormat(this string fileName, string videoFormat)
         {
-            return fileName.EndsWith(".mp4");
+            if(videoFormat == "*")
+                return fileName.EndsWith(".mp4") || fileName.EndsWith(".avi") || fileName.EndsWith(".mkv");
+            else
+                return fileName.EndsWith(videoFormat);
         }
     }
 }
