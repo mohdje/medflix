@@ -81,6 +81,17 @@
     cursor: pointer;
 }
 
+.standard-button.orange{
+    color: white;
+    background-color: #f06a10;
+    font-weight: 'bold'
+}
+
+.standard-button.orange:hover{
+    background-color: #92400a;
+    cursor: pointer;
+}
+
 .round-btn{
     width: 70px;
     height: 70px;

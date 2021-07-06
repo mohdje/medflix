@@ -6,7 +6,9 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import VideoPlayerWindow from '../../video/VideoPlayerWindow';
 import CircularProgressBar from "../../common/CircularProgressBar";
 import PlayButton from "../../common/PlayButton";
+import PlayWithVLCButton from "../../common/PlayWithVLCButton";
 import BookmarkButton from "../../common/BookmarkButton";
+import ModalPlayWithVLCInstructions from "../../modal/ModalPlayWithVLCInstructions";
 
 import MoviesAPI from "../../../js/moviesAPI.js";
 import fadeTransition from "../../../js/customStyles.js";
@@ -21,11 +23,16 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
     const [selectedVersion, setSelectedVersion] = useState("VO");
     const [vfState, setVfState] = useState("not available");
     const [availableMovieSources, setAvailableMovieSources] = useState([]);
+    const [VOMovieSources, setVOMovieSources] = useState([]);
+    const [VFMovieSources, setVFMovieSources] = useState([]);
+
+
     const [selectedMovieSources, setSelectedMovieSources] = useState([]);
     const [movieSubtitles, setMovieSubtitles] = useState([]);
 
     const [dataLoaded, setDataLoaded] = useState(false);
     const [showMoviePlayer, setShowMoviePlayer] = useState(false);
+    const [showVLCPlayerInstructions, setShowVLCPlayerInstructions] = useState(false);
     const [addBookmarkButtonVisible, setAddBookmarkButtonVisible] = useState(true);
 
 
@@ -35,11 +42,8 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
             MoviesAPI.getMovieDetails(movieId,
                 (details) => {
                     if (details) {
-                        details.torrents.forEach(t => {
-                            t.version = "VO";
-                        });
                         setMovieDetails(details);
-                        setAvailableMovieSources(details.torrents);
+                        setVOMovieSources(details.torrents);
                         setDataLoaded(true);
                     }
                 });
@@ -53,16 +57,13 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
     }, [movieId]);
 
     useEffect(() => {
-       
+
         if (movieDetails.title) {
             setVfState('loading');
             MoviesAPI.searchVFSources(movieDetails.title, movieDetails.year,
                 (sources) => {
                     if (sources && sources.length > 0) {
-                        sources.forEach(source => {
-                            source.version = "VF";
-                        });
-                        setAvailableMovieSources(sources);
+                        setVFMovieSources(sources);
                         setVfState('available');
                     }
                     else
@@ -81,12 +82,12 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
         }
     }, [movieDetails]);
 
-    useEffect(()=>{
-        if (availableMovieSources && availableMovieSources.length > 0) {           
-            setSelectedMovieSources(availableMovieSources.filter(t => t.version === selectedVersion));
-        }
-
-    },[selectedVersion, availableMovieSources]);
+    useEffect(() => {
+        if(selectedVersion === "VO" && VOMovieSources && VOMovieSources.length > 0)
+            setSelectedMovieSources(VOMovieSources);
+        else if(selectedVersion === "VF" && VFMovieSources && VFMovieSources.length > 0)
+            setSelectedMovieSources(VFMovieSources);
+    }, [selectedVersion, VOMovieSources, VFMovieSources]);
 
     useEffect(() => {
         if (showMoviePlayer && movieDetails) MoviesAPI.saveLastSeenMovie(movieDetails);
@@ -108,13 +109,14 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
 
     const versionSelector = () => {
         return (
-            <VersionSelector vfState={vfState} onVersionSelected={(version) => setSelectedVersion(version)}/>
+            <VersionSelector vfState={vfState} onVersionSelected={(version) => setSelectedVersion(version)} />
         );
     }
 
     return (
         <div style={{ height: '100%' }}>
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />
+            <ModalPlayWithVLCInstructions visible={showVLCPlayerInstructions} sources={selectedMovieSources} onCloseClick={() => setShowVLCPlayerInstructions(false)} />
             <div style={fadeTransition(dataLoaded)} className="movie-full-presentation-container">
                 <VideoPlayerWindow visible={showMoviePlayer} sources={selectedMovieSources} subtitles={movieSubtitles} onCloseClick={() => setShowMoviePlayer(false)} />
                 <div className="movie-full-presentation-close-btn" onClick={() => onCloseClick()}>
@@ -136,6 +138,7 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                     <VideoInfo infoTitle={"Qualities"} infoContent={getVideoQualities(movieDetails.torrents)} />
                     <VideoInfo infoTitle={"Duration"} infoContent={movieDetails.duration} />
                     <PlayButton onClick={() => setShowMoviePlayer(true)} />
+                    <PlayWithVLCButton onClick={() => setShowVLCPlayerInstructions(true)} />
                     <BookmarkButton onClick={() => bookmarkMovie()} visible={addBookmarkButtonVisible} />
                 </div>
                 <div className="movie-full-presentation-body">
@@ -171,38 +174,38 @@ function VersionSelector({ vfState, onVersionSelected }) {
 
     const [selectedVersion, setSelectedVersion] = useState("VO");
 
-    const toggleSelection = (selectedVersion)=>{
+    const toggleSelection = (selectedVersion) => {
         setSelectedVersion(selectedVersion);
         onVersionSelected(selectedVersion);
     }
 
-    if(vfState === 'available'){
+    if (vfState === 'available') {
         return (
             <div className="movie-version-selector">
-                <div className={"standard-button " + (selectedVersion === "VO" ? 'red' : 'grey')} onClick={()=> toggleSelection("VO")}>VO</div>
-                <div className={"standard-button " + (selectedVersion === "VF" ? 'red' : 'grey')} onClick={()=> toggleSelection("VF")}>VF</div>
+                <div className={"standard-button " + (selectedVersion === "VO" ? 'red' : 'grey')} onClick={() => toggleSelection("VO")}>VO</div>
+                <div className={"standard-button " + (selectedVersion === "VF" ? 'red' : 'grey')} onClick={() => toggleSelection("VF")}>VF</div>
             </div>
         );
     }
-    else if(vfState === 'loading'){
+    else if (vfState === 'loading') {
 
         return (
             <div className="movie-version-selector">
-            <div className="version">VO</div>
-            <div className="version loading">
-                <div>VF</div>
-                <CircularProgressBar color={'white'} size={'15px'}  visible={true} />
+                <div className="version">VO</div>
+                <div className="version loading">
+                    <div>VF</div>
+                    <CircularProgressBar color={'white'} size={'15px'} visible={true} />
+                </div>
             </div>
-        </div>
         );
-           
+
     }
-    else{
+    else {
         return (
             <div className="movie-version-selector">
                 <div className="version">VO</div>
             </div>
         )
     }
-    
+
 }
