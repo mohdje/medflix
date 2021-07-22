@@ -43,6 +43,8 @@ namespace WebHostStreaming.Middlewares
 
             stringBuilder.Append($"########################### Exception ##################################");
 
+            stringBuilder.Append(Environment.NewLine);
+
             stringBuilder.Append($"-{DateTime.Now.ToString("MM/dd/yyyy H:mm")} : ");
 
             stringBuilder.Append(Environment.NewLine);
@@ -52,7 +54,11 @@ namespace WebHostStreaming.Middlewares
             stringBuilder.Append(Environment.NewLine);
 
             stringBuilder.Append($"CONTEXT = ");
-            stringBuilder.Append($"query: {context.Request.QueryString}");
+
+            if(context?.Request?.QueryString != null)
+                stringBuilder.Append($"query: {context.Request.QueryString}");
+
+            stringBuilder.Append(Environment.NewLine);
 
             stringBuilder.Append($"########################### End of Exception ##################################");
 
