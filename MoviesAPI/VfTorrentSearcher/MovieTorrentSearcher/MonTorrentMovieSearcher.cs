@@ -30,17 +30,22 @@ namespace VfTorrentSearcher
                 result = await webRequester.LoadHtlmSourceAsync(url);
             }
 
-            var torrents = GetMovieTorrents(result);
+            var torrents = GetMovieTorrents(title, result);
 
             return torrents;
         }
 
-        private IEnumerable<MovieTorrent> GetMovieTorrents(string htmlSourceCode)
+        private IEnumerable<MovieTorrent> GetMovieTorrents(string movieTitle, string htmlSourceCode)
         {
             var result = new List<MovieTorrent>();
 
             var doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(htmlSourceCode);
+
+            var noResultElement = doc.DocumentNode.SelectSingleNode("//*[contains(@class, 'h1-aucun-resultat')]");
+
+            if (noResultElement != null)
+                return result;
 
             var torrentHtmlLines = doc.DocumentNode.SelectNodes("//div[contains(@class, 't-details')]");
 
@@ -49,7 +54,12 @@ namespace VfTorrentSearcher
 
             foreach (var torrentHtmlLine in torrentHtmlLines)
             {
-                var pageLink = torrentHtmlLine.SelectSingleNode(".//div[contains(@class, 't-rls text-start')]/a")?.Attributes["href"].Value;
+                var titleElement = torrentHtmlLine.SelectSingleNode(".//div[contains(@class, 't-rls text-start')]/a");
+
+                if (titleElement == null || !titleElement.InnerText.StartsWith(movieTitle, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                var pageLink = titleElement?.Attributes["href"].Value;
                 var quality = torrentHtmlLine.SelectSingleNode(".//a[contains(@class, 'liste-categorie-couleur')]")?.Attributes["title"].Value;
                 var downloadUrl = torrentHtmlLine.SelectSingleNode(".//div[contains(@class, 't-telechargement')]/a")?.Attributes["href"].Value;
 
@@ -61,19 +71,25 @@ namespace VfTorrentSearcher
                     pageDoc.LoadHtml(htmlPage);
 
                     var year = pageDoc.DocumentNode.SelectSingleNode(".//em[contains(@title, 'Année de production du film')]")?.InnerText;
-                    var title = pageDoc.DocumentNode.SelectSingleNode(".//li[contains(@title, 'Nom du Film')]/text()[1]")?.InnerText;
+                    var originalTitle = pageDoc.DocumentNode.SelectSingleNode(".//em[contains(@class, 'film-nom-original')]")?.InnerText;
 
-                    result.Add(new MovieTorrent()
+                    if (originalTitle != null)
+                        originalTitle = originalTitle.Substring(1, originalTitle.Length - 2).Trim();
+                    else
+                        originalTitle = pageDoc.DocumentNode.SelectSingleNode(".//li[contains(@title, 'Nom du Film')]/text()[1]")?.InnerText.Trim();
+
+                    if (originalTitle.Equals(movieTitle, StringComparison.OrdinalIgnoreCase))
                     {
-                        Quality = quality.Replace("Accéder à la catégorie", "").Trim(),
-                        DownloadUrl = this.GetBaseUri() + downloadUrl,
-                        Year = year,
-                        Title = title
-                    });
-
-
+                        result.Add(new MovieTorrent()
+                        {
+                            Quality = quality.Replace("Accéder à la catégorie", "").Trim(),
+                            DownloadUrl = this.GetBaseUri() + downloadUrl,
+                            Year = year,
+                            Title = originalTitle
+                        });
+                    }
                 }
-            }         
+            }
 
             return result;
         }
