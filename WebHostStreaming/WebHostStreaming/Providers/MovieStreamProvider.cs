@@ -56,7 +56,7 @@ namespace WebHostStreaming.Providers
 
             if (movieStream == null)
             {
-                movieStream = new MovieStream(clientEngine, torrentUri, videoFormat);
+                movieStream = MovieStream.CreateMovieStream(clientEngine, torrentUri, videoFormat);
                 movieStreams.Add(movieStream);
             }
 
