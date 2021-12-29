@@ -13,7 +13,7 @@ namespace MoviesAPI.Services.YtsHtml
 
         public string GetLastMoviesByGenreUrl(string genre)
         {
-            return GetServiceUrl() + $"/browse-movies/all/all/{genre.ToLower()}/7"; 
+            return GetServiceUrl() + $"/browse-movies/all/all/{genre.ToLower()}/5"; 
         }
 
         public string GetMovieDetailsUrl(string movieId)

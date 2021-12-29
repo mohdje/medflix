@@ -46,7 +46,7 @@ namespace MoviesAPI.Services.YtsApi
             var parameters = new NameValueCollection();
             parameters.Add("limit", (50).ToString());
             parameters.Add("page", "1");
-            parameters.Add("minimum_rating", "7");
+            parameters.Add("minimum_rating", "5");
             parameters.Add("sort_by", "year");
             parameters.Add("order_by", "desc");
             parameters.Add("genre", genre);
