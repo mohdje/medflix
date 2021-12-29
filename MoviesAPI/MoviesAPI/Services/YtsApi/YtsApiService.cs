@@ -132,7 +132,7 @@ namespace MoviesAPI.Services.YtsApi
                 BackgroundImageUrl = ytsMovieDto.BackgroundImageUrl,
                 ImdbCode = ytsMovieDto.ImdbCode,
                 CoverImageUrl = ytsMovieDto.CoverImageUrl,
-                Genres = string.Join(", ", ytsMovieDto.Genres),
+                Genres = ytsMovieDto.Genres == null ? string.Empty : string.Join(", ", ytsMovieDto.Genres),
                 Id = ytsMovieDto.Id.ToString(),
                 Duration = ytsMovieDto.Runtime > 0 ? $"{TimeSpan.FromMinutes(ytsMovieDto.Runtime).Hours} h {TimeSpan.FromMinutes(ytsMovieDto.Runtime).Minutes} min" : string.Empty,
                 Rating = ytsMovieDto.Rating.ToString(),

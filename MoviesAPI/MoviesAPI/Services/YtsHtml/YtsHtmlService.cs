@@ -126,41 +126,40 @@ namespace MoviesAPI.Services.YtsHtml
             if (movies == null)
                 return new MovieDto[0];
 
-            var movieInfosRetievers = new List<Task<MovieDto>>();
+            var movieDtos = new List<MovieDto>();
 
-            foreach (var movie in movies)          
-                movieInfosRetievers.Add(GetYtsHtmlMovieLiteDto(movie.InnerHtml, withSynopsis, withBackgroundImage));
-
-            MovieDto[] movieDtos = new MovieDto[0];
-            Task.WhenAll(movieInfosRetievers).ContinueWith(moviesList => movieDtos = moviesList.Result.ToArray()).Wait();             
+            Parallel.ForEach(movies, m =>
+            {
+                movieDtos.Add(GetYtsHtmlMovieLiteDto(m.InnerHtml, withSynopsis, withBackgroundImage));
+            });
 
             return movieDtos;
         }
 
-        private async Task<MovieDto> GetYtsHtmlMovieLiteDto(string movieHtml, bool withSynopsis = false, bool withBackgroundImage = false)
+        private MovieDto GetYtsHtmlMovieLiteDto(string movieHtml, bool withSynopsis = false, bool withBackgroundImage = false)
         {
             var doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(movieHtml);
 
             var movieId = htmlUrlProvider.GetMovieId(doc.DocumentNode.SelectSingleNode("/*[contains(@class, 'browse-movie-link')]")?.Attributes["href"].Value);
-            
+
             string synopsis = "";
             string backgroundImage = "";
 
             if (withSynopsis || withBackgroundImage)
             {
-                var detailsDoc = await GetDocument(htmlUrlProvider.GetMovieDetailsUrl(movieId));
+                var detailsDoc = GetDocument(htmlUrlProvider.GetMovieDetailsUrl(movieId)).Result;
                 synopsis = withSynopsis ? detailsDoc.DocumentNode.SelectNodes("//div[@id='synopsis']//p")?.First().InnerText : string.Empty;
                 backgroundImage = withBackgroundImage ? htmlUrlProvider.GetImageUrl(detailsDoc.DocumentNode.SelectSingleNode("//a[contains(@class, 'screenshot-group')]").Attributes["href"].Value) : string.Empty;
             }
-           
+
             // XPATH : '/a[...]' = search a at fist level of doc, //img[...] search img recursivily in doc
             return new MovieDto()
             {
                 CoverImageUrl = htmlUrlProvider.GetImageUrl(doc.DocumentNode.SelectSingleNode("//img[contains(@class, 'img-responsive')]")?.Attributes["src"].Value),
                 Id = movieId,
                 Synopsis = synopsis,
-                BackgroundImageUrl = backgroundImage ,
+                BackgroundImageUrl = backgroundImage,
                 Title = doc.DocumentNode.SelectSingleNode("//*[contains(@class, 'browse-movie-title')]")?.InnerText,
                 Year = doc.DocumentNode.SelectSingleNode("//*[contains(@class, 'browse-movie-year')]")?.InnerText,
                 Rating = doc.DocumentNode.SelectSingleNode("//*[contains(@class, 'rating')]")?.InnerText.Replace("/ 10", "").Trim()

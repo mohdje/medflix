@@ -13,7 +13,7 @@ namespace MoviesAPI.Services.YtsHtml
 
         public string GetLastMoviesByGenreUrl(string genre)
         {
-            return GetServiceUrl() + $"/browse-movies/0/all/{genre}/7/year";
+            return GetServiceUrl() + $"/browse-movies/0/all/{genre}/7/0/year";
         }
 
         public string GetMovieDetailsUrl(string movieId)
@@ -28,12 +28,12 @@ namespace MoviesAPI.Services.YtsHtml
 
         public string GetMovieSearchByGenreUrl(string genre, int pageIndex)
         {
-            return GetServiceUrl() + $"/browse-movies/0/all/{genre.ToLower()}/0/year?page={pageIndex}";
+            return GetServiceUrl() + $"/browse-movies/0/all/{genre.ToLower()}/0/0/year?page={pageIndex}";
         }
 
         public string GetMovieSearchByNameUrl(string name, int pageIndex)
         {
-            return GetServiceUrl() + $"/browse-movies/{name}/all/all/0/year?page={pageIndex}";
+            return GetServiceUrl() + $"/browse-movies/{name}/all/all/0/0/year?page={pageIndex}";
         }
 
         public string GetServiceUrl()

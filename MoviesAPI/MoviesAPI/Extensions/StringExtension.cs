@@ -10,7 +10,7 @@ namespace MoviesAPI.Extensions
         {
             foreach (var word in words)
             {
-                if (!str.Contains(word))
+                if (!str.Contains(word, StringComparison.OrdinalIgnoreCase))
                     return false;
             }
             return true;
