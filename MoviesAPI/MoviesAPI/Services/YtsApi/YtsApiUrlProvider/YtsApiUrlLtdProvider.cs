@@ -10,5 +10,10 @@ namespace MoviesAPI.Services.YtsApi
         {
             return "https://yts.unblockit.tv/api/v2/";
         }
+
+        public string GetPingUrl()
+        {
+            return GetBaseApiUrl();
+        }
     }
 }

@@ -7,5 +7,7 @@ namespace MoviesAPI.Services.YtsApi
     public interface IYtsApiUrlProvider
     {
         string GetBaseApiUrl();
+
+        string GetPingUrl();
     }
 }

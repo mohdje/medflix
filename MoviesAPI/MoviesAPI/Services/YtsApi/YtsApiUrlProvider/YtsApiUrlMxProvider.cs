@@ -10,5 +10,10 @@ namespace MoviesAPI.Services.YtsApi
         {
             return "https://yts.mx/api/v2/";
         }
+
+        public string GetPingUrl()
+        {
+            return "https://yts.mx/api";
+        }
     }
 }

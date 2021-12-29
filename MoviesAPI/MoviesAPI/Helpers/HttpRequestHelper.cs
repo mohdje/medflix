@@ -14,7 +14,7 @@ namespace MoviesAPI.Helpers
     internal static class HttpRequestHelper
     {
         static HttpClient client;
-        public static void InitHttpClient()
+        private static void InitHttpClient()
         {
             if (client == null)
             {

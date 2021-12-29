@@ -19,5 +19,7 @@ namespace MoviesAPI.Services
         Task<MovieDto> GetMovieDetailsAsync(string movieId);
 
         IEnumerable<string> GetMovieGenres();
+
+        Task<bool> PingAsync();
     }
 }

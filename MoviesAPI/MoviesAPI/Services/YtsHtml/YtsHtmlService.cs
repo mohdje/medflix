@@ -168,5 +168,19 @@ namespace MoviesAPI.Services.YtsHtml
             return new string[] { "Thriller", "Sci-Fi", "Horror", "Romance", "Action", "Comedy", "Drama", "Crime", "Animation", "Adventure", "Fantasy" };
 
         }
+
+        public async Task<bool> PingAsync()
+        {
+            try
+            {
+                var result = await HttpRequestHelper.GetAsync(new Uri(htmlUrlProvider.GetServiceUrl()));
+                return !string.IsNullOrEmpty(result);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+        }
     }
 }
