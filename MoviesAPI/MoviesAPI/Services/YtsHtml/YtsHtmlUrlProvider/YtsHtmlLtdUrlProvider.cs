@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MoviesAPI.Services.YtsHtml
 {
-    public class YtsHtmlLtdProvider : IYtsHtmlUrlProvider
+    public class YtsHtmlLtdUrlProvider : IYtsHtmlUrlProvider
     {
         public string GetImageUrl(string imagePath)
         {
