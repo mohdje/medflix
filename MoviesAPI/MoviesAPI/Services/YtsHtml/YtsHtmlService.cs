@@ -22,12 +22,9 @@ namespace MoviesAPI.Services.YtsHtml
 
         public async Task<IEnumerable<MovieDto>> GetSuggestedMoviesAsync(int nbMovies)
         {
-            var doc = await GetDocument(htmlUrlProvider.GetServiceUrl());
+            var doc = await GetDocument(htmlUrlProvider.GetSuggestedMoviesUrl());
 
-            var popularDownLoadsHtml = new HtmlAgilityPack.HtmlDocument();
-            popularDownLoadsHtml.LoadHtml(doc.DocumentNode.SelectSingleNode("//div[@id='popular-downloads']").InnerHtml);
-
-            var movieDtos = GetYtsHtmlMovieLiteDtos(popularDownLoadsHtml.DocumentNode, true, true);
+            var movieDtos = GetYtsHtmlMovieLiteDtos(doc.DocumentNode, true, true);
 
             return movieDtos.Where(m => !string.IsNullOrEmpty(m.Synopsis)).Take(nbMovies);
         }

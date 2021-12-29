@@ -7,6 +7,9 @@ namespace MoviesAPI.Services.YtsHtml
     public interface IYtsHtmlUrlProvider
     {
         string GetServiceUrl();
+
+        string GetSuggestedMoviesUrl();
+
         string GetMovieSearchByGenreUrl(string genre, int pageIndex);
 
         string GetMovieSearchByNameUrl(string name, int pageIndex);
@@ -20,6 +23,5 @@ namespace MoviesAPI.Services.YtsHtml
         string GetMovieId(string movieLinkUrl);
 
         string GetTorrentUrl(string torrentLink);
-
     }
 }

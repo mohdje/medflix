@@ -43,6 +43,11 @@ namespace MoviesAPI.Services.YtsHtml
             return "https://yts.mx";
         }
 
+        public string GetSuggestedMoviesUrl()
+        {
+            return GetServiceUrl() + $"/browse-movies/0/all/all/8/latest/0/all";
+        }
+
         public string GetTorrentUrl(string torrentLink)
         {
             return torrentLink;

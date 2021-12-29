@@ -46,6 +46,11 @@ namespace MoviesAPI.Services.YtsHtml
             return "https://yts.pm";
         }
 
+        public string GetSuggestedMoviesUrl()
+        {
+            return GetServiceUrl() + $"/browse-movies/all/all/all/8/latest";
+        }
+
         public string GetTorrentUrl(string torrentLink)
         {
             return GetServiceUrl() + torrentLink;
