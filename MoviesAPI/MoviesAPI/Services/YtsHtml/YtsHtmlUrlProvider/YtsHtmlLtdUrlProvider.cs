@@ -40,7 +40,12 @@ namespace MoviesAPI.Services.YtsHtml
 
         public string GetServiceUrl()
         {
-            return "https://yts.unblockit.ltd";
+            return "https://yts.unblockit.tv";
+        }
+
+        public string GetSuggestedMoviesUrl()
+        {
+            throw new NotImplementedException();
         }
 
         public string GetTorrentUrl(string torrentLink)

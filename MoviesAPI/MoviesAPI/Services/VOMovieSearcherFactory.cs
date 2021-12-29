@@ -27,7 +27,7 @@ namespace MoviesAPI.Services
                 case MovieServiceType.YtsHtmlMx:
                     return new YtsHtml.YtsHtmlService(new YtsHtml.YtsHtmlMxUrlProvider());
                 case MovieServiceType.YtsHtmlLtd:
-                    return new YtsHtml.YtsHtmlService(new YtsHtml.YtsHtmlLtdProvider());
+                    return new YtsHtml.YtsHtmlService(new YtsHtml.YtsHtmlLtdUrlProvider());
                 case MovieServiceType.YtsHtmlOne:
                     return new YtsHtml.YtsHtmlService(new YtsHtml.YtsHtmlOneUrlProvider());
                 case MovieServiceType.YtsHtmlPm:

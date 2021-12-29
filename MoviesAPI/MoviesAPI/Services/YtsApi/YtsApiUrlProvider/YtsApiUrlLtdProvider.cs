@@ -8,7 +8,7 @@ namespace MoviesAPI.Services.YtsApi
     {
         public string GetBaseApiUrl()
         {
-            return "https://yts.unblockit.ltd/api/v2/";
+            return "https://yts.unblockit.tv/api/v2/";
         }
     }
 }
