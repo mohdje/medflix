@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MoviesAPI.Services.YtsHtml
+namespace MoviesAPI.Services.VOMovies.YtsHtml
 {
-    public class YtsHtmlLtdUrlProvider : IYtsHtmlUrlProvider
+    public class YtsHtmlMxUrlProvider : IYtsHtmlUrlProvider
     {
         public string GetImageUrl(string imagePath)
         {
@@ -29,28 +29,29 @@ namespace MoviesAPI.Services.YtsHtml
         public string GetMovieSearchByGenreUrl(string genre, int pageIndex)
         {
             var pageParameter = pageIndex == 1 ? string.Empty : $"?page={pageIndex}";
-            return GetServiceUrl() + $"/browse-movies/0/all/{genre.ToLower()}/0/year/0/all{pageParameter}";
+            return GetServiceUrl() + $"/browse-movies/0/all/{genre.ToLower()}/0/year/0/all{pageParameter}"; 
         }
 
         public string GetMovieSearchByNameUrl(string name, int pageIndex)
         {
             var pageParameter = pageIndex == 1 ? string.Empty : $"?page={pageIndex}";
-            return GetServiceUrl() + $"/browse-movies/{name}/all/all/0/year/0/all{pageParameter}"; 
+            return GetServiceUrl() + $"/browse-movies/{name}/all/all/0/year/0/all{pageParameter}";
         }
 
         public string GetServiceUrl()
         {
-            return "https://yts.unblockit.tv";
+            return "https://yts.mx";
         }
 
         public string GetSuggestedMoviesUrl()
         {
-            throw new NotImplementedException();
+            return GetServiceUrl() + $"/browse-movies/0/all/all/8/latest/0/all";
         }
 
         public string GetTorrentUrl(string torrentLink)
         {
             return torrentLink;
         }
+
     }
 }

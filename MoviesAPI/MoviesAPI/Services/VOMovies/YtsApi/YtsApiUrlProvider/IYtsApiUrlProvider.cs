@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MoviesAPI.Services.YtsApi
+namespace MoviesAPI.Services.VOMovies.YtsApi
 {
     public interface IYtsApiUrlProvider
     {

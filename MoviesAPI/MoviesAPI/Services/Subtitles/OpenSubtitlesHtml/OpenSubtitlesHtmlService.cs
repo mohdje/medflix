@@ -4,25 +4,28 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
-using MoviesAPI.Services.OpenSubtitlesHtml.DTOs;
+using MoviesAPI.Services.Subtitles.OpenSubtitlesHtml.DTOs;
 using System.IO;
 using System.IO.Compression;
 using MoviesAPI.Helpers;
 using System.Collections.Specialized;
 using MoviesAPI.Services.CommonDtos;
+using MoviesAPI.Services.Subtitles.DTOs;
+using MoviesAPI.Services.Subtitles;
+using System.Net.Http.Headers;
 
-namespace MoviesAPI.Services.OpenSubtitlesHtml
+namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
 {
-    public class OpenSubtitlesHtmlService
+    public class OpenSubtitlesHtmlService : ISubtitlesProvider
     {
         private string baseUrl = "https://www.opensubtitles.org";
-        public async Task<OpenSubtitlesDto> GetAvailableSubtitlesAsync(string imdbCode, string languageCode, string languageLabel)
+        public async Task<SubtitlesSearchResultDto> GetAvailableSubtitlesAsync(string imdbCode, SubtitlesLanguage subtitlesLanguage)
         {
             var openSubtitleMovieId = await GetOpenSubtitleMovieId(imdbCode);
             if (string.IsNullOrEmpty(openSubtitleMovieId))
                 return null;
 
-            var doc = await GetDocument(baseUrl + "/en/search/idmovie-" + openSubtitleMovieId + "/sublanguageid-" + languageCode);
+            var doc = await GetDocument(baseUrl + "/en/search/idmovie-" + openSubtitleMovieId + "/sublanguageid-" + GetLanguageCode(subtitlesLanguage));
             if (doc == null)
                 return null;
 
@@ -33,9 +36,9 @@ namespace MoviesAPI.Services.OpenSubtitlesHtml
             var searchResultsHtml = new HtmlDocument();
             searchResultsHtml.LoadHtml(htmlTableResults.InnerHtml);
 
-            return new OpenSubtitlesDto()
+            return new SubtitlesSearchResultDto()
             {
-                Language = languageLabel,
+                Language = GetLanguageLabel(subtitlesLanguage),
                 SubtitlesIds = searchResultsHtml.DocumentNode.SelectNodes("//a[contains(@onclick, '/subtitleserve/sub/')]")?
                                                             .Select(n =>
                                                             {
@@ -88,12 +91,12 @@ namespace MoviesAPI.Services.OpenSubtitlesHtml
 
         private void DownloadSubtitle(string url, string destinationFileName)
         {
-            using (var client = new System.Net.WebClient())
-            {
-                client.Headers.Add("User-Agent", "Mozilla / 5.0(Windows NT 6.3; Win64; x64) AppleWebKit / 537.36(KHTML, like Gecko) Chrome / 87.0.4280.88 Safari / 537.36");
-                client.Headers.Add("referer", baseUrl);
-                client.DownloadFile(url, destinationFileName);
-            }
+            var httpRequestHeaders = new List<KeyValuePair<string, string>>();
+            httpRequestHeaders.Add(new KeyValuePair<string, string>("referer", baseUrl));
+
+            var result = HttpRequestHelper.DownloadAsync(new Uri(url), httpRequestHeaders, false).Result;
+
+            File.WriteAllBytes(destinationFileName, result);
         }
 
         private void ExtractSubtitlesFile(string zipFile, string extractedFile)
@@ -129,6 +132,32 @@ namespace MoviesAPI.Services.OpenSubtitlesHtml
             catch (Exception)
             {
                 return null;
+            }
+        }
+
+        private string GetLanguageCode(SubtitlesLanguage subtitlesLanguage)
+        {
+            switch (subtitlesLanguage)
+            {
+                case SubtitlesLanguage.French:
+                    return "fre";
+                case SubtitlesLanguage.English:
+                    return "eng";
+                default:
+                    return null;
+            }
+        }
+
+        private string GetLanguageLabel(SubtitlesLanguage subtitlesLanguage)
+        {
+            switch (subtitlesLanguage)
+            {
+                case SubtitlesLanguage.French:
+                    return "French";
+                case SubtitlesLanguage.English:
+                    return "English";
+                default:
+                    return null;
             }
         }
     }

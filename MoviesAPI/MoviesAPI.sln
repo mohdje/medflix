@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30717.126
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VOMoviesSearcher", "MoviesAPI\VOMoviesSearcher.csproj", "{5B618B03-4C72-4F40-BC61-124EE387937B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoviesAPI", "MoviesAPI\MoviesAPI.csproj", "{5B618B03-4C72-4F40-BC61-124EE387937B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoviesApiSample", "MoviesApiSample\MoviesApiSample.csproj", "{39BFA0AF-9661-4662-9622-885DB289B403}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VFMoviesSearcher", "VfTorrentSearcher\VFMoviesSearcher.csproj", "{592CA26E-35F4-488E-AB52-DC7E6EC4F70C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +21,6 @@ Global
 		{39BFA0AF-9661-4662-9622-885DB289B403}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39BFA0AF-9661-4662-9622-885DB289B403}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39BFA0AF-9661-4662-9622-885DB289B403}.Release|Any CPU.Build.0 = Release|Any CPU
-		{592CA26E-35F4-488E-AB52-DC7E6EC4F70C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{592CA26E-35F4-488E-AB52-DC7E6EC4F70C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{592CA26E-35F4-488E-AB52-DC7E6EC4F70C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{592CA26E-35F4-488E-AB52-DC7E6EC4F70C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

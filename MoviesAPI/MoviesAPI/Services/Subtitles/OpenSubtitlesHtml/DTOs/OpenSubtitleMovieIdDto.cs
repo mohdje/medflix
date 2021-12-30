@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MoviesAPI.Services.OpenSubtitlesHtml.DTOs
+namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml.DTOs
 {
     public class OpenSubtitleMovieIdDto
     {

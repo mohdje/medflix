@@ -5,11 +5,11 @@ using System.Web;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 using System.Linq;
-using MoviesAPI.Services.YtsApi.DTOs;
+using MoviesAPI.Services.VOMovies.YtsApi.DTOs;
 using MoviesAPI.Services.CommonDtos;
 using MoviesAPI.Helpers;
 
-namespace MoviesAPI.Services.YtsApi
+namespace MoviesAPI.Services.VOMovies.YtsApi
 {
     public class YtsApiService : IVOMovieSearcher
     {

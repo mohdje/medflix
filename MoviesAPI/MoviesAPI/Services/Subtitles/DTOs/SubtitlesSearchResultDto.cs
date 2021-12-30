@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MoviesAPI.Services.OpenSubtitlesHtml.DTOs
+namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml.DTOs
 {
-    public class OpenSubtitlesDto
+    public class SubtitlesSearchResultDto
     {
         public string Language { get; set; }
 

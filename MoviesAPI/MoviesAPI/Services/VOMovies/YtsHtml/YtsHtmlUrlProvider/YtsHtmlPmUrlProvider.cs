@@ -2,48 +2,53 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MoviesAPI.Services.YtsHtml
+namespace MoviesAPI.Services.VOMovies.YtsHtml
 {
-    public class YtsHtmlOneUrlProvider : IYtsHtmlUrlProvider
+    public class YtsHtmlPmUrlProvider : IYtsHtmlUrlProvider
     {
         public string GetImageUrl(string imagePath)
         {
-            return GetServiceUrl() + imagePath;
+            return "https:" + imagePath;
         }
 
         public string GetLastMoviesByGenreUrl(string genre)
         {
-            return GetServiceUrl() + $"/browse-movies/0/all/{genre}/5/0/year";
+            return GetServiceUrl() + $"/browse-movies/all/all/{genre.ToLower()}/5"; 
         }
 
         public string GetMovieDetailsUrl(string movieId)
         {
-            return GetServiceUrl() + $"/movie/{movieId}";
+            return GetServiceUrl() + $"/movies/{movieId}";
         }
 
         public string GetMovieId(string movieLinkUrl)
         {
-            return movieLinkUrl.Replace("/movie/", string.Empty).Replace("/", string.Empty);
+            return movieLinkUrl.Replace("/movies/", string.Empty);
+        }
+
+        public string GetMovieIdFromUrl(string movieDetailsUrl)
+        {
+            return movieDetailsUrl.Replace("/movies/", string.Empty);
         }
 
         public string GetMovieSearchByGenreUrl(string genre, int pageIndex)
         {
-            return GetServiceUrl() + $"/browse-movies/0/all/{genre.ToLower()}/0/0/year?page={pageIndex}";
+            return GetServiceUrl() + $"/browse-movies/all/all/{genre.ToLower()}/0/year?page={pageIndex}";
         }
 
         public string GetMovieSearchByNameUrl(string name, int pageIndex)
         {
-            return GetServiceUrl() + $"/browse-movies/{name}/all/all/0/0/year?page={pageIndex}";
+            return GetServiceUrl() + $"/browse-movies/{name}/all/all/0/year?page={pageIndex}"; 
         }
 
         public string GetServiceUrl()
         {
-            return "https://yts.one";
+            return "https://yts.pm";
         }
 
         public string GetSuggestedMoviesUrl()
         {
-            return GetServiceUrl() + $"/browse-movies/0/all/all/8/0/latest";
+            return GetServiceUrl() + $"/browse-movies/all/all/all/8/latest";
         }
 
         public string GetTorrentUrl(string torrentLink)

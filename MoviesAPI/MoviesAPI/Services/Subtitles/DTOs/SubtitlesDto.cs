@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MoviesAPI.Services.CommonDtos
+namespace MoviesAPI.Services.Subtitles.DTOs
 {
     public class SubtitlesDto
     {

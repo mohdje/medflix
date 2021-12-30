@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MoviesAPI.Services
+namespace MoviesAPI.Services.VOMovies
 {
-    public enum MovieServiceType
+    public enum VOMovieService
     {
         YtsApiMx = 0,
         YtsApiLtd = 1,
@@ -16,21 +16,21 @@ namespace MoviesAPI.Services
 
     public class VOMovieSearcherFactory
     {
-        public static IVOMovieSearcher GetMovieService(MovieServiceType movieServiceType)
+        public static IVOMovieSearcher GetMovieService(VOMovieService VOMovieService)
         {
-            switch (movieServiceType)
+            switch (VOMovieService)
             {
-                case MovieServiceType.YtsApiMx:
+                case VOMovieService.YtsApiMx:
                     return new YtsApi.YtsApiService(new YtsApi.YtsApiUrlMxProvider());
-                case MovieServiceType.YtsApiLtd:
+                case VOMovieService.YtsApiLtd:
                     return new YtsApi.YtsApiService(new YtsApi.YtsApiUrlLtdProvider());
-                case MovieServiceType.YtsHtmlMx:
+                case VOMovieService.YtsHtmlMx:
                     return new YtsHtml.YtsHtmlService(new YtsHtml.YtsHtmlMxUrlProvider());
-                case MovieServiceType.YtsHtmlLtd:
+                case VOMovieService.YtsHtmlLtd:
                     return new YtsHtml.YtsHtmlService(new YtsHtml.YtsHtmlLtdUrlProvider());
-                case MovieServiceType.YtsHtmlOne:
+                case VOMovieService.YtsHtmlOne:
                     return new YtsHtml.YtsHtmlService(new YtsHtml.YtsHtmlOneUrlProvider());
-                case MovieServiceType.YtsHtmlPm:
+                case VOMovieService.YtsHtmlPm:
                     return new YtsHtml.YtsHtmlService(new YtsHtml.YtsHtmlPmUrlProvider());
                 default:
                     return null;
@@ -39,7 +39,7 @@ namespace MoviesAPI.Services
 
         public static IEnumerable<string> GetAvailableMovieServices()
         {
-            foreach (MovieServiceType val in Enum.GetValues(typeof(MovieServiceType)))
+            foreach (VOMovieService val in Enum.GetValues(typeof(VOMovieService)))
             {
                 yield return val.ToString();
             }

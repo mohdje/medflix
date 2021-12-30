@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MoviesAPI.Services.YtsApi.DTOs
+namespace MoviesAPI.Services.VOMovies.YtsApi.DTOs
 {
     class YtsResultDto
     {

@@ -8,7 +8,7 @@ using MoviesAPI.Extensions;
 using MoviesAPI.Services.CommonDtos;
 using MoviesAPI.Helpers;
 
-namespace MoviesAPI.Services.YtsHtml
+namespace MoviesAPI.Services.VOMovies.YtsHtml
 {
 
     public class YtsHtmlService : IVOMovieSearcher

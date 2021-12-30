@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MoviesAPI.Services.YtsApi
+namespace MoviesAPI.Services.VOMovies.YtsApi
 {
-    public class YtsApiUrlMxProvider : IYtsApiUrlProvider
+    public class YtsApiUrlLtdProvider : IYtsApiUrlProvider
     {
         public string GetBaseApiUrl()
         {
-            return "https://yts.mx/api/v2/";
+            return "https://yts.unblockit.tv/api/v2/";
         }
 
         public string GetPingUrl()
         {
-            return "https://yts.mx/api";
+            return GetBaseApiUrl();
         }
     }
 }
