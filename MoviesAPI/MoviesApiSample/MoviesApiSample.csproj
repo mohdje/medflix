@@ -10,8 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MoviesAPI\VOMoviesSearcher.csproj" />
-    <ProjectReference Include="..\VfTorrentSearcher\VFMoviesSearcher.csproj" />
+    <ProjectReference Include="..\MoviesAPI\MoviesAPI.csproj" />
   </ItemGroup>
 
 </Project>

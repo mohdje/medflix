@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
-using Chromium;
 
 namespace VfTorrentSearcher
 {
@@ -24,11 +23,11 @@ namespace VfTorrentSearcher
         {
             var url = GetSearchUri(title);
 
-            string result;
-            using (var webRequester = new ChromiumWebClient())
-            {
-                result = await webRequester.LoadHtlmSourceAsync(url);
-            }
+            string result = null;
+            //using (var webRequester = new ChromiumWebClient())
+            //{
+            //    result = await webRequester.LoadHtlmSourceAsync(url);
+            //}
 
             var torrents = GetMovieTorrents(title, result);
 
@@ -63,32 +62,32 @@ namespace VfTorrentSearcher
                 var quality = torrentHtmlLine.SelectSingleNode(".//a[contains(@class, 'liste-categorie-couleur')]")?.Attributes["title"].Value;
                 var downloadUrl = torrentHtmlLine.SelectSingleNode(".//div[contains(@class, 't-telechargement')]/a")?.Attributes["href"].Value;
 
-                using (var webRequester = new ChromiumWebClient())
-                {
-                    var htmlPage = webRequester.LoadHtlmSourceAsync(this.GetBaseUri() + pageLink).Result;
+                //using (var webRequester = new ChromiumWebClient())
+                //{
+                //    //var htmlPage = webRequester.LoadHtlmSourceAsync(this.GetBaseUri() + pageLink).Result;
 
-                    var pageDoc = new HtmlAgilityPack.HtmlDocument();
-                    pageDoc.LoadHtml(htmlPage);
+                //    //var pageDoc = new HtmlAgilityPack.HtmlDocument();
+                //    //pageDoc.LoadHtml(htmlPage);
 
-                    var year = pageDoc.DocumentNode.SelectSingleNode(".//em[contains(@title, 'Année de production du film')]")?.InnerText;
-                    var originalTitle = pageDoc.DocumentNode.SelectSingleNode(".//em[contains(@class, 'film-nom-original')]")?.InnerText;
+                //    //var year = pageDoc.DocumentNode.SelectSingleNode(".//em[contains(@title, 'Année de production du film')]")?.InnerText;
+                //    //var originalTitle = pageDoc.DocumentNode.SelectSingleNode(".//em[contains(@class, 'film-nom-original')]")?.InnerText;
 
-                    if (originalTitle != null)
-                        originalTitle = originalTitle.Substring(1, originalTitle.Length - 2).Trim();
-                    else
-                        originalTitle = pageDoc.DocumentNode.SelectSingleNode(".//li[contains(@title, 'Nom du Film')]/text()[1]")?.InnerText.Trim();
+                //    //if (originalTitle != null)
+                //    //    originalTitle = originalTitle.Substring(1, originalTitle.Length - 2).Trim();
+                //    //else
+                //    //    originalTitle = pageDoc.DocumentNode.SelectSingleNode(".//li[contains(@title, 'Nom du Film')]/text()[1]")?.InnerText.Trim();
 
-                    if (originalTitle.Equals(movieTitle, StringComparison.OrdinalIgnoreCase))
-                    {
-                        result.Add(new MovieTorrent()
-                        {
-                            Quality = quality.Replace("Accéder à la catégorie", "").Trim(),
-                            DownloadUrl = this.GetBaseUri() + downloadUrl,
-                            Year = year,
-                            Title = originalTitle
-                        });
-                    }
-                }
+                //    //if (originalTitle.Equals(movieTitle, StringComparison.OrdinalIgnoreCase))
+                //    //{
+                //    //    result.Add(new MovieTorrent()
+                //    //    {
+                //    //        Quality = quality.Replace("Accéder à la catégorie", "").Trim(),
+                //    //        DownloadUrl = this.GetBaseUri() + downloadUrl,
+                //    //        Year = year,
+                //    //        Title = originalTitle
+                //    //    });
+                //    //}
+                //}
             }
 
             return result;
