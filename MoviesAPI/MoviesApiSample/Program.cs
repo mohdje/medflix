@@ -5,6 +5,11 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Authentication;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using MoviesAPI.Services.VOMovies;
+using MoviesAPI.Services.Subtitles;
+using MoviesAPI.Services.CommonDtos;
 
 namespace MoviesApiSample
 {
@@ -14,61 +19,113 @@ namespace MoviesApiSample
         {
             Console.WriteLine("Test started");
 
-            var movieName = "Inside man";
-            //  SearchVOMovies(movieName);
-
-
-            var search = true;
-            while (search)
-            {
-                SearchVFMovies(movieName);
-                Console.WriteLine("New search ? (y for yes)");
-                var a = Console.ReadKey();
-
-                if (a.Key != ConsoleKey.Y)
-                    search = false;
-
-            }
+            //SearchVOMovies("spider man", VOMovieService.YtsApiMx);
+            //GetLastMoviesByGenre(VOMovieService.YtsApiMx, "Action");
+            //GetSuggestedMovies(VOMovieService.YtsApiMx);
+            
+            //PingService();
+            
+            GetSubtitles(SubtitlesService.OpenSubtitlesHtml);
 
             Console.WriteLine("End");
             Console.ReadKey();
         }
 
-        static void SearchVOMovies(string title)
+        static void SearchVOMovies(string title, VOMovieService movieService)
         {
-            var moviesServiceProvider = MoviesAPI.Services.VOMovieSearcherFactory.GetMovieService(MoviesAPI.Services.MovieServiceType.YtsHtmlLtd);
-
             Console.WriteLine($"Search VO movies for {title}");
 
+            var moviesServiceProvider = VOMovieSearcherFactory.GetMovieService(movieService);
+            var watch = Stopwatch.StartNew();
             var movies = moviesServiceProvider.GetMoviesByNameAsync(title).Result;
+            watch.Stop();
 
-            Console.WriteLine($"VO movies found for {title} :");
-            foreach (var movie in movies)
+            Console.WriteLine($"execution time :{watch.Elapsed.TotalSeconds}");
+
+            ShowMoviesList(movies);
+        }
+
+        static void GetLastMoviesByGenre(VOMovieService movieService, string genre)
+        {
+            Console.WriteLine("Get last movies by genre...");
+
+            var moviesServiceProvider = VOMovieSearcherFactory.GetMovieService(movieService);
+            var watch = Stopwatch.StartNew();
+            var movies = moviesServiceProvider.GetLastMoviesByGenreAsync(12, genre).Result;
+            watch.Stop();
+            Console.WriteLine($"execution time :{watch.Elapsed.TotalSeconds}");
+            ShowMoviesList(movies);
+        }
+
+        static void GetSuggestedMovies(VOMovieService movieService)
+        {
+            Console.WriteLine("Get suggested movies...");
+
+            var moviesServiceProvider = VOMovieSearcherFactory.GetMovieService(movieService);
+            var watch = Stopwatch.StartNew();
+            var movies = moviesServiceProvider.GetSuggestedMoviesAsync(6).Result;
+            watch.Stop();
+            Console.WriteLine($"execution time :{watch.Elapsed.TotalSeconds}");
+            ShowMoviesList(movies);
+        }
+
+        static void ShowMoviesList(IEnumerable<MovieDto> movies)
+        {
+            if (movies.Any())
             {
-                Console.WriteLine( $"-{movie.Id}, {movie.Title} - {movie.Year}");
+                Console.WriteLine($"Movies :");
+                foreach (var movie in movies)
+                {
+                    Console.WriteLine($"+{movie.Title} ({movie.Year}), {movie.Id}");
+                }
             }
-            Console.WriteLine();
+            else
+                Console.WriteLine("No movies found");
         }
 
         static void SearchVFMovies(string title)
         {
-            var vfSearcher = new VfTorrentSearcher.MonTorrentMovieSearcher();
+            //var vfSearcher = new VfTorrentSearcher.MonTorrentMovieSearcher();
 
-            Console.WriteLine($"Search VF movies for {title}");
+            //Console.WriteLine($"Search VF movies for {title}");
 
-            var movies = vfSearcher.SearchVfAsync(title).Result;
+            //var movies = vfSearcher.SearchVfAsync(title).Result;
 
 
-            Console.WriteLine($"VF movies found for {title} :");
-            foreach (var movie in movies)
-            {
-                Console.WriteLine($"-{movie.Title}, year {movie.Year}, quality {movie.Quality}");
-            }
-            Console.WriteLine();
+            //Console.WriteLine($"VF movies found for {title} :");
+            //foreach (var movie in movies)
+            //{
+            //    Console.WriteLine($"-{movie.Title}, year {movie.Year}, quality {movie.Quality}");
+            //}
+            //Console.WriteLine();
         }
 
-     
+        static void PingService(VOMovieService movieService)
+        {
+            var moviesServiceProvider = VOMovieSearcherFactory.GetMovieService(movieService);
+            var isOk = moviesServiceProvider.PingAsync().Result;
 
+            Console.WriteLine(isOk ? "service OK" : "service HS");
+        }
 
+        static void GetSubtitles(SubtitlesService subtitlesService)
+        {
+            var subtitlesProvider = SubtitlesProviderFactory.GetSubtitlesProvider(subtitlesService);
+            var result = subtitlesProvider.GetAvailableSubtitlesAsync("tt0816692", SubtitlesLanguage.French).Result;
+
+            if (result == null)
+                Console.WriteLine("No subtitles found");
+            else
+            {
+                Console.WriteLine($"subtitles found:{result.Language} - {string.Join(',', result.SubtitlesIds)}");
+
+                var subtitles = subtitlesProvider.GetSubtitles(result.SubtitlesIds[0], Environment.CurrentDirectory).ToArray();
+                var length = subtitles.Length > 10 ? 10 : subtitles.Count();
+                for (int i = 0; i < length; i++)
+                {
+                    Console.WriteLine($"{subtitles[i].StartTime} - {subtitles[i].EndTime} : {subtitles[i].Text}");
+                }
+            }
+        }
     }
 }
