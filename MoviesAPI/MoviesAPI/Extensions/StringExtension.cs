@@ -6,7 +6,7 @@ namespace MoviesAPI.Extensions
 {
     internal static class StringExtension
     {
-        public static bool ContainWords(this string str, string[] words)
+        public static bool ContainsWords(this string str, string[] words)
         {
             foreach (var word in words)
             {
