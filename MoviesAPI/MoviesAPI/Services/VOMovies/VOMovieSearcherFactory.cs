@@ -1,47 +1,35 @@
-﻿using System;
+﻿using MoviesAPI.Services.VOMovies.YtsApi;
+using MoviesAPI.Services.VOMovies.YtsHtml;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MoviesAPI.Services.VOMovies
 {
-    public enum VOMovieService
+    
+    public class VOMovieSearcherFactory : ServiceFactory<VOMovieService, IVOMovieSearcher>
     {
-        YtsApiMx = 0,
-        YtsApiLtd = 1,
-        YtsHtmlMx = 2,
-        YtsHtmlLtd = 3,
-        YtsHtmlOne = 4,
-        YtsHtmlPm = 5
-    }
-
-    public class VOMovieSearcherFactory
-    {
-        public static IVOMovieSearcher GetMovieService(VOMovieService VOMovieService)
+        public override IVOMovieSearcher GetService(VOMovieService VOMovieService)
         {
             switch (VOMovieService)
             {
                 case VOMovieService.YtsApiMx:
-                    return new YtsApi.YtsApiService(new YtsApi.YtsApiUrlMxProvider());
+                    return new YtsApiService(new YtsApiUrlMxProvider());
                 case VOMovieService.YtsApiLtd:
-                    return new YtsApi.YtsApiService(new YtsApi.YtsApiUrlLtdProvider());
+                    return new YtsApiService(new YtsApiUrlLtdProvider());
                 case VOMovieService.YtsHtmlMx:
-                    return new YtsHtml.YtsHtmlService(new YtsHtml.YtsHtmlMxUrlProvider());
+                    return new YtsHtmlService(new YtsHtmlMxUrlProvider());
                 case VOMovieService.YtsHtmlLtd:
-                    return new YtsHtml.YtsHtmlService(new YtsHtml.YtsHtmlLtdUrlProvider());
+                    return new YtsHtmlService(new YtsHtmlLtdUrlProvider());
                 case VOMovieService.YtsHtmlOne:
-                    return new YtsHtml.YtsHtmlService(new YtsHtml.YtsHtmlOneUrlProvider());
+                    return new YtsHtmlService(new YtsHtmlOneUrlProvider());
                 case VOMovieService.YtsHtmlPm:
-                    return new YtsHtml.YtsHtmlService(new YtsHtml.YtsHtmlPmUrlProvider());
+                    return new YtsHtmlService(new YtsHtmlPmUrlProvider());
                 default:
                     return null;
-            }
-        }
-
-        public static IEnumerable<string> GetAvailableMovieServices()
-        {
-            foreach (VOMovieService val in Enum.GetValues(typeof(VOMovieService)))
-            {
-                yield return val.ToString();
             }
         }
     }

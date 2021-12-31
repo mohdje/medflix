@@ -9,14 +9,14 @@ namespace MoviesAPI.Services.Subtitles
 {
    
 
-    public static class SubtitlesProviderFactory
+    public class SubtitlesProviderFactory : ServiceFactory<SubtitlesService, ISubtitlesProvider>
     {
-        public static ISubtitlesProvider GetSubtitlesProvider(SubtitlesService subtitlesService)
+        public override ISubtitlesProvider GetService(SubtitlesService serviceType)
         {
-            switch (subtitlesService)
+            switch (serviceType)
             {
                 case SubtitlesService.OpenSubtitlesHtml:
-                    return new OpenSubtitlesHtmlService();                   
+                    return new OpenSubtitlesHtmlService();
                 default:
                     return null;
             }

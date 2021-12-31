@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MoviesAPI.Services.Subtitles
+namespace MoviesAPI.Services
 {
-    public enum SubtitlesLanguage
+    public interface IService
     {
-        French,
-        English
+        Task<bool> PingAsync();
     }
 }

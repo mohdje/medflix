@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MoviesAPI.Services.VOMovies
 {
-    public interface IVOMovieSearcher
+    public interface IVOMovieSearcher : IService
     {
         Task<IEnumerable<MovieDto>> GetSuggestedMoviesAsync(int nbMovies);
 
@@ -19,7 +19,5 @@ namespace MoviesAPI.Services.VOMovies
         Task<MovieDto> GetMovieDetailsAsync(string movieId);
 
         IEnumerable<string> GetMovieGenres();
-
-        Task<bool> PingAsync();
     }
 }
