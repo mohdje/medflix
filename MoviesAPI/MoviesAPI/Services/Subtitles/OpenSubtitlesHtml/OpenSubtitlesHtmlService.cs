@@ -25,7 +25,7 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
             if (string.IsNullOrEmpty(openSubtitleMovieId))
                 return null;
 
-            var doc = await GetDocument(baseUrl + "/en/search/idmovie-" + openSubtitleMovieId + "/sublanguageid-" + GetLanguageCode(subtitlesLanguage));
+            var doc = await HttpRequester.GetHtmlDocumentAsync(baseUrl + "/en/search/idmovie-" + openSubtitleMovieId + "/sublanguageid-" + GetLanguageCode(subtitlesLanguage));
             if (doc == null)
                 return null;
 
@@ -117,21 +117,6 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
                             entry.ExtractToFile(destinationPath);
                     }
                 }
-            }
-        }
-
-        private async Task<HtmlDocument> GetDocument(string url)
-        {
-            try
-            {
-                var html = await HttpRequester.GetAsync(url, null);
-                var doc = new HtmlDocument();
-                doc.LoadHtml(html);
-                return doc;
-            }
-            catch (Exception)
-            {
-                return null;
             }
         }
 

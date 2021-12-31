@@ -22,7 +22,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
 
         public async Task<IEnumerable<MovieDto>> GetSuggestedMoviesAsync(int nbMovies)
         {
-            var doc = await GetDocument(htmlUrlProvider.GetSuggestedMoviesUrl());
+            var doc = await HttpRequester.GetHtmlDocumentAsync(htmlUrlProvider.GetSuggestedMoviesUrl());
 
             var movieDtos = GetYtsHtmlMovieLiteDtos(doc.DocumentNode, true, true);
 
@@ -31,7 +31,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
 
         public async Task<IEnumerable<MovieDto>> GetLastMoviesByGenreAsync(int nbMovies, string genre)
         {
-            var doc = await GetDocument(htmlUrlProvider.GetLastMoviesByGenreUrl(genre));
+            var doc = await HttpRequester.GetHtmlDocumentAsync(htmlUrlProvider.GetLastMoviesByGenreUrl(genre));
 
             var movieDtos = GetYtsHtmlMovieLiteDtos(doc.DocumentNode);
 
@@ -42,7 +42,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
         {
             var pageIndex = page <= 0 ? 1 : page;
 
-            var doc = await GetDocument(htmlUrlProvider.GetMovieSearchByGenreUrl(genre, pageIndex));
+            var doc = await HttpRequester.GetHtmlDocumentAsync(htmlUrlProvider.GetMovieSearchByGenreUrl(genre, pageIndex));
 
             var movieDtos = GetYtsHtmlMovieLiteDtos(doc.DocumentNode);
 
@@ -62,7 +62,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
             {
                 pageIndex++;
 
-                var doc = await GetDocument(htmlUrlProvider.GetMovieSearchByNameUrl(name, pageIndex));
+                var doc = await HttpRequester.GetHtmlDocumentAsync(htmlUrlProvider.GetMovieSearchByNameUrl(name, pageIndex));
 
                 var movieDtos = GetYtsHtmlMovieLiteDtos(doc.DocumentNode);
 
@@ -77,7 +77,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
 
         public async Task<MovieDto> GetMovieDetailsAsync(string movieId)
         {
-            var doc = await GetDocument(htmlUrlProvider.GetMovieDetailsUrl(movieId));
+            var doc = await HttpRequester.GetHtmlDocumentAsync(htmlUrlProvider.GetMovieDetailsUrl(movieId));
 
             var movieTorrents = doc.DocumentNode.SelectSingleNode("//p/em[contains(text(), 'Available in')]").ParentNode;
             var movieTorrentsHtml = new HtmlAgilityPack.HtmlDocument();
@@ -105,15 +105,6 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
                                                             Quality = n.InnerText
                                                         }).ToArray()
             };
-        }
-
-        private async Task<HtmlDocument> GetDocument(string url)
-        {
-            var html = await HttpRequester.GetAsync(url, null);
-
-            var doc = new HtmlAgilityPack.HtmlDocument();
-            doc.LoadHtml(html);
-            return doc;
         }
 
         private IEnumerable<MovieDto> GetYtsHtmlMovieLiteDtos(HtmlNode documentNode, bool withSynopsis = false, bool withBackgroundImage = false)
@@ -145,7 +136,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
 
             if (withSynopsis || withBackgroundImage)
             {
-                var detailsDoc = GetDocument(htmlUrlProvider.GetMovieDetailsUrl(movieId)).Result;
+                var detailsDoc = HttpRequester.GetHtmlDocumentAsync(htmlUrlProvider.GetMovieDetailsUrl(movieId)).Result;
                 synopsis = withSynopsis ? detailsDoc.DocumentNode.SelectNodes("//div[@id='synopsis']//p")?.First().InnerText : string.Empty;
                 backgroundImage = withBackgroundImage ? htmlUrlProvider.GetImageUrl(detailsDoc.DocumentNode.SelectSingleNode("//a[contains(@class, 'screenshot-group')]").Attributes["href"].Value) : string.Empty;
             }
