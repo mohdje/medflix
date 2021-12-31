@@ -67,7 +67,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
                 var movieDtos = GetYtsHtmlMovieLiteDtos(doc.DocumentNode);
 
                 if (movieDtos.Any())
-                    moviesSearchResult.AddRange(movieDtos.Where(m => m.Title.ToLower().ContainWords(tokenizedName)));
+                    moviesSearchResult.AddRange(movieDtos.Where(m => m.Title.ToLower().ContainsWords(tokenizedName)));
                 else
                     keepSearch = false;
             }
@@ -109,7 +109,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
 
         private async Task<HtmlDocument> GetDocument(string url)
         {
-            var html = await HttpRequestHelper.GetAsync(url, null);
+            var html = await HttpRequester.GetAsync(url, null);
 
             var doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
@@ -173,7 +173,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
         {
             try
             {
-                var result = await HttpRequestHelper.GetAsync(new Uri(htmlUrlProvider.GetServiceUrl()));
+                var result = await HttpRequester.GetAsync(new Uri(htmlUrlProvider.GetServiceUrl()));
                 return !string.IsNullOrEmpty(result);
             }
             catch (Exception)

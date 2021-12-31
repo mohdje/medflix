@@ -80,7 +80,7 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
 
             try
             {
-                var dto = await HttpRequestHelper.GetAsync<List<OpenSubtitleMovieIdDto>>(url, pamareters);
+                var dto = await HttpRequester.GetAsync<List<OpenSubtitleMovieIdDto>>(url, pamareters);
                 return dto?.FirstOrDefault()?.OpenSubtitleMovieId;
             }
             catch (Exception)
@@ -94,7 +94,7 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
             var httpRequestHeaders = new List<KeyValuePair<string, string>>();
             httpRequestHeaders.Add(new KeyValuePair<string, string>("referer", baseUrl));
 
-            var result = HttpRequestHelper.DownloadAsync(new Uri(url), httpRequestHeaders, false).Result;
+            var result = HttpRequester.DownloadAsync(new Uri(url), httpRequestHeaders, false).Result;
 
             File.WriteAllBytes(destinationFileName, result);
         }
@@ -124,7 +124,7 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
         {
             try
             {
-                var html = await HttpRequestHelper.GetAsync(url, null);
+                var html = await HttpRequester.GetAsync(url, null);
                 var doc = new HtmlDocument();
                 doc.LoadHtml(html);
                 return doc;
@@ -158,6 +158,19 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
                     return "English";
                 default:
                     return null;
+            }
+        }
+
+        public async Task<bool> PingAsync()
+        {
+            try
+            {
+                var result = await HttpRequester.GetAsync(new Uri(baseUrl));
+                return !string.IsNullOrEmpty(result);
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
     }

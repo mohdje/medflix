@@ -32,7 +32,7 @@ namespace MoviesAPI.Services.VOMovies.YtsApi
             parameters.Add("sort_by", "year");
             parameters.Add("order_by", "desc");
 
-            var requestResult = await HttpRequestHelper.GetAsync<YtsResultDto>(ytsApiUrlProvider.GetBaseApiUrl() + listMovies, parameters);
+            var requestResult = await HttpRequester.GetAsync<YtsResultDto>(ytsApiUrlProvider.GetBaseApiUrl() + listMovies, parameters);
 
             return requestResult.Data.Movies.Where(m => !string.IsNullOrEmpty(m.Summary))
                                             .OrderBy(m => m.DateUploaded)
@@ -51,7 +51,7 @@ namespace MoviesAPI.Services.VOMovies.YtsApi
             parameters.Add("order_by", "desc");
             parameters.Add("genre", genre);
 
-            var requestResult = await HttpRequestHelper.GetAsync<YtsResultDto>(ytsApiUrlProvider.GetBaseApiUrl() + listMovies, parameters);
+            var requestResult = await HttpRequester.GetAsync<YtsResultDto>(ytsApiUrlProvider.GetBaseApiUrl() + listMovies, parameters);
 
             return requestResult.Data.Movies.OrderBy(m => m.DateUploaded).Take(nbMovies).Select(m => ToMovieDto(m));
         }
@@ -65,7 +65,7 @@ namespace MoviesAPI.Services.VOMovies.YtsApi
             parameters.Add("order_by", "desc");
             parameters.Add("genre", genre);
 
-            var requestResult = await HttpRequestHelper.GetAsync<YtsResultDto>(ytsApiUrlProvider.GetBaseApiUrl() + listMovies, parameters);
+            var requestResult = await HttpRequester.GetAsync<YtsResultDto>(ytsApiUrlProvider.GetBaseApiUrl() + listMovies, parameters);
 
             return requestResult.Data.Movies.Select(m => ToMovieDto(m));
         }
@@ -77,7 +77,7 @@ namespace MoviesAPI.Services.VOMovies.YtsApi
             parameters.Add("sort_by", "year");
             parameters.Add("order_by", "desc");
 
-            var requestResult = await HttpRequestHelper.GetAsync<YtsResultDto>(ytsApiUrlProvider.GetBaseApiUrl() + listMovies, parameters);
+            var requestResult = await HttpRequester.GetAsync<YtsResultDto>(ytsApiUrlProvider.GetBaseApiUrl() + listMovies, parameters);
 
             return requestResult.Data.Movies?.Select(m => ToMovieDto(m));
         }
@@ -90,7 +90,7 @@ namespace MoviesAPI.Services.VOMovies.YtsApi
             parameters.Add("sort_by", "year");
             parameters.Add("order_by", "desc");
 
-            var requestResult = await HttpRequestHelper.GetAsync<YtsResultDto>(ytsApiUrlProvider.GetBaseApiUrl() + movieDetails, parameters);
+            var requestResult = await HttpRequester.GetAsync<YtsResultDto>(ytsApiUrlProvider.GetBaseApiUrl() + movieDetails, parameters);
             var movieDto = ToMovieDto(requestResult?.Data?.Movie);
 
             if (movieDto != null)
@@ -101,7 +101,7 @@ namespace MoviesAPI.Services.VOMovies.YtsApi
 
         private async Task<string> GetDirector(string imdbCode)
         {
-            var html = await HttpRequestHelper.GetAsync("https://www.imdb.com/title/" + imdbCode, null);
+            var html = await HttpRequester.GetAsync("https://www.imdb.com/title/" + imdbCode, null);
 
             if (html == null)
                 return string.Empty;
@@ -157,7 +157,7 @@ namespace MoviesAPI.Services.VOMovies.YtsApi
         {
             try
             {
-                var result = await HttpRequestHelper.GetAsync(new Uri(ytsApiUrlProvider.GetPingUrl()));
+                var result = await HttpRequester.GetAsync(new Uri(ytsApiUrlProvider.GetPingUrl()));
                 return !string.IsNullOrEmpty(result);
             }
             catch (Exception)

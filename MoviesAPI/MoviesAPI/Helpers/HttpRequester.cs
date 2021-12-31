@@ -12,7 +12,7 @@ using System.Web;
 
 namespace MoviesAPI.Helpers
 {
-    internal static class HttpRequestHelper
+    internal static class HttpRequester
     {
         static HttpClient client;
         const string userAgent = "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36";
@@ -63,6 +63,19 @@ namespace MoviesAPI.Helpers
             }
 
             return result;
+        }
+
+        public static async Task<HtmlAgilityPack.HtmlDocument> GetHtmlDocumentAsync(string url)
+        {
+            var htmlResult = await GetAsync(new Uri(url));
+
+            if (string.IsNullOrEmpty(htmlResult))
+                return null;
+
+            var htmlDocument = new HtmlAgilityPack.HtmlDocument();
+            htmlDocument.LoadHtml(htmlResult);
+
+            return htmlDocument;
         }
 
         private static Uri BuildUri(string url, NameValueCollection parameters)
