@@ -9,7 +9,8 @@ namespace MoviesAPI.Services.CommonDtos
     public class ServiceInfo
     {
         public string Description { get; set; }
-        public bool Available { get; set; }
+        public bool? Available { get; set; }
         public int Id { get; set; }
+        public bool Selected { get; set; }
     }
 }

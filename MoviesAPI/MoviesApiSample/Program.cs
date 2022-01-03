@@ -42,30 +42,30 @@ namespace MoviesApiSample
         static void GetVOMovieServicesInfo()
         {
             Console.WriteLine("VOMovieServices");
-            var serviceInfos = MoviesAPIServiceFactories.VOMovieSearcherFactory.GetServicesInfo();
+            var serviceInfos = MoviesAPIServiceFactories.VOMovieSearcherFactory.GetServicesInfo(true);
             foreach (var info in serviceInfos)
             {
-                Console.WriteLine($"{info.Description}, {info.Id} : {(info.Available ? "available" : "unaivalable")}");
+                Console.WriteLine($"{info.Description}, {info.Id} : {(info.Available.Value ? "available" : "unaivalable")}");
             }
         }
 
         static void GetVFMovieServicesInfo()
         {
             Console.WriteLine("VFMovieServices");
-            var serviceInfos = MoviesAPIServiceFactories.VFMovieSearcherFactory.GetServicesInfo();
+            var serviceInfos = MoviesAPIServiceFactories.VFMovieSearcherFactory.GetServicesInfo(true);
             foreach (var info in serviceInfos)
             {
-                Console.WriteLine($"{info.Description}, {info.Id} : {(info.Available ? "available" : "unaivalable")}");
+                Console.WriteLine($"{info.Description}, {info.Id} : {(info.Available.Value ? "available" : "unaivalable")}");
             }
         }
 
         static void GetSubtitlesServicesInfo()
         {
             Console.WriteLine("SubtitlesServices");
-            var serviceInfos = MoviesAPIServiceFactories.SubtitlesProviderFactory.GetServicesInfo();
+            var serviceInfos = MoviesAPIServiceFactories.SubtitlesProviderFactory.GetServicesInfo(true);
             foreach (var info in serviceInfos)
             {
-                Console.WriteLine($"{info.Description}, {info.Id} : {(info.Available ? "available" : "unaivalable")}");
+                Console.WriteLine($"{info.Description}, {info.Id} : {(info.Available.Value ? "available" : "unaivalable")}");
             }
         }
 

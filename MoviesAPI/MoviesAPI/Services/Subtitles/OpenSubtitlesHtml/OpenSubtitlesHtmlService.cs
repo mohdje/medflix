@@ -19,6 +19,10 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
     public class OpenSubtitlesHtmlService : SubtitlesSearcher
     {
         private string baseUrl = "https://www.opensubtitles.org";
+
+        internal OpenSubtitlesHtmlService()
+        {
+        }
         public override async Task<SubtitlesSearchResultDto> GetAvailableSubtitlesAsync(string imdbCode, SubtitlesLanguage subtitlesLanguage)
         {
             var openSubtitleMovieId = await GetOpenSubtitleMovieId(imdbCode);
@@ -67,7 +71,7 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
 
             ExtractSubtitlesFile(downloadedFile, extractedFile);
 
-           return SubtitlesConverter.GetSubtitles(extractedFile);
+            return SubtitlesConverter.GetSubtitles(extractedFile);
         }
 
         private async Task<string> GetOpenSubtitleMovieId(string imdbCode)
@@ -86,7 +90,7 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
             catch (Exception)
             {
                 return null;
-            }          
+            }
         }
 
         private void DownloadSubtitle(string url, string destinationFileName)
@@ -106,7 +110,7 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
                     if (entry.FullName.EndsWith(".srt", StringComparison.OrdinalIgnoreCase))
-                    {                        
+                    {
                         // Gets the full path to ensure that relative segments are removed.
                         string destinationPath = Path.GetFullPath(extractedFile);
 

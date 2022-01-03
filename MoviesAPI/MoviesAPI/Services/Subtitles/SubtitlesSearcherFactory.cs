@@ -9,7 +9,7 @@ namespace MoviesAPI.Services.Subtitles
 {
    
 
-    public class SubtitlesProviderFactory : ServiceFactory<SubtitlesService, SubtitlesSearcher>
+    public class SubtitlesSearcherFactory : ServiceFactory<SubtitlesService, SubtitlesSearcher>
     {
         public override SubtitlesSearcher GetService(SubtitlesService serviceType)
         {

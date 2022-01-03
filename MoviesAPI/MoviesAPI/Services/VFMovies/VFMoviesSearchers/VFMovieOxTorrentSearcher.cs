@@ -16,6 +16,10 @@ namespace MoviesAPI.Services.VFMovies.VFMoviesSearchers
 
         private const string baseSearchUrl = "https://www.oxtorrents.co/recherche/";
 
+        internal VFMovieOxTorrentSearcher()
+        {
+
+        }
         public override async Task<IEnumerable<MovieTorrent>> GetMovieTorrentsAsync(string title, int year, bool exactTitle)
         {
             var imdbMoviesInfo = await ImdbRequester.GetImdbMoviesInfoAsync(title);

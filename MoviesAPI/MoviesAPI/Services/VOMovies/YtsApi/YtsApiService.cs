@@ -18,7 +18,7 @@ namespace MoviesAPI.Services.VOMovies.YtsApi
         private string listMovies = "list_movies.json";
         private string movieDetails = "movie_details.json";
 
-        public YtsApiService(IYtsApiUrlProvider ytsApiUrlProvider)
+        internal YtsApiService(IYtsApiUrlProvider ytsApiUrlProvider)
         {
             this.ytsApiUrlProvider = ytsApiUrlProvider;
         }

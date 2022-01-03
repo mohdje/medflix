@@ -15,7 +15,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
     {
         IYtsHtmlUrlProvider htmlUrlProvider;
 
-        public YtsHtmlService(IYtsHtmlUrlProvider ytsHtmlUrlProvider)
+        internal YtsHtmlService(IYtsHtmlUrlProvider ytsHtmlUrlProvider)
         {
             htmlUrlProvider = ytsHtmlUrlProvider;
         }

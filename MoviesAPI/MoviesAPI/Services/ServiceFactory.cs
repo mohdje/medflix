@@ -22,7 +22,29 @@ namespace MoviesAPI.Services
                 throw new ArgumentException("T must be an enumerated type");
             }
         }
-        public IEnumerable<ServiceInfo> GetServicesInfo()
+
+        public ServiceInfo GetServiceInfo(T serviceType, bool includeAvailabilityState)
+        {
+            var memInfo = serviceEnumType.GetMember(serviceEnumType.GetEnumName(serviceType));
+            var descriptionAttribute = memInfo[0]
+                .GetCustomAttributes(typeof(DescriptionAttribute), false)
+                .FirstOrDefault() as DescriptionAttribute;
+
+            if (descriptionAttribute != null)
+            {
+                object type = serviceType;
+
+                return new ServiceInfo()
+                {
+                    Description = descriptionAttribute.Description,
+                    Id = (int)type,
+                    Available = includeAvailabilityState ? PingService(serviceType) : null
+                };
+            }
+
+            return null;
+        }
+        public IEnumerable<ServiceInfo> GetServicesInfo(bool includeAvailabilityState)
         {
             var infoList = new List<ServiceInfo>();
             var tasks = new List<Task>();
@@ -37,12 +59,7 @@ namespace MoviesAPI.Services
                 {
                     tasks.Add(new Task(() =>
                     {
-                        infoList.Add(new ServiceInfo()
-                        {
-                            Description = descriptionAttribute.Description,
-                            Id = (int)val,
-                            Available = PingService((T)val)
-                        });
+                        infoList.Add(GetServiceInfo((T)val, includeAvailabilityState));
                     }));
                 }
             }

@@ -13,6 +13,6 @@ namespace MoviesApiSample
     {
         public static VOMovieSearcherFactory VOMovieSearcherFactory => new VOMovieSearcherFactory();
         public static VFMovieSearcherFactory VFMovieSearcherFactory => new VFMovieSearcherFactory();
-        public static SubtitlesProviderFactory SubtitlesProviderFactory => new SubtitlesProviderFactory();
+        public static SubtitlesSearcherFactory SubtitlesProviderFactory => new SubtitlesSearcherFactory();
     }
 }
