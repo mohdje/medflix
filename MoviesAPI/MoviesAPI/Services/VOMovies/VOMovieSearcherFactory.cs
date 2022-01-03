@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 namespace MoviesAPI.Services.VOMovies
 {
     
-    public class VOMovieSearcherFactory : ServiceFactory<VOMovieService, IVOMovieSearcher>
+    public class VOMovieSearcherFactory : ServiceFactory<VOMovieService, VOMovieSearcher>
     {
-        public override IVOMovieSearcher GetService(VOMovieService VOMovieService)
+        public override VOMovieSearcher GetService(VOMovieService VOMovieService)
         {
             switch (VOMovieService)
             {

@@ -8,27 +8,15 @@ using System.Text;
 using System.Threading.Tasks;
 using MoviesAPI.Extensions;
 
-namespace MoviesAPI.Services.VFMovies.VFMoviesSearcher
+namespace MoviesAPI.Services.VFMovies.VFMoviesSearchers
 {
-    public class VFMovieOxTorrentSearcher : IVFMovieSearcher
+    public class VFMovieOxTorrentSearcher : VFMoviesSearcher
     {
         private const string baseUrl = "https://www.oxtorrents.co";
 
         private const string baseSearchUrl = "https://www.oxtorrents.co/recherche/";
 
-        public async Task<bool> PingAsync()
-        {
-            try
-            {
-                var result = await HttpRequester.GetAsync(new Uri(baseUrl));
-                return !string.IsNullOrEmpty(result);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-        public async Task<IEnumerable<MovieTorrent>> GetMovieTorrentsAsync(string title, int year, bool exactTitle)
+        public override async Task<IEnumerable<MovieTorrent>> GetMovieTorrentsAsync(string title, int year, bool exactTitle)
         {
             var imdbMoviesInfo = await ImdbRequester.GetImdbMoviesInfoAsync(title);
             var imdbMovieInfo = imdbMoviesInfo?.SingleOrDefault(m => m.OriginalTitle.StartsWith(title, StringComparison.OrdinalIgnoreCase) && m.Year == year.ToString());
@@ -74,7 +62,7 @@ namespace MoviesAPI.Services.VFMovies.VFMoviesSearcher
 
         private string GetTorrentQuality(string linkTitle)
         {
-            var qualities = new string[] { "720p", "1080p", "DVDRIP" };
+            var qualities = new string[] { "720p", "1080p", "DVDRIP", "WEBRIP" };
 
             foreach (var quality in qualities)
             {
@@ -91,6 +79,9 @@ namespace MoviesAPI.Services.VFMovies.VFMoviesSearcher
             return null;
         }
 
-
+        protected override string GetPingUrl()
+        {
+            return baseUrl;
+        }
     }
 }

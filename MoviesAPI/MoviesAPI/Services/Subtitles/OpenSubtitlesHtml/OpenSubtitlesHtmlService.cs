@@ -16,10 +16,10 @@ using System.Net.Http.Headers;
 
 namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
 {
-    public class OpenSubtitlesHtmlService : ISubtitlesProvider
+    public class OpenSubtitlesHtmlService : SubtitlesSearcher
     {
         private string baseUrl = "https://www.opensubtitles.org";
-        public async Task<SubtitlesSearchResultDto> GetAvailableSubtitlesAsync(string imdbCode, SubtitlesLanguage subtitlesLanguage)
+        public override async Task<SubtitlesSearchResultDto> GetAvailableSubtitlesAsync(string imdbCode, SubtitlesLanguage subtitlesLanguage)
         {
             var openSubtitleMovieId = await GetOpenSubtitleMovieId(imdbCode);
             if (string.IsNullOrEmpty(openSubtitleMovieId))
@@ -48,7 +48,7 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
             };
         }
 
-        public IEnumerable<SubtitlesDto> GetSubtitles(string subtitleId, string extractionFolder)
+        public override IEnumerable<SubtitlesDto> GetSubtitles(string subtitleId, string extractionFolder)
         {
             if (!Directory.Exists(extractionFolder))
                 Directory.CreateDirectory(extractionFolder);
@@ -146,17 +146,9 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
             }
         }
 
-        public async Task<bool> PingAsync()
+        protected override string GetPingUrl()
         {
-            try
-            {
-                var result = await HttpRequester.GetAsync(new Uri(baseUrl));
-                return !string.IsNullOrEmpty(result);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            return baseUrl;
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MoviesAPI.Services
 {
-    public abstract class ServiceFactory<T, U> where T : struct, IConvertible where U : IService
+    public abstract class ServiceFactory<T, U> where T : struct, IConvertible where U : BaseService
     {
         private Type serviceEnumType;
         public ServiceFactory()

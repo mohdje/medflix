@@ -21,19 +21,19 @@ namespace MoviesApiSample
         {
             Console.WriteLine("Test started");
 
-            //SearchVOMovies("spider man", VOMovieService.YtsApiMx);
+            //SearchVOMovies("spider man", VOMovieService.YtsHtmlPm);
             //GetLastMoviesByGenre(VOMovieService.YtsApiMx, "Action");
             //GetSuggestedMovies(VOMovieService.YtsApiMx);
 
             //SearchVFMovies("inside man", 2006);
 
-            //PingService();
+
 
             //GetSubtitles(SubtitlesService.OpenSubtitlesHtml);
 
-            //GetVOMovieServicesInfo();
+            GetVOMovieServicesInfo();
             //GetVFMovieServicesInfo();
-            GetSubtitlesServicesInfo();
+            //GetSubtitlesServicesInfo();
 
             Console.WriteLine("End");
             Console.ReadKey();

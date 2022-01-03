@@ -11,7 +11,7 @@ using MoviesAPI.Helpers;
 
 namespace MoviesAPI.Services.VOMovies.YtsApi
 {
-    public class YtsApiService : IVOMovieSearcher
+    public class YtsApiService : VOMovieSearcher
     {
         IYtsApiUrlProvider ytsApiUrlProvider;
 
@@ -23,7 +23,7 @@ namespace MoviesAPI.Services.VOMovies.YtsApi
             this.ytsApiUrlProvider = ytsApiUrlProvider;
         }
 
-        public async Task<IEnumerable<MovieDto>> GetSuggestedMoviesAsync(int nbMovies)
+        public override async Task<IEnumerable<MovieDto>> GetSuggestedMoviesAsync(int nbMovies)
         {
             var parameters = new NameValueCollection();
             parameters.Add("limit", (50).ToString());
@@ -41,7 +41,7 @@ namespace MoviesAPI.Services.VOMovies.YtsApi
                                             .Select(m => ToMovieDto(m));
         }
 
-        public async Task<IEnumerable<MovieDto>> GetLastMoviesByGenreAsync(int nbMovies, string genre)
+        public override async Task<IEnumerable<MovieDto>> GetLastMoviesByGenreAsync(int nbMovies, string genre)
         {
             var parameters = new NameValueCollection();
             parameters.Add("limit", (50).ToString());
@@ -56,7 +56,7 @@ namespace MoviesAPI.Services.VOMovies.YtsApi
             return requestResult.Data.Movies.OrderBy(m => m.DateUploaded).Take(nbMovies).Select(m => ToMovieDto(m));
         }
 
-        public async Task<IEnumerable<MovieDto>> GetMoviesByGenreAsync(string genre, int page)
+        public override async Task<IEnumerable<MovieDto>> GetMoviesByGenreAsync(string genre, int page)
         {
             var parameters = new NameValueCollection();
             parameters.Add("limit", (20).ToString());
@@ -70,7 +70,7 @@ namespace MoviesAPI.Services.VOMovies.YtsApi
             return requestResult.Data.Movies.Select(m => ToMovieDto(m));
         }
 
-        public async Task<IEnumerable<MovieDto>> GetMoviesByNameAsync(string name)
+        public override async Task<IEnumerable<MovieDto>> GetMoviesByNameAsync(string name)
         {
             var parameters = new NameValueCollection();
             parameters.Add("query_term", name);
@@ -82,7 +82,7 @@ namespace MoviesAPI.Services.VOMovies.YtsApi
             return requestResult.Data.Movies?.Select(m => ToMovieDto(m));
         }
 
-        public async Task<MovieDto> GetMovieDetailsAsync(string movieId)
+        public override async Task<MovieDto> GetMovieDetailsAsync(string movieId)
         {
             var parameters = new NameValueCollection();
             parameters.Add("movie_id", movieId);
@@ -148,23 +148,14 @@ namespace MoviesAPI.Services.VOMovies.YtsApi
             };
         }
 
-        public IEnumerable<string> GetMovieGenres()
+        public override IEnumerable<string> GetMovieGenres()
         {
             return new string[] { "Thriller", "Sci-Fi", "Horror", "Romance", "Action", "Comedy", "Drama", "Crime", "Animation", "Adventure", "Fantasy" };
         }
 
-        public async Task<bool> PingAsync()
+        protected override string GetPingUrl()
         {
-            try
-            {
-                var result = await HttpRequester.GetAsync(new Uri(ytsApiUrlProvider.GetPingUrl()));
-                return !string.IsNullOrEmpty(result);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        
+            return this.ytsApiUrlProvider.GetPingUrl();
         }
     }
 }

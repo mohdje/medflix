@@ -1,4 +1,4 @@
-﻿using MoviesAPI.Services.VFMovies.VFMoviesSearcher;
+﻿using MoviesAPI.Services.VFMovies.VFMoviesSearchers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace MoviesAPI.Services.VFMovies
 {
 
-    public class VFMovieSearcherFactory : ServiceFactory<VFMoviesService, IVFMovieSearcher>
+    public class VFMovieSearcherFactory : ServiceFactory<VFMoviesService, VFMoviesSearcher>
     {
-        public override IVFMovieSearcher GetService(VFMoviesService serviceType)
+        public override VFMoviesSearcher GetService(VFMoviesService serviceType)
         {
             switch (serviceType)
             {

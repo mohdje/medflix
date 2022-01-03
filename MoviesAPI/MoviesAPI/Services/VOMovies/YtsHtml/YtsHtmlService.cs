@@ -11,7 +11,7 @@ using MoviesAPI.Helpers;
 namespace MoviesAPI.Services.VOMovies.YtsHtml
 {
 
-    public class YtsHtmlService : IVOMovieSearcher
+    public class YtsHtmlService : VOMovieSearcher
     {
         IYtsHtmlUrlProvider htmlUrlProvider;
 
@@ -20,7 +20,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
             htmlUrlProvider = ytsHtmlUrlProvider;
         }
 
-        public async Task<IEnumerable<MovieDto>> GetSuggestedMoviesAsync(int nbMovies)
+        public override async Task<IEnumerable<MovieDto>> GetSuggestedMoviesAsync(int nbMovies)
         {
             var doc = await HttpRequester.GetHtmlDocumentAsync(htmlUrlProvider.GetSuggestedMoviesUrl());
 
@@ -29,7 +29,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
             return movieDtos.Where(m => !string.IsNullOrEmpty(m.Synopsis)).Take(nbMovies);
         }
 
-        public async Task<IEnumerable<MovieDto>> GetLastMoviesByGenreAsync(int nbMovies, string genre)
+        public override async Task<IEnumerable<MovieDto>> GetLastMoviesByGenreAsync(int nbMovies, string genre)
         {
             var doc = await HttpRequester.GetHtmlDocumentAsync(htmlUrlProvider.GetLastMoviesByGenreUrl(genre));
 
@@ -38,7 +38,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
             return movieDtos.Take(nbMovies);
         }
 
-        public async Task<IEnumerable<MovieDto>> GetMoviesByGenreAsync(string genre, int page)
+        public override async Task<IEnumerable<MovieDto>> GetMoviesByGenreAsync(string genre, int page)
         {
             var pageIndex = page <= 0 ? 1 : page;
 
@@ -49,7 +49,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
             return movieDtos;
         }
 
-        public async Task<IEnumerable<MovieDto>> GetMoviesByNameAsync(string name)
+        public override async Task<IEnumerable<MovieDto>> GetMoviesByNameAsync(string name)
         {
             var pageIndex = 0;
             bool keepSearch = true;
@@ -75,7 +75,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
             return moviesSearchResult;
         }
 
-        public async Task<MovieDto> GetMovieDetailsAsync(string movieId)
+        public override async Task<MovieDto> GetMovieDetailsAsync(string movieId)
         {
             var doc = await HttpRequester.GetHtmlDocumentAsync(htmlUrlProvider.GetMovieDetailsUrl(movieId));
 
@@ -154,24 +154,15 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
             };
         }
 
-        public IEnumerable<string> GetMovieGenres()
+        public override IEnumerable<string> GetMovieGenres()
         {
             return new string[] { "Thriller", "Sci-Fi", "Horror", "Romance", "Action", "Comedy", "Drama", "Crime", "Animation", "Adventure", "Fantasy" };
 
         }
 
-        public async Task<bool> PingAsync()
+        protected override string GetPingUrl()
         {
-            try
-            {
-                var result = await HttpRequester.GetAsync(new Uri(htmlUrlProvider.GetServiceUrl()));
-                return !string.IsNullOrEmpty(result);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
+            return htmlUrlProvider.GetServiceUrl();
         }
     }
 }
