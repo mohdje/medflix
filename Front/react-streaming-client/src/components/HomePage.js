@@ -15,13 +15,9 @@ function HomePage({ genres, onMovieClick }) {
         <div style={{height: '100%'}}>
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />
             <div className="home-page-container" style={fadeTransition(dataLoaded)}>
-                <div className="suggested-movies">
-                    <SuggestedMovies onMoreClick={(movieId) => onMovieClick(movieId)} onDataLoaded={()=>setDataLoaded(true)}/>
-                </div>
+                <SuggestedMovies onMoreClick={(movieId) => onMovieClick(movieId)} onDataLoaded={()=>setDataLoaded(true)}/>
                 <div className="blur-divider"></div>
-                <div className="last-movies">
-                    <LastMoviesLists genres={genres} onMovieClick={(movieId) => onMovieClick(movieId)} />
-                </div>
+                <LastMoviesLists genres={genres} onMovieClick={(movieId) => onMovieClick(movieId)} />
             </div>
         </div>
     )
