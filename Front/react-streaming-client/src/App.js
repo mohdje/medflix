@@ -28,13 +28,11 @@ function App() {
   const [centerToLastClickedBookmark, setCenterToLastClickedBookmark] = useState(false);
   const [centerToLastClickedSeenMovie, setCenterToLastClickedSeenMovie] = useState(false);
 
-
   const [splashscreenVisible, setSplashscreenVisible] = useState(true);
   const [modalSearchVisible, setModalSearchVisible] = useState(false);
 
   const [modalListGenresVisible, setModalListGenresVisible] = useState(false);
   const [listGenres, setListGenres] = useState([]);
-  const [genresSelection, setGenresSelection] = useState([]);
 
   const [movieId, setMovieId] = useState('');
 
@@ -53,20 +51,6 @@ function App() {
     setModalSearchVisible(false);
     setMovieId(movieId);
     showComponent(routerIds.movieFullPresentation);
-  }
-
-  const selectRandomGenres = (genres, count) => {
-    var indexes = [];
-    while (indexes.length !== count) {
-      var index = Math.floor(Math.random() * genres.length);
-      if (!indexes.find(j => j === index)) indexes.push(index);
-    }
-
-    var selectedGenres = [];
-    for (let i = 0; i < indexes.length; i++) {
-      selectedGenres.push(genres[indexes[i]]);
-    }
-    setGenresSelection(selectedGenres);
   }
 
   const goToPreviousComponent = () => {
@@ -93,7 +77,7 @@ function App() {
       {
         id: routerIds.homePage,
         render: (<HomePage
-          genres={genresSelection}
+          genres={listGenres}
           onMovieClick={(movieId) => showMovieFullPresentation(movieId)} />)
       },
       {
@@ -132,7 +116,6 @@ function App() {
       (genres) => {
         if (genres && genres.length > 0) {
           setListGenres(genres);
-          selectRandomGenres(genres, 4);
         }
       }
     );

@@ -47,7 +47,7 @@ function LastMoviesLists({ genres, onMovieClick }) {
     }, [lastMoviesListRef]);
 
     return (
-        <div ref={lastMoviesListRef} style={{ height: '100%', overflowY: 'scroll' }}>
+        <div ref={lastMoviesListRef}>
             {genres.map((genre, index) =>
             (
                 <MoviesListGenreLite

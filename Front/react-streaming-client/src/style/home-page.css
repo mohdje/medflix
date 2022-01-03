@@ -1,11 +1,7 @@
 .home-page-container{
     height: 100%;
-    overflow: hidden;
-}
-
-.home-page-container .suggested-movies{
-    height: 44%;
-    
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .home-page-container .blur-divider {
@@ -15,9 +11,4 @@
     height: 1px;
     position: relative;
     z-index: 2;
-}
-
-.home-page-container .last-movies{
-    height: 56%;
-    z-index: 1;
 }
