@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MoviesAPI.Services;
+using MoviesAPI.Services.CommonDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,35 +15,72 @@ namespace WebHostStreaming.Controllers
     public class ServicesController : ControllerBase
     {
         IVOMovieSearcherProvider voMovieSearcherProvider;
-        public ServicesController(IVOMovieSearcherProvider movieServiceProvider)
+        IVFMovieSearcherProvider vfMovieSearcherProvider;
+        ISubtitlesSearcherProvider subtitlesSearcherProvider;
+        public ServicesController(
+            IVOMovieSearcherProvider voMovieSearcherProvider, 
+            IVFMovieSearcherProvider vfMovieSearcherProvider,
+            ISubtitlesSearcherProvider subtitlesSearcherProvider
+            )
         {
-            this.voMovieSearcherProvider = movieServiceProvider;
+            this.voMovieSearcherProvider = voMovieSearcherProvider;
+            this.vfMovieSearcherProvider = vfMovieSearcherProvider;
+            this.subtitlesSearcherProvider = subtitlesSearcherProvider;
         }
-        [HttpGet]
-        public IEnumerable<object> GetAvailableMovieServices()
+        [HttpGet("vo")]
+        public IEnumerable<ServiceInfo> GetVOMovieServices()
         {
-            var activeServiceTypeName = voMovieSearcherProvider.GetActiveServiceTypeName();
-
-            return voMovieSearcherProvider.GetAvailableVOMovieSearchers()
-                                        .Select(s => new
-                                        {
-                                            Name = s,
-                                            Selected = s == activeServiceTypeName
-                                        });
-        }
-
-        [HttpGet("active")]
-        public string GetActiveServiceName()
-        {
-           return voMovieSearcherProvider.GetActiveServiceTypeName();
+            return voMovieSearcherProvider.GetVOMoviesServicesInfo();
         }
 
-        [HttpPost]
-        public IActionResult ChangeMovieService([FromForm] string serviceName)
+        [HttpPost("vo")]
+        public IActionResult SelectVOMovieService([FromForm] int selectedVOMovieServiceId)
         {
             try
             {
-                voMovieSearcherProvider.UpdateActiveVOMovieSearcher((MovieServiceType)Enum.Parse(typeof(MovieServiceType), serviceName));
+                voMovieSearcherProvider.UpdateSelectedVOMovieSearcher(selectedVOMovieServiceId);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+
+            return StatusCode(200);
+        }
+
+        [HttpGet("vf")]
+        public IEnumerable<ServiceInfo> GetVFMovieServices()
+        {
+            return vfMovieSearcherProvider.GetVFMoviesServicesInfo();
+        }
+
+        [HttpPost("vf")]
+        public IActionResult SelectVFMovieService([FromForm] int selectedVFMovieServiceId)
+        {
+            try
+            {
+                vfMovieSearcherProvider.UpdateSelectedVFMovieSearcher(selectedVFMovieServiceId);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+
+            return StatusCode(200);
+        }
+
+        [HttpGet("subtitles")]
+        public IEnumerable<ServiceInfo> GetSubtitlesServices()
+        {
+            return subtitlesSearcherProvider.GetSubtitlesServicesInfo();
+        }
+
+        [HttpPost("subtitles")]
+        public IActionResult SelectSubtitlesService([FromForm] int selectedSubtitlesServiceId)
+        {
+            try
+            {
+                subtitlesSearcherProvider.UpdateSelectedSubtitlesSearcher(selectedSubtitlesServiceId);
             }
             catch (Exception)
             {

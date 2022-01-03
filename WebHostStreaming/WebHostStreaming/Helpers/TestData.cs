@@ -1,4 +1,5 @@
 ﻿using MoviesAPI.Services.CommonDtos;
+using MoviesAPI.Services.Subtitles.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;

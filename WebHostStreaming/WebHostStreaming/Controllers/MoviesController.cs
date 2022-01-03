@@ -10,6 +10,8 @@ using System.IO;
 using WebHostStreaming.Models;
 using WebHostStreaming.Helpers;
 using System.Net;
+using MoviesAPI.Services.VOMovies;
+using MoviesAPI.Services.VFMovies.VFMoviesSearchers;
 
 namespace WebHostStreaming.Controllers
 {
@@ -18,16 +20,22 @@ namespace WebHostStreaming.Controllers
     public class MoviesController : ControllerBase
     {
         IVOMovieSearcherProvider voMovieSearcherProvider;
-        IVOMovieSearcher voMovieSearcher;
+        VOMovieSearcher voMovieSearcher;
+        VFMoviesSearcher vfMovieSearcher;
+
         IMovieStreamProvider movieStreamProvider;
         IMovieBookmarkProvider movieBookmarkProvider;
         public MoviesController(
             IVOMovieSearcherProvider voMovieSearcherProvider,
+            IVFMovieSearcherProvider vfMovieSearcherProvider,
             IMovieStreamProvider movieStreamProvider,
             IMovieBookmarkProvider movieBookmarkProvider)
         {
             this.voMovieSearcherProvider = voMovieSearcherProvider;
             this.voMovieSearcher = voMovieSearcherProvider.GetActiveVOMovieSearcher();
+
+            this.vfMovieSearcher = vfMovieSearcherProvider.GetActiveVFMovieSearcher();
+
             this.movieStreamProvider = movieStreamProvider;
             this.movieBookmarkProvider = movieBookmarkProvider;
         }
@@ -68,17 +76,11 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("vf")]
-        public async Task<object> SearchVFMovies([FromQuery(Name = "title")] string title, [FromQuery(Name = "year")] string year)
+        public async Task<IEnumerable<MovieTorrent>> SearchVF([FromQuery(Name = "title")] string title, [FromQuery(Name = "year")] string year)
         {
-            var vfSearcher = new VfTorrentSearcher.MonTorrentMovieSearcher();
+            var movies = await vfMovieSearcher.GetMovieTorrentsAsync(title, int.Parse(year), true);
 
-            var movies = await vfSearcher.SearchVfAsync(title);
-
-            return movies?.Where(m => m.Year == year).Select(m => new
-            {
-                DownloadUrl = m.DownloadUrl,
-                Quality = m.Quality,
-            });
+            return movies;
         }
 
         [HttpGet("stream")]
@@ -128,10 +130,13 @@ namespace WebHostStreaming.Controllers
         [HttpPut("lastseenmovies")]
         public void SaveLastSeenMovie([FromBody] MovieDto movie)
         {
+            var serviceInfo = voMovieSearcherProvider.GetSelectedVOMoviesServiceInfo(false);
+
             var movieBookmark = new MovieBookmark()
             {
                 Movie = movie,
-                ServiceName = voMovieSearcherProvider.GetActiveServiceTypeName()
+                ServiceName = serviceInfo.Description,
+                ServiceId = serviceInfo.Id
             };
 
             movieBookmarkProvider.SaveMovieBookmark(movieBookmark, AppFiles.LastSeenMovies, 7);
@@ -147,10 +152,13 @@ namespace WebHostStreaming.Controllers
         [HttpPut("bookmarks")]
         public IActionResult BookmarkMovie([FromBody] MovieDto movie)
         {
+            var serviceInfo = voMovieSearcherProvider.GetSelectedVOMoviesServiceInfo(false);
+
             var movieBookmark = new MovieBookmark()
             {
                 Movie = movie,
-                ServiceName = voMovieSearcherProvider.GetActiveServiceTypeName()
+                ServiceName = serviceInfo.Description,
+                ServiceId = serviceInfo.Id
             };
 
             try

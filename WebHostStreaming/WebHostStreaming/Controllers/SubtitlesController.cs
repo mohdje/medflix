@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebHostStreaming.Providers;
-using MoviesAPI.Services.OpenSubtitlesHtml;
-using MoviesAPI.Services.OpenSubtitlesHtml.DTOs;
+using MoviesAPI.Services.Subtitles;
+using MoviesAPI.Services.Subtitles.DTOs;
 
 namespace WebHostStreaming.Controllers
 {
@@ -14,22 +14,22 @@ namespace WebHostStreaming.Controllers
     [ApiController]
     public class SubtitlesController : ControllerBase
     {
-        OpenSubtitlesHtmlService subtitlesService;
-        public SubtitlesController()
+        SubtitlesSearcher subtitlesSearcher;
+        public SubtitlesController(ISubtitlesSearcherProvider subtitlesSearcherProvider)
         {
-            subtitlesService = new OpenSubtitlesHtmlService();
+            this.subtitlesSearcher = subtitlesSearcherProvider.GetActiveSubtitlesSearcher();
         }
 
         [HttpGet("available/{imdbCode}")]
-        public async Task<IEnumerable<OpenSubtitlesDto>> GetAvailableSubtitles(string imdbCode)
+        public async Task<IEnumerable<SubtitlesSearchResultDto>> GetAvailableSubtitles(string imdbCode)
         {
-            var subtitlesDownloaders = new Task<OpenSubtitlesDto>[]
+            var subtitlesDownloaders = new Task<SubtitlesSearchResultDto>[]
             {
-                subtitlesService.GetAvailableSubtitlesAsync(imdbCode, "fre", "French"),
-                subtitlesService.GetAvailableSubtitlesAsync(imdbCode, "eng", "English")
+                subtitlesSearcher.GetAvailableSubtitlesAsync(imdbCode, SubtitlesLanguage.French),
+                subtitlesSearcher.GetAvailableSubtitlesAsync(imdbCode, SubtitlesLanguage.English)
             };
 
-            var subtitles = new List<OpenSubtitlesDto>();
+            var subtitles = new List<SubtitlesSearchResultDto>();
 
             await Task.WhenAll(subtitlesDownloaders).ContinueWith(s =>
             {
@@ -49,7 +49,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("{subtitlesId}")]
         public IEnumerable<SubtitlesDto> GetSubtitles(string subtitlesId)
         {
-            return subtitlesService.GetSubtitles(subtitlesId, Helpers.AppFolders.SubtitlesFolder);
+            return subtitlesSearcher.GetSubtitles(subtitlesId, Helpers.AppFolders.SubtitlesFolder);
         }
     }
 }

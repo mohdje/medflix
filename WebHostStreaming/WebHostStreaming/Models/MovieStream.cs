@@ -11,7 +11,6 @@ using MonoTorrent;
 using MonoTorrent.Client;
 using MonoTorrent.Streaming;
 using WebHostStreaming.Extensions;
-using Chromium;
 using WebHostStreaming.Helpers;
 
 namespace WebHostStreaming.Models
@@ -36,7 +35,7 @@ namespace WebHostStreaming.Models
 
         private ITorrentFileInfo movieFileInfo;
 
-        private static ChromiumWebClient client;
+        private static HttpClient client;
         private string torrentDownloadDirectory => Path.Combine(Helpers.AppFolders.TorrentsFolder, TorrentUri.ToMD5Hash());
         private string torrentFileName => Path.Combine(torrentDownloadDirectory, "torrent");
 
@@ -88,14 +87,17 @@ namespace WebHostStreaming.Models
                 Directory.CreateDirectory(torrentDownloadDirectory);
 
             if (client == null)
-                client = new ChromiumWebClient();
+                client = new HttpClient();
 
             await Task.Run(() =>
                 {
                     lock (client)
                     {
                         if (!File.Exists(torrentFileName))
-                            client.DownloadFileAsync(TorrentUri, torrentFileName).Wait();
+                        {
+                            var bytes = client.GetByteArrayAsync(TorrentUri).Result;
+                            File.WriteAllBytes(torrentFileName, bytes);
+                        }
                     }
                 }).ContinueWith(t =>
                 {

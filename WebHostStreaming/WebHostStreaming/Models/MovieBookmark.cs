@@ -10,5 +10,6 @@ namespace WebHostStreaming.Models
     {
         public MovieDto Movie { get; set; }
         public string ServiceName { get; set; }
+        public int ServiceId { get; set; }
     }
 }
