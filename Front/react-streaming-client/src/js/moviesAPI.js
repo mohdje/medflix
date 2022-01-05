@@ -59,15 +59,35 @@ const MoviesAPI = {
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
-    getAvailableMovieServices(onSuccess, onFail) {
-        this.sendRequest(this.apiServicesUrl, [], true, onSuccess, onFail);
+    getActiveVOMovieService(onSuccess, onFail){
+        this.sendRequest(this.apiServicesUrl + "vo/selected", [], false, onSuccess, onFail);
     },
 
-    getActiveMovieServiceName(onSuccess, onFail){
-        this.sendRequest(this.apiServicesUrl + "active", [], false, onSuccess, onFail);
+    getVOMovieServices(onSuccess, onFail){
+        this.sendRequest(this.apiServicesUrl + "vo", [], true, onSuccess, onFail);
     },
 
-    changeMovieService(serviceName, onSuccess, onFail) {
+    selectVOMovieService(serviceId, onSuccess, onFail){
+        this.selectService(this.apiServicesUrl + "vo", serviceId, onSuccess, onFail);
+    },
+
+    getVFMovieServices(onSuccess, onFail){
+        this.sendRequest(this.apiServicesUrl + "vf", [], true, onSuccess, onFail);
+    },
+
+    selectVFMovieService(serviceId, onSuccess, onFail){
+        this.selectService(this.apiServicesUrl + "vf", serviceId, onSuccess, onFail);
+    },
+
+    getSubtitlesMovieServices(onSuccess, onFail){
+        this.sendRequest(this.apiServicesUrl + "subtitles", [], true, onSuccess, onFail);
+    },
+
+    selectSubtitlesMovieService(serviceId, onSuccess, onFail){
+        this.selectService(this.apiServicesUrl + "vf", serviceId, onSuccess, onFail);
+    },
+
+    selectService(serviceUrl, selectedServiceId, onSuccess, onFail) {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState === 4) {
@@ -81,9 +101,9 @@ const MoviesAPI = {
                 }
             }
         };
-        xhttp.open("POST", this.apiServicesUrl, true);
+        xhttp.open("POST", serviceUrl, true);
         xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhttp.send("serviceName=" + serviceName);
+        xhttp.send("selectedServiceId=" + selectedServiceId);
     },
 
     getLastSeenMovies(onSuccess, onFail) {

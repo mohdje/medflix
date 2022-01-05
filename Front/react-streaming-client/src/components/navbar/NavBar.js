@@ -7,12 +7,9 @@ import ViewModuleIcon from '@material-ui/icons/ViewModule';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 
-import MovieServicesMenu from './MovieServicesMenu';
-
 import { useState, useRef } from 'react';
-import { useOnClickOutside } from '../../js/customHooks';
 
-function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onLastSeenMoviesClick, onBookmarkedMoviesClick }) {
+function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onLastSeenMoviesClick, onBookmarkedMoviesClick, onSettingsClick }) {
 
     const [showMovieServicesMenu, setShowMovieServicesMenu] = useState(false);
     const movieServicesMenuRef = useRef(null);
@@ -22,8 +19,6 @@ function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onLastSeenMovies
         width: '30px',
         height: '30px'
     }
-
-    useOnClickOutside(movieServicesMenuRef, () => setShowMovieServicesMenu(false));
 
     return (
         <div className="nav-bar-container">
@@ -44,13 +39,8 @@ function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onLastSeenMovies
                 <div className="nav-bar-btn" onClick={() => onSearchClick()}>
                     <SearchIcon style={navBarIconStyle} />
                 </div>
-                <div ref={movieServicesMenuRef} style={{ position: 'relative' }}>
-                    <div className="nav-bar-btn" onClick={() => setShowMovieServicesMenu(!showMovieServicesMenu)}>
-                        <SettingsIcon style={navBarIconStyle} />
-                    </div>
-                    <div style={{ position: 'absolute', top: '100%', right: '0' }}>
-                        <MovieServicesMenu visible={showMovieServicesMenu} onClick={() => setShowMovieServicesMenu(false)} />
-                    </div>
+                <div className="nav-bar-btn" onClick={() => onSettingsClick()}>
+                    <SettingsIcon style={navBarIconStyle} />
                 </div>
             </div>
         </div>

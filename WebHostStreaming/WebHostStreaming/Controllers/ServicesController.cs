@@ -30,15 +30,21 @@ namespace WebHostStreaming.Controllers
         [HttpGet("vo")]
         public IEnumerable<ServiceInfo> GetVOMovieServices()
         {
-            return voMovieSearcherProvider.GetVOMoviesServicesInfo();
+            return voMovieSearcherProvider.GetVOMoviesServicesInfo().OrderBy(s => s.Id);
+        }
+
+        [HttpGet("vo/selected")]
+        public ServiceInfo GetActiveVOMovieServices()
+        {
+            return voMovieSearcherProvider.GetSelectedVOMoviesServiceInfo(false);
         }
 
         [HttpPost("vo")]
-        public IActionResult SelectVOMovieService([FromForm] int selectedVOMovieServiceId)
+        public IActionResult SelectVOMovieService([FromForm] int selectedServiceId)
         {
             try
             {
-                voMovieSearcherProvider.UpdateSelectedVOMovieSearcher(selectedVOMovieServiceId);
+                voMovieSearcherProvider.UpdateSelectedVOMovieSearcher(selectedServiceId);
             }
             catch (Exception)
             {
@@ -51,15 +57,15 @@ namespace WebHostStreaming.Controllers
         [HttpGet("vf")]
         public IEnumerable<ServiceInfo> GetVFMovieServices()
         {
-            return vfMovieSearcherProvider.GetVFMoviesServicesInfo();
+            return vfMovieSearcherProvider.GetVFMoviesServicesInfo().OrderBy(s => s.Id);
         }
 
         [HttpPost("vf")]
-        public IActionResult SelectVFMovieService([FromForm] int selectedVFMovieServiceId)
+        public IActionResult SelectVFMovieService([FromForm] int selectedServiceId)
         {
             try
             {
-                vfMovieSearcherProvider.UpdateSelectedVFMovieSearcher(selectedVFMovieServiceId);
+                vfMovieSearcherProvider.UpdateSelectedVFMovieSearcher(selectedServiceId);
             }
             catch (Exception)
             {
@@ -72,15 +78,15 @@ namespace WebHostStreaming.Controllers
         [HttpGet("subtitles")]
         public IEnumerable<ServiceInfo> GetSubtitlesServices()
         {
-            return subtitlesSearcherProvider.GetSubtitlesServicesInfo();
+            return subtitlesSearcherProvider.GetSubtitlesServicesInfo().OrderBy(s => s.Id);
         }
 
         [HttpPost("subtitles")]
-        public IActionResult SelectSubtitlesService([FromForm] int selectedSubtitlesServiceId)
+        public IActionResult SelectSubtitlesService([FromForm] int selectedServiceId)
         {
             try
             {
-                subtitlesSearcherProvider.UpdateSelectedSubtitlesSearcher(selectedSubtitlesServiceId);
+                subtitlesSearcherProvider.UpdateSelectedSubtitlesSearcher(selectedServiceId);
             }
             catch (Exception)
             {
