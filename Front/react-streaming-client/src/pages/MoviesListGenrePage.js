@@ -1,12 +1,12 @@
-import "../../../style/movie-lite-presentation.css";
-import "../../../style/movies-list.css";
-import "../../../style/button.css";
+import "../style/movie-lite-presentation.css";
+import "../style/movies-list.css";
+import "../style/button.css";
 
 import AddIcon from '@material-ui/icons/Add';
-import CircularProgressBar from "../../common/CircularProgressBar";
+import CircularProgressBar from "../components/common/CircularProgressBar";
 
-import MovieLitePresentation from "../presentation/MovieLitePresentation";
-import MoviesAPI from "../../../js/moviesAPI.js";
+import MovieLitePresentation from "../components/movies/presentation/MovieLitePresentation";
+import MoviesAPI from "../js/moviesAPI.js";
 
 import { useEffect, useState } from 'react';
 
@@ -36,7 +36,7 @@ const cache = {
     movieElementId: ''
 }
 
-function MoviesListGenreFull({ genre, loadFromCache, onMovieClick }) {
+function MoviesListGenrePage({ genre, loadFromCache, onMovieClick }) {
 
     const [movies, setMovies] = useState([]);
     const [pageIndex, setPageIndex] = useState(0);
@@ -134,4 +134,4 @@ function MoviesListGenreFull({ genre, loadFromCache, onMovieClick }) {
     );
 }
 
-export default MoviesListGenreFull;
+export default MoviesListGenrePage;

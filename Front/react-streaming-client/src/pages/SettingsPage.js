@@ -1,5 +1,6 @@
 import "../style/button.css";
 import "../style/settings.css";
+import fadeTransition from "../js/customStyles.js";
 
 import CircularProgressBar from "../components/common/CircularProgressBar";
 import MoviesAPI from "../js/moviesAPI";
@@ -90,7 +91,7 @@ function SettingsPage() {
     return (
         <div className="settings-container">
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={loading} />
-            <div className={loading ? "hidden" : "visible"}>
+            <div style={fadeTransition(!loading)}>
                 {settingsSections.map((settingsSection) =>
                 <ServicesSection 
                     key={settingsSection.id}

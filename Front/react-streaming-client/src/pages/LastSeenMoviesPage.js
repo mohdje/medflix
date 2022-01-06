@@ -1,5 +1,5 @@
-import MoviesAPI from "../../../js/moviesAPI.js";
-import MoviesIntermediatePresentationList from "../list/MoviesIntermediatePresentationList";
+import MoviesAPI from "../js/moviesAPI.js";
+import MoviesIntermediatePresentationList from "../components/movies/list/MoviesIntermediatePresentationList";
 import { useEffect, useState } from 'react';
 
 var lastSeenMovieLastClicked = null;

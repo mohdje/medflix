@@ -1,17 +1,17 @@
 
-import "../../../style/movie-full-presentation.css";
+import "../style/movie-full-presentation.css";
 
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
-import VideoPlayerWindow from '../../video/VideoPlayerWindow';
-import CircularProgressBar from "../../common/CircularProgressBar";
-import PlayButton from "../../common/PlayButton";
-import PlayWithVLCButton from "../../common/PlayWithVLCButton";
-import BookmarkButton from "../../common/BookmarkButton";
-import ModalPlayWithVLCInstructions from "../../modal/ModalPlayWithVLCInstructions";
+import VideoPlayerWindow from '../components/video/VideoPlayerWindow';
+import CircularProgressBar from "../components/common/CircularProgressBar";
+import PlayButton from "../components/common/PlayButton";
+import PlayWithVLCButton from "../components/common/PlayWithVLCButton";
+import BookmarkButton from "../components/common/BookmarkButton";
+import ModalPlayWithVLCInstructions from "../components/modal/ModalPlayWithVLCInstructions";
 
-import MoviesAPI from "../../../js/moviesAPI.js";
-import fadeTransition from "../../../js/customStyles.js";
+import MoviesAPI from "../js/moviesAPI.js";
+import fadeTransition from "../js/customStyles.js";
 
 import { useEffect, useState } from 'react';
 
@@ -47,8 +47,8 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                         setDataLoaded(true);
                     }
                 });
-            MoviesAPI.getActiveMovieServiceName((serviceName) => {
-                MoviesAPI.isMovieBookmarked(movieId, serviceName, (isMovieBookmarked) => {
+            MoviesAPI.getActiveVOMovieService((service) => {           
+                MoviesAPI.isMovieBookmarked(movieId, service.id, (isMovieBookmarked) => {
                     isMovieBookmarked = isMovieBookmarked === 'true';
                     setAddBookmarkButtonVisible(!isMovieBookmarked);
                 });

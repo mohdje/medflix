@@ -9,11 +9,11 @@ import SplashScreen from "./components/SplashScreen";
 import ModalSearch from "./components/modal/ModalSearch";
 import ModalListGenre from "./components/modal/ModalListGenre.js";
 
-import MoviesListGenreFull from "./components/movies/list/MoviesListGenreFull";
-import MovieFullPresentation from "./components/movies/presentation/MovieFullPresentation";
-import HomePage from "./components/HomePage";
-import LastSeenMoviesView from "./components/movies/views/LastSeenMoviesView";
-import BookmarkedMoviesView from "./components/movies/views/BookmarkedMoviesView";
+import MoviesListGenrePage from "./pages/MoviesListGenrePage";
+import MoviePresentationPage from "./pages/MoviePresentationPage";
+import HomePage from "./pages/HomePage";
+import LastSeenMoviesPage from "./pages/LastSeenMoviesPage";
+import BookmarkedMoviesPage from "./pages/BookmarkedMoviesPage";
 import SettingsPage from "./pages/SettingsPage";
 
 
@@ -45,13 +45,13 @@ function App() {
   const showMoviesFullListofGenre = (genre) => {
     setMoviesFullListGenre(genre);
     setLoadFullListGenrefromCache(false);
-    showComponent(routerIds.moviesGenreFullList);
+    showComponent(routerIds.moviesListGenrePage);
   }
 
   const showMovieFullPresentation = (movieId) => {
     setModalSearchVisible(false);
     setMovieId(movieId);
-    showComponent(routerIds.movieFullPresentation);
+    showComponent(routerIds.moviePresentationPage);
   }
 
   const goToPreviousComponent = () => {
@@ -67,10 +67,10 @@ function App() {
 
   const routerIds = {
     homePage: 'homePage',
-    moviesGenreFullList: 'moviesOfGenre',
-    movieFullPresentation: 'movieFullPresentation',
-    seenMoviesList: 'seenMoviesList',
-    bookmarkedMoviesList: 'bookmarkedMoviesList',
+    moviesListGenrePage: 'moviesOfGenre',
+    moviePresentationPage: 'moviePresentationPage',
+    seenMoviesListPage: 'seenMoviesListPage',
+    bookmarkedMoviesListPage: 'bookmarkedMoviesListPage',
     settings: 'settings'
   }
 
@@ -83,27 +83,27 @@ function App() {
           onMovieClick={(movieId) => showMovieFullPresentation(movieId)} />)
       },
       {
-        id: routerIds.moviesGenreFullList,
-        render: (<MoviesListGenreFull
+        id: routerIds.moviesListGenrePage,
+        render: (<MoviesListGenrePage
           genre={moviesFullListGenre}
           loadFromCache={loadFullListGenrefromCache}
           onMovieClick={(movieId) => showMovieFullPresentation(movieId)} />)
       },
       {
-        id: routerIds.movieFullPresentation,
-        render: (<MovieFullPresentation
+        id: routerIds.moviePresentationPage,
+        render: (<MoviePresentationPage
           movieId={movieId}
           onCloseClick={() => onMovieFullPresentationClose()} />)
       },
       {
-        id: routerIds.seenMoviesList,
-        render: (<LastSeenMoviesView
+        id: routerIds.seenMoviesListPage,
+        render: (<LastSeenMoviesPage
           centerToLastClickedMovie={centerToLastClickedSeenMovie}
           onMoreClick={(movieId) => showMovieFullPresentation(movieId)} />)
       },
       {
-        id: routerIds.bookmarkedMoviesList,
-        render: (<BookmarkedMoviesView
+        id: routerIds.bookmarkedMoviesListPage,
+        render: (<BookmarkedMoviesPage
           centerToLastClickedBookmark={centerToLastClickedBookmark}
           onMoreClick={(movieId) => showMovieFullPresentation(movieId)} />)
       },
@@ -144,10 +144,10 @@ function App() {
         onSearchClick={() => setModalSearchVisible(true)}
         onHomeClick={() => setRouterActiveComponentId(routerIds.homePage)}
         onGenreMenuClick={() => setModalListGenresVisible(true)}
-        onLastSeenMoviesClick={() => { setCenterToLastClickedSeenMovie(false); setRouterActiveComponentId(routerIds.seenMoviesList) }}
-        onBookmarkedMoviesClick={() => { setCenterToLastClickedBookmark(false); setRouterActiveComponentId(routerIds.bookmarkedMoviesList) }}
+        onLastSeenMoviesClick={() => { setCenterToLastClickedSeenMovie(false); setRouterActiveComponentId(routerIds.seenMoviesListPage) }}
+        onBookmarkedMoviesClick={() => { setCenterToLastClickedBookmark(false); setRouterActiveComponentId(routerIds.bookmarkedMoviesListPage) }}
         onSettingsClick={() => {setRouterActiveComponentId(routerIds.settings)}} />
-      <div className="app-content" >
+      <div className="app-content">
         <Router components={router.components} activeComponentId={routerActiveComponentId} />
       </div>
     </div>
