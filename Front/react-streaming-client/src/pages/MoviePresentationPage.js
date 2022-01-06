@@ -11,7 +11,6 @@ import PlayButton from "../components/common/Buttons/PlayButton";
 import TrailerButton from "../components/common/Buttons/TrailerButton";
 import PlayWithVLCButton from "../components/common/Buttons/PlayWithVLCButton";
 import BookmarkButton from "../components/common/Buttons/BookmarkButton";
-import ModalPlayWithVLCInstructions from "../components/modal/ModalPlayWithVLCInstructions";
 
 import MoviesAPI from "../js/moviesAPI.js";
 import fadeTransition from "../js/customStyles.js";
@@ -128,7 +127,6 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
     return (
         <div style={{ height: '100%' }}>
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />
-            <ModalPlayWithVLCInstructions visible={showVLCPlayerInstructions} sources={selectedMovieSources} onCloseClick={() => setShowVLCPlayerInstructions(false)} />
             <ModalMovieTrailer visible={showMovieTrailer} youtubeTrailerUrl={movieDetails.youtubeTrailerUrl} onCloseClick={() => setShowMovieTrailer(false)}/>
             <VideoPlayerWindow visible={showMoviePlayer} sources={selectedMovieSources} subtitles={movieSubtitles} onCloseClick={() => setShowMoviePlayer(false)} />
  
