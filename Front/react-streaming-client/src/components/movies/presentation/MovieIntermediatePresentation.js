@@ -21,7 +21,6 @@ function MovieIntermediatePresentation({ movieBookmark, deleteButtonAvailable, o
                 </div>
                 <div className="movie-intermediate-presentation-actions">
                     <MoreButton onClick={() => onMoreClick()} color="grey" />
-                    <PlayButton onClick={() => onPlayClick()} />
                     <DeleteButton onClick={() => onDeleteClick()} visible={deleteButtonAvailable}/>
                 </div>
             </div>
