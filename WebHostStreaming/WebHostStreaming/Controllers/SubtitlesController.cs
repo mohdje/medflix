@@ -33,14 +33,23 @@ namespace WebHostStreaming.Controllers
 
             await Task.WhenAll(subtitlesDownloaders).ContinueWith(s =>
             {
-                if (s?.Result != null)
+                try
                 {
-                    foreach (var openSubtitleDto in s.Result)
+                    if (s?.Result != null)
                     {
-                        if (openSubtitleDto?.SubtitlesIds != null && openSubtitleDto.SubtitlesIds.Any())
-                            subtitles.Add(openSubtitleDto);
+                        foreach (var openSubtitleDto in s.Result)
+                        {
+                            if (openSubtitleDto?.SubtitlesIds != null && openSubtitleDto.SubtitlesIds.Any())
+                                subtitles.Add(openSubtitleDto);
+                        }
                     }
                 }
+                catch (Exception)
+                {
+
+                   
+                }
+               
             });
 
             return subtitles;

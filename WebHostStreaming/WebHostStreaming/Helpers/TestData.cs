@@ -11,7 +11,7 @@ namespace WebHostStreaming.Helpers
     {     
         public static string ParadiseCanyonTorrentUrl => "https://archive.org/download/ParadiseCanyon/ParadiseCanyon_archive.torrent";
         public static string JungleBookTorrentUrl => "https://archive.org/download/JungleBook/JungleBook_archive.torrent";
-        public static System.IO.Stream SunriseMexicoVideoStream => new System.IO.FileStream(@"C:\Users\mohamed\Desktop\Projects\Streaming\test\data\Sunrise In Empty Plaza del Zócalo In Mexico City.mp4", System.IO.FileMode.Open);
+        public static System.IO.Stream SunriseMexicoVideoStream => new System.IO.FileStream(@"D:\Projets\Streaming\test\data\Sunrise In Empty Plaza del Zócalo In Mexico City.mp4", System.IO.FileMode.Open);
     
         public static IEnumerable<SubtitlesDto> GetSubtitlesDto()
         {

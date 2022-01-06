@@ -30,8 +30,6 @@ namespace WebHostStreaming.Middlewares
                 {
                     await sw.WriteAsync(BuildErrorMessage(e, context));
                 }
-
-                throw;
             }
         }
 
