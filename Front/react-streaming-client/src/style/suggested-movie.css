@@ -40,19 +40,17 @@
 }
 
 .suggested-movie-title{
-    font-size: 1.6rem;
-    font-weight: bold;
-    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    font-size: 25px;
 }
 
 .suggested-movie-year{
-    font-style: italic;
-    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    font-size: 16px;
+    color:rgb(194, 194, 194);
 }
 
 .suggested-movie-rating{
     border-radius: 50%;
-    background-color: rgb(71, 50, 50);
+    background-color: rgb(59, 59, 59);
     color:white;
     width: 40px;
     height: 40px;
