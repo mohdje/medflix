@@ -185,7 +185,8 @@
 .video-player-subtitles{
     max-width: 50%;
     color: white;
-    margin: 0 auto 50px auto;
+    background-color: #00000079;
+    margin: 0 auto;
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
