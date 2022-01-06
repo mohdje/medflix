@@ -2,6 +2,7 @@ import ModalWindow from "./ModalWindow";
 
 function ModalMovieTrailer({visible, youtubeTrailerUrl, onCloseClick}){
 
+
     const trailerStyle = {      
             width: '800px',
             height: '500px',
@@ -13,7 +14,7 @@ function ModalMovieTrailer({visible, youtubeTrailerUrl, onCloseClick}){
 
     const content = () => {
         return (
-            <iframe style={trailerStyle} src={youtubeTrailerUrl}></iframe>
+            <iframe style={trailerStyle} src={visible ? youtubeTrailerUrl : ''}></iframe>
         );
     };
 
