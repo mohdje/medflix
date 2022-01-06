@@ -1,16 +1,18 @@
 .App {
-  text-align: center;
-  margin: 0;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
 }
 
 .app-content{
   overflow-x: hidden;
   overflow-y: auto;
-  height: 90%;
+  flex-grow: 3;
 }
 
 /* width */
