@@ -1,11 +1,14 @@
 
-import "../style/movie-full-presentation.css";
+import "../style/movie-presentation-page.css";
 
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+
+import ModalMovieTrailer from '../components/modal/ModalMovieTrailer';
 
 import VideoPlayerWindow from '../components/video/VideoPlayerWindow';
 import CircularProgressBar from "../components/common/CircularProgressBar";
 import PlayButton from "../components/common/PlayButton";
+import TrailerButton from "../components/common/TrailerButton";
 import PlayWithVLCButton from "../components/common/PlayWithVLCButton";
 import BookmarkButton from "../components/common/BookmarkButton";
 import ModalPlayWithVLCInstructions from "../components/modal/ModalPlayWithVLCInstructions";
@@ -18,20 +21,19 @@ import { useEffect, useState } from 'react';
 
 function MovieFullPresentation({ movieId, onCloseClick }) {
 
+    const [dataLoaded, setDataLoaded] = useState(false);
     const [movieDetails, setMovieDetails] = useState({});
 
     const [selectedVersion, setSelectedVersion] = useState("VO");
     const [vfState, setVfState] = useState("not available");
-    const [availableMovieSources, setAvailableMovieSources] = useState([]);
     const [VOMovieSources, setVOMovieSources] = useState([]);
     const [VFMovieSources, setVFMovieSources] = useState([]);
-
 
     const [selectedMovieSources, setSelectedMovieSources] = useState([]);
     const [movieSubtitles, setMovieSubtitles] = useState([]);
 
-    const [dataLoaded, setDataLoaded] = useState(false);
     const [showMoviePlayer, setShowMoviePlayer] = useState(false);
+    const [showMovieTrailer, setShowMovieTrailer] = useState(false);
     const [showVLCPlayerInstructions, setShowVLCPlayerInstructions] = useState(false);
     const [addBookmarkButtonVisible, setAddBookmarkButtonVisible] = useState(true);
 
@@ -57,7 +59,6 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
     }, [movieId]);
 
     useEffect(() => {
-
         if (movieDetails.title) {
             setVfState('loading');
             MoviesAPI.searchVFSources(movieDetails.title, movieDetails.year,
@@ -113,39 +114,46 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
         );
     }
 
+    const getMovieInfo = () => {
+        let info = movieDetails?.year;
+        if(movieDetails?.rating)
+            info += " - " + movieDetails.rating.replace(',','.');
+
+        if(movieDetails?.duration)
+            info +=" - " + movieDetails.duration.replace(/\s/g, "");
+
+        return info;
+    }
+
     return (
         <div style={{ height: '100%' }}>
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />
             <ModalPlayWithVLCInstructions visible={showVLCPlayerInstructions} sources={selectedMovieSources} onCloseClick={() => setShowVLCPlayerInstructions(false)} />
-            <div style={fadeTransition(dataLoaded)} className="movie-full-presentation-container">
-                <VideoPlayerWindow visible={showMoviePlayer} sources={selectedMovieSources} subtitles={movieSubtitles} onCloseClick={() => setShowMoviePlayer(false)} />
-                <div className="movie-full-presentation-close-btn" onClick={() => onCloseClick()}>
-                    <ArrowBackIcon className="close-cross" />
+            <ModalMovieTrailer visible={showMovieTrailer} youtubeTrailerUrl={movieDetails.youtubeTrailerUrl} onCloseClick={() => setShowMovieTrailer(false)}/>
+            <VideoPlayerWindow visible={showMoviePlayer} sources={selectedMovieSources} subtitles={movieSubtitles} onCloseClick={() => setShowMoviePlayer(false)} />
+ 
+            <div style={fadeTransition(dataLoaded)} className="movie-presentation-page-container">
+                <div className="back-btn" onClick={() => onCloseClick()}>
+                    <ArrowBackIcon className="back-arrow" />
                 </div>
-                <div className="movie-full-presentation-header" style={{ backgroundImage: 'url(' + movieDetails.backgroundImageUrl + ')' }}>
-                    <div className="cover-and-rating">
-                        <img className="cover" src={movieDetails.coverImageUrl} />
-                        <div className="rating">{movieDetails.rating} </div>
-                    </div>
-                    <div className="title-and-trailer">
-                        <div className="title">{movieDetails.title}</div>
-                        <div className="year">{movieDetails.year}</div>
-                        <iframe className="trailer" src={movieDetails.youtubeTrailerUrl}></iframe>
-                    </div>
+                <div className="illustration" style={{ backgroundImage: 'url(' + movieDetails.backgroundImageUrl + ')' }}>
+                    <img className="cover" src={movieDetails.coverImageUrl} />
                 </div>
-                <div className="movie-full-presentation-video-info">
-                    <VideoInfo infoTitle={"Versions"} infoContent={versionSelector()} />
-                    <VideoInfo infoTitle={"Qualities"} infoContent={getVideoQualities(movieDetails.torrents)} />
-                    <VideoInfo infoTitle={"Duration"} infoContent={movieDetails.duration} />
-                    <PlayButton onClick={() => setShowMoviePlayer(true)} />
-                    <PlayWithVLCButton onClick={() => setShowVLCPlayerInstructions(true)} />
-                    <BookmarkButton onClick={() => bookmarkMovie()} visible={addBookmarkButtonVisible} />
-                </div>
-                <div className="movie-full-presentation-body">
-                    <MovieInfo infoTitle={"Genre"} infoContent={movieDetails.genres} />
-                    <MovieInfo infoTitle={"Synopsis"} infoContent={movieDetails.synopsis} />
+                <div className="info">
+                    <div className="title">{movieDetails.title}</div>
+                    <div className="details">{getMovieInfo()}</div>
                     <MovieInfo infoTitle={"Director"} infoContent={movieDetails.director} />
                     <MovieInfo infoTitle={"Cast"} infoContent={movieDetails.cast} />
+                    <MovieInfo infoTitle={"Genre"} infoContent={movieDetails.genres} />
+                    <MovieInfo infoTitle={"Synopsis"} infoContent={movieDetails.synopsis} />
+                    <MovieInfo infoTitle={"Qualities"} infoContent={getVideoQualities(movieDetails.torrents)} />
+                    <MovieInfo infoTitle={"Versions"} infoContent={versionSelector()} />
+                    <div className="actions">
+                        <TrailerButton visible={movieDetails?.youtubeTrailerUrl} onClick={() => setShowMovieTrailer(true)} />
+                        <PlayButton onClick={() => setShowMoviePlayer(true)} />
+                        <PlayWithVLCButton onClick={() => setShowVLCPlayerInstructions(true)} />
+                        <BookmarkButton onClick={() => bookmarkMovie()} visible={addBookmarkButtonVisible} />
+                    </div>
                 </div>
             </div>
         </div>
@@ -153,21 +161,17 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
 }
 export default MovieFullPresentation;
 
-function VideoInfo({ infoTitle, infoContent }) {
-    return (
-        <div className="video-info">
-            <span className="title">{infoTitle} </span>{infoContent}
-        </div>
-    )
-}
-
 function MovieInfo({ infoTitle, infoContent }) {
-    return (
-        <div className="movie-full-presentation-info">
-            <div className="title">{infoTitle}</div>
-            <div className="content">{infoContent}</div>
-        </div>
-    )
+    if(infoContent){
+        return (
+            <div className="extra">
+                <div className="title">{infoTitle}</div>
+                <div className="content">{infoContent}</div>
+            </div>
+        )
+    }
+    else 
+        return null; 
 }
 
 function VersionSelector({ vfState, onVersionSelected }) {
