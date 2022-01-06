@@ -60,7 +60,7 @@ const MoviesAPI = {
     },
 
     getActiveVOMovieService(onSuccess, onFail){
-        this.sendRequest(this.apiServicesUrl + "vo/selected", [], false, onSuccess, onFail);
+        this.sendRequest(this.apiServicesUrl + "vo/selected", [], true, onSuccess, onFail);
     },
 
     getVOMovieServices(onSuccess, onFail){
@@ -147,18 +147,18 @@ const MoviesAPI = {
             }
     },
 
-    isMovieBookmarked(movieId, serviceName, onSuccess, onFail){
+    isMovieBookmarked(movieId, serviceId, onSuccess, onFail){
         var parameters = [
             {
                 name: 'movieId',
                 value: movieId
             },
             {
-                name: 'serviceName',
-                value: serviceName
+                name: 'serviceId',
+                value: serviceId
             }
         ];
-
+        console.log('isMovieBookmarked', this.apiBookmarkedMoviesUrl + 'exists', parameters);
         this.sendRequest(this.apiBookmarkedMoviesUrl + 'exists', parameters, false, onSuccess, onFail);
     },
 

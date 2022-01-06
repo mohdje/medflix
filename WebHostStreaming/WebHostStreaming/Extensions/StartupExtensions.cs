@@ -15,7 +15,8 @@ namespace WebHostStreaming.StartupExtensions
             services.AddSingleton<IVFMovieSearcherProvider, VFMovieSearcherProvider>();
             services.AddSingleton<ISubtitlesSearcherProvider, SubtitlesSearcherProvider>();
             services.AddSingleton<IMovieStreamProvider, MovieStreamProvider>();
-            services.AddSingleton<IMovieBookmarkProvider, MovieBookmarkProvider>();
+            services.AddSingleton<ISeenMovieBookmarkProvider, SeenMovieBookmarkProvider>();
+            services.AddSingleton<IMovieToSeeBookmarkProvider, MovieToSeeBookmarkProvider>();
         }
     }
 }

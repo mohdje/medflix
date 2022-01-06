@@ -14,7 +14,7 @@ function MoviesIntermediatePresentationList({ title, moviesBookmarks, centerToMo
     const selectMoviesService = (movieBookmark, callback) => {
         setMoviesServiceLoadingVisible(true);
         setTimeout(() => {
-            MoviesAPI.changeMovieService(movieBookmark.serviceName, () => {
+            MoviesAPI.selectVOMovieService(movieBookmark.serviceId, () => {
                 setMoviesServiceLoadingVisible(false);
                 callback();
             })
@@ -35,6 +35,7 @@ function MoviesIntermediatePresentationList({ title, moviesBookmarks, centerToMo
     }, [moviesBookmarks, centerToMovieBookmark]);
 
     useEffect(() => {
+        console.log(selectedMovie);
         if (selectedMovie) MoviesAPI.saveLastSeenMovie(selectedMovie);
     }, [selectedMovie]);
 

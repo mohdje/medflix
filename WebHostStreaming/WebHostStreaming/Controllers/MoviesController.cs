@@ -24,12 +24,14 @@ namespace WebHostStreaming.Controllers
         VFMoviesSearcher vfMovieSearcher;
 
         IMovieStreamProvider movieStreamProvider;
-        IMovieBookmarkProvider movieBookmarkProvider;
+        ISeenMovieBookmarkProvider seenMovieBookmarkProvider;
+        IMovieToSeeBookmarkProvider movieToSeeBookmarkProvider;
         public MoviesController(
             IVOMovieSearcherProvider voMovieSearcherProvider,
             IVFMovieSearcherProvider vfMovieSearcherProvider,
             IMovieStreamProvider movieStreamProvider,
-            IMovieBookmarkProvider movieBookmarkProvider)
+            ISeenMovieBookmarkProvider seenMovieBookmarkProvider,
+            IMovieToSeeBookmarkProvider movieToSeeBookmarkProvider)
         {
             this.voMovieSearcherProvider = voMovieSearcherProvider;
             this.voMovieSearcher = voMovieSearcherProvider.GetActiveVOMovieSearcher();
@@ -37,7 +39,8 @@ namespace WebHostStreaming.Controllers
             this.vfMovieSearcher = vfMovieSearcherProvider.GetActiveVFMovieSearcher();
 
             this.movieStreamProvider = movieStreamProvider;
-            this.movieBookmarkProvider = movieBookmarkProvider;
+            this.seenMovieBookmarkProvider = seenMovieBookmarkProvider;
+            this.movieToSeeBookmarkProvider = movieToSeeBookmarkProvider;
         }
         [HttpGet("genres")]
         public IEnumerable<string> GetMoviesGenres()
@@ -96,10 +99,12 @@ namespace WebHostStreaming.Controllers
             try
             {
                 var acceptedFormat = userAgent.StartsWith("VLC") ? "*" : ".mp4";
-                var streamDto = movieStreamProvider.GetStream(url, offset, acceptedFormat);
+                //var streamDto = movieStreamProvider.GetStream(url, offset, acceptedFormat);
+                var streamDto = TestData.SunriseMexicoVideoStream;
 
                 if (streamDto != null)
-                    return File(streamDto.Stream, streamDto.ContentType, true); 
+                    //return File(streamDto.Stream, streamDto.ContentType, true); 
+                    return File(streamDto, "video/mp4", true); 
                 else
                     return NoContent();
             }
@@ -123,7 +128,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("lastseenmovies")]
         public IEnumerable<MovieBookmark> GetLastSeenMovies()
         {
-            var lastSeenMovies = movieBookmarkProvider.GetMovieBookmarks(AppFiles.LastSeenMovies);
+            var lastSeenMovies = seenMovieBookmarkProvider.GetMovieBookmarks();
             return lastSeenMovies?.Reverse();
         }
 
@@ -139,13 +144,13 @@ namespace WebHostStreaming.Controllers
                 ServiceId = serviceInfo.Id
             };
 
-            movieBookmarkProvider.SaveMovieBookmark(movieBookmark, AppFiles.LastSeenMovies, 7);
+            seenMovieBookmarkProvider.SaveMovieBookmark(movieBookmark, 7);
         }
 
         [HttpGet("bookmarks")]
         public IEnumerable<MovieBookmark> GetBookmarkedMovies()
         {
-            var lastSeenMovies = movieBookmarkProvider.GetMovieBookmarks(AppFiles.BookmarkedMovies);
+            var lastSeenMovies = movieToSeeBookmarkProvider.GetMovieBookmarks();
             return lastSeenMovies?.Reverse();
         }
 
@@ -163,7 +168,7 @@ namespace WebHostStreaming.Controllers
 
             try
             {
-                movieBookmarkProvider.SaveMovieBookmark(movieBookmark, AppFiles.BookmarkedMovies);
+                movieToSeeBookmarkProvider.SaveMovieBookmark(movieBookmark);
             }
             catch (Exception)
             {
@@ -179,7 +184,7 @@ namespace WebHostStreaming.Controllers
         {
             try
             {
-                movieBookmarkProvider.DeleteMovieBookmark(movieBookmark.Movie.Id, movieBookmark.ServiceName, AppFiles.BookmarkedMovies);
+                movieToSeeBookmarkProvider.DeleteMovieBookmark(movieBookmark.Movie.Id, movieBookmark.ServiceId);
             }
             catch (Exception)
             {
@@ -191,9 +196,15 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("bookmarks/exists")]
-        public bool MovieBookmarkExists([FromQuery] string movieId, [FromQuery] string serviceName)
+        public IActionResult MovieBookmarkExists([FromQuery] string movieId, [FromQuery] string serviceId)
         {
-            return movieBookmarkProvider.MovieBookmarkExists(movieId, serviceName, AppFiles.BookmarkedMovies);
+            int id;
+            if (int.TryParse(serviceId, out id))
+            {
+                return Ok(movieToSeeBookmarkProvider.MovieBookmarkExists(movieId, id));
+            }
+            else
+                return BadRequest();
         }
     }
 }
