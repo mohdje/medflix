@@ -83,12 +83,12 @@
 
 .standard-button.orange{
     color: white;
-    background-color: #f06a10;
+    background-color: #ca5b11;
     font-weight: 'bold'
 }
 
 .standard-button.orange:hover{
-    background-color: #92400a;
+    background-color: #693715;
     cursor: pointer;
 }
 
