@@ -19,6 +19,9 @@ namespace MoviesAPI.Helpers
 
                 var searchResultList = doc.DocumentNode.SelectNodes("//tr[contains(@class, 'findResult')]/td[@class='result_text']");
 
+                if (searchResultList == null)
+                    return null;
+
                 foreach (var node in searchResultList)
                 {
                     doc = new HtmlAgilityPack.HtmlDocument();

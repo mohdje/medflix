@@ -15,5 +15,18 @@ namespace MoviesAPI.Extensions
             }
             return true;
         }
+
+        public static string GetMovieQuality(this string movieLinkTitle)
+        {
+            var qualities = new string[] { "720p", "1080p", "DVDRIP", "WEBRIP" };
+
+            foreach (var quality in qualities)
+            {
+                if (movieLinkTitle.Contains(quality))
+                    return quality;
+            }
+
+            return string.Empty;
+        }
     }
 }

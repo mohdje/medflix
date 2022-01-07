@@ -25,13 +25,11 @@ namespace MoviesApiSample
             //GetLastMoviesByGenre(VOMovieService.YtsApiMx, "Action");
             //GetSuggestedMovies(VOMovieService.YtsApiMx);
 
-            //SearchVFMovies("inside man", 2006);
-
-
+            SearchVFMovies("Encanto", 2021, VFMoviesService.Torrent911);
 
             //GetSubtitles(SubtitlesService.OpenSubtitlesHtml);
 
-            GetVOMovieServicesInfo();
+            //GetVOMovieServicesInfo();
             //GetVFMovieServicesInfo();
             //GetSubtitlesServicesInfo();
 
@@ -121,21 +119,21 @@ namespace MoviesApiSample
                 Console.WriteLine("No movies found");
         }
 
-        static void SearchVFMovies(string title, int year)
+        static void SearchVFMovies(string title, int year, VFMoviesService vFMoviesService)
         {
-            var vfSearcher = MoviesAPIServiceFactories.VFMovieSearcherFactory.GetService(VFMoviesService.OxTorrent);
+            var vfSearcher = MoviesAPIServiceFactories.VFMovieSearcherFactory.GetService(vFMoviesService);
 
             Console.WriteLine($"Search VF movies for {title}");
 
             var movies = vfSearcher.GetMovieTorrentsAsync(title, year, true).Result;
 
 
-            //Console.WriteLine($"VF movies found for {title} :");
-            //foreach (var movie in movies)
-            //{
-            //    Console.WriteLine($"-{movie.Title}, year {movie.Year}, quality {movie.Quality}");
-            //}
-            //Console.WriteLine();
+            Console.WriteLine($"VF torrents found for {title} :");
+            foreach (var movie in movies)
+            {
+                Console.WriteLine($"-quality {movie.Quality}, link {movie.DownloadUrl}");
+            }
+            Console.WriteLine();
         }
 
         static void GetSubtitles(SubtitlesService subtitlesService)
