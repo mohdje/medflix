@@ -158,7 +158,6 @@ const MoviesAPI = {
                 value: serviceId
             }
         ];
-        console.log('isMovieBookmarked', this.apiBookmarkedMoviesUrl + 'exists', parameters);
         this.sendRequest(this.apiBookmarkedMoviesUrl + 'exists', parameters, false, onSuccess, onFail);
     },
 
