@@ -37,7 +37,7 @@ namespace WebHostStreaming.Models
 
         private static HttpClient client;
         private string torrentDownloadDirectory => Path.Combine(Helpers.AppFolders.TorrentsFolder, TorrentUri.ToMD5Hash());
-        private string torrentFileName => Path.Combine(torrentDownloadDirectory, "torrent");
+        private string torrentFilePath => Path.Combine(torrentDownloadDirectory, "torrent");
 
         private DownloadingState downloadingState;
 
@@ -54,12 +54,21 @@ namespace WebHostStreaming.Models
         {
             downloadingState = DownloadingState.SearchResources;
 
-            await DownloadTorrentFileAsync().ContinueWith(t =>
+            if (TorrentUri.IsMagnetLink())
             {
-                torrentManager = clientEngine.AddStreamingAsync(torrentFileName, torrentDownloadDirectory).Result;
-                movieFileInfo = GetMovieFile(torrentManager, videoFormat);
-                downloadingState = DownloadingState.PrepareDownload;
-            });
+                //torrentManager = clientEngine.AddStreamingAsync(MagnetLink.Parse(TorrentUri), torrentDownloadDirectory).Result;
+                //movieFileInfo = GetMovieFile(torrentManager, videoFormat);
+                //downloadingState = DownloadingState.PrepareDownload;
+            }
+            else
+            {
+                await DownloadTorrentFileAsync().ContinueWith(t =>
+                {
+                    torrentManager = clientEngine.AddStreamingAsync(torrentFilePath, torrentDownloadDirectory).Result;
+                    movieFileInfo = GetMovieFile(torrentManager, videoFormat);
+                    downloadingState = DownloadingState.PrepareDownload;
+                });
+            }
         }
 
         private ITorrentFileInfo GetMovieFile(TorrentManager torrentManager, string videoFormat)
@@ -93,18 +102,18 @@ namespace WebHostStreaming.Models
                 {
                     lock (client)
                     {
-                        if (!File.Exists(torrentFileName))
+                        if (!File.Exists(torrentFilePath))
                         {
                             var bytes = client.GetByteArrayAsync(TorrentUri).Result;
-                            File.WriteAllBytes(torrentFileName, bytes);
+                            File.WriteAllBytes(torrentFilePath, bytes);
                         }
                     }
                 }).ContinueWith(t =>
                 {
                     client.Dispose();
                     client = null;
-                    if (!TorrentHelper.IsValidTorrentFile(torrentFileName))
-                        TorrentHelper.FixTorrentFile(torrentFileName);
+                    if (!TorrentHelper.IsValidTorrentFile(torrentFilePath))
+                        TorrentHelper.FixTorrentFile(torrentFilePath);
                 });
         }
 

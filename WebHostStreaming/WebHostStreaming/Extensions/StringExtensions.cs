@@ -33,5 +33,10 @@ namespace WebHostStreaming.Extensions
             else
                 return fileName.EndsWith(videoFormat);
         }
+
+        public static bool IsMagnetLink(this string link)
+        {
+            return link.StartsWith("magnet:?xt=urn:btih");
+        }
     }
 }

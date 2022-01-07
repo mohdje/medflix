@@ -99,12 +99,10 @@ namespace WebHostStreaming.Controllers
             try
             {
                 var acceptedFormat = userAgent.StartsWith("VLC") ? "*" : ".mp4";
-                //var streamDto = movieStreamProvider.GetStream(url, offset, acceptedFormat);
-                var streamDto = TestData.SunriseMexicoVideoStream;
-
+                var streamDto = movieStreamProvider.GetStream(url, offset, acceptedFormat);
+            
                 if (streamDto != null)
-                    //return File(streamDto.Stream, streamDto.ContentType, true); 
-                    return File(streamDto, "video/mp4", true); 
+                    return File(streamDto.Stream, streamDto.ContentType, true); 
                 else
                     return NoContent();
             }

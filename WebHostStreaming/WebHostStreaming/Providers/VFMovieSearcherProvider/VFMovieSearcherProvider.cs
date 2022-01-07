@@ -9,7 +9,7 @@ namespace WebHostStreaming.Providers
 {
     public class VFMovieSearcherProvider : IVFMovieSearcherProvider
     {
-        private VFMoviesService selectedVFMovieServiceType = VFMoviesService.OxTorrent;
+        private VFMoviesService selectedVFMovieServiceType = VFMoviesService.ZeTorrents;
         private VFMovieSearcherFactory VFMovieSearcherFactory = new VFMovieSearcherFactory();
         public VFMoviesSearcher GetActiveVFMovieSearcher()
         {
