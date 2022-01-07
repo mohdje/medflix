@@ -13,26 +13,32 @@ namespace MoviesAPI.Services
         [Description("Yts.mx - Api")]
         YtsApiMx = 0,
 
-        [Description("Yts.ltd - Api")]
-        YtsApiLtd = 1,
-
         [Description("Yts.mx - Site")]
-        YtsHtmlMx = 2,
-
-        [Description("Yts.ltd - Site")]
-        YtsHtmlLtd = 3,
+        YtsHtmlMx = 1,
 
         [Description("Yts.one - Site")]
-        YtsHtmlOne = 4,
+        YtsHtmlOne = 2,
 
         [Description("Yts.pm - Site")]
-        YtsHtmlPm = 5
+        YtsHtmlPm = 3,
+
+        [Description("Yts.ltd - Api")]
+        YtsApiLtd = 4,
+
+        [Description("Yts.ltd - Site")]
+        YtsHtmlLtd = 5,
     }
 
     public enum VFMoviesService
     {
+        [Description("ZeTorrents - Site")]
+        ZeTorrents = 0,
+
+        [Description("Torrent911 - Site")]
+        Torrent911 = 1,
+
         [Description("OxTorrent - Site")]
-        OxTorrent = 0
+        OxTorrent = 2
     }
 
     public enum SubtitlesService

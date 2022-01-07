@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using MoviesAPI.Extensions;
 using MoviesAPI.Helpers;
 using MoviesAPI.Services.CommonDtos;
 using System;
@@ -6,21 +7,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MoviesAPI.Extensions;
 
 namespace MoviesAPI.Services.VFMovies.VFMoviesSearchers
 {
-    public class VFMovieOxTorrentSearcher : VFMoviesSearcher
+    public class VFMoviesTorrent911Searcher : VFMoviesSearcher
     {
-        private const string baseUrl = "https://www.oxtorrents.co";
-
-        private const string baseSearchUrl = "https://www.oxtorrents.co/recherche/";
-
-        internal VFMovieOxTorrentSearcher()
+        private const string baseUrl = "https://www.torrent911.com";
+        internal VFMoviesTorrent911Searcher()
         {
 
         }
-        public override async Task<IEnumerable<MovieTorrent>> GetMovieTorrentsAsync(string title, int year, bool exactTitle)
+
+        public async override Task<IEnumerable<MovieTorrent>> GetMovieTorrentsAsync(string title, int year, bool exactTitle)
         {
             var imdbMoviesInfo = await ImdbRequester.GetImdbMoviesInfoAsync(title);
             var imdbMovieInfo = imdbMoviesInfo?.SingleOrDefault(m => m.OriginalTitle.StartsWith(title, StringComparison.OrdinalIgnoreCase) && m.Year == year.ToString());
@@ -30,21 +28,24 @@ namespace MoviesAPI.Services.VFMovies.VFMoviesSearchers
 
             var frenchTitle = await ImdbRequester.GetFrenchMovieTitleAsync(imdbMovieInfo.ImdbCode);
 
-            var searchUrl = baseSearchUrl + frenchTitle.Replace(" ", "-");
+            var searchUrl = $"{baseUrl}/recherche/" + frenchTitle.ToLower();
 
             var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
 
-            var searchResultList = doc.DocumentNode.SelectNodes("//table[@class='table table-hover']//td");
+            var searchResultList = doc.DocumentNode.SelectNodes("//table[@class='table table-hover']//td//div[@class='maxi']");
 
             var result = new List<MovieTorrent>();
 
             if (searchResultList == null)
                 return result;
 
+            var getTorrentTasks = new List<Task>();
+
             foreach (var node in searchResultList)
             {
                 doc = new HtmlDocument();
                 doc.LoadHtml(node.InnerHtml);
+             
                 var mediaInfo = doc.DocumentNode.SelectSingleNode("/i");
                 if (mediaInfo != null && mediaInfo.Attributes["class"].Value == "Films")
                 {
@@ -54,26 +55,37 @@ namespace MoviesAPI.Services.VFMovies.VFMoviesSearchers
                         && linkNode.InnerText.Contains("FRENCH")
                         && linkNode.InnerText.EndsWith(year.ToString())
                         && !linkNode.InnerText.Contains("MD")
-                        && (linkNode.InnerText.Contains("720p") || linkNode.InnerText.Contains("1080p") || linkNode.InnerText.Contains("DVDRIP"))
+                        && (linkNode.InnerText.Contains("720p") || linkNode.InnerText.Contains("1080p") || linkNode.InnerText.Contains("DVDRIP") || linkNode.InnerText.Contains("WEBRIP"))
                         )
-                        result.Add(new MovieTorrent()
+                        getTorrentTasks.Add(new Task(() =>
                         {
-                            Quality = linkNode.InnerText.GetMovieQuality(),
-                            DownloadUrl = GetTorrentLink(baseUrl + linkNode.Attributes["href"].Value)
-                        });
+                            result.Add(new MovieTorrent()
+                            {
+                                Quality = linkNode.InnerText.GetMovieQuality(),
+                                DownloadUrl = GetTorrentLink(baseUrl + linkNode.Attributes["href"].Value)
+                            });
+                        }));
                 }
+                    
             }
 
+            getTorrentTasks.ForEach(t => t.Start());
+            Task.WaitAll(getTorrentTasks.ToArray());
+
             return result;
-
         }
-
-       
 
         private string GetTorrentLink(string moviePageUrl)
         {
-            //la page du site ne contient pas de lien pour télécharger le torrent :'(
-            return null;
+            var htmlPage = HttpRequester.GetAsync(new Uri(moviePageUrl)).Result;
+
+            var startIndex = htmlPage.IndexOf("/telecharger/");
+            var lastIndex = startIndex > 0 ? htmlPage.IndexOf("'", startIndex) : 0;
+
+            if (startIndex * lastIndex > 0)
+                return baseUrl + htmlPage.Substring(startIndex, lastIndex - startIndex);
+            else
+                return null;
         }
 
         protected override string GetPingUrl()

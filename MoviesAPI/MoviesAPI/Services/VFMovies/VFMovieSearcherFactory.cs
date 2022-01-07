@@ -17,6 +17,10 @@ namespace MoviesAPI.Services.VFMovies
             {
                 case VFMoviesService.OxTorrent:
                     return new VFMovieOxTorrentSearcher();
+                case VFMoviesService.ZeTorrents:
+                    return new VFMoviesZeTorrentsSearcher();
+                case VFMoviesService.Torrent911:
+                    return new VFMoviesTorrent911Searcher();
                 default:
                     return null;
             }
