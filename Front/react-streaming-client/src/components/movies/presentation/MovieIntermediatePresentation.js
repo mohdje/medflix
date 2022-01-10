@@ -1,9 +1,9 @@
 import "../../../style/movie-intermediate-presentation.css";
 
 import MovieLitePresentation from "./MovieLitePresentation";
-import PlayButton from "../../common/PlayButton";
-import MoreButton from "../../common/MoreButton";
-import DeleteButton from "../../common/DeleteButton";
+import PlayButton from "../../common/Buttons/PlayButton";
+import MoreButton from "../../common/Buttons/MoreButton";
+import DeleteButton from "../../common/Buttons/DeleteButton";
 
 function MovieIntermediatePresentation({ movieBookmark, deleteButtonAvailable, onPlayClick, onMoreClick, onDeleteClick }) {
     const truncateText = (text) =>{
