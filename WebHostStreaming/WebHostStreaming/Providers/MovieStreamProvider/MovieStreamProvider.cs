@@ -37,12 +37,12 @@ namespace WebHostStreaming.Providers
             return movieStream.GetStream(offset);
         }
 
-        public string GetStreamDownloadingState(string torrentUri)
+        public DownloadingState GetStreamDownloadingState(string torrentUri)
         {
             var movieStream = movieStreams.SingleOrDefault(m => m.TorrentUri == torrentUri);
 
             if (movieStream == null)
-                return string.Empty;
+                return new DownloadingState();
 
             return movieStream.GetDownloadingState();
         }
