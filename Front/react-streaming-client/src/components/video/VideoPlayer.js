@@ -17,8 +17,8 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
 
-    const [showErrorMessage, setshowErrorMessage] = useState(false);
-    
+    const [errorMessage, setErrorMessage] = useState();
+
     const checkDownloadStateRef = useRef(false);
     const videoDownloadStateRef =  useRef('');
 
@@ -32,20 +32,26 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
     const [showVideoControls, setShowVideoControls] = useState(false);
     const lastTimeMouseMovedRef = useRef(0);
 
-
     const checkMovieDownloadState = (url) => {
-        if (checkDownloadStateRef.current) {
-            MoviesAPI.getMovieDownloadState(url, (response) => {
-                videoDownloadStateRef.current = response;
-                setTimeout(() => {
-                    checkMovieDownloadState(url);
-                }, 3000);
+        if (checkDownloadStateRef.current && videoRef.current) {       
+            MoviesAPI.getMovieDownloadState(url, (response) => {  
+                console.log(response);      
+                if(response.error) {
+                    checkDownloadStateRef.current = false;
+                    setErrorMessage(response.message);
+                }                
+                else{
+                    videoDownloadStateRef.current = response.message; 
+                    setTimeout(() => {
+                        checkMovieDownloadState(url);
+                    }, 3000);
+                }
+              
             })
         }
     };
 
-    const changeVideoSource = (url) => {
-       
+    const changeVideoSource = (url) => {       
         var currentTime = videoRef.current.currentTime;
         setVideoSource(url);
 
@@ -57,7 +63,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
       
         setVideoIsLoading(true);
         checkDownloadStateRef.current = true;
-        setshowErrorMessage(false);
+        setErrorMessage('');
         checkMovieDownloadState(url);
     }
 
@@ -84,8 +90,8 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
 
     useEffect(() => {
         const videoErrorHandler = (e) => {
-            if (videoRef.current.attributes.src.value) {
-                setshowErrorMessage(true);
+            if (videoRef?.current?.attributes.src.value) {
+                if(!errorMessage) setErrorMessage("An error occured");
                 setVideoIsLoading(false);
             }
         }
@@ -94,6 +100,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
         const onVideoPlaying = () => {        
             checkDownloadStateRef.current = false;
             videoDownloadStateRef.current = '';
+            console.log("onVideoPlaying");
             setVideoIsLoading(false);
         };
         videoRef.current.addEventListener('canplay', onVideoPlaying, true);
@@ -183,7 +190,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
     return (
         <div ref={videoPlayerContainerRef} className="video-player-content" >
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={videoSource && videoIsLoading} text={videoDownloadStateRef.current} />
-            <div className="video-player-error-message" style={{ display: showErrorMessage ? '' : 'none' }}>An error occured during loading</div>
+            <div className="video-player-error-message" style={{ display: errorMessage ? '' : 'none' }}>{errorMessage}</div>
             <video ref={videoRef} className="video-player" src={videoSource}></video>
             <div className="video-player-bottom">
                 <VideoSubtitles

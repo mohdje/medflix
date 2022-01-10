@@ -1,14 +1,19 @@
 import "../../../style/suggested-movie.css";
-import MoreButton from "../../common/MoreButton";
+import MoreButton from "../../common/Buttons/MoreButton";
 
 
 function SuggestedMovie({ movie, visible, onMoreClick }) {
 
     const truncateText = (text) => {
         if (!text) return '';
-        var maxTextlength = 300;
+        var maxTextlength = 200;
         return text.substring(0, maxTextlength) + (text && text.length > maxTextlength ? '...' : '');
     }
+
+    const formatMovieRating = (rating) => {
+        return rating ? rating.replace(',', '.') : '';
+    };
+
 
     return (
         <div className={"suggested-movie " + (!visible ? "hidden" : "")} >
@@ -20,7 +25,7 @@ function SuggestedMovie({ movie, visible, onMoreClick }) {
                     </div>
 
                 </div>
-                <div className="suggested-movie-rating">{movie.rating}</div>
+                <div className="suggested-movie-rating">{formatMovieRating(movie.rating)}</div>
                 <div className="suggested-movie-summary">{truncateText(movie.synopsis)}</div>
                 <MoreButton onClick={() => onMoreClick()} color="red" center={true} />
             </div>

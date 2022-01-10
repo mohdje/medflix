@@ -169,7 +169,7 @@ const MoviesAPI = {
             }
         ];
 
-        this.sendRequest(this.apiMovieDownloadStateUrl, parameters, false, onSuccess, onFail);
+        this.sendRequest(this.apiMovieDownloadStateUrl, parameters, true, onSuccess, onFail);
     },
 
     sendRequest(url, parameters, deserializeResult, onSuccess, onFail) {

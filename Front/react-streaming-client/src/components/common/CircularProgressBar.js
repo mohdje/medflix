@@ -5,6 +5,8 @@ import fadeTransition from "../../js/customStyles.js";
 function CircularProgressBar({ position, color, size, visible, text }) {
 
     const [positionStyle, setpositionStyle] = useState({});
+    const [displayedText, setDisplayedText] = useState();
+
     const textStyle = {
         color: 'white',
         fontSize: '20px',
@@ -24,10 +26,14 @@ function CircularProgressBar({ position, color, size, visible, text }) {
         }
     }, [position]);
 
+    useEffect(()=>{
+        setDisplayedText(text);
+    },[text]);
+
     return (
         <div style={fadeTransition(visible)}>
             <div style={positionStyle}>
-                <div style={textStyle}>{text}</div>
+                <div style={textStyle}>{displayedText}</div>
                 <CircularProgress style={{ color: color, width: size, height: 'auto' }} />
             </div>
         </div>
