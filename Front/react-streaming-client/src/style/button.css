@@ -28,30 +28,44 @@
 }
 
 .standard-button{
-    border-radius: 10px;
+    border-radius: 7px;
     padding: 7px 10px;
-    box-shadow: 0px 5px 6px 0px #101010c9;
     width: fit-content;
     font-size: 1.2rem;
-    font-weight: bold;
+    font-weight: 600;
     display: flex;
     align-items: center;
     margin: 0 5px;
+    position: relative;
 }
 
 .standard-button.center{
     margin: 7px auto;
 }
 
-.standard-button:active{
-    transform: translateY(2px);
-    box-shadow:none;
+.standard-button .ripple-effect{
+    position: absolute;
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.363);
+    height: 0;
+    width: 0;
+    top: 50%;
+    left: 50%;
+    border-radius: 100%;
+    transform: translate(-50%, -50%);
+    opacity: 1;
+}
+
+.standard-button .ripple-effect.visible{
+    width: 60px;
+    height: 60px;
+    opacity: 0;
+    transition: all 0.3s;
 }
 
 .standard-button.red{
     color: white;
     background-color: #E50914;
-    font-weight: 'bold'
 }
 
 .standard-button.red:hover{
@@ -62,7 +76,6 @@
 .standard-button.dark-red{
     color: white;
     background-color: #880b11;
-    font-weight: 'bold'
 }
 
 .standard-button.dark-red:hover{
@@ -73,18 +86,16 @@
 .standard-button.grey{
     color: white;
     background-color: #252525;
-    font-weight: 'bold'
 }
 
 .standard-button.grey:hover{
-    background-color: #4d4d4d;
+    background-color: #1a1a1a;
     cursor: pointer;
 }
 
 .standard-button.orange{
     color: white;
     background-color: #ca5b11;
-    font-weight: 'bold'
 }
 
 .standard-button.orange:hover{
