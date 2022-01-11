@@ -26,9 +26,7 @@ namespace MoviesAPI.Services.VFMovies.VFMoviesSearchers
             if (imdbMovieInfo == null)
                 return null;
 
-            var frenchTitle = await ImdbRequester.GetFrenchMovieTitleAsync(imdbMovieInfo.ImdbCode);
-
-            var searchUrl = $"{baseUrl}/recherche/" + frenchTitle.ToLower().Replace(":", "");
+            var searchUrl = $"{baseUrl}/recherche/" + imdbMovieInfo.FrenchTitle.ToLower().Replace(":", "");
 
             var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
 
@@ -48,7 +46,7 @@ namespace MoviesAPI.Services.VFMovies.VFMoviesSearchers
                 var linkNode = doc.DocumentNode.SelectSingleNode("/a");
 
                 if (linkNode != null
-                    && ((exactTitle && linkNode.InnerText.Replace(" ","").Contains(frenchTitle.Replace(" ",""), StringComparison.OrdinalIgnoreCase)) || linkNode.InnerText.ContainsWords(title.Split(" ")))
+                    && ((exactTitle && linkNode.InnerText.Replace(" ","").Contains(imdbMovieInfo.FrenchTitle.Replace(" ",""), StringComparison.OrdinalIgnoreCase)) || linkNode.InnerText.ContainsWords(title.Split(" ")))
                     && linkNode.InnerText.Contains("FRENCH")
                     && linkNode.InnerText.EndsWith(year.ToString())
                     && !linkNode.InnerText.Contains("MD")
