@@ -31,13 +31,13 @@ namespace MoviesAPI.Services
 
     public enum VFMoviesService
     {
-        [Description("ZeTorrents - Site")]
+        [Description("ZeTorrents")]
         ZeTorrents = 0,
 
-        [Description("Torrent911 - Site")]
+        [Description("Torrent911")]
         Torrent911 = 1,
 
-        [Description("OxTorrent - Site")]
+        [Description("OxTorrent")]
         OxTorrent = 2
     }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,13 +31,13 @@ namespace MoviesAPI.Helpers
                     var originalTitle = doc.DocumentNode.SelectSingleNode("/i")?.InnerText.Replace("\"", "") ?? doc.DocumentNode.SelectSingleNode("/a")?.InnerText;
                     var frenchTitle = doc.DocumentNode.SelectSingleNode("/a")?.InnerText;
                     var year = doc.DocumentNode.InnerText.Replace(originalTitle, "").Replace(frenchTitle, "").Replace("aka", "").Replace("(", "").Replace(")", "").Replace("\"", "").Trim();
-
+                    
                     if (originalTitle.Contains(movieTitle, StringComparison.OrdinalIgnoreCase))
                         imdbMoviesInfo.Add(new ImdbMovieInfo()
                         {
                             ImdbCode = doc.DocumentNode.SelectSingleNode("/a")?.Attributes["href"].Value.Split("/")[2],
-                            OriginalTitle = originalTitle,
-                            FrenchTitle = frenchTitle,
+                            OriginalTitle = WebUtility.HtmlDecode(originalTitle),
+                            FrenchTitle = WebUtility.HtmlDecode(frenchTitle),
                             Year = year
                         });
                 }
@@ -60,7 +61,9 @@ namespace MoviesAPI.Helpers
             {
                 var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
 
-                return doc?.DocumentNode.SelectSingleNode("//h1[contains(@class, 'TitleHeader__TitleText')]")?.InnerText;
+                var frenchTitle = doc?.DocumentNode.SelectSingleNode("//h1[contains(@class, 'TitleHeader__TitleText')]")?.InnerText;
+              
+                return string.IsNullOrEmpty(frenchTitle) ? null : WebUtility.HtmlDecode(frenchTitle);
             }
             catch (Exception)
             {

@@ -49,6 +49,11 @@ namespace MoviesAPI.Helpers
             return JsonHelper.ToObject<T>(result);
         }
 
+        public static async Task<string> PostAsync(string url, object payloadObject)
+        {
+            return await PerformPostCallAsync(new Uri(url), JsonHelper.ToJson(payloadObject));
+        }
+
         public static async Task<byte[]> DownloadAsync(Uri url, IEnumerable<KeyValuePair<string, string>> httpRequestHeaders, bool keepHeaders)
         {
             foreach (var header in httpRequestHeaders)
@@ -99,6 +104,21 @@ namespace MoviesAPI.Helpers
             {
                 InitHttpClient();
                 return await client.GetStringAsync(url);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private static async Task<string> PerformPostCallAsync(Uri url, string payload)
+        {
+            try
+            {
+                InitHttpClient();
+                var response = await client.PostAsync(url, new StringContent(payload));
+
+                return await response.Content.ReadAsStringAsync();
             }
             catch (Exception ex)
             {
