@@ -26,6 +26,7 @@
     width: 60%;
     box-shadow: -5px 0px 20px 20px #000000;
     color: white;
+    overflow-y: scroll;
 }
 
 .movie-presentation-page-container .info > .title{
