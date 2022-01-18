@@ -1,23 +1,19 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+MoviesAPI/.vs
+MoviesAPI/MoviesAPI/obj
+MoviesAPI/MoviesAPI/bin
+MoviesAPI/VfTorrentSearcher/bin
+MoviesAPI/VfTorrentSearcher/obj
+MoviesAPI.Tests/
+MoviesAPI/MoviesApiSample/bin
+MoviesAPI/MoviesApiSample/obj
+WebHostStreaming/WebHostStreaming/bin
+WebHostStreaming/WebHostStreaming/obj
+WebHostStreaming/WebHostStreaming/GPUcache
+WebHostStreaming/.vs
+WebHostStreaming/WebHostStreaming/cache/
+Front/react-streaming-client/.eslintcache
+Front/react-streaming-client/node_modules/
+Front/electron-application/medflix-win32-x64/
+Front/electron-application/node_modules/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
 
-# testing
-/coverage
-
-# production
-/build
-
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
