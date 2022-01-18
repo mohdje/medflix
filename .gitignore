@@ -1,0 +1,16 @@
+MoviesAPI/.vs
+MoviesAPI/MoviesAPI/obj
+MoviesAPI/MoviesAPI/bin
+MoviesAPI/VfTorrentSearcher/bin
+MoviesAPI/VfTorrentSearcher/obj
+MoviesAPI.Tests/
+MoviesAPI/MoviesApiSample/bin
+MoviesAPI/MoviesApiSample/obj
+WebHostStreaming/WebHostStreaming/bin
+WebHostStreaming/WebHostStreaming/obj
+WebHostStreaming/WebHostStreaming/GPUcache
+WebHostStreaming/.vs
+WebHostStreaming/WebHostStreaming/cache/
+Front/react-streaming-client/.eslintcache
+Front/electron-application/medflix-win32-x64
+Front/electron-application/node_modules
