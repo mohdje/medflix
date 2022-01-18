@@ -56,12 +56,15 @@ namespace MoviesAPI.Helpers
 
         public static async Task<byte[]> DownloadAsync(Uri url, IEnumerable<KeyValuePair<string, string>> httpRequestHeaders, bool keepHeaders)
         {
-            foreach (var header in httpRequestHeaders)
-                client.DefaultRequestHeaders.Add(header.Key, header.Value);
-
+            if(httpRequestHeaders != null)
+            {
+                foreach (var header in httpRequestHeaders)
+                    client.DefaultRequestHeaders.Add(header.Key, header.Value);
+            }
+          
             var result = await DownloadFile(url);
 
-            if (!keepHeaders)
+            if (!keepHeaders && httpRequestHeaders != null)
             {
                 foreach (var header in httpRequestHeaders)
                     client.DefaultRequestHeaders.Remove(header.Key);

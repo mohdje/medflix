@@ -17,6 +17,8 @@ namespace MoviesAPI.Services.Subtitles
             {
                 case SubtitlesService.OpenSubtitlesHtml:
                     return new OpenSubtitlesHtmlService();
+                case SubtitlesService.YtsSubs:
+                    return new YtsSubsService();
                 default:
                     return null;
             }

@@ -8,6 +8,6 @@ namespace MoviesAPI.Services.Subtitles.DTOs
     {
         public string Language { get; set; }
 
-        public string[] SubtitlesIds { get; set; }
+        public string[] SubtitlesSourceUrls { get; set; }
     }
 }

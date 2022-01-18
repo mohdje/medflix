@@ -43,35 +43,13 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
             return new SubtitlesSearchResultDto()
             {
                 Language = GetLanguageLabel(subtitlesLanguage),
-                SubtitlesIds = searchResultsHtml.DocumentNode.SelectNodes("//a[contains(@onclick, '/subtitleserve/sub/')]")?
+                SubtitlesSourceUrls = searchResultsHtml.DocumentNode.SelectNodes("//a[contains(@onclick, '/subtitleserve/sub/')]")?
                                                             .Select(n =>
                                                             {
                                                                 var values = n.Attributes["href"].Value.Split('/');
-                                                                return values[values.Length - 1];
+                                                                return "https://dl.opensubtitles.org/en/download/sub/" + values[values.Length - 1];
                                                             }).ToArray()
             };
-        }
-
-        public override IEnumerable<SubtitlesDto> GetSubtitles(string subtitleId, string extractionFolder)
-        {
-            if (!Directory.Exists(extractionFolder))
-                Directory.CreateDirectory(extractionFolder);
-
-            var url = "https://dl.opensubtitles.org/en/download/sub/" + subtitleId;
-
-            var downloadedFile = Path.Combine(extractionFolder, "subtitles.zip");
-            if (File.Exists(downloadedFile))
-                File.Delete(downloadedFile);
-
-            DownloadSubtitle(url, Path.Combine(extractionFolder, downloadedFile));
-
-            var extractedFile = Path.Combine(extractionFolder, "subtitles.srt");
-            if (File.Exists(extractedFile))
-                File.Delete(extractedFile);
-
-            ExtractSubtitlesFile(downloadedFile, extractedFile);
-
-            return SubtitlesConverter.GetSubtitles(extractedFile);
         }
 
         private async Task<string> GetOpenSubtitleMovieId(string imdbCode)
@@ -93,38 +71,20 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
             }
         }
 
-        private void DownloadSubtitle(string url, string destinationFileName)
+        public override IEnumerable<SubtitlesDto> GetSubtitles(string subtitleSourceUrl)
         {
             var httpRequestHeaders = new List<KeyValuePair<string, string>>();
             httpRequestHeaders.Add(new KeyValuePair<string, string>("referer", baseUrl));
 
-            var result = HttpRequester.DownloadAsync(new Uri(url), httpRequestHeaders, false).Result;
+            DownloadSubtitlesZipFile(subtitleSourceUrl, httpRequestHeaders);
+            var subtitlesFile = GetSubtitlesFile();
 
-            File.WriteAllBytes(destinationFileName, result);
+            return SubtitlesConverter.GetSubtitles(subtitlesFile);
         }
 
-        private void ExtractSubtitlesFile(string zipFile, string extractedFile)
-        {
-            using (ZipArchive archive = ZipFile.OpenRead(zipFile))
-            {
-                foreach (ZipArchiveEntry entry in archive.Entries)
-                {
-                    if (entry.FullName.EndsWith(".srt", StringComparison.OrdinalIgnoreCase))
-                    {
-                        // Gets the full path to ensure that relative segments are removed.
-                        string destinationPath = Path.GetFullPath(extractedFile);
-
-                        // Ordinal match is safest, case-sensitive volumes can be mounted within volumes that
-                        // are case-insensitive.
-                        var destinationFolder = Path.GetDirectoryName(extractedFile);
-                        if (destinationPath.StartsWith(destinationFolder, StringComparison.Ordinal))
-                            entry.ExtractToFile(destinationPath);
-                    }
-                }
-            }
-        }
-
-        private string GetLanguageCode(SubtitlesLanguage subtitlesLanguage)
+      
+       
+        protected override string GetLanguageCode(SubtitlesLanguage subtitlesLanguage)
         {
             switch (subtitlesLanguage)
             {
@@ -137,7 +97,7 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
             }
         }
 
-        private string GetLanguageLabel(SubtitlesLanguage subtitlesLanguage)
+        protected override string GetLanguageLabel(SubtitlesLanguage subtitlesLanguage)
         {
             switch (subtitlesLanguage)
             {
