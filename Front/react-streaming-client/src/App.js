@@ -10,7 +10,7 @@ import ModalSearch from "./components/modal/ModalSearch";
 import ModalListGenre from "./components/modal/ModalListGenre.js";
 
 import MoviesListGenreFull from "./components/movies/list/MoviesListGenreFull";
-import MovieFullPresentation from "./components/movies/presentation/MovieFullPresentation";
+import MovieFullPresentation from "./pages/MoviePresentationPage";
 import HomePage from "./components/HomePage";
 import LastSeenMoviesView from "./components/movies/views/LastSeenMoviesView";
 import BookmarkedMoviesView from "./components/movies/views/BookmarkedMoviesView";
