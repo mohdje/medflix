@@ -78,6 +78,12 @@ namespace WebHostStreaming.Controllers
             return await voMovieSearcher.GetMovieDetailsAsync(id);
         }
 
+        [HttpGet("topnetflix")]
+        public async Task<IEnumerable<MovieDto>> GetTopNetflixMovies()
+        {
+            return await voMovieSearcher.GetTopNetflixMovies();
+        }
+
         [HttpGet("vf")]
         public async Task<IEnumerable<MovieTorrent>> SearchVF([FromQuery(Name = "title")] string title, [FromQuery(Name = "year")] string year)
         {

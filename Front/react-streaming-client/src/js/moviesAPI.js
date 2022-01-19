@@ -38,6 +38,11 @@ const MoviesAPI = {
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
+    getTopNetflixMovies(onSuccess, onFail) {
+        var url = this.apiMoviesUrl + 'topnetflix'
+        this.sendRequest(url, [], true, onSuccess, onFail);
+    },
+
     searchVFSources(title, year, onSuccess, onFail){
         var url = this.apiMoviesUrl + 'vf';
         var parameters = [
