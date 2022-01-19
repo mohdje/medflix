@@ -125,6 +125,10 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
         return info;
     }
 
+    const getSubtitles = () => {     
+        return movieSubtitles?.length > 0 ? movieSubtitles.map(s => s.language).join(", ") : null;
+    }
+
     return (
         <div style={{ height: '100%' }}>
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />
@@ -147,6 +151,7 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                     <MovieInfo infoTitle={"Genre"} infoContent={movieDetails.genres} />
                     <MovieInfo infoTitle={"Synopsis"} infoContent={movieDetails.synopsis} />
                     <MovieInfo infoTitle={"Qualities"} infoContent={getVideoQualities(movieDetails.torrents)} />
+                    <MovieInfo infoTitle={"Subtitles"} infoContent={getSubtitles()} />
                     <MovieInfo infoTitle={"Versions"} infoContent={versionSelector()} />
                     <div className="actions">
                         <TrailerButton visible={movieDetails?.youtubeTrailerUrl} onClick={() => setShowMovieTrailer(true)} />

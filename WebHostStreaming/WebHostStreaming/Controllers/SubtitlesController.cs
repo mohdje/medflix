@@ -39,7 +39,7 @@ namespace WebHostStreaming.Controllers
                     {
                         foreach (var openSubtitleDto in s.Result)
                         {
-                            if (openSubtitleDto?.SubtitlesIds != null && openSubtitleDto.SubtitlesIds.Any())
+                            if (openSubtitleDto?.SubtitlesSourceUrls != null && openSubtitleDto.SubtitlesSourceUrls.Any())
                                 subtitles.Add(openSubtitleDto);
                         }
                     }
@@ -58,7 +58,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("{subtitlesId}")]
         public IEnumerable<SubtitlesDto> GetSubtitles(string subtitlesId)
         {
-            return subtitlesSearcher.GetSubtitles(subtitlesId, Helpers.AppFolders.SubtitlesFolder);
+            return subtitlesSearcher.GetSubtitles(subtitlesId);
         }
     }
 }

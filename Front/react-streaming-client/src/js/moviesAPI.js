@@ -84,7 +84,7 @@ const MoviesAPI = {
     },
 
     selectSubtitlesMovieService(serviceId, onSuccess, onFail){
-        this.selectService(this.apiServicesUrl + "vf", serviceId, onSuccess, onFail);
+        this.selectService(this.apiServicesUrl + "subtitles", serviceId, onSuccess, onFail);
     },
 
     selectService(serviceUrl, selectedServiceId, onSuccess, onFail) {

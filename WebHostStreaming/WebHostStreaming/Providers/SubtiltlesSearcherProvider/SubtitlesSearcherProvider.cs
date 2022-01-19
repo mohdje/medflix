@@ -8,7 +8,7 @@ namespace WebHostStreaming.Providers
 {
     public class SubtitlesSearcherProvider : ISubtitlesSearcherProvider
     {
-        private SubtitlesService selectedSubtitlesServiceType = SubtitlesService.OpenSubtitlesHtml;
+        private SubtitlesService selectedSubtitlesServiceType = SubtitlesService.YtsSubs;
         private SubtitlesSearcherFactory SubtitlesSearcherFactory = new SubtitlesSearcherFactory();
         public SubtitlesSearcher GetActiveSubtitlesSearcher()
         {

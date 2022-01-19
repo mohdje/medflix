@@ -43,10 +43,12 @@ namespace MoviesAPI.Services
 
     public enum SubtitlesService
     {
-        [Description("OpenSubtitles - Site")]
-        OpenSubtitlesHtml = 0,
-
         [Description("YtsSubs - Site")]
-        YtsSubs = 1
+        YtsSubs = 1,
+
+       [Description("OpenSubtitles - Site")]
+        OpenSubtitlesHtml = 0
+
+       
     }
 }
