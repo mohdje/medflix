@@ -25,9 +25,9 @@ namespace MoviesApiSample
             //GetLastMoviesByGenre(VOMovieService.YtsApiMx, "Action");
             //GetSuggestedMovies(VOMovieService.YtsApiMx);
 
-            SearchVFMovies("Encanto", 2021, VFMoviesService.Torrent911);
+            //SearchVFMovies("Encanto", 2021, VFMoviesService.Torrent911);
 
-            //GetSubtitles(SubtitlesService.OpenSubtitlesHtml);
+            GetSubtitles(SubtitlesService.YtsSubs);
 
             //GetVOMovieServicesInfo();
             //GetVFMovieServicesInfo();
@@ -139,15 +139,15 @@ namespace MoviesApiSample
         static void GetSubtitles(SubtitlesService subtitlesService)
         {
             var subtitlesProvider = MoviesAPIServiceFactories.SubtitlesProviderFactory.GetService(subtitlesService);
-            var result = subtitlesProvider.GetAvailableSubtitlesAsync("tt0816692", SubtitlesLanguage.French).Result;
+            var result = subtitlesProvider.GetAvailableSubtitlesAsync("tt4733624", SubtitlesLanguage.French).Result;
 
             if (result == null)
                 Console.WriteLine("No subtitles found");
             else
             {
-                Console.WriteLine($"subtitles found:{result.Language} - {string.Join(',', result.SubtitlesIds)}");
+                Console.WriteLine($"subtitles found:{result.Language} - {string.Join(',', result.SubtitlesSourceUrls)}");
 
-                var subtitles = subtitlesProvider.GetSubtitles(result.SubtitlesIds[0], Environment.CurrentDirectory).ToArray();
+                var subtitles = subtitlesProvider.GetSubtitles(result.SubtitlesSourceUrls[0]).ToArray();
                 var length = subtitles.Length > 10 ? 10 : subtitles.Count();
                 for (int i = 0; i < length; i++)
                 {
