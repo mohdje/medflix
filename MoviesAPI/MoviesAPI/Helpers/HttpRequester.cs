@@ -75,6 +75,7 @@ namespace MoviesAPI.Helpers
 
         public static async Task<HtmlAgilityPack.HtmlDocument> GetHtmlDocumentAsync(string url)
         {
+           
             var htmlResult = await GetAsync(new Uri(url));
 
             if (string.IsNullOrEmpty(htmlResult))
@@ -106,7 +107,15 @@ namespace MoviesAPI.Helpers
             try
             {
                 InitHttpClient();
-                return await client.GetStringAsync(url);
+
+                var response = await client.GetAsync(url);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                    return await response.Content.ReadAsStringAsync();
+                else if (response.StatusCode == HttpStatusCode.Found)
+                    return await PerformGetStringCallAsync(response.Headers.Location);
+                else
+                    return null;
             }
             catch (Exception ex)
             {

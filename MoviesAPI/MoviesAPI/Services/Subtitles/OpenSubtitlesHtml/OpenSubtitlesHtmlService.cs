@@ -34,22 +34,32 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
                 return null;
 
             var htmlTableResults = doc.DocumentNode.SelectSingleNode("//table[@id='search_results']");
-            if (htmlTableResults == null)
-                return null;
-
-            var searchResultsHtml = new HtmlDocument();
-            searchResultsHtml.LoadHtml(htmlTableResults.InnerHtml);
-
-            return new SubtitlesSearchResultDto()
+            if (htmlTableResults != null)
             {
-                Language = GetLanguageLabel(subtitlesLanguage),
-                SubtitlesSourceUrls = searchResultsHtml.DocumentNode.SelectNodes("//a[contains(@onclick, '/subtitleserve/sub/')]")?
-                                                            .Select(n =>
-                                                            {
-                                                                var values = n.Attributes["href"].Value.Split('/');
-                                                                return "https://dl.opensubtitles.org/en/download/sub/" + values[values.Length - 1];
-                                                            }).ToArray()
-            };
+                var searchResultsHtml = new HtmlDocument();
+                searchResultsHtml.LoadHtml(htmlTableResults.InnerHtml);
+
+                return new SubtitlesSearchResultDto()
+                {
+                    Language = GetLanguageLabel(subtitlesLanguage),
+                    SubtitlesSourceUrls = searchResultsHtml.DocumentNode.SelectNodes("//a[contains(@onclick, '/subtitleserve/sub/')]")?
+                                                                .Select(n =>
+                                                                {
+                                                                    var values = n.Attributes["href"].Value.Split('/');
+                                                                    return "https://dl.opensubtitles.org/en/download/sub/" + values[values.Length - 1];
+                                                                }).ToArray()
+                };
+            }
+
+            var singleResult = doc.DocumentNode.SelectSingleNode("//a[@id='bt-dwl-bt']")?.Attributes["href"]?.Value;
+            if (!string.IsNullOrEmpty(singleResult))
+                return new SubtitlesSearchResultDto()
+                {
+                    Language = GetLanguageLabel(subtitlesLanguage),
+                    SubtitlesSourceUrls = new string[] {baseUrl + singleResult}
+                };
+
+            return null;
         }
 
         private async Task<string> GetOpenSubtitleMovieId(string imdbCode)
