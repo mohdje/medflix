@@ -23,18 +23,37 @@ namespace MoviesApiSample
 
             //SearchVOMovies("spider man", VOMovieService.YtsHtmlPm);
             //GetLastMoviesByGenre(VOMovieService.YtsApiMx, "Action");
-            //GetSuggestedMovies(VOMovieService.YtsApiMx);
+            GetSuggestedMovies(VOMovieService.YtsHtmlOne);
 
             //SearchVFMovies("Encanto", 2021, VFMoviesService.Torrent911);
 
-            GetSubtitles(SubtitlesService.YtsSubs);
+            //GetSubtitles(SubtitlesService.YtsSubs);
 
             //GetVOMovieServicesInfo();
             //GetVFMovieServicesInfo();
             //GetSubtitlesServicesInfo();
 
+           // GetTopNetflixMovies(VOMovieService.YtsHtmlPm);
+
             Console.WriteLine("End");
             Console.ReadKey();
+        }
+
+        static void GetTopNetflixMovies(VOMovieService movieService)
+        {
+            var movieSearcher = MoviesAPIServiceFactories.VOMovieSearcherFactory.GetService(movieService);
+            var movies = movieSearcher.GetTopNetflixMovies().Result;
+
+            if(movies != null)
+            {
+                Console.WriteLine(movies.Count() + " top Netflix movies found");
+                foreach (var movie in movies)
+                {
+                    Console.WriteLine(movie.Title);
+                }
+            }
+            else
+                Console.WriteLine("No top Netflix movies found");
         }
 
         static void GetVOMovieServicesInfo()
