@@ -55,10 +55,10 @@ namespace WebHostStreaming.Controllers
             return subtitles;
         }
 
-        [HttpGet("{subtitlesId}")]
-        public IEnumerable<SubtitlesDto> GetSubtitles(string subtitlesId)
+        [HttpGet]
+        public IEnumerable<SubtitlesDto> GetSubtitles([FromQuery(Name = "sourceUrl")] string sourceUrl)
         {
-            return subtitlesSearcher.GetSubtitles(subtitlesId);
+            return subtitlesSearcher.GetSubtitles(sourceUrl);
         }
     }
 }

@@ -45,12 +45,12 @@ function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick }) {
                 selected: false,
                 subOptions: []
             };
-            sub.subtitlesIds.forEach((id, index) => {
+            sub.subtitlesSourceUrls.forEach((sourceUrl, index) => {
                 subtitlesOption.subOptions.push({
                     label: sub.language + ' ' + (index + 1),
                     selected: false,
                     data: {
-                        url: MoviesAPI.apiSubtitlesUrl + id
+                        url: MoviesAPI.getSubtitlesApiUrl(sourceUrl)
                     }
                 });
             })

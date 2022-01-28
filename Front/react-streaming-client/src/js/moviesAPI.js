@@ -2,7 +2,7 @@ import { movies } from "./fakeData";
 const MoviesAPI = {
     apiMoviesUrl: 'https://localhost:5001/movies/',
     apiStreamUrl: 'https://localhost:5001/movies/stream?url=',
-    apiSubtitlesUrl: 'https://localhost:5001/subtitles/',
+    apiSubtitlesUrl: 'https://localhost:5001/subtitles',
     apiServicesUrl: 'https://localhost:5001/services/',
     apiLastSeenMoviesUrl: 'https://localhost:5001/movies/lastseenmovies/',
     apiBookmarkedMoviesUrl: 'https://localhost:5001/movies/bookmarks/',
@@ -60,8 +60,12 @@ const MoviesAPI = {
     },
 
     getAvailableSubtitles(imdbId, onSuccess, onFail) {
-        var url = this.apiSubtitlesUrl + 'available/' + imdbId;
+        var url = this.apiSubtitlesUrl + '/available/' + imdbId;
         this.sendRequest(url, [], true, onSuccess, onFail);
+    },
+
+    getSubtitlesApiUrl(subtitlesSourceUrl){
+        return this.apiSubtitlesUrl + "?sourceUrl=" + subtitlesSourceUrl;
     },
 
     getActiveVOMovieService(onSuccess, onFail){
