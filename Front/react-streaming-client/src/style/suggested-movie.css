@@ -65,15 +65,13 @@
 }
 
 .suggested-movie-summary{
-    border-radius: 10px;
-    padding: 10px;
     text-align: left;
     overflow: hidden;       
     text-overflow: ellipsis;
     max-height: 40%;
     line-height: 1;
-    font-size: 1.3rem;
-    margin: 0 auto;
+    font-size: 18px;
+    margin: 20px;
 }
 
 .suggested-movie-pictures{
