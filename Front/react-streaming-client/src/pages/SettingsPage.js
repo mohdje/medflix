@@ -3,7 +3,7 @@ import "../style/settings.css";
 import fadeTransition from "../js/customStyles.js";
 
 import CircularProgressBar from "../components/common/CircularProgressBar";
-import ApplyButton from "../components/common/buttons/ApplyButton";
+import ApplyButton from "../components/common/Buttons/ApplyButton";
 import MoviesAPI from "../js/moviesAPI";
 
 import { useEffect, useState } from 'react';

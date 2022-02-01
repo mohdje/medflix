@@ -1,7 +1,7 @@
 import "../../style/vlc-player-instructions.css";
 
 import ModalWindow from "./ModalWindow";
-import CopyButton from "../common/buttons/CopyButton";
+import CopyButton from "../common/Buttons/CopyButton";
 
 import MoviesAPI from "../../js/moviesAPI";
 

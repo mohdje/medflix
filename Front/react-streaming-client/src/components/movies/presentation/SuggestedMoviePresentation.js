@@ -1,5 +1,5 @@
 import "../../../style/suggested-movie.css";
-import MoreButton from "../../common/buttons/MoreButton";
+import MoreButton from "../../common/Buttons/MoreButton";
 
 
 function SuggestedMovie({ movie, visible, onMoreClick }) {
