@@ -92,7 +92,8 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                     <MovieInfo infoTitle={"Cast"} infoContent={movieDetails.cast} />
                     <MovieInfo infoTitle={"Genre"} infoContent={movieDetails.genres} />
                     <MovieInfo infoTitle={"Synopsis"} infoContent={movieDetails.synopsis} />
-                    <MovieInfo infoTitle={"Qualities"} infoContent={getVideoQualities(movieDetails.torrents)} />
+                    <MovieInfo infoTitle={"Subtitles"} infoContent={"French, English"} />
+                    <MovieInfo infoTitle={"Qualities"} infoContent={getVideoQualities(movieDetails.torrents)} />                  
                     <div className="actions">
                         <TrailerButton visible={movieDetails?.youtubeTrailerUrl} onClick={() => setShowMovieTrailer(true)} />
                         <PlayButton onClick={() => setShowMoviePlayer(true)} />
