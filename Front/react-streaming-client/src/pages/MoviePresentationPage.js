@@ -7,9 +7,11 @@ import ModalMovieTrailer from '../components/modal/ModalMovieTrailer';
 
 import VideoPlayerWindow from '../components/video/VideoPlayerWindow';
 import CircularProgressBar from "../components/common/CircularProgressBar";
+
 import PlayButton from "../components/common/buttons/PlayButton";
 import TrailerButton from "../components/common/buttons/TrailerButton";
 import BookmarkButton from "../components/common/buttons/BookmarkButton";
+
 
 import MoviesAPI from "../js/moviesAPI.js";
 import fadeTransition from "../js/customStyles.js";
