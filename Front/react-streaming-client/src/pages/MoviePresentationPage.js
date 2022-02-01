@@ -8,9 +8,10 @@ import ModalMovieTrailer from '../components/modal/ModalMovieTrailer';
 import VideoPlayerWindow from '../components/video/VideoPlayerWindow';
 import CircularProgressBar from "../components/common/CircularProgressBar";
 
-import PlayButton from "../components/common/buttons/PlayButton";
-import TrailerButton from "../components/common/buttons/TrailerButton";
-import BookmarkButton from "../components/common/buttons/BookmarkButton";
+import PlayButton from "../components/common/Buttons/PlayButton";
+import TrailerButton from "../components/common/Buttons/TrailerButton";
+import BookmarkButton from "../components/common/Buttons/BookmarkButton";
+
 
 
 import MoviesAPI from "../js/moviesAPI.js";
