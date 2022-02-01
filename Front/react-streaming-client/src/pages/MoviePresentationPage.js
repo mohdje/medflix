@@ -7,10 +7,11 @@ import ModalMovieTrailer from '../components/modal/ModalMovieTrailer';
 
 import VideoPlayerWindow from '../components/video/VideoPlayerWindow';
 import CircularProgressBar from "../components/common/CircularProgressBar";
-import PlayButton from "../components/common/buttons/PlayButton";
+
 import TrailerButton from "../components/common/buttons/TrailerButton";
 import PlayWithVLCButton from "../components/common/buttons/PlayWithVLCButton";
 import BookmarkButton from "../components/common/buttons/BookmarkButton";
+import PlayButton from "../components/common/buttons/PlayButton";
 import ModalPlayWithVLCInstructions from "../components/modal/ModalPlayWithVLCInstructions";
 
 import MoviesAPI from "../js/moviesAPI.js";
