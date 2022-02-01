@@ -11,7 +11,7 @@ import ModalListGenre from "./components/modal/ModalListGenre.js";
 
 import MoviesListGenreFull from "./components/movies/list/MoviesListGenreFull";
 import MovieFullPresentation from "./pages/MoviePresentationPage";
-import HomePage from "./components/HomePage";
+import HomePage from "./pages/HomePage";
 import LastSeenMoviesView from "./components/movies/views/LastSeenMoviesView";
 import BookmarkedMoviesView from "./components/movies/views/BookmarkedMoviesView";
 

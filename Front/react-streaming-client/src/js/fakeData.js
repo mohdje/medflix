@@ -4,22 +4,22 @@ export const FakeSubtitles = {
             return [
                 {
                     startTime: 0,
-                    endTime: 3,
+                    endTime: 20,
                     text: "Voici des sous-titres pour la version demo"
                 },
                 {
-                    startTime: 3,
-                    endTime: 5,
+                    startTime: 20,
+                    endTime: 40,
                     text: "L'application récupère les sous-titres du film choisi"
                 },
                 {
-                    startTime: 5,
-                    endTime: 8,
+                    startTime: 40,
+                    endTime: 60,
                     text: "à partir de opensubtitles.org"
                 },
                 {
-                    startTime: 8,
-                    endTime: 11,
+                    startTime: 60,
+                    endTime: 100,
                     text: "et propose plusieurs versions pour chaque langue"
                 }
             ]
@@ -28,22 +28,22 @@ export const FakeSubtitles = {
             return [
                 {
                     startTime: 0,
-                    endTime: 3,
+                    endTime: 20,
                     text: "Voici une autre autre version des sous-titres pour la version demo"
                 },
                 {
-                    startTime: 3,
-                    endTime: 5,
+                    startTime: 20,
+                    endTime: 50,
                     text: "L'application récupère les sous-titres du film choisi"
                 },
                 {
-                    startTime: 5,
-                    endTime: 8,
+                    startTime: 50,
+                    endTime: 80,
                     text: "à partir de opensubtitles.org"
                 },
                 {
-                    startTime: 8,
-                    endTime: 11,
+                    startTime: 80,
+                    endTime: 100,
                     text: "et propose plusieurs versions pour chaque langue"
                 }
             ]
@@ -52,22 +52,22 @@ export const FakeSubtitles = {
             return [
                 {
                     startTime: 0,
-                    endTime: 3,
+                    endTime: 30,
                     text: "Here are subtitles for the demo version"
                 },
                 {
-                    startTime: 3,
-                    endTime: 5,
+                    startTime: 30,
+                    endTime: 50,
                     text: "The application get the selected movie's subtitles "
                 },
                 {
-                    startTime: 5,
-                    endTime: 8,
+                    startTime: 50,
+                    endTime: 80,
                     text: "from opensubtitles.org"
                 },
                 {
-                    startTime: 8,
-                    endTime: 11,
+                    startTime: 80,
+                    endTime: 100,
                     text: "and proposes to the user several versions for each language"
                 }
             ]
@@ -76,22 +76,22 @@ export const FakeSubtitles = {
             return [
                 {
                     startTime: 0,
-                    endTime: 3,
+                    endTime: 30,
                     text: "Here is an other version of subtitles for the demo version"
                 },
                 {
-                    startTime: 3,
-                    endTime: 5,
+                    startTime: 30,
+                    endTime: 50,
                     text: "The application get the selected movie's subtitles "
                 },
                 {
-                    startTime: 5,
-                    endTime: 8,
+                    startTime: 50,
+                    endTime: 80,
                     text: "from opensubtitles.org"
                 },
                 {
-                    startTime: 8,
-                    endTime: 11,
+                    startTime: 80,
+                    endTime: 100,
                     text: "and proposes to the user several versions for each language"
                 }
             ]
