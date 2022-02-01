@@ -1,4 +1,4 @@
-// import logo from './logo.svg';
+
 import './App.css';
 import MoviesAPI from "./js/moviesAPI.js";
 
@@ -12,9 +12,10 @@ import ModalListGenre from "./components/modal/ModalListGenre.js";
 import MoviesListGenreFull from "./components/movies/list/MoviesListGenreFull";
 import MovieFullPresentation from "./pages/MoviePresentationPage";
 import HomePage from "./pages/HomePage";
+import NotAvailableOnMobilePage from "./pages/NotAvailableOnMobilePage";
+
 import LastSeenMoviesView from "./components/movies/views/LastSeenMoviesView";
 import BookmarkedMoviesView from "./components/movies/views/BookmarkedMoviesView";
-
 
 import Router from "./components/Router";
 import { useEffect, useState } from 'react';
@@ -29,6 +30,7 @@ function App() {
   const [centerToLastClickedSeenMovie, setCenterToLastClickedSeenMovie] = useState(false);
 
   const [splashscreenVisible, setSplashscreenVisible] = useState(true);
+  const [notAvailableOnMobileVisible, setNotAvailableOnMobileVisible] = useState(false);
   const [modalSearchVisible, setModalSearchVisible] = useState(false);
 
   const [modalListGenresVisible, setModalListGenresVisible] = useState(false);
@@ -112,18 +114,25 @@ function App() {
 
   useEffect(() => {
     setTimeout(() => { setSplashscreenVisible(false) }, 4000);
-    MoviesAPI.getMoviesGenres(
-      (genres) => {
-        if (genres && genres.length > 0) {
-          setListGenres(genres);
+
+    if ((typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1)) {
+      setNotAvailableOnMobileVisible(true);
+    }
+    else {
+      MoviesAPI.getMoviesGenres(
+        (genres) => {
+          if (genres && genres.length > 0) {
+            setListGenres(genres);
+          }
         }
-      }
-    );
+      );
+    }
   }, []);
 
   return (
     <div className="App">
       <SplashScreen visible={splashscreenVisible} />
+      <NotAvailableOnMobilePage visible={notAvailableOnMobileVisible}/>
       <ModalSearch
         visible={modalSearchVisible}
         onCloseClick={() => setModalSearchVisible(false)}
