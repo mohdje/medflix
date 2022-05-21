@@ -16,13 +16,8 @@ namespace MoviesAPI.Helpers
             if (string.IsNullOrEmpty(buildId))
                 return null;
 
-            var weekParam = GetWeek(buildId);
-
-            if (string.IsNullOrEmpty(weekParam))
-                return null;
-
-            var topEnglishMovies = await GetMoviesNamesAsync(GetTopMoviesUrl(buildId, weekParam, true));
-            var topNonEnglishMovies = await GetMoviesNamesAsync(GetTopMoviesUrl(buildId, weekParam, false));
+            var topEnglishMovies = await GetMoviesNamesAsync(GetTopMoviesUrl(buildId, true));
+            var topNonEnglishMovies = await GetMoviesNamesAsync(GetTopMoviesUrl(buildId, false));
 
             var result = new List<string>();
 
@@ -47,18 +42,10 @@ namespace MoviesAPI.Helpers
                 : null;
         }
 
-        private static string GetWeek(string buildId)
-        {
-            var url = $"https://top10.netflix.com/_next/data/{buildId}/united-states.json";
-            var getParams = HttpRequester.GetAsync<NetflixMovieDto>(new Uri(url)).Result;
-
-            return getParams?.PageProps?.PathParams?.Week;
-        }
-
-        private static string GetTopMoviesUrl(string buildId, string week, bool english)
+        private static string GetTopMoviesUrl(string buildId, bool english)
         {
             var origin = english ? "films" : "films-non-english";
-            return $"https://top10.netflix.com/_next/data/{buildId}/{origin}/{week}.json";
+            return $"https://top10.netflix.com/_next/data/{buildId}/{origin}.json";
         }
 
         private static async Task<string[]> GetMoviesNamesAsync(string url)
