@@ -12,5 +12,6 @@ WebHostStreaming/WebHostStreaming/GPUcache
 WebHostStreaming/.vs
 WebHostStreaming/WebHostStreaming/cache/
 Front/react-streaming-client/node_modules/
+Front/react-streaming-client/build/
 Front/electron-application/medflix-win32-x64/
 Front/electron-application/node_modules/
