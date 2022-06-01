@@ -6,7 +6,6 @@ import NavBar from "./components/navbar/NavBar";
 
 import SplashScreen from "./components/SplashScreen";
 
-import ModalSearch from "./components/modal/ModalSearch";
 import ModalListGenre from "./components/modal/ModalListGenre.js";
 
 import MoviesListGenrePage from "./pages/MoviesListGenrePage";
@@ -15,6 +14,8 @@ import HomePage from "./pages/HomePage";
 import LastSeenMoviesPage from "./pages/LastSeenMoviesPage";
 import BookmarkedMoviesPage from "./pages/BookmarkedMoviesPage";
 import SettingsPage from "./pages/SettingsPage";
+import ResearchPage from "./pages/ResearchPage";
+
 
 
 import Router from "./components/Router";
@@ -22,15 +23,15 @@ import { useEffect, useState } from 'react';
 
 
 function App() {
-
   const [moviesFullListGenre, setMoviesFullListGenre] = useState('');
   const [loadFullListGenrefromCache, setLoadFullListGenrefromCache] = useState(false);
+
+  const [loadResearchfromCache, setLoadResearchfromCache] = useState(false);
 
   const [centerToLastClickedBookmark, setCenterToLastClickedBookmark] = useState(false);
   const [centerToLastClickedSeenMovie, setCenterToLastClickedSeenMovie] = useState(false);
 
   const [splashscreenVisible, setSplashscreenVisible] = useState(true);
-  const [modalSearchVisible, setModalSearchVisible] = useState(false);
 
   const [modalListGenresVisible, setModalListGenresVisible] = useState(false);
   const [listGenres, setListGenres] = useState([]);
@@ -49,7 +50,6 @@ function App() {
   }
 
   const showMovieFullPresentation = (movieId) => {
-    setModalSearchVisible(false);
     setMovieId(movieId);
     showComponent(routerIds.moviePresentationPage);
   }
@@ -62,6 +62,7 @@ function App() {
     setLoadFullListGenrefromCache(true);
     setCenterToLastClickedBookmark(true);
     setCenterToLastClickedSeenMovie(true);
+    setLoadResearchfromCache(true);
     goToPreviousComponent();
   }
 
@@ -71,7 +72,8 @@ function App() {
     moviePresentationPage: 'moviePresentationPage',
     seenMoviesListPage: 'seenMoviesListPage',
     bookmarkedMoviesListPage: 'bookmarkedMoviesListPage',
-    settings: 'settings'
+    settings: 'settings',
+    researchPage: 'researchPage'
   }
 
   const router = {
@@ -110,6 +112,10 @@ function App() {
       {
         id: routerIds.settings,
         render: (<SettingsPage />)
+      },
+      {
+        id: routerIds.researchPage,
+        render: (<ResearchPage loadFromCache={loadResearchfromCache}  onMovieClick={(movieId) => showMovieFullPresentation(movieId)}/>)
       }
     ]
   };
@@ -130,10 +136,6 @@ function App() {
   return (
     <div className="App">
       <SplashScreen visible={splashscreenVisible} />
-      <ModalSearch
-        visible={modalSearchVisible}
-        onCloseClick={() => setModalSearchVisible(false)}
-        onMovieClick={(movieId) => showMovieFullPresentation(movieId)} />
       <ModalListGenre
         genres={listGenres}
         visible={modalListGenresVisible}
@@ -141,7 +143,7 @@ function App() {
         onCloseClick={() => setModalListGenresVisible(false)}
       />
       <NavBar
-        onSearchClick={() => setModalSearchVisible(true)}
+        onSearchClick={() => { setLoadResearchfromCache(false); setRouterActiveComponentId(routerIds.researchPage) }}
         onHomeClick={() => setRouterActiveComponentId(routerIds.homePage)}
         onGenreMenuClick={() => setModalListGenresVisible(true)}
         onLastSeenMoviesClick={() => { setCenterToLastClickedSeenMovie(false); setRouterActiveComponentId(routerIds.seenMoviesListPage) }}
