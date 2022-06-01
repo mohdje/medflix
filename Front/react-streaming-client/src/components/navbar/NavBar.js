@@ -7,12 +7,7 @@ import ViewModuleIcon from '@material-ui/icons/ViewModule';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 
-import { useState, useRef } from 'react';
-
 function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onLastSeenMoviesClick, onBookmarkedMoviesClick, onSettingsClick }) {
-
-    const [showMovieServicesMenu, setShowMovieServicesMenu] = useState(false);
-    const movieServicesMenuRef = useRef(null);
 
     const navBarIconStyle = {
         color: 'white',
