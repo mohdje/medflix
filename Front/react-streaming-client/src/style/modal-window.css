@@ -5,6 +5,10 @@
     width: 100vw;
     height: 100vh;
     background-color: #000000ec;
+    z-index: -1;
+}
+
+.modal-window-container.visible{
     z-index: 5;
 }
 

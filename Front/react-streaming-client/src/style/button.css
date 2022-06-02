@@ -129,4 +129,17 @@
     background-color: rgb(70, 70, 70);
 }
 
+.text-button{
+    margin-left: 15px;
+    text-decoration: underline;
+}
+
+.text-button:active{
+    color:#252525;
+}
+
+.text-button:hover{
+    cursor: pointer;
+}
+
 

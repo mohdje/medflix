@@ -186,7 +186,7 @@ const MoviesAPI = {
         xhttp.onreadystatechange = function () {
             if (this.readyState === 4) {
                 if (this.status === 200) {
-                    var result = deserializeResult ? JSON.parse(this.response) : this.response;
+                    var result = deserializeResult && this.response ? JSON.parse(this.response) : this.response;
                     if (onSuccess)
                         onSuccess(result);
                 }
