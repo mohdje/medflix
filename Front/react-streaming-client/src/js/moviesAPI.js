@@ -76,43 +76,25 @@ const MoviesAPI = {
         this.sendRequest(this.apiServicesUrl + "vo", [], true, onSuccess, onFail);
     },
 
-    selectVOMovieService(serviceId, onSuccess, onFail){
-        this.selectService(this.apiServicesUrl + "vo", serviceId, onSuccess, onFail);
-    },
-
     getVFMovieServices(onSuccess, onFail){
         this.sendRequest(this.apiServicesUrl + "vf", [], true, onSuccess, onFail);
-    },
-
-    selectVFMovieService(serviceId, onSuccess, onFail){
-        this.selectService(this.apiServicesUrl + "vf", serviceId, onSuccess, onFail);
     },
 
     getSubtitlesMovieServices(onSuccess, onFail){
         this.sendRequest(this.apiServicesUrl + "subtitles", [], true, onSuccess, onFail);
     },
 
-    selectSubtitlesMovieService(serviceId, onSuccess, onFail){
-        this.selectService(this.apiServicesUrl + "subtitles", serviceId, onSuccess, onFail);
+    selectVOMovieService(serviceId, onSuccess, onFail){
+        this.performPost(this.apiServicesUrl + "vo", 'selectedServiceId=' + serviceId, onSuccess, onFail);
     },
 
-    selectService(serviceUrl, selectedServiceId, onSuccess, onFail) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState === 4) {
-                if (this.status === 200) {
-                    if (onSuccess)
-                        onSuccess();
-                }
-                else {
-                    if (onFail)
-                        onFail();
-                }
-            }
-        };
-        xhttp.open("POST", serviceUrl, true);
-        xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhttp.send("selectedServiceId=" + selectedServiceId);
+    saveSelectedServices(selectedServices, onSuccess, onFail) {
+        let parameters = [];
+        if(selectedServices.vo >= 0) parameters.push("selectedVOServiceId=" + selectedServices.vo);
+        if(selectedServices.vf >= 0) parameters.push("selectedVFServiceId=" + selectedServices.vf);
+        if(selectedServices.subs >= 0) parameters.push("selectedSubtitlesServiceId=" + selectedServices.subs);
+
+        this.performPost(this.apiServicesUrl + "save", parameters.join('&'), onSuccess, onFail);
     },
 
     getLastSeenMovies(onSuccess, onFail) {
@@ -209,6 +191,25 @@ const MoviesAPI = {
 
         xhttp.open("GET", url, true);
         xhttp.send();
+    },
+
+    performPost(url, parameters, onSuccess, onFail){
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState === 4) {
+                if (this.status === 200) {
+                    if (onSuccess)
+                        onSuccess();
+                }
+                else {
+                    if (onFail)
+                        onFail();
+                }
+            }
+        };
+        xhttp.open("POST", url, true);
+        xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhttp.send(parameters);
     }
 }
 

@@ -14,7 +14,6 @@ function SettingsPage({settings, onApplyClick}) {
     const settingsSectionsResult = [];
 
     const nbSections = settings.length;
-    let nbChangesApplied = 0;
 
     useEffect(() => {
         if(settings.includes('vo')){
@@ -76,29 +75,18 @@ function SettingsPage({settings, onApplyClick}) {
 
     const applyChanges = () => {
         setLoading(true);
-        nbChangesApplied = 0;
-        onApplyClick();
-        setTimeout(() => {
-            settingsSections.forEach(section => {
-                if (section.id === "vo") {
-                    MoviesAPI.selectVOMovieService(section.services.filter(s => s.selected)[0].id, updateChangesApplied());
-                }
-                else if (section.id === "vf") {
-                    MoviesAPI.selectVFMovieService(section.services.filter(s => s.selected)[0].id, updateChangesApplied());
-                }
-                else if (section.id === "subs") {
-                    MoviesAPI.selectSubtitlesMovieService(section.services.filter(s => s.selected)[0].id, updateChangesApplied());
-                }
-            });
-        }, 1000);
+        if (onApplyClick) onApplyClick();
 
+        const selectedServices = {
+            vo: settingsSections.find(s => s.id === 'vo')?.services.find(s => s.selected).id,
+            vf: settingsSections.find(s => s.id === 'vf')?.services.find(s => s.selected).id,
+            subs: settingsSections.find(s => s.id === 'subs')?.services.find(s => s.selected).id
+        };
+        MoviesAPI.saveSelectedServices(selectedServices , () => { 
+            setTimeout(()=>{
+                setLoading(false)
+            }, 1000)});
     };
-
-    const updateChangesApplied = () => {
-        nbChangesApplied++;
-        if (nbChangesApplied === nbSections)
-            setLoading(false);
-    }
 
     return (
         <div className="settings-container">

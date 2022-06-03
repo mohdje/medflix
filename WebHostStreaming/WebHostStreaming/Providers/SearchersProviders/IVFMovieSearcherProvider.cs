@@ -6,7 +6,7 @@ namespace WebHostStreaming.Providers
 {
     public interface IVFMovieSearcherProvider
     {
-        VFMoviesSearcher GetActiveVFMovieSearcher();
+        VFMoviesSearcher ActiveVFMovieSearcher { get; }
         IEnumerable<ServiceInfo> GetVFMoviesServicesInfo();
         void UpdateSelectedVFMovieSearcher(int selectedMovieServiceId);
     }

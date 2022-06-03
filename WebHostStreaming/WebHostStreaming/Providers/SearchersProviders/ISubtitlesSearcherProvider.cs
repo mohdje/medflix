@@ -6,7 +6,7 @@ namespace WebHostStreaming.Providers
 {
     public interface ISubtitlesSearcherProvider
     {
-        SubtitlesSearcher GetActiveSubtitlesSearcher();
+        SubtitlesSearcher ActiveSubtitlesSearcher { get; }
         IEnumerable<ServiceInfo> GetSubtitlesServicesInfo();
         void UpdateSelectedSubtitlesSearcher(int selectedSubtitleServiceId);
     }

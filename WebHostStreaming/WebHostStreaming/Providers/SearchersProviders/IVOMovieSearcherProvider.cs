@@ -10,7 +10,7 @@ namespace WebHostStreaming.Providers
 {
     public interface IVOMovieSearcherProvider
     {
-        VOMovieSearcher GetActiveVOMovieSearcher();
+        VOMovieSearcher ActiveVOMovieSearcher { get; }
         IEnumerable<ServiceInfo> GetVOMoviesServicesInfo();
         ServiceInfo GetSelectedVOMoviesServiceInfo(bool includeAvailabiltyState);
         void UpdateSelectedVOMovieSearcher(int selectedMovieServiceId);

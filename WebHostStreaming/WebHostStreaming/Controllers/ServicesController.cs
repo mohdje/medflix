@@ -14,29 +14,22 @@ namespace WebHostStreaming.Controllers
     [ApiController]
     public class ServicesController : ControllerBase
     {
-        IVOMovieSearcherProvider voMovieSearcherProvider;
-        IVFMovieSearcherProvider vfMovieSearcherProvider;
-        ISubtitlesSearcherProvider subtitlesSearcherProvider;
-        public ServicesController(
-            IVOMovieSearcherProvider voMovieSearcherProvider, 
-            IVFMovieSearcherProvider vfMovieSearcherProvider,
-            ISubtitlesSearcherProvider subtitlesSearcherProvider
-            )
+        ISearchersProvider searchersProvider;
+
+        public ServicesController(ISearchersProvider searchersProvider)
         {
-            this.voMovieSearcherProvider = voMovieSearcherProvider;
-            this.vfMovieSearcherProvider = vfMovieSearcherProvider;
-            this.subtitlesSearcherProvider = subtitlesSearcherProvider;
+            this.searchersProvider = searchersProvider;
         }
         [HttpGet("vo")]
         public IEnumerable<ServiceInfo> GetVOMovieServices()
         {
-            return voMovieSearcherProvider.GetVOMoviesServicesInfo().OrderBy(s => s.Id);
+            return searchersProvider.GetVOMoviesServicesInfo().OrderBy(s => s.Id);
         }
 
         [HttpGet("vo/selected")]
         public ServiceInfo GetActiveVOMovieServices()
         {
-            return voMovieSearcherProvider.GetSelectedVOMoviesServiceInfo(false);
+            return searchersProvider.GetSelectedVOMoviesServiceInfo(false);
         }
 
         [HttpPost("vo")]
@@ -44,7 +37,7 @@ namespace WebHostStreaming.Controllers
         {
             try
             {
-                voMovieSearcherProvider.UpdateSelectedVOMovieSearcher(selectedServiceId);
+                searchersProvider.UpdateSelectedVOMovieSearcher(selectedServiceId);
             }
             catch (Exception)
             {
@@ -57,36 +50,30 @@ namespace WebHostStreaming.Controllers
         [HttpGet("vf")]
         public IEnumerable<ServiceInfo> GetVFMovieServices()
         {
-            return vfMovieSearcherProvider.GetVFMoviesServicesInfo().OrderBy(s => s.Id);
-        }
-
-        [HttpPost("vf")]
-        public IActionResult SelectVFMovieService([FromForm] int selectedServiceId)
-        {
-            try
-            {
-                vfMovieSearcherProvider.UpdateSelectedVFMovieSearcher(selectedServiceId);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
-
-            return StatusCode(200);
+            return searchersProvider.GetVFMoviesServicesInfo().OrderBy(s => s.Id);
         }
 
         [HttpGet("subtitles")]
         public IEnumerable<ServiceInfo> GetSubtitlesServices()
         {
-            return subtitlesSearcherProvider.GetSubtitlesServicesInfo().OrderBy(s => s.Id);
+            return searchersProvider.GetSubtitlesServicesInfo().OrderBy(s => s.Id);
         }
 
-        [HttpPost("subtitles")]
-        public IActionResult SelectSubtitlesService([FromForm] int selectedServiceId)
+        [HttpPost("save")]
+        public IActionResult SaveSelectedServices([FromForm] int? selectedVOServiceId, [FromForm] int? selectedVFServiceId, [FromForm] int? selectedSubtitlesServiceId)
         {
             try
             {
-                subtitlesSearcherProvider.UpdateSelectedSubtitlesSearcher(selectedServiceId);
+                if(selectedSubtitlesServiceId.HasValue)
+                    searchersProvider.UpdateSelectedSubtitlesSearcher(selectedSubtitlesServiceId.Value);
+
+                if (selectedVFServiceId.HasValue)
+                    searchersProvider.UpdateSelectedVFMovieSearcher(selectedVFServiceId.Value);
+
+                if (selectedVOServiceId.HasValue)
+                    searchersProvider.UpdateSelectedVOMovieSearcher(selectedVOServiceId.Value);
+
+                searchersProvider.SaveSources();
             }
             catch (Exception)
             {

@@ -14,10 +14,10 @@ namespace WebHostStreaming.Controllers
     [ApiController]
     public class SubtitlesController : ControllerBase
     {
-        SubtitlesSearcher subtitlesSearcher;
-        public SubtitlesController(ISubtitlesSearcherProvider subtitlesSearcherProvider)
+        ISearchersProvider searchersProvider;
+        public SubtitlesController(ISearchersProvider searchersProvider)
         {
-            this.subtitlesSearcher = subtitlesSearcherProvider.GetActiveSubtitlesSearcher();
+            this.searchersProvider = searchersProvider;
         }
 
         [HttpGet("available/{imdbCode}")]
@@ -25,8 +25,8 @@ namespace WebHostStreaming.Controllers
         {
             var subtitlesDownloaders = new Task<SubtitlesSearchResultDto>[]
             {
-                subtitlesSearcher.GetAvailableSubtitlesAsync(imdbCode, SubtitlesLanguage.French),
-                subtitlesSearcher.GetAvailableSubtitlesAsync(imdbCode, SubtitlesLanguage.English)
+                searchersProvider.ActiveSubtitlesSearcher.GetAvailableSubtitlesAsync(imdbCode, SubtitlesLanguage.French),
+                searchersProvider.ActiveSubtitlesSearcher.GetAvailableSubtitlesAsync(imdbCode, SubtitlesLanguage.English)
             };
 
             var subtitles = new List<SubtitlesSearchResultDto>();
@@ -58,7 +58,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet]
         public IEnumerable<SubtitlesDto> GetSubtitles([FromQuery(Name = "sourceUrl")] string sourceUrl)
         {
-            return subtitlesSearcher.GetSubtitles(sourceUrl);
+            return searchersProvider.ActiveSubtitlesSearcher.GetSubtitles(sourceUrl);
         }
     }
 }

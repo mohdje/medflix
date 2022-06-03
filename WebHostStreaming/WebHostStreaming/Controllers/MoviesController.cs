@@ -19,24 +19,18 @@ namespace WebHostStreaming.Controllers
     [ApiController]
     public class MoviesController : ControllerBase
     {
-        IVOMovieSearcherProvider voMovieSearcherProvider;
-        VOMovieSearcher voMovieSearcher;
-        VFMoviesSearcher vfMovieSearcher;
+        ISearchersProvider searchersProvider;
 
         IMovieStreamProvider movieStreamProvider;
         ISeenMovieBookmarkProvider seenMovieBookmarkProvider;
         IMovieToSeeBookmarkProvider movieToSeeBookmarkProvider;
         public MoviesController(
-            IVOMovieSearcherProvider voMovieSearcherProvider,
-            IVFMovieSearcherProvider vfMovieSearcherProvider,
+            ISearchersProvider searchersProvider,
             IMovieStreamProvider movieStreamProvider,
             ISeenMovieBookmarkProvider seenMovieBookmarkProvider,
             IMovieToSeeBookmarkProvider movieToSeeBookmarkProvider)
         {
-            this.voMovieSearcherProvider = voMovieSearcherProvider;
-            this.voMovieSearcher = voMovieSearcherProvider.GetActiveVOMovieSearcher();
-
-            this.vfMovieSearcher = vfMovieSearcherProvider.GetActiveVFMovieSearcher();
+            this.searchersProvider = searchersProvider;
 
             this.movieStreamProvider = movieStreamProvider;
             this.seenMovieBookmarkProvider = seenMovieBookmarkProvider;
@@ -45,49 +39,49 @@ namespace WebHostStreaming.Controllers
         [HttpGet("genres")]
         public IEnumerable<string> GetMoviesGenres()
         {
-            return voMovieSearcher.GetMovieGenres();
+            return searchersProvider.ActiveVOMovieSearcher.GetMovieGenres();
         }
 
         [HttpGet("suggested")]
         public async Task<IEnumerable<MovieDto>> GetSuggestedMovies()
         {
-            return await voMovieSearcher.GetSuggestedMoviesAsync(5);
+            return await searchersProvider.ActiveVOMovieSearcher.GetSuggestedMoviesAsync(5);
         }
 
         [HttpGet("genre/{genre}")]
         public async Task<IEnumerable<MovieDto>> GetLastMoviesByGenre(string genre)
         {
-            return await voMovieSearcher.GetLastMoviesByGenreAsync(15, genre);
+            return await searchersProvider.ActiveVOMovieSearcher.GetLastMoviesByGenreAsync(15, genre);
         }
 
         [HttpGet("genre/{genre}/{page}")]
         public async Task<IEnumerable<MovieDto>> GetLastMoviesByGenre(string genre, int page)
         {
-            return await voMovieSearcher.GetMoviesByGenreAsync(genre, page);
+            return await searchersProvider.ActiveVOMovieSearcher.GetMoviesByGenreAsync(genre, page);
         }
 
         [HttpGet("search/{text}")]
         public async Task<IEnumerable<MovieDto>> SearchMovies(string text)
         {
-            return await voMovieSearcher.GetMoviesByNameAsync(text);
+            return await searchersProvider.ActiveVOMovieSearcher.GetMoviesByNameAsync(text);
         }
 
         [HttpGet("details/{id}")]
         public async Task<MovieDto> GetMovieDetails(string id)
         {
-            return await voMovieSearcher.GetMovieDetailsAsync(id);
+            return await searchersProvider.ActiveVOMovieSearcher.GetMovieDetailsAsync(id);
         }
 
         [HttpGet("topnetflix")]
         public async Task<IEnumerable<MovieDto>> GetTopNetflixMovies()
         {
-            return await voMovieSearcher.GetTopNetflixMovies();
+            return await searchersProvider.ActiveVOMovieSearcher.GetTopNetflixMovies();
         }
 
         [HttpGet("vf")]
         public async Task<IEnumerable<MovieTorrent>> SearchVF([FromQuery(Name = "title")] string title, [FromQuery(Name = "year")] string year)
         {
-            var movies = await vfMovieSearcher.GetMovieTorrentsAsync(title, int.Parse(year), true);
+            var movies = await searchersProvider.ActiveVFMovieSearcher.GetMovieTorrentsAsync(title, int.Parse(year), true);
 
             return movies;
         }
@@ -139,7 +133,7 @@ namespace WebHostStreaming.Controllers
         [HttpPut("lastseenmovies")]
         public void SaveLastSeenMovie([FromBody] MovieDto movie)
         {
-            var serviceInfo = voMovieSearcherProvider.GetSelectedVOMoviesServiceInfo(false);
+            var serviceInfo = searchersProvider.GetSelectedVOMoviesServiceInfo(false);
 
             var movieBookmark = new MovieBookmark()
             {
@@ -161,7 +155,7 @@ namespace WebHostStreaming.Controllers
         [HttpPut("bookmarks")]
         public IActionResult BookmarkMovie([FromBody] MovieDto movie)
         {
-            var serviceInfo = voMovieSearcherProvider.GetSelectedVOMoviesServiceInfo(false);
+            var serviceInfo = searchersProvider.GetSelectedVOMoviesServiceInfo(false);
 
             var movieBookmark = new MovieBookmark()
             {
