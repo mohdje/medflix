@@ -20,13 +20,7 @@ namespace MoviesAPI.Services
         YtsHtmlOne = 2,
 
         [Description("Yts.pm - Site")]
-        YtsHtmlPm = 3,
-
-        [Description("Yts.ltd - Api")]
-        YtsApiLtd = 4,
-
-        [Description("Yts.ltd - Site")]
-        YtsHtmlLtd = 5,
+        YtsHtmlPm = 3
     }
 
     public enum VFMoviesService

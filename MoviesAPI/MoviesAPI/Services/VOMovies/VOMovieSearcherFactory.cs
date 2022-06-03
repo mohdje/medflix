@@ -18,12 +18,8 @@ namespace MoviesAPI.Services.VOMovies
             {
                 case VOMovieService.YtsApiMx:
                     return new YtsApiService(new YtsApiUrlMxProvider());
-                case VOMovieService.YtsApiLtd:
-                    return new YtsApiService(new YtsApiUrlLtdProvider());
                 case VOMovieService.YtsHtmlMx:
                     return new YtsHtmlService(new YtsHtmlMxUrlProvider());
-                case VOMovieService.YtsHtmlLtd:
-                    return new YtsHtmlService(new YtsHtmlLtdUrlProvider());
                 case VOMovieService.YtsHtmlOne:
                     return new YtsHtmlService(new YtsHtmlOneUrlProvider());
                 case VOMovieService.YtsHtmlPm:
