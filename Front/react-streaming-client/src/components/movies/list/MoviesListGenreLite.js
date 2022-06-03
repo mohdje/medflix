@@ -4,15 +4,32 @@ import MoviesListLite from "./MoviesListLite";
 import { useEffect, useState } from 'react';
 import fadeTransition from "../../../js/customStyles.js";
 
+
+const moviesListGenreLiteCache = [];
+
 function MoviesListGenreLite({ genre, visible, onMovieClick}) {
     const [movies, setMovies] = useState([]);
 
     useEffect(() => {
-        MoviesAPI.getLastMoviesByGenre(genre,
-            (moviesOfGenre) => {
-                if (moviesOfGenre && moviesOfGenre.length > 0)
-                    setMovies(moviesOfGenre);
-            });
+        let cacheOfGenre = moviesListGenreLiteCache.find(c => c.genre === genre);
+
+        if(cacheOfGenre){
+            setMovies(cacheOfGenre.movies);
+        }
+        else{
+            MoviesAPI.getLastMoviesByGenre(genre,
+                (moviesOfGenre) => {
+                    if (moviesOfGenre && moviesOfGenre.length > 0){
+                        moviesListGenreLiteCache.push({
+                            genre: genre,
+                            movies: moviesOfGenre
+                        });
+                        setMovies(moviesOfGenre);
+                    }
+                       
+                });
+        }
+        
     }, []);
 
     return (

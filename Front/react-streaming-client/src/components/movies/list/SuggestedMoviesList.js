@@ -6,19 +6,32 @@ import SuggestedMovie from "../presentation/SuggestedMoviePresentation";
 import MoviesAPI from "../../../js/moviesAPI.js";
 import { useEffect, useState } from 'react';
 
+const suggestedMoviesCache = {
+    movies: []
+}
+
 function SuggestedMovies({ onMoreClick, onDataLoaded }) {
     const [movies, setMovies] = useState([]);
     const [movieIndexVisible, setMovieIndexVisible] = useState(0);
     const [suggestedMoviesPlay, setSuggestedMoviesPlay] = useState(true);
 
     useEffect(() => {
-        MoviesAPI.getSuggestedMovies(
-            (suggestedMovies) => {
-                if (suggestedMovies && suggestedMovies.length > 0) {
-                    setMovies(suggestedMovies);
-                    onDataLoaded();
-                }
-            })
+
+        if(suggestedMoviesCache.movies.length > 0){
+            setMovies(suggestedMoviesCache.movies);
+            onDataLoaded();
+        } 
+        else{
+            MoviesAPI.getSuggestedMovies(
+                (suggestedMovies) => {
+                    if (suggestedMovies && suggestedMovies.length > 0) {
+                        suggestedMoviesCache.movies = suggestedMovies;
+                        setMovies(suggestedMovies);
+                        onDataLoaded();
+                    }
+                })
+        }
+        
     }, []);
 
     useEffect(() => {
