@@ -1,50 +1,50 @@
 import { movies } from "./fakeData";
 const MoviesAPI = {
-    apiMoviesUrl: 'https://localhost:5001/movies/',
-    apiStreamUrl: 'https://localhost:5001/movies/stream?url=',
-    apiSubtitlesUrl: 'https://localhost:5001/subtitles',
-    apiServicesUrl: 'https://localhost:5001/services/',
-    apiLastSeenMoviesUrl: 'https://localhost:5001/movies/lastseenmovies/',
-    apiBookmarkedMoviesUrl: 'https://localhost:5001/movies/bookmarks/',
-    apiMovieDownloadStateUrl: 'https://localhost:5001/movies/streamdownloadstate/',
-
+    apiUrl(route) { return 'http://localhost:5000/' + route },
+    apiMoviesUrl(route) { return this.apiUrl( 'movies/' + route) },
+    apiLastSeenMoviesUrl() { return this.apiMoviesUrl('lastseenmovies') },
+    apiBookmarkedMoviesUrl(route) { return route ? this.apiMoviesUrl('bookmarks/' + route)  : this.apiMoviesUrl('bookmarks')},
+    apiStreamUrl(url) { return this.apiMoviesUrl('stream?url=' + url)},
+    apiSubtitlesUrl(route) { return this.apiUrl('subtitles/' + route) },
+    apiServicesUrl(route) { return this.apiUrl('services/' + route) },
+    apiApplicationUrl(route) { return this.apiUrl('application/' + route) },
 
     getMoviesGenres(onSuccess, onFail) {
-        var url = this.apiMoviesUrl + 'genres';
+        var url = this.apiMoviesUrl('genres');
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
     getLastMoviesByGenre(genre, onSuccess, onFail) {
-        var url = this.apiMoviesUrl + 'genre/' + genre;
+        var url = this.apiMoviesUrl('genre/' + genre);
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
     getSuggestedMovies(onSuccess, onFail) {
-        var url = this.apiMoviesUrl + 'suggested'
+        var url = this.apiMoviesUrl('suggested')
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
     getMoviesByGenre(genre, page, onSuccess, onFail) {
-        var url = this.apiMoviesUrl + 'genre/' + genre + '/' + page;
+        var url = this.apiMoviesUrl('genre/' + genre + '/' + page);
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
     getMovieDetails(id, onSuccess, onFail) {
-        var url = this.apiMoviesUrl + 'details/' + id;
+        var url = this.apiMoviesUrl('details/' + id);
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
     searchMovies(text, onSuccess, onFail) {
-        var url = this.apiMoviesUrl + 'search/' + text
+        var url = this.apiMoviesUrl('search/' + text);
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
     getTopNetflixMovies(onSuccess, onFail) {
-        var url = this.apiMoviesUrl + 'topnetflix'
+        var url = this.apiMoviesUrl('topnetflix');
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
-    searchVFSources(title, year, onSuccess, onFail){
-        var url = this.apiMoviesUrl + 'vf';
+    searchVFSources(title, year, onSuccess, onFail) {
+        var url = this.apiMoviesUrl('vf');
         var parameters = [
             {
                 name: 'title',
@@ -60,85 +60,85 @@ const MoviesAPI = {
     },
 
     getAvailableSubtitles(imdbId, onSuccess, onFail) {
-        var url = this.apiSubtitlesUrl + '/available/' + imdbId;
+        var url = this.apiSubtitlesUrl('available/' + imdbId);
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
-    getSubtitlesApiUrl(subtitlesSourceUrl){
-        return this.apiSubtitlesUrl + "?sourceUrl=" + subtitlesSourceUrl;
+    getSubtitlesApiUrl(subtitlesSourceUrl) {
+        return this.apiSubtitlesUrl("?sourceUrl=" + subtitlesSourceUrl);
     },
 
-    getActiveVOMovieService(onSuccess, onFail){
-        this.sendRequest(this.apiServicesUrl + "vo/selected", [], true, onSuccess, onFail);
+    getActiveVOMovieService(onSuccess, onFail) {
+        this.sendRequest(this.apiServicesUrl("vo/selected"), [], true, onSuccess, onFail);
     },
 
-    getVOMovieServices(onSuccess, onFail){
-        this.sendRequest(this.apiServicesUrl + "vo", [], true, onSuccess, onFail);
+    getVOMovieServices(onSuccess, onFail) {
+        this.sendRequest(this.apiServicesUrl("vo"), [], true, onSuccess, onFail);
     },
 
-    getVFMovieServices(onSuccess, onFail){
-        this.sendRequest(this.apiServicesUrl + "vf", [], true, onSuccess, onFail);
+    getVFMovieServices(onSuccess, onFail) {
+        this.sendRequest(this.apiServicesUrl("vf"), [], true, onSuccess, onFail);
     },
 
-    getSubtitlesMovieServices(onSuccess, onFail){
-        this.sendRequest(this.apiServicesUrl + "subtitles", [], true, onSuccess, onFail);
+    getSubtitlesMovieServices(onSuccess, onFail) {
+        this.sendRequest(this.apiServicesUrl("subtitles"), [], true, onSuccess, onFail);
     },
 
-    selectVOMovieService(serviceId, onSuccess, onFail){
-        this.performPost(this.apiServicesUrl + "vo", 'selectedServiceId=' + serviceId, onSuccess, onFail);
+    selectVOMovieService(serviceId, onSuccess, onFail) {
+        this.performPost(this.apiServicesUrl("vo"), 'selectedServiceId=' + serviceId, onSuccess, onFail);
     },
 
     saveSelectedServices(selectedServices, onSuccess, onFail) {
         let parameters = [];
-        if(selectedServices.vo >= 0) parameters.push("selectedVOServiceId=" + selectedServices.vo);
-        if(selectedServices.vf >= 0) parameters.push("selectedVFServiceId=" + selectedServices.vf);
-        if(selectedServices.subs >= 0) parameters.push("selectedSubtitlesServiceId=" + selectedServices.subs);
+        if (selectedServices.vo >= 0) parameters.push("selectedVOServiceId=" + selectedServices.vo);
+        if (selectedServices.vf >= 0) parameters.push("selectedVFServiceId=" + selectedServices.vf);
+        if (selectedServices.subs >= 0) parameters.push("selectedSubtitlesServiceId=" + selectedServices.subs);
 
-        this.performPost(this.apiServicesUrl + "save", parameters.join('&'), onSuccess, onFail);
+        this.performPost(this.apiServicesUrl("save"), parameters.join('&'), onSuccess, onFail);
     },
 
     getLastSeenMovies(onSuccess, onFail) {
-        this.sendRequest(this.apiLastSeenMoviesUrl, [], true, onSuccess, onFail);
+        this.sendRequest(this.apiLastSeenMoviesUrl(), [], true, onSuccess, onFail);
     },
 
     saveLastSeenMovie(movie) {
         var xhttp = new XMLHttpRequest();
-        xhttp.open("PUT", this.apiLastSeenMoviesUrl, true);
+        xhttp.open("PUT", this.apiLastSeenMoviesUrl(), true);
         xhttp.setRequestHeader("Content-Type", "application/json");
         xhttp.send(JSON.stringify(movie));
     },
 
-    getBookmarkedMovies(onSuccess, onFail){
-        this.sendRequest(this.apiBookmarkedMoviesUrl, [], true, onSuccess, onFail);
+    getBookmarkedMovies(onSuccess, onFail) {
+        this.sendRequest(this.apiBookmarkedMoviesUrl(), [], true, onSuccess, onFail);
     },
 
     addBookmarkedMovie(movie, onSuccess) {
         var xhttp = new XMLHttpRequest();
-        xhttp.open("PUT", this.apiBookmarkedMoviesUrl, true);
+        xhttp.open("PUT", this.apiBookmarkedMoviesUrl(), true);
         xhttp.setRequestHeader("Content-Type", "application/json");
         xhttp.send(JSON.stringify(movie));
 
         xhttp.onreadystatechange = function () {
-            if (this.readyState === 4) 
-                if (this.status === 200) 
+            if (this.readyState === 4)
+                if (this.status === 200)
                     onSuccess();
-            }
+        }
     },
 
     deleteBookmarkedMovie(movieBookmark, onSuccess) {
         var xhttp = new XMLHttpRequest();
-        xhttp.open("DELETE", this.apiBookmarkedMoviesUrl, true);
+        xhttp.open("DELETE", this.apiBookmarkedMoviesUrl(), true);
         xhttp.setRequestHeader("Content-Type", "application/json");
         xhttp.send(JSON.stringify(movieBookmark));
 
         xhttp.onreadystatechange = function () {
-            if (this.readyState === 4) 
-                if (this.status === 200) 
+            if (this.readyState === 4)
+                if (this.status === 200)
                     onSuccess();
-            }
+        }
     },
 
-    isMovieBookmarked(movieId, serviceId, onSuccess, onFail){
+    isMovieBookmarked(movieId, serviceId, onSuccess, onFail) {
         var parameters = [
             {
                 name: 'movieId',
@@ -149,18 +149,41 @@ const MoviesAPI = {
                 value: serviceId
             }
         ];
-        this.sendRequest(this.apiBookmarkedMoviesUrl + 'exists', parameters, false, onSuccess, onFail);
+        this.sendRequest(this.apiBookmarkedMoviesUrl('exists'), parameters, false, onSuccess, onFail);
     },
 
-    getMovieDownloadState(streamUrl, onSuccess, onFail){
+    getMovieDownloadState(streamUrl, onSuccess, onFail) {
         var parameters = [
             {
                 name: 'torrentUrl',
-                value: streamUrl.replace(this.apiStreamUrl, '')
+                value: streamUrl.replace(this.apiStreamUrl(), '')
             }
         ];
 
-        this.sendRequest(this.apiMovieDownloadStateUrl, parameters, true, onSuccess, onFail);
+        this.sendRequest(this.apiMoviesUrl('streamdownloadstate'), parameters, true, onSuccess, onFail);
+    },
+
+    playWithVlc(streamUrl, onSuccess, onFail){
+
+        var parameters = [
+            {
+                name: 'url',
+                value: streamUrl
+            }
+        ];
+
+        this.sendRequest(this.apiApplicationUrl('startvlc'), parameters, false, onSuccess, onFail);
+    },
+
+    getPlatform(onSuccess, onFail) {
+        if (this.isDesktopApplication) onSuccess(this.isDesktopApplication);
+        else {
+            const self = this;
+            this.sendRequest(self.apiApplicationUrl('platform'), null, true, (response) => {
+                self.isDesktopApplication = response.isDesktopApplication;
+                onSuccess(response.isDesktopApplication);
+            }, onFail);
+        }
     },
 
     sendRequest(url, parameters, deserializeResult, onSuccess, onFail) {
@@ -193,7 +216,7 @@ const MoviesAPI = {
         xhttp.send();
     },
 
-    performPost(url, parameters, onSuccess, onFail){
+    performPost(url, parameters, onSuccess, onFail) {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState === 4) {

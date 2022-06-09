@@ -39,18 +39,5 @@ namespace WebHostStreaming.Helpers
                 }
             }
         }
-
-        public static void SetupViewFolder()
-        {
-            var viewZipFile = Path.Combine(CurrentFolder, "view.zip");
-
-            using (var fs = new FileStream(viewZipFile, FileMode.Create))
-                fs.Write(Properties.Resources.View);
-
-            if (Directory.Exists(ViewFolder))
-                Directory.Delete(ViewFolder, true);
-
-            System.IO.Compression.ZipFile.ExtractToDirectory(viewZipFile, ViewFolder);
-        }
     }
 }

@@ -1,12 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ApplicationIcon>favicon.ico</ApplicationIcon>
     <AssemblyName>Medflix</AssemblyName>
+    <Configurations>Debug;Release;Release Background</Configurations>
   </PropertyGroup>
 
-  <ItemGroup>
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release Background' ">
+		<OutputType>WinExe</OutputType>
+	</PropertyGroup>
+
+
+	<ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.34" />
     <PackageReference Include="Mono.Nat" Version="3.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
@@ -35,6 +41,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
 
 

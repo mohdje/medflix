@@ -1,7 +1,7 @@
 import BaseButton from './BaseButton';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 
-function PlayButton({ onClick }) {
+function PlayButton({center, onClick }) {
 
     const content = (<div style={{ display: 'flex', justifyContent: 'center' }}>
         <PlayArrowIcon />
@@ -9,7 +9,7 @@ function PlayButton({ onClick }) {
     </div>);
 
     return (
-        <BaseButton content={content} color={"red"} onClick={() => onClick()} />
+        <BaseButton content={content} centered={center} color={"red"} onClick={() => onClick()} />
     );
 }
 

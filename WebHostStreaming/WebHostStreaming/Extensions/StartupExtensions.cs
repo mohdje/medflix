@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
+using System.IO;
+using WebHostStreaming.Helpers;
 using WebHostStreaming.Providers;
 
 namespace WebHostStreaming.StartupExtensions
@@ -15,6 +16,42 @@ namespace WebHostStreaming.StartupExtensions
             services.AddSingleton<IMovieStreamProvider, MovieStreamProvider>();
             services.AddSingleton<ISeenMovieBookmarkProvider, SeenMovieBookmarkProvider>();
             services.AddSingleton<IMovieToSeeBookmarkProvider, MovieToSeeBookmarkProvider>();
+        }
+
+        public static void SetupUI(this IApplicationBuilder applicationBuilder, IHostApplicationLifetime appLifetime)
+        {
+            if (PlatformConfiguration.PlatformIsWeb)
+            {
+                if (!Directory.Exists(AppFolders.ViewFolder))
+                    throw new DirectoryNotFoundException(AppFolders.ViewFolder);
+
+                applicationBuilder.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(AppFolders.ViewFolder),
+                    RequestPath = "/view"
+                });
+            }
+            else if (PlatformConfiguration.PlatformIsWindows)
+            {
+                if (!File.Exists(AppFiles.WindowsDesktopAppView))
+                    throw new FileNotFoundException(AppFiles.WindowsDesktopAppView);
+
+                appLifetime.ApplicationStarted.Register(() =>
+                {
+                    System.Diagnostics.Process.Start(AppFiles.WindowsDesktopAppView);
+                });
+            }
+            else if (PlatformConfiguration.PlatformIsMacos)
+            {
+                if (!File.Exists(AppFiles.MacosDesktopAppView))
+                    throw new FileNotFoundException(AppFiles.MacosDesktopAppView);
+
+                appLifetime.ApplicationStarted.Register(() =>
+                {
+                    System.Diagnostics.Process.Start(AppFiles.MacosDesktopAppView);
+                });
+            }
+           
         }
     }
 }

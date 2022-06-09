@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using WebHostStreaming.Helpers;
 using WebHostStreaming.Middlewares;
 using WebHostStreaming.StartupExtensions;
 
@@ -20,13 +21,13 @@ namespace WebHostStreaming
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         const string ALLOW_SPECIFIC_ORIGIN = "AllowSpecificOrigin";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -46,29 +47,18 @@ namespace WebHostStreaming
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
+            PlatformConfiguration.ReadPlatformConfiguration(Configuration);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseStaticFiles(new StaticFileOptions
-                {
-                    FileProvider = new PhysicalFileProvider(Helpers.AppFolders.ViewFolder),
-                    RequestPath = "/view"
-                });
-
-                appLifetime.ApplicationStarted.Register(() =>
-                {
-                    Process.Start(
-                       new ProcessStartInfo("cmd", $"/c start https://localhost:5001/view/index.html")
-                       {
-                           CreateNoWindow = true
-                       });
-                });
+                app.SetupUI(appLifetime);
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

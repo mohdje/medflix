@@ -42,6 +42,13 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
     const [addBookmarkButtonVisible, setAddBookmarkButtonVisible] = useState(true);
     const [showChangeSourcesModal, setShowChangeSourcesModal] = useState({visible: false, setting: ''});
 
+    const [isDesktopApp, setIsDesktopApp] = useState(false);
+
+    useEffect(()=>{
+        MoviesAPI.getPlatform((isDesktopApp)=>{
+            setIsDesktopApp(isDesktopApp);
+        })
+    }, []);
 
     useEffect(() => {
         setDataLoaded(false);
@@ -142,7 +149,12 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
     return (
         <div style={{ height: '100%' }}>
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />
-            <ModalPlayWithVLCInstructions visible={showVLCPlayerInstructions} sources={selectedMovieSources} onCloseClick={() => setShowVLCPlayerInstructions(false)} />
+            <ModalPlayWithVLCInstructions 
+                visible={showVLCPlayerInstructions} 
+                sources={selectedMovieSources} 
+                movieDetails={movieDetails}
+                isDesktopApp={isDesktopApp} 
+                onCloseClick={() => setShowVLCPlayerInstructions(false)} />
             <ModalChangeSources visible={showChangeSourcesModal.visible} setting={showChangeSourcesModal.setting} onCloseClick={(changes)=> { if(changes) changeSource(); setShowChangeSourcesModal({visible: false})}}/>
             <ModalMovieTrailer visible={showMovieTrailer} youtubeTrailerUrl={movieDetails.youtubeTrailerUrl} onCloseClick={() => setShowMovieTrailer(false)}/>
             <VideoPlayerWindow visible={showMoviePlayer} sources={selectedMovieSources} subtitles={movieSubtitles} onCloseClick={() => setShowMoviePlayer(false)} />
