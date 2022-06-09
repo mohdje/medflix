@@ -3,24 +3,24 @@ import MoviesAPI from "../../../js/moviesAPI.js";
 import MoviesListLite from "./MoviesListLite";
 import { useEffect, useState } from 'react';
 import fadeTransition from "../../../js/customStyles.js";
+import CacheService from "../../../js/cacheService";
 
-const topNetflixMoviesCache = {
-    movies: []
-}
 
 function TopNetflixMovies({ onMovieClick }) {
     const [movies, setMovies] = useState([]);
+    const cacheId = "topnetflixcache";
 
     useEffect(() => {
-        if(topNetflixMoviesCache.movies.length > 0){
-            setMovies(topNetflixMoviesCache.movies);
+        let cache = CacheService.getCache(cacheId);
+        if(cache){
+            setMovies(cache.data);
         }
         else{
             MoviesAPI.getTopNetflixMovies(
                 (movies) => {
                     if (movies && movies.length > 0){
                         setMovies(movies);
-                        topNetflixMoviesCache.movies = movies;
+                        CacheService.setCache(cacheId , movies);
                     } 
                 });
         }

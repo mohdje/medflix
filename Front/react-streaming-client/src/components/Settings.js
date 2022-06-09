@@ -7,6 +7,7 @@ import ApplyButton from "./common/buttons/ApplyButton";
 import MoviesAPI from "../js/moviesAPI";
 
 import { useEffect, useState } from 'react';
+import CacheService from "../js/cacheService";
 
 function SettingsPage({settings, onApplyClick}) {
     const [loading, setLoading] = useState(true);
@@ -86,6 +87,8 @@ function SettingsPage({settings, onApplyClick}) {
             setTimeout(()=>{
                 setLoading(false)
             }, 1000)});
+
+        if(selectedServices.vo >= 0) CacheService.clearCache();
     };
 
     return (

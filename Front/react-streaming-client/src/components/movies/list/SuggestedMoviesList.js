@@ -5,27 +5,26 @@ import PauseIcon from '@material-ui/icons/Pause';
 import SuggestedMovie from "../presentation/SuggestedMoviePresentation";
 import MoviesAPI from "../../../js/moviesAPI.js";
 import { useEffect, useState } from 'react';
-
-const suggestedMoviesCache = {
-    movies: []
-}
+import CacheService from "../../../js/cacheService";
 
 function SuggestedMovies({ onMoreClick, onDataLoaded }) {
     const [movies, setMovies] = useState([]);
     const [movieIndexVisible, setMovieIndexVisible] = useState(0);
     const [suggestedMoviesPlay, setSuggestedMoviesPlay] = useState(true);
+    const cacheId = "suggestedmoviescache";
 
     useEffect(() => {
 
-        if(suggestedMoviesCache.movies.length > 0){
-            setMovies(suggestedMoviesCache.movies);
+        const cache = CacheService.getCache(cacheId);
+        if(cache){
+            setMovies(cache.data);
             onDataLoaded();
         } 
         else{
             MoviesAPI.getSuggestedMovies(
                 (suggestedMovies) => {
                     if (suggestedMovies && suggestedMovies.length > 0) {
-                        suggestedMoviesCache.movies = suggestedMovies;
+                        CacheService.setCache(cacheId, suggestedMovies);
                         setMovies(suggestedMovies);
                         onDataLoaded();
                     }

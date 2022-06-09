@@ -3,27 +3,23 @@ import MoviesAPI from "../../../js/moviesAPI.js";
 import MoviesListLite from "./MoviesListLite";
 import { useEffect, useState } from 'react';
 import fadeTransition from "../../../js/customStyles.js";
-
-
-const moviesListGenreLiteCache = [];
+import CacheService from "../../../js/cacheService";
 
 function MoviesListGenreLite({ genre, visible, onMovieClick}) {
     const [movies, setMovies] = useState([]);
+    const cacheId = genre + "listlitemoviescache";
 
     useEffect(() => {
-        let cacheOfGenre = moviesListGenreLiteCache.find(c => c.genre === genre);
+        let cache = CacheService.getCache(cacheId);
 
-        if(cacheOfGenre){
-            setMovies(cacheOfGenre.movies);
+        if(cache){
+            setMovies(cache.data);
         }
         else{
             MoviesAPI.getLastMoviesByGenre(genre,
                 (moviesOfGenre) => {
                     if (moviesOfGenre && moviesOfGenre.length > 0){
-                        moviesListGenreLiteCache.push({
-                            genre: genre,
-                            movies: moviesOfGenre
-                        });
+                        CacheService.setCache(cacheId, moviesOfGenre);
                         setMovies(moviesOfGenre);
                     }
                        
