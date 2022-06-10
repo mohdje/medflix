@@ -5,6 +5,7 @@
     <ApplicationIcon>medflix.ico</ApplicationIcon>
     <AssemblyName>Medflix</AssemblyName>
     <Configurations>Debug;Release;Release Background</Configurations>
+	<RuntimeIdentifiers>win10-x64;osx.10.12-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release Background' ">
