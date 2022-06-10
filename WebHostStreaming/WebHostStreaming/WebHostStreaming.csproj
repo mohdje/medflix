@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <ApplicationIcon>medflix.ico</ApplicationIcon>
     <AssemblyName>Medflix</AssemblyName>
     <Configurations>Debug;Release;Release Background</Configurations>
   </PropertyGroup>
