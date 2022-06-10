@@ -13,12 +13,19 @@ namespace WebHostStreaming
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            var configuration = new ConfigurationBuilder()
+                                .AddJsonFile("appsettings.json", false)
+                                .Build();
+
+            return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseConfiguration(configuration);
                     webBuilder.UseStartup<Startup>();
                 });
+        }
 
         private static void SetupBeforeRun()
         {
