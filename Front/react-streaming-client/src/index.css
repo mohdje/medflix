@@ -9,6 +9,8 @@ html, body {
   background: rgb(79,79,79);
   background: linear-gradient(0deg, rgba(79,79,79,1) 0%, rgba(0,0,0,1) 36%);
   overflow:hidden;
+  width: 100vw;
+  height: 100vh;
    
 }
 
