@@ -156,7 +156,7 @@ const MoviesAPI = {
         var parameters = [
             {
                 name: 'torrentUrl',
-                value: streamUrl.replace(this.apiStreamUrl(), '')
+                value: streamUrl.replace(this.apiStreamUrl(''), '')
             }
         ];
 

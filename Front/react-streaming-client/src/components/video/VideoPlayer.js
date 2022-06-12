@@ -34,8 +34,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
 
     const checkMovieDownloadState = (url) => {
         if (checkDownloadStateRef.current && videoRef.current) {       
-            MoviesAPI.getMovieDownloadState(url, (response) => {  
-                console.log(response);      
+            MoviesAPI.getMovieDownloadState(url, (response) => {      
                 if(response.error) {
                     checkDownloadStateRef.current = false;
                     setErrorMessage(response.message);
@@ -100,7 +99,6 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
         const onVideoPlaying = () => {        
             checkDownloadStateRef.current = false;
             videoDownloadStateRef.current = '';
-            console.log("onVideoPlaying");
             setVideoIsLoading(false);
         };
         videoRef.current.addEventListener('canplay', onVideoPlaying, true);
