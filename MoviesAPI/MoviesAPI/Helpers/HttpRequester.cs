@@ -15,7 +15,7 @@ namespace MoviesAPI.Helpers
     internal static class HttpRequester
     {
         static HttpClient client;
-        const string userAgent = "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36";
+        const string userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.115 Safari/537.36";
         private static void InitHttpClient()
         {
             if (client == null)
