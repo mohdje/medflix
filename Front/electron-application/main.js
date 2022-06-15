@@ -26,7 +26,7 @@ function createWindow () {
     mainWindow.loadFile('view/index.html');
     mainTitleBar.attachTitlebarToWindow(mainWindow);
 
-    mainWindow.webContents.openDevTools();
+   // mainWindow.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {
