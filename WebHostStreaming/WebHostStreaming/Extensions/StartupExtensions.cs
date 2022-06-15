@@ -28,8 +28,10 @@ namespace WebHostStreaming.StartupExtensions
                 applicationBuilder.UseStaticFiles(new StaticFileOptions
                 {
                     FileProvider = new PhysicalFileProvider(AppFolders.ViewFolder),
-                    RequestPath = "/view"
+                    RequestPath = "/home"
                 });
+
+                System.Console.WriteLine("Web application accessible here : http://localhost:5000/home/index.html");
             }
             else if (PlatformConfiguration.PlatformIsWindows)
             {
