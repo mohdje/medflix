@@ -31,6 +31,9 @@ namespace WebHostStreaming
         {
             System.Console.WriteLine("---- Setup torrents folder ----");
             AppFolders.SetupTorrentsFolder();
+
+            System.Console.WriteLine("---- Setup subtitles folder ----");
+            AppFolders.SetupSubtitlesFolder();
         }
     }
 }

@@ -39,5 +39,12 @@ namespace WebHostStreaming.Helpers
                 }
             }
         }
+
+        public static void SetupSubtitlesFolder()
+        {
+            if (!Directory.Exists(SubtitlesFolder))
+                Directory.CreateDirectory(SubtitlesFolder);
+
+        }
     }
 }

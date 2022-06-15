@@ -13,15 +13,15 @@ namespace MoviesAPI.Services.Subtitles
 {
     public abstract class SubtitlesSearcher : BaseService
     {
-        private string ExtractionFolder => Path.Combine(Environment.CurrentDirectory, "subtitles");
-
+        private static string ExtractionFolder;
         private string SubtitlesZipFile => Path.Combine(ExtractionFolder, "subtitles.zip");
 
 
         internal SubtitlesSearcher() : base()
         {
-            if (!Directory.Exists(ExtractionFolder))
-                Directory.CreateDirectory(ExtractionFolder);
+            if (string.IsNullOrEmpty(ExtractionFolder))
+                throw new Exception("You have to provide an extraction folder by calling SubtitlesSearcher.SetExtractionFolderLocation() before instantiation of an object.");
+
         }
        
         public abstract Task<SubtitlesSearchResultDto> GetAvailableSubtitlesAsync(string imdbCode, SubtitlesLanguage subtitlesLanguage);
@@ -72,6 +72,14 @@ namespace MoviesAPI.Services.Subtitles
             }
 
             return null;
+        }
+
+        public static void SetExtractionFolderLocation(string folderPath)
+        {
+            if (!Directory.Exists(folderPath))
+                throw new DirectoryNotFoundException("This directory has been found :" + folderPath);
+
+            ExtractionFolder = folderPath;
         }
 
     }

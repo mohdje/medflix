@@ -65,7 +65,8 @@ namespace MoviesAPI.Services.Subtitles
         {
             var doc = HttpRequester.GetHtmlDocumentAsync(subtitlesSourceUrl).Result;
 
-            var subtitlesDownloadUrl = doc.DocumentNode.SelectSingleNode("//a[@class='btn-icon download-subtitle']")?.Attributes["href"]?.Value;
+            var base64dataLink = doc.DocumentNode.SelectSingleNode("//a[@id='btn-download-subtitle']")?.Attributes["data-link"]?.Value;
+            var subtitlesDownloadUrl = Base64Decode(base64dataLink);
 
             if (string.IsNullOrEmpty(subtitlesDownloadUrl))
                 return null;
@@ -97,6 +98,12 @@ namespace MoviesAPI.Services.Subtitles
         protected override string GetPingUrl()
         {
             return baseUrl;
+        }
+
+        private string Base64Decode(string base64EncodedData)
+        {
+            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace WebHostStreaming.Providers
         public VFMoviesSearcher ActiveVFMovieSearcher => VFMovieSearcherFactory.GetService(selectedVFMovieServiceType);
         public SubtitlesSearcher ActiveSubtitlesSearcher => SubtitlesSearcherFactory.GetService(selectedSubtitlesServiceType);
 
-        private VOMovieService selectedVOMovieServiceType = VOMovieService.YtsApiMx;
+        private VOMovieService selectedVOMovieServiceType = VOMovieService.YtsHtmlOne;
         private VOMovieSearcherFactory VOMovieSearcherFactory = new VOMovieSearcherFactory();
 
         private VFMoviesService selectedVFMovieServiceType = VFMoviesService.ZeTorrents;
@@ -29,6 +29,8 @@ namespace WebHostStreaming.Providers
         public SearchersProvider()
         {
             LoadSourcesSettings();
+
+            SubtitlesSearcher.SetExtractionFolderLocation(AppFolders.SubtitlesFolder);
         }
 
         private void LoadSourcesSettings()
