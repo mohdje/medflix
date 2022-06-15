@@ -12,7 +12,7 @@ namespace MoviesAPI.Services.VFMovies.VFMoviesSearchers
 {
     public class VFMoviesTorrent911Searcher : VFMoviesSearcher
     {
-        private const string baseUrl = "https://www.torrent911.com";
+        private const string baseUrl = "https://www.torrent911.org";
         internal VFMoviesTorrent911Searcher()
         {
 

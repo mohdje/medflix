@@ -12,7 +12,7 @@ namespace MoviesAPI.Services.VFMovies.VFMoviesSearchers
 {
     public class VFMoviesZeTorrentsSearcher : VFMoviesSearcher
     {
-        private const string baseUrl = "https://www.zetorrents.tv";
+        private const string baseUrl = "https://www.zetorrents.biz";
 
         internal VFMoviesZeTorrentsSearcher()
         {
