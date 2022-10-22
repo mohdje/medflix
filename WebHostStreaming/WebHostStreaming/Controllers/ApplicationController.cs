@@ -53,7 +53,7 @@ namespace WebHostStreaming.Controllers
             else if (PlatformConfiguration.PlatformIsMacos)
             {
                 if (!System.IO.File.Exists(MACOS_VLC_PATH)) return NotFound();
-                System.Diagnostics.Process.Start(MACOS_VLC_PATH, $"'{url}'");
+                System.Diagnostics.Process.Start(MACOS_VLC_PATH, url.Replace(" ", "%20"));
 
             }
 
