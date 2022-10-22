@@ -6,8 +6,9 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import ViewModuleIcon from '@material-ui/icons/ViewModule';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
+import LinkIcon from '@material-ui/icons/Link';
 
-function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onLastSeenMoviesClick, onBookmarkedMoviesClick, onSettingsClick }) {
+function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onLastSeenMoviesClick, onBookmarkedMoviesClick, onTorrentLinkClick, onSettingsClick }) {
 
     const navBarIconStyle = {
         color: 'white',
@@ -33,6 +34,9 @@ function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onLastSeenMovies
                 </div>
                 <div className="nav-bar-btn" onClick={() => onSearchClick()}>
                     <SearchIcon style={navBarIconStyle} />
+                </div>
+                <div className="nav-bar-btn" onClick={() => onTorrentLinkClick()}>
+                    <LinkIcon style={navBarIconStyle} />
                 </div>
                 <div className="nav-bar-btn" onClick={() => onSettingsClick()}>
                     <SettingsIcon style={navBarIconStyle} />

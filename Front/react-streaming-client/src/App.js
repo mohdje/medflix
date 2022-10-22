@@ -15,6 +15,8 @@ import LastSeenMoviesPage from "./pages/LastSeenMoviesPage";
 import BookmarkedMoviesPage from "./pages/BookmarkedMoviesPage";
 import SettingsPage from "./pages/SettingsPage";
 import ResearchPage from "./pages/ResearchPage";
+import TorrentLinkPage from "./pages/TorrentLinkPage";
+
 
 
 
@@ -73,7 +75,8 @@ function App() {
     seenMoviesListPage: 'seenMoviesListPage',
     bookmarkedMoviesListPage: 'bookmarkedMoviesListPage',
     settings: 'settings',
-    researchPage: 'researchPage'
+    researchPage: 'researchPage',
+    torrentLinkPage: 'torrentLinkPage'
   }
 
   const router = {
@@ -116,6 +119,10 @@ function App() {
       {
         id: routerIds.researchPage,
         render: (<ResearchPage loadFromCache={loadResearchfromCache}  onMovieClick={(movieId) => showMovieFullPresentation(movieId)}/>)
+      },
+      {
+        id: routerIds.torrentLinkPage,
+        render: (<TorrentLinkPage />)
       }
     ]
   };
@@ -148,6 +155,7 @@ function App() {
         onGenreMenuClick={() => setModalListGenresVisible(true)}
         onLastSeenMoviesClick={() => { setCenterToLastClickedSeenMovie(false); setRouterActiveComponentId(routerIds.seenMoviesListPage) }}
         onBookmarkedMoviesClick={() => { setCenterToLastClickedBookmark(false); setRouterActiveComponentId(routerIds.bookmarkedMoviesListPage) }}
+        onTorrentLinkClick={()=>{ setRouterActiveComponentId(routerIds.torrentLinkPage) }}
         onSettingsClick={() => {setRouterActiveComponentId(routerIds.settings)}} />
       <div className="app-content">
         <Router components={router.components} activeComponentId={routerActiveComponentId} />
