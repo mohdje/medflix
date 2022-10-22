@@ -81,13 +81,12 @@ namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml
             }
         }
 
-        public override IEnumerable<SubtitlesDto> GetSubtitles(string subtitleSourceUrl)
+        public override async Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitleSourceUrl)
         {
             var httpRequestHeaders = new List<KeyValuePair<string, string>>();
             httpRequestHeaders.Add(new KeyValuePair<string, string>("referer", baseUrl));
 
-            DownloadSubtitlesZipFile(subtitleSourceUrl, httpRequestHeaders);
-            var subtitlesFile = GetSubtitlesFile();
+            var subtitlesFile = await GetSubtitlesFileAsync(subtitleSourceUrl, httpRequestHeaders);
 
             return SubtitlesConverter.GetSubtitles(subtitlesFile);
         }

@@ -23,7 +23,7 @@ namespace MoviesAPI.Services
             }
         }
 
-        public ServiceInfo GetServiceInfo(T serviceType, bool includeAvailabilityState)
+        public async Task<ServiceInfo> GetServiceInfoAsync(T serviceType, bool includeAvailabilityState)
         {
             var memInfo = serviceEnumType.GetMember(serviceEnumType.GetEnumName(serviceType));
             var descriptionAttribute = memInfo[0]
@@ -38,13 +38,13 @@ namespace MoviesAPI.Services
                 {
                     Description = descriptionAttribute.Description,
                     Id = (int)type,
-                    Available = includeAvailabilityState ? PingService(serviceType) : null
+                    Available = includeAvailabilityState ? await PingServiceAsync(serviceType) : null
                 };
             }
 
             return null;
         }
-        public IEnumerable<ServiceInfo> GetServicesInfo(bool includeAvailabilityState)
+        public async Task<IEnumerable<ServiceInfo>> GetServicesInfoAsync(bool includeAvailabilityState)
         {
             var infoList = new List<ServiceInfo>();
             var tasks = new List<Task>();
@@ -57,23 +57,21 @@ namespace MoviesAPI.Services
 
                 if (descriptionAttribute != null)
                 {
-                    tasks.Add(new Task(() =>
+                    tasks.Add(Task.Run(async() =>
                     {
-                        infoList.Add(GetServiceInfo((T)val, includeAvailabilityState));
+                        infoList.Add(await GetServiceInfoAsync((T)val, includeAvailabilityState));
                     }));
                 }
             }
 
-            tasks.ForEach(t => t.Start());
-
-            Task.WaitAll(tasks.ToArray());
+            await Task.WhenAll(tasks.ToArray());
 
             return infoList;
         }
 
-        protected bool PingService(T serviceType)
+        protected async Task<bool> PingServiceAsync(T serviceType)
         {
-           return GetService(serviceType).PingAsync().Result;
+           return await GetService(serviceType).PingAsync();
         }
 
         public abstract U GetService(T serviceType);

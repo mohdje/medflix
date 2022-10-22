@@ -79,7 +79,7 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("vf")]
-        public async Task<IEnumerable<MovieTorrent>> SearchVF([FromQuery(Name = "title")] string title, [FromQuery(Name = "year")] string year)
+        public  async Task<IEnumerable<MovieTorrent>> SearchVF([FromQuery(Name = "title")] string title, [FromQuery(Name = "year")] string year)
         {
             var movies = await searchersProvider.ActiveVFMovieSearcher.GetMovieTorrentsAsync(title, int.Parse(year), true);
 
@@ -131,9 +131,9 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpPut("lastseenmovies")]
-        public void SaveLastSeenMovie([FromBody] MovieDto movie)
+        public async void SaveLastSeenMovie([FromBody] MovieDto movie)
         {
-            var serviceInfo = searchersProvider.GetSelectedVOMoviesServiceInfo(false);
+            var serviceInfo = await searchersProvider.GetSelectedVOMoviesServiceInfoAsync(false);
 
             var movieBookmark = new MovieBookmark()
             {
@@ -153,9 +153,9 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpPut("bookmarks")]
-        public IActionResult BookmarkMovie([FromBody] MovieDto movie)
+        public async Task<IActionResult> BookmarkMovie([FromBody] MovieDto movie)
         {
-            var serviceInfo = searchersProvider.GetSelectedVOMoviesServiceInfo(false);
+            var serviceInfo = await searchersProvider.GetSelectedVOMoviesServiceInfoAsync(false);
 
             var movieBookmark = new MovieBookmark()
             {

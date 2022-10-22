@@ -53,19 +53,18 @@ namespace MoviesAPI.Services.VFMovies.VFMoviesSearchers
                     && (linkNode.InnerText.Contains("720p") || linkNode.InnerText.Contains("1080p") || linkNode.InnerText.Contains("DVDRIP") || linkNode.InnerText.Contains("WEBRIP"))
                     )
                 {
-                    getTorrentTasks.Add(new Task(() =>
+                    getTorrentTasks.Add(Task.Run(async() =>
                     {
                         result.Add(new MovieTorrent()
                         {
                             Quality = linkNode.InnerText.GetMovieQuality(),
-                            DownloadUrl = GetTorrentLink(baseUrl + linkNode.Attributes["href"].Value)
+                            DownloadUrl = await GetTorrentLinkAsync(baseUrl + linkNode.Attributes["href"].Value)
                         });
                     }));
                 }
             }
 
-            getTorrentTasks.ForEach(t => t.Start());
-            Task.WaitAll(getTorrentTasks.ToArray());
+            await Task.WhenAll(getTorrentTasks);
 
             return result;
         }
@@ -75,9 +74,9 @@ namespace MoviesAPI.Services.VFMovies.VFMoviesSearchers
             return baseUrl;
         }
 
-        private string GetTorrentLink(string moviePageUrl)
+        private async Task<string> GetTorrentLinkAsync(string moviePageUrl)
         {
-            var htmlPage = HttpRequester.GetAsync(new Uri(moviePageUrl)).Result;
+            var htmlPage = await HttpRequester.GetAsync(new Uri(moviePageUrl));
 
             var startIndex = htmlPage.IndexOf("/telecharger/");
             var lastIndex = startIndex > 0 ? htmlPage.IndexOf("'", startIndex) : 0;

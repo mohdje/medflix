@@ -56,9 +56,9 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<SubtitlesDto> GetSubtitles([FromQuery(Name = "sourceUrl")] string sourceUrl)
+        public async Task<IEnumerable<SubtitlesDto>> GetSubtitles([FromQuery(Name = "sourceUrl")] string sourceUrl)
         {
-            return searchersProvider.ActiveSubtitlesSearcher.GetSubtitles(sourceUrl);
+            return await searchersProvider.ActiveSubtitlesSearcher.GetSubtitlesAsync(sourceUrl);
         }
     }
 }

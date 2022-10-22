@@ -21,15 +21,16 @@ namespace WebHostStreaming.Controllers
             this.searchersProvider = searchersProvider;
         }
         [HttpGet("vo")]
-        public IEnumerable<ServiceInfo> GetVOMovieServices()
+        public async Task<IEnumerable<ServiceInfo>> GetVOMovieServices()
         {
-            return searchersProvider.GetVOMoviesServicesInfo().OrderBy(s => s.Id);
+            var services = await searchersProvider.GetVOMoviesServicesInfo();
+            return services.OrderBy(s => s.Id);
         }
 
         [HttpGet("vo/selected")]
-        public ServiceInfo GetActiveVOMovieServices()
+        public async Task<ServiceInfo> GetActiveVOMovieServices()
         {
-            return searchersProvider.GetSelectedVOMoviesServiceInfo(false);
+            return await searchersProvider.GetSelectedVOMoviesServiceInfoAsync(false);
         }
 
         [HttpPost("vo")]
@@ -48,15 +49,17 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("vf")]
-        public IEnumerable<ServiceInfo> GetVFMovieServices()
+        public async Task<IEnumerable<ServiceInfo>> GetVFMovieServices()
         {
-            return searchersProvider.GetVFMoviesServicesInfo().OrderBy(s => s.Id);
+            var services = await searchersProvider.GetVFMoviesServicesInfo();
+            return services.OrderBy(s => s.Id);
         }
 
         [HttpGet("subtitles")]
-        public IEnumerable<ServiceInfo> GetSubtitlesServices()
+        public async Task<IEnumerable<ServiceInfo>> GetSubtitlesServices()
         {
-            return searchersProvider.GetSubtitlesServicesInfo().OrderBy(s => s.Id);
+            var services = await searchersProvider.GetSubtitlesServicesInfo();
+            return services.OrderBy(s => s.Id);
         }
 
         [HttpPost("save")]

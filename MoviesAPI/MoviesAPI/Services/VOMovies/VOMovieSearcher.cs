@@ -34,9 +34,9 @@ namespace MoviesAPI.Services.VOMovies
 
             foreach (var movieName in netflixMoviesNames)
             {
-                getMovieDtoTasks.Add(new Task(() =>
+                getMovieDtoTasks.Add(Task.Run(async() =>
                 {
-                    var searchResult = GetMoviesByNameAsync(movieName).Result;
+                    var searchResult = await GetMoviesByNameAsync(movieName);
 
                     var topMovie = searchResult?.FirstOrDefault(r => r.Title.Equals(movieName, StringComparison.OrdinalIgnoreCase));
 
@@ -46,9 +46,7 @@ namespace MoviesAPI.Services.VOMovies
                 }));
             }
 
-            getMovieDtoTasks.ForEach(t => t.Start());
-
-            Task.WaitAll(getMovieDtoTasks.ToArray());
+            await Task.WhenAll(getMovieDtoTasks.ToArray());
 
             return movieDtos;
         }

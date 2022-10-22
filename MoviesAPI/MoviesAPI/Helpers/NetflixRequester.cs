@@ -11,7 +11,7 @@ namespace MoviesAPI.Helpers
         private const string baseUrl = "https://top10.netflix.com";
         public static async Task<string[]> GetTopNetflixMoviesNameAsync()
         {
-            var buildId = GetBuildId();
+            var buildId = await GetBuildIdAsync();
 
             if (string.IsNullOrEmpty(buildId))
                 return null;
@@ -30,9 +30,9 @@ namespace MoviesAPI.Helpers
             return result.ToArray();
         }
 
-        private static string GetBuildId()
+        private static async Task<string> GetBuildIdAsync()
         {
-            var doc = HttpRequester.GetHtmlDocumentAsync(baseUrl + "/films").Result;
+            var doc = await HttpRequester.GetHtmlDocumentAsync(baseUrl + "/films");
 
             var startIndex = doc.DocumentNode.InnerHtml.IndexOf("buildId");
             var lastIndex = doc.DocumentNode.InnerHtml.IndexOf(",", startIndex);

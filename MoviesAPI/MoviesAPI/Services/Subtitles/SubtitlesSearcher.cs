@@ -26,24 +26,21 @@ namespace MoviesAPI.Services.Subtitles
        
         public abstract Task<SubtitlesSearchResultDto> GetAvailableSubtitlesAsync(string imdbCode, SubtitlesLanguage subtitlesLanguage);
 
-        public abstract IEnumerable<SubtitlesDto> GetSubtitles(string subtitlesSourceUrl);
+        public abstract Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitlesSourceUrl);
 
         protected abstract string GetLanguageCode(SubtitlesLanguage subtitlesLanguage);
 
         protected abstract string GetLanguageLabel(SubtitlesLanguage subtitlesLanguage);
 
-        protected void DownloadSubtitlesZipFile(string subtitleSourceUrl, IEnumerable<KeyValuePair<string, string>> httpRequestHeaders)
-        {         
+        protected async Task<string> GetSubtitlesFileAsync(string subtitleSourceUrl, IEnumerable<KeyValuePair<string, string>> httpRequestHeaders)
+        {
             if (File.Exists(SubtitlesZipFile))
                 File.Delete(SubtitlesZipFile);
 
-            var result = HttpRequester.DownloadAsync(new Uri(subtitleSourceUrl), httpRequestHeaders, false).Result;
+            var result = await HttpRequester.DownloadAsync(new Uri(subtitleSourceUrl), httpRequestHeaders, false);
 
             File.WriteAllBytes(SubtitlesZipFile, result);
-        }
 
-        protected string GetSubtitlesFile()
-        {
             if (!File.Exists(SubtitlesZipFile))
                 throw new FileNotFoundException($"{SubtitlesZipFile} not found");
 

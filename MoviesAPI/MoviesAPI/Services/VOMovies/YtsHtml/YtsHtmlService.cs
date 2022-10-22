@@ -24,7 +24,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
         {
             var doc = await HttpRequester.GetHtmlDocumentAsync(htmlUrlProvider.GetSuggestedMoviesUrl());
 
-            var movieDtos = GetYtsHtmlMovieLiteDtos(doc.DocumentNode, true, true);
+            var movieDtos = await GetYtsHtmlMovieLiteDtosAsync(doc.DocumentNode, true, true);
 
             return movieDtos.Where(m => !string.IsNullOrEmpty(m.Synopsis)).Take(nbMovies);
         }
@@ -33,7 +33,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
         {
             var doc = await HttpRequester.GetHtmlDocumentAsync(htmlUrlProvider.GetLastMoviesByGenreUrl(genre));
 
-            var movieDtos = GetYtsHtmlMovieLiteDtos(doc.DocumentNode);
+            var movieDtos = await GetYtsHtmlMovieLiteDtosAsync(doc.DocumentNode);
 
             return movieDtos.Take(nbMovies);
         }
@@ -44,7 +44,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
 
             var doc = await HttpRequester.GetHtmlDocumentAsync(htmlUrlProvider.GetMovieSearchByGenreUrl(genre, pageIndex));
 
-            var movieDtos = GetYtsHtmlMovieLiteDtos(doc.DocumentNode);
+            var movieDtos = await GetYtsHtmlMovieLiteDtosAsync(doc.DocumentNode);
 
             return movieDtos;
         }
@@ -64,7 +64,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
 
                 var doc = await HttpRequester.GetHtmlDocumentAsync(htmlUrlProvider.GetMovieSearchByNameUrl(name, pageIndex));
 
-                var movieDtos = GetYtsHtmlMovieLiteDtos(doc.DocumentNode);
+                var movieDtos = await GetYtsHtmlMovieLiteDtosAsync(doc.DocumentNode);
 
                 if (movieDtos.Any())
                     moviesSearchResult.AddRange(movieDtos.Where(m => m.Title.ToLower().ContainsWords(tokenizedName)));
@@ -91,9 +91,9 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
                 Duration = doc.DocumentNode.SelectSingleNode("//span[@title='Runtime']")?.ParentNode?.InnerText.Trim(),
                 Genres = doc.DocumentNode.SelectNodes("//div[@id='movie-info']//h2")?.Last().InnerText.Replace("&nbsp;", string.Empty).Replace("/", ", "),
                 ImdbCode = doc.DocumentNode.SelectSingleNode("//div[@id='movie-info']//a[@title='IMDb Rating']")?.Attributes["href"].Value.Split('/').SingleOrDefault(t => t.StartsWith("tt")),
-                BackgroundImageUrl = htmlUrlProvider.GetImageUrl(doc.DocumentNode.SelectSingleNode("//a[contains(@class, 'screenshot-group')]").Attributes["href"].Value),
+                BackgroundImageUrl = htmlUrlProvider.GetImageUrl(doc.DocumentNode.SelectSingleNode("//a[contains(@class, 'screenshot-group')]")?.Attributes["href"].Value),
                 CoverImageUrl = htmlUrlProvider.GetImageUrl(doc.DocumentNode.SelectSingleNode("//div[@id='movie-poster']//img")?.Attributes["src"].Value),
-                Rating = doc.DocumentNode.SelectSingleNode("//div[@class='rating-row']/a[@title='IMDb Rating']").ParentNode.InnerText.Trim().Split('\n').First(),
+                Rating = doc.DocumentNode.SelectSingleNode("//div[@class='rating-row']/a[@title='IMDb Rating']")?.ParentNode?.InnerText.Trim().Split('\n').First(),
                 Synopsis = doc.DocumentNode.SelectSingleNode("//div[@id='synopsis']//p")?.InnerText,
                 Director = doc.DocumentNode.SelectSingleNode("//div[@class='directors']//a[@class='name-cast']")?.InnerText,
                 Cast = doc.DocumentNode.SelectNodes("//div[@class='actors']//a[@class='name-cast']")?.Select(n => n.InnerText).Aggregate((a, b) => a + ", " + b),
@@ -107,7 +107,7 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
             };
         }
 
-        private IEnumerable<MovieDto> GetYtsHtmlMovieLiteDtos(HtmlNode documentNode, bool withSynopsis = false, bool withBackgroundImage = false)
+        private async Task<IEnumerable<MovieDto>> GetYtsHtmlMovieLiteDtosAsync(HtmlNode documentNode, bool withSynopsis = false, bool withBackgroundImage = false)
         {
             var movies = documentNode.SelectNodes("//div[contains(@class, 'browse-movie-wrap')]");
 
@@ -115,16 +115,21 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
                 return new MovieDto[0];
 
             var movieDtos = new List<MovieDto>();
-
-            Parallel.ForEach(movies, m =>
+            var tasks = new List<Task<MovieDto>>();
+            foreach (var movie in movies)
             {
-                movieDtos.Add(GetYtsHtmlMovieLiteDto(m.InnerHtml, withSynopsis, withBackgroundImage));
-            });
+                tasks.Add(Task.Run(async () =>
+                {
+                    return await GetYtsHtmlMovieLiteDtoAsync(movie.InnerHtml, withSynopsis, withBackgroundImage);
+                }));
+            }
+
+            await Task.WhenAll(tasks).ContinueWith(t => movieDtos.AddRange(t.Result));
 
             return movieDtos;
         }
 
-        private MovieDto GetYtsHtmlMovieLiteDto(string movieHtml, bool withSynopsis = false, bool withBackgroundImage = false)
+        private async Task<MovieDto> GetYtsHtmlMovieLiteDtoAsync(string movieHtml, bool withSynopsis = false, bool withBackgroundImage = false)
         {
             var doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(movieHtml);
@@ -136,9 +141,9 @@ namespace MoviesAPI.Services.VOMovies.YtsHtml
 
             if (withSynopsis || withBackgroundImage)
             {
-                var detailsDoc = HttpRequester.GetHtmlDocumentAsync(htmlUrlProvider.GetMovieDetailsUrl(movieId)).Result;
+                var detailsDoc = await HttpRequester.GetHtmlDocumentAsync(htmlUrlProvider.GetMovieDetailsUrl(movieId));
                 synopsis = withSynopsis ? detailsDoc.DocumentNode.SelectNodes("//div[@id='synopsis']//p")?.First().InnerText : string.Empty;
-                backgroundImage = withBackgroundImage ? htmlUrlProvider.GetImageUrl(detailsDoc.DocumentNode.SelectSingleNode("//a[contains(@class, 'screenshot-group')]").Attributes["href"].Value) : string.Empty;
+                backgroundImage = withBackgroundImage ? htmlUrlProvider.GetImageUrl(detailsDoc.DocumentNode.SelectSingleNode("//a[contains(@class, 'screenshot-group')]")?.Attributes["href"].Value) : string.Empty;
             }
 
             // XPATH : '/a[...]' = search a at fist level of doc, //img[...] search img recursivily in doc
