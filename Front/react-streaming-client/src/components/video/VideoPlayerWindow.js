@@ -39,23 +39,27 @@ function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick }) {
                 label: 'Off',
                 selected: true
             });
-        subtitles.forEach(sub => {
-            var subtitlesOption = {
-                label: sub.language,
-                selected: false,
-                subOptions: []
-            };
-            sub.subtitlesSourceUrls.forEach((sourceUrl, index) => {
-                subtitlesOption.subOptions.push({
-                    label: sub.language + ' ' + (index + 1),
+
+        if(subtitles && subtitles.length > 0){
+            subtitles.forEach(sub => {
+                var subtitlesOption = {
+                    label: sub.language,
                     selected: false,
-                    data: {
-                        url: MoviesAPI.getSubtitlesApiUrl(sourceUrl)
-                    }
-                });
-            })
-            newSubtitlesOptions.push(subtitlesOption);
-        });
+                    subOptions: []
+                };
+                sub.subtitlesSourceUrls.forEach((sourceUrl, index) => {
+                    subtitlesOption.subOptions.push({
+                        label: sub.language + ' ' + (index + 1),
+                        selected: false,
+                        data: {
+                            url: MoviesAPI.getSubtitlesApiUrl(sourceUrl)
+                        }
+                    });
+                })
+                newSubtitlesOptions.push(subtitlesOption);
+            });
+        }
+        
         setSubtitlesOptions(newSubtitlesOptions);
     }
 

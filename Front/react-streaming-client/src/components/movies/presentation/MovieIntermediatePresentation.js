@@ -1,7 +1,6 @@
 import "../../../style/movie-intermediate-presentation.css";
 
 import MovieLitePresentation from "./MovieLitePresentation";
-import PlayButton from "../../common/buttons/PlayButton";
 import MoreButton from "../../common/buttons/MoreButton";
 import DeleteButton from "../../common/buttons/DeleteButton";
 
