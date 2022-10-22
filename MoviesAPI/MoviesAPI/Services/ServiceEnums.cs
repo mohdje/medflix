@@ -32,7 +32,10 @@ namespace MoviesAPI.Services
         Torrent911 = 1,
 
         [Description("OxTorrent")]
-        OxTorrent = 2
+        OxTorrent = 2,
+
+        [Description("GxTorrent")]
+        GxTorrent = 3
     }
 
     public enum SubtitlesService

@@ -10,16 +10,11 @@ using MoviesAPI.Extensions;
 
 namespace MoviesAPI.Services.VFMovies.VFMoviesSearchers
 {
-    public class VFMovieOxTorrentSearcher : VFMoviesSearcher
+    public class VFMovieGkTorrentSearcher : VFMoviesSearcher
     {
-        private const string baseUrl = "https://www.oxtorrents.co";
+        private const string baseUrl = "https://www.gktorrents.cc/";
 
-        private const string baseSearchUrl = "https://www.oxtorrents.co/recherche/";
-
-        internal VFMovieOxTorrentSearcher()
-        {
-
-        }
+        private const string baseSearchUrl = "https://www.gktorrents.cc/recherche/";
         public override async Task<IEnumerable<MovieTorrent>> GetMovieTorrentsAsync(string title, int year, bool exactTitle)
         {
             var imdbMoviesInfo = await ImdbRequester.GetImdbMoviesInfoAsync(title);
@@ -28,7 +23,7 @@ namespace MoviesAPI.Services.VFMovies.VFMoviesSearchers
             if (imdbMovieInfo == null)
                 return null;
 
-            var searchUrl = baseSearchUrl + imdbMovieInfo.FrenchTitle.Replace(" ", "-");
+            var searchUrl = baseSearchUrl + imdbMovieInfo.FrenchTitle;
 
             var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
 
@@ -58,36 +53,47 @@ namespace MoviesAPI.Services.VFMovies.VFMoviesSearchers
                         )
 
 
-                        getTorrentTasks.Add(new Task(() =>
+                        getTorrentTasks.Add(Task.Run(async () =>
                         {
-                            var torrentLink = GetTorrentLink(baseUrl + linkNode.Attributes["href"].Value);
-                            if (!string.IsNullOrEmpty(torrentLink))
+                            var torrentLinks = await GetTorrentLinkAsync(baseUrl + linkNode.Attributes["href"].Value);
+                            if (torrentLinks.Any())
                             {
-                                result.Add(new MovieTorrent()
+                                foreach (var torrentLink in torrentLinks)
                                 {
-                                    Quality = linkNode.InnerText.GetMovieQuality(),
-                                    DownloadUrl = torrentLink
-                                });
+                                    result.Add(new MovieTorrent()
+                                    {
+                                        Quality = linkNode.InnerText.GetMovieQuality(),
+                                        DownloadUrl = torrentLink
+                                    });
+                                }
+                               
                             }
                         }));
                 }
             }
 
-            getTorrentTasks.ForEach(t => t.Start());
-            Task.WaitAll(getTorrentTasks.ToArray());
+            await Task.WhenAll(getTorrentTasks.ToArray());
 
             return result;
         }
 
-        private string GetTorrentLink(string moviePageUrl)
+        private async Task<string[]> GetTorrentLinkAsync(string moviePageUrl)
         {
-            var doc = HttpRequester.GetHtmlDocumentAsync(moviePageUrl).Result;
+            var doc = await HttpRequester.GetHtmlDocumentAsync(moviePageUrl);
+
+            var links = new List<string>();
 
             var magnetNode = doc.DocumentNode.SelectSingleNode("//div[@class='btn-magnet']/a");
+            var directDownloadNode = doc.DocumentNode.SelectSingleNode("//div[@class='btn-download']/a");
 
-            return magnetNode != null ? magnetNode.Attributes["href"].Value : null;
+            if (magnetNode != null)
+                links.Add(magnetNode.Attributes["href"].Value);
+
+            if (directDownloadNode != null)
+                links.Add(baseUrl + directDownloadNode.Attributes["href"].Value);
+
+            return links.ToArray();
         }
-
         protected override string GetPingUrl()
         {
             return baseUrl;

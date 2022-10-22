@@ -21,6 +21,8 @@ namespace MoviesAPI.Services.VFMovies
                     return new VFMoviesZeTorrentsSearcher();
                 case VFMoviesService.Torrent911:
                     return new VFMoviesTorrent911Searcher();
+                case VFMoviesService.GxTorrent:
+                    return new VFMovieGkTorrentSearcher();
                 default:
                     return null;
             }
