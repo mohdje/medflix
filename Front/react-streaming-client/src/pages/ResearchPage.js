@@ -1,11 +1,9 @@
-import TextField from '@material-ui/core/TextField';
-import ClearIcon from '@material-ui/icons/Clear';
 import "../style/search-view.css";
 
 import MoviesListLite from "../components/movies/list/MoviesListLite";
 import CircularProgressBar from "../components/common/CircularProgressBar";
+import TextInput from '../components/common/TextInput';
 import MoviesAPI from "../js/moviesAPI.js";
-import fadeTransition from "../js/customStyles.js";
 
 import { useEffect, useState, useRef, useReducer } from 'react';
 
@@ -82,14 +80,9 @@ function ResearchPage({ loadFromCache, onMovieClick }) {
     }, []);
 
     return (
-        <div className="search-view-container">
-            <div className="search-field-container">
-                <div className="search-field">
-                    <CircularProgressBar color={'white'} size={'40px'} visible={searchInProgress} />
-                    <TextField value={searchValue} onChange={(e) => { setSearchValue(e.target.value) }} placeholder="Enter a movie name" />
-                    <ClearIcon style={fadeTransition(searchValue)} className='delete-text-cross' onClick={() => { setSearchValue('') }} />
-                </div>
-            </div>
+        <div className="search-view-container">    
+            <TextInput placeHolder="Enter a movie name" onTextChanged={(text) => { setSearchValue(text) }} />
+            <CircularProgressBar color={'white'} size={'40px'} visible={searchInProgress} />
             <div className="movies-search-result">
                 <MoviesListLite movies={movies} onMovieClick={(movieId) => onMovieClick(movieId)} />
                 <div className="label-result">{searchResultLabel}</div>
