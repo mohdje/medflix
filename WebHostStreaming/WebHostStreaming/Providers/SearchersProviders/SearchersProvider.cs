@@ -6,6 +6,7 @@ using MoviesAPI.Services.VFMovies.VFMoviesSearchers;
 using MoviesAPI.Services.VOMovies;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using WebHostStreaming.Helpers;
 using WebHostStreaming.Models;
 
@@ -49,28 +50,28 @@ namespace WebHostStreaming.Providers
         }
 
         
-        public ServiceInfo GetSelectedVOMoviesServiceInfo(bool includeAvailabiltyState)
+        public async Task<ServiceInfo> GetSelectedVOMoviesServiceInfoAsync(bool includeAvailabiltyState)
         {
-            return VOMovieSearcherFactory.GetServiceInfo(selectedVOMovieServiceType, includeAvailabiltyState);
+            return await VOMovieSearcherFactory.GetServiceInfoAsync(selectedVOMovieServiceType, includeAvailabiltyState);
         }
 
-        public IEnumerable<ServiceInfo> GetSubtitlesServicesInfo()
+        public async Task<IEnumerable<ServiceInfo>> GetSubtitlesServicesInfo()
         {
-            var servicesInfo = SubtitlesSearcherFactory.GetServicesInfo(true);
+            var servicesInfo = await SubtitlesSearcherFactory.GetServicesInfoAsync(true);
             servicesInfo.SingleOrDefault(s => s.Id == (int)selectedSubtitlesServiceType).Selected = true;
             return servicesInfo;
         }
 
-        public IEnumerable<ServiceInfo> GetVFMoviesServicesInfo()
+        public async Task<IEnumerable<ServiceInfo>> GetVFMoviesServicesInfo()
         {
-            var servicesInfo = VFMovieSearcherFactory.GetServicesInfo(true);
+            var servicesInfo = await VFMovieSearcherFactory.GetServicesInfoAsync(true);
             servicesInfo.SingleOrDefault(s => s.Id == (int)selectedVFMovieServiceType).Selected = true;
             return servicesInfo;
         }
 
-        public IEnumerable<ServiceInfo> GetVOMoviesServicesInfo()
+        public async Task<IEnumerable<ServiceInfo>> GetVOMoviesServicesInfo()
         {
-            var servicesInfo = VOMovieSearcherFactory.GetServicesInfo(true);
+            var servicesInfo = await VOMovieSearcherFactory.GetServicesInfoAsync(true);
             servicesInfo.SingleOrDefault(s => s.Id == (int)selectedVOMovieServiceType).Selected = true;
             return servicesInfo;
         }
