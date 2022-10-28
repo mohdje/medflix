@@ -18,7 +18,16 @@ namespace MoviesAPI.Helpers
 
         public static T ToObject<T>(string json) where T : class
         {
-            return JsonConvert.DeserializeObject(json, typeof(T)) as T;
+            try
+            {
+                return JsonConvert.DeserializeObject(json, typeof(T)) as T;
+            }
+            catch (System.Exception ex)
+            {
+
+                return default(T);
+            }
+            
         }
 
       

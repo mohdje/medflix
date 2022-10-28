@@ -37,6 +37,11 @@ namespace MoviesAPI.Helpers
             return JsonHelper.ToObject<T>(result);
         }
 
+        public static async Task<T> GetAsync<T>(string url) where T : class
+        {
+            return await GetAsync<T>(new Uri(url));
+        }
+
         public static Task<string> GetAsync(string baseUrl, NameValueCollection parameters)
         {
             return PerformGetStringCallAsync(BuildUri(baseUrl, parameters));
@@ -104,23 +109,16 @@ namespace MoviesAPI.Helpers
 
         private static async Task<string> PerformGetStringCallAsync(Uri url)
         {
-            try
-            {
-                InitHttpClient();
+            InitHttpClient();
 
-                var response = await client.GetAsync(url);
+            var response = await client.GetAsync(url);
 
-                if (response.StatusCode == HttpStatusCode.OK)
-                    return await response.Content.ReadAsStringAsync();
-                else if (response.StatusCode == HttpStatusCode.Found)
-                    return await PerformGetStringCallAsync(response.Headers.Location);
-                else
-                    return null;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            if (response.StatusCode == HttpStatusCode.OK)
+                return await response.Content.ReadAsStringAsync();
+            else if (response.StatusCode == HttpStatusCode.Found)
+                return await PerformGetStringCallAsync(response.Headers.Location);
+            else
+                return null;
         }
 
         private static async Task<string> PerformPostCallAsync(Uri url, string payload)
@@ -140,21 +138,15 @@ namespace MoviesAPI.Helpers
 
         private static async Task<byte[]> DownloadFile(Uri url)
         {
-            try
-            {
-                InitHttpClient();
-                var response = await client.GetAsync(url);
+            InitHttpClient();
+            var response = await client.GetAsync(url);
 
-                var responseStream = response.Content.ReadAsStream();
-                var data = new byte[responseStream.Length];
+            var responseStream = response.Content.ReadAsStream();
+            var data = new byte[responseStream.Length];
 
-                responseStream.Read(data, 0, data.Length);
-                return data;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            responseStream.Read(data, 0, data.Length);
+            return data;
+            
         }
         #endregion
 
