@@ -32,7 +32,7 @@ namespace MoviesAPI.Services.Torrent
 
             var requestResult = await HttpRequester.GetAsync<YtsResultDto>(ytsApiUrlProvider.GetBaseApiUrl() + listMovies, parameters);
 
-            var movie = requestResult?.Data?.Movies?.FirstOrDefault(m => m.Title.Equals(movieName, StringComparison.OrdinalIgnoreCase) && m.Year == year);
+            var movie = requestResult?.Data?.Movies?.FirstOrDefault(m => m.Title.Replace("\'", String.Empty).Equals(movieName.Replace("\'", String.Empty), StringComparison.OrdinalIgnoreCase) && m.Year == year);
               
             return movie != null ? movie.Torrents.Select(t => new MovieTorrent() { DownloadUrl = t.Url, Quality = t.Quality }) : new MovieTorrent[0];
         }

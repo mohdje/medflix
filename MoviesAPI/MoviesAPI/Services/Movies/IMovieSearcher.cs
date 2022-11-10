@@ -14,11 +14,14 @@ namespace MoviesAPI.Services.Movies
         Task<IEnumerable<LiteMovieDto>> GetMoviesOfTodayAsync();
         Task<IEnumerable<LiteMovieDto>> GetPopularMoviesAsync();
         Task<IEnumerable<LiteMovieDto>> GetRecommandationsAsync(string movieId);
-        Task<IEnumerable<LiteMovieDto>> GetSimilarMovies(string movieId);
-        Task<MovieDto> GetMovieDetails(string movieId);
-        Task<IEnumerable<LiteMovieDto>> GetMoviesByGenre(int genreId, int page);
-        Task<IEnumerable<LiteMovieDto>> GetPopularMoviesByGenre(int genreId);
-        Task<IEnumerable<LiteMovieDto>> GetTopNetflixMovies();
-        Task<IEnumerable<Genre>> GetGenres();
+        Task<IEnumerable<LiteMovieDto>> GetSimilarMoviesAsync(string movieId);
+        Task<MovieDto> GetMovieDetailsAsync(string movieId);
+        Task<IEnumerable<LiteMovieDto>> GetMoviesByGenreAsync(int genreId, int page);
+        Task<IEnumerable<LiteMovieDto>> GetPopularMoviesByGenreAsync(int genreId);
+        Task<IEnumerable<LiteMovieDto>> GetTopNetflixMoviesAsync();
+        Task<IEnumerable<LiteMovieDto>> GetPopularNetflixMoviesAsync();
+        Task<IEnumerable<LiteMovieDto>> GetPopularDisneyPlusMoviesAsync();
+        Task<IEnumerable<LiteMovieDto>> GetPopularAmazonPrimeMoviesAsync();
+        Task<IEnumerable<Genre>> GetGenresAsync();
     }
 }

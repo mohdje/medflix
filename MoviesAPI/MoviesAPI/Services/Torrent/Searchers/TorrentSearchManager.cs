@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MoviesAPI.Services.Torrent.Searchers
+namespace MoviesAPI.Services.Torrent
 {
     public class TorrentSearchManager
     {
@@ -38,7 +38,7 @@ namespace MoviesAPI.Services.Torrent.Searchers
 
             var movieTorrents = await Task.WhenAll(tasks);
 
-            return movieTorrents.SelectMany(m => m);
+            return movieTorrents.Where(r => r != null).SelectMany(m => m);
         }
     }
 }

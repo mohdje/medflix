@@ -25,12 +25,12 @@ namespace MoviesAPI.Services.Subtitles
             var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
 
             if (doc == null)
-                return null;
+                return new string[0];
 
             var nodes = doc.DocumentNode.SelectNodes("//table[@class='table other-subs']/tbody/tr");
 
             if (nodes == null)
-                return null;
+                return new string[0];
 
             var subtitlesSourceLinks = new List<string>();
 

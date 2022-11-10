@@ -3,7 +3,6 @@ using MoviesAPI.Services.Movies;
 using MoviesAPI.Services.Subtitles;
 using MoviesAPI.Services.Subtitles.Searchers;
 using MoviesAPI.Services.Torrent;
-using MoviesAPI.Services.Torrent.Searchers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

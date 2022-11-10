@@ -11,6 +11,7 @@ namespace MoviesAPI.Services.Movies
         private readonly string apiKey;
 
         private const string BaseUrl = "https://api.themoviedb.org/3";
+        private const string BaseImageUrl = "https://image.tmdb.org/t/p";
 
         public TmdbUrlBuilder(string apiKey)
         {
@@ -56,12 +57,17 @@ namespace MoviesAPI.Services.Movies
         public string BuildCoverImageUrl(string imageName)
         {
 
-            return string.IsNullOrEmpty(imageName) ? null : $"https://image.tmdb.org/t/p/w300_and_h450_bestv2/{imageName.Replace("/","")}";
+            return string.IsNullOrEmpty(imageName) ? null : $"{BaseImageUrl}/w300_and_h450_bestv2/{imageName.Replace("/","")}";
         }
 
         public string BuildBackgroundImageUrl(string imageName)
         {
-            return string.IsNullOrEmpty(imageName) ? null : $"https://image.tmdb.org/t/p/w1920_and_h1080_bestv2/{imageName.Replace("/", "")}";
+            return string.IsNullOrEmpty(imageName) ? null : $"{BaseImageUrl}/w1920_and_h1080_bestv2/{imageName.Replace("/", "")}";
+        }
+
+        public string BuildLogoImageUrl(string imageName)
+        {
+            return string.IsNullOrEmpty(imageName) ? null : $"{BaseImageUrl}/w500/{imageName.Replace("/", "")}";
         }
 
         public string BuildMovieDetailsUrl(string tmdbMovieId, string language = null)
@@ -93,11 +99,28 @@ namespace MoviesAPI.Services.Movies
             return $"{BaseUrl}/movie/{tmdbMovieId}/credits?api_key={apiKey}";
         }
 
-        //public string BuildPopularMoviesByPlatformUrl(int platformId)
-        //{
-        //    var date = DateTime.Now.AddMonths(-3).ToString("yyyy-MM-dd");
+        public string BuildGetImagesUrl(string tmdbMovieId)
+        {
+            return $"{BaseUrl}/movie/{tmdbMovieId}/images?api_key={apiKey}";
+        }
 
-        //    return $"{BaseUrl}/discover/movie?api_key={apiKey}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&release_date.lte={date}&vote_average.gte=5&with_genres={genreId}&vote_count.gte=15";
-        //}
+        // "provider_id":8 netflix
+        //"provider_id":9 amazon prime video
+
+        //"provider_name":"Amazon Video",
+        // "provider_id":10
+
+        //"provider_name":"Disney Plus",
+        //"provider_id":337
+
+        //"provider_name":"Disney Plus",
+        //"provider_id":390
+
+        public string BuildPopularMoviesByPlatformUrl(int platformId)
+        {
+            var date = DateTime.Now.ToString("yyyy-MM-dd");
+
+            return $"{BaseUrl}/discover/movie?api_key={apiKey}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&release_date.lte={date}&with_watch_providers={platformId}&watch_region=US";
+        }
     }
 }

@@ -31,7 +31,7 @@ namespace MoviesAPI.Services.Subtitles
 
             var resultDtos = await Task.WhenAll(tasks);
 
-            return resultDtos?.SelectMany(r => r);            
+            return resultDtos?.Where(r => r != null).SelectMany(r => r);            
         }
 
         public Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitlesSourceUrl)

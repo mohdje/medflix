@@ -31,11 +31,11 @@ namespace MoviesAPI.Services.Subtitles
         {
             var openSubtitleMovieId = await GetOpenSubtitleMovieId(imdbCode);
             if (string.IsNullOrEmpty(openSubtitleMovieId))
-                return null;
+                return new string[0];
 
             var doc = await HttpRequester.GetHtmlDocumentAsync(baseUrl + "/en/search/idmovie-" + openSubtitleMovieId + "/sublanguageid-" + GetLanguageCode(subtitlesLanguage));
             if (doc == null)
-                return null;
+                return new string[0];
 
             var htmlTableResults = doc.DocumentNode.SelectSingleNode("//table[@id='search_results']");
             if (htmlTableResults != null)
@@ -58,7 +58,7 @@ namespace MoviesAPI.Services.Subtitles
                     return new string[] { baseUrl + singleResult };
             }
 
-            return null;
+            return new string[0];
         }
 
         private async Task<string> GetOpenSubtitleMovieId(string imdbCode)

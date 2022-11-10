@@ -22,16 +22,38 @@ namespace MoviesAPI.Services.Movies
 
         public async Task<IEnumerable<LiteMovieDto>> SearchMoviesAsync(string movieName)
         {
-            var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildSearchUrl(movieName));
+            var response = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildSearchUrl(movieName));
 
-            return ToLiteMovieDtos(results, 15);
+            return ToLiteMovieDtos(response);
         }
 
         public async Task<IEnumerable<LiteMovieDto>> GetMoviesOfTodayAsync()
         {
             var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildMoviesOfTodayUrl());
 
-            return ToLiteMovieDtos(results);
+            var liteMovieDtos = ToLiteMovieDtos(results).ToList();//ToList() is needed to update LogoImageUrl on each element
+
+            var tasks = new List<Task>();
+            var movieLogos = new List<Tuple<string, string>>();
+
+            foreach (var movie in liteMovieDtos)
+            {
+                tasks.Add(Task.Run(async () =>
+                {
+                    var logoImgUrl = await GetLogoImageUrlAsync(movie.Id);
+                    movieLogos.Add(new Tuple<string, string>(movie.Id, logoImgUrl));
+                }));
+                 
+            }
+
+            await Task.WhenAll(tasks);
+
+            foreach (var movieDto in liteMovieDtos)
+            {
+                movieDto.LogoImageUrl = movieLogos.SingleOrDefault(m => m.Item1 == movieDto.Id)?.Item2;
+            }
+
+            return liteMovieDtos.OrderBy(m => m.Rating);
         }
 
         public async Task<IEnumerable<LiteMovieDto>> GetPopularMoviesAsync()
@@ -48,7 +70,7 @@ namespace MoviesAPI.Services.Movies
             return ToLiteMovieDtos(results);
         }
 
-        public async Task<IEnumerable<LiteMovieDto>> GetSimilarMovies(string tmdbMovieId)
+        public async Task<IEnumerable<LiteMovieDto>> GetSimilarMoviesAsync(string tmdbMovieId)
         {
             var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildSimilarMoviesUrl(tmdbMovieId));
 
@@ -71,14 +93,20 @@ namespace MoviesAPI.Services.Movies
             return tmdbResults?.Results?.FirstOrDefault(r => r.Title.Equals(originalTitle, StringComparison.OrdinalIgnoreCase) && r.Year == year)?.Id;
         }
 
-        private IEnumerable<LiteMovieDto> ToLiteMovieDtos(TmdbSearchResults tmdbSearchResults, int voteCountMin = 0)
+        private async Task<string> GetLogoImageUrlAsync(string movieId)
         {
-            return tmdbSearchResults?.Results?.Where(r => r.VoteCount > voteCountMin).Select(r => ToLiteMovieDto(r));
+            var tmdbImages = await HttpRequester.GetAsync<TmdbImages>(tmdbUrlBuilder.BuildGetImagesUrl(movieId));
+
+            var filePath = tmdbImages?.Logos.Where(l => string.IsNullOrEmpty(l.CountryCode) || l.CountryCode == "en").OrderBy(l => l.VoteAverage).FirstOrDefault()?.FilePath;
+
+            return String.IsNullOrEmpty(filePath) ? null : tmdbUrlBuilder.BuildLogoImageUrl(filePath);
         }
 
-        public async Task<MovieDto> GetMovieDetails(string movieId)
+     
+        public async Task<MovieDto> GetMovieDetailsAsync(string movieId)
         {
             var tmdbSearchResult = await HttpRequester.GetAsync<TmdbSearchResult>(tmdbUrlBuilder.BuildMovieDetailsUrl(movieId));
+            var logoImgUrl = await GetLogoImageUrlAsync(movieId);
             var tmdbCredits = await GetMovieCredits(movieId);
            
             return new MovieDto()
@@ -87,18 +115,20 @@ namespace MoviesAPI.Services.Movies
                 Year = tmdbSearchResult.ReleaseDate?.Split('-')[0],
                 CoverImageUrl = tmdbUrlBuilder.BuildCoverImageUrl(tmdbSearchResult.PosterPath),
                 BackgroundImageUrl = tmdbUrlBuilder.BuildBackgroundImageUrl(tmdbSearchResult.BackdropPath),
-                Rating = tmdbSearchResult.VoteAverage,
-                MovieId = tmdbSearchResult.Id,
+                LogoImageUrl = logoImgUrl,
+                Rating = Math.Round(tmdbSearchResult.VoteAverage, 1),
+                Id = tmdbSearchResult.Id,
                 Synopsis = tmdbSearchResult.Overview,
                 Genre = tmdbSearchResult.Genres.Select(g => g.Name).Aggregate((a, b) => $"{a}, {b}"),
                 Duration = tmdbSearchResult.Runtime + " min.",
                 YoutubeTrailerUrl = GetYoutubeTrailerUrlVideo(tmdbSearchResult.Videos.Results),
-                Cast = tmdbCredits.Cast.Take(4).Select(c => c.Name).Aggregate((a, b) => $"{a}, {b}"),
-                Director = tmdbCredits.Crew.FirstOrDefault(c => c.Job.Equals("director", StringComparison.OrdinalIgnoreCase))?.Name
+                Cast = tmdbCredits?.Cast?.Take(4).Select(c => c.Name).Aggregate((a, b) => $"{a}, {b}"),
+                Director = tmdbCredits?.Crew?.FirstOrDefault(c => c.Job.Equals("director", StringComparison.OrdinalIgnoreCase))?.Name,
+                ImdbId = tmdbSearchResult.ImdbId
             };
         }
 
-        public async Task<IEnumerable<LiteMovieDto>> GetMoviesByGenre(int genreId, int page)
+        public async Task<IEnumerable<LiteMovieDto>> GetMoviesByGenreAsync(int genreId, int page)
         {
             var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildMoviesByGenreUrl(genreId, page));
 
@@ -106,21 +136,23 @@ namespace MoviesAPI.Services.Movies
         }
 
 
-        public async Task<IEnumerable<LiteMovieDto>> GetPopularMoviesByGenre(int genreId)
+        public async Task<IEnumerable<LiteMovieDto>> GetPopularMoviesByGenreAsync(int genreId)
         {
             var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildPopularMoviesByGenreUrl(genreId));
 
             return ToLiteMovieDtos(results);
         }
 
-        public async Task<IEnumerable<Genre>> GetGenres()
+        public async Task<IEnumerable<Genre>> GetGenresAsync()
         {
             var result = await HttpRequester.GetAsync<TmdbGenres>(tmdbUrlBuilder.BuilGenresListUrl());
 
-            return result?.Genres;
+            var genreIdsToRemove = new int[] { 10402, 9648, 10770, 10752, 37, 36 };
+
+            return result?.Genres.Where(g => !genreIdsToRemove.Contains(g.Id));
         }
 
-        public async Task<IEnumerable<LiteMovieDto>> GetTopNetflixMovies()
+        public async Task<IEnumerable<LiteMovieDto>> GetTopNetflixMoviesAsync()
         {
             var moviesName = await NetflixRequester.GetTopNetflixMoviesNameAsync();
 
@@ -132,6 +164,28 @@ namespace MoviesAPI.Services.Movies
             }
 
             return await Task.WhenAll(tasks).ContinueWith(t => t.Result.Where(m => m != null));
+        }
+
+        public async Task<IEnumerable<LiteMovieDto>> GetPopularNetflixMoviesAsync()
+        {
+            var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildPopularMoviesByPlatformUrl(8));
+            results.Results = results.Results.OrderByDescending(r => r.VoteCount).ToArray();
+
+            return ToLiteMovieDtos(results);
+        }
+
+        public async Task<IEnumerable<LiteMovieDto>> GetPopularDisneyPlusMoviesAsync()
+        {
+            var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildPopularMoviesByPlatformUrl(337));
+
+            return ToLiteMovieDtos(results);
+        }
+
+        public async Task<IEnumerable<LiteMovieDto>> GetPopularAmazonPrimeMoviesAsync()
+        {
+            var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildPopularMoviesByPlatformUrl(9));
+
+            return ToLiteMovieDtos(results);
         }
 
         private async Task<TmdbCredits> GetMovieCredits(string movieId)
@@ -146,8 +200,14 @@ namespace MoviesAPI.Services.Movies
             var trailerVideo = youtubeVideos?.FirstOrDefault(v => v.Type.Equals("Trailer", StringComparison.OrdinalIgnoreCase))
                                 ?? youtubeVideos?.FirstOrDefault();
 
-            return trailerVideo != null ? $"https://www.youtube.com/watch?v={trailerVideo?.Key}" : null;
+            return trailerVideo != null ? $"https://www.youtube.com/embed/{trailerVideo?.Key}?rel=0&wmode=transparent&border=0&autoplay=1&iv_load_policy=3" : null;
         }
+
+        private IEnumerable<LiteMovieDto> ToLiteMovieDtos(TmdbSearchResults tmdbSearchResults)
+        {
+            return tmdbSearchResults?.Results?.Where(r => r.VoteCount > 0).Select(r => ToLiteMovieDto(r));
+        }
+
         private LiteMovieDto ToLiteMovieDto(TmdbSearchResult tmdbSearchResult)
         {
             return new LiteMovieDto()
@@ -156,10 +216,11 @@ namespace MoviesAPI.Services.Movies
                 Year = tmdbSearchResult.ReleaseDate?.Split('-')[0],
                 CoverImageUrl = tmdbUrlBuilder.BuildCoverImageUrl(tmdbSearchResult.PosterPath),
                 BackgroundImageUrl = tmdbUrlBuilder.BuildBackgroundImageUrl(tmdbSearchResult.BackdropPath),
-                Rating = tmdbSearchResult.VoteAverage,
-                MovieId = tmdbSearchResult.Id,
+                Rating = Math.Round(tmdbSearchResult.VoteAverage, 1),
+                Id = tmdbSearchResult.Id,
                 Synopsis = tmdbSearchResult.Overview
             };
+           
         }
 
       

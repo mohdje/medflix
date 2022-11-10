@@ -26,7 +26,7 @@ namespace MoviesAPI.Services.Movies.Dtos
         public string PosterPath { get; set; }
 
         [JsonProperty("vote_average")]
-        public string VoteAverage { get; set; }
+        public float VoteAverage { get; set; }
 
         [JsonProperty("backdrop_path")]
         public string BackdropPath { get; set; }
@@ -39,6 +39,9 @@ namespace MoviesAPI.Services.Movies.Dtos
 
         public Genre[] Genres { get; set; }
         public string Runtime { get; set; }
+
+        [JsonProperty("imdb_id")]
+        public string ImdbId { get; set; }
 
     }
 }

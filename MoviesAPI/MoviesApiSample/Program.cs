@@ -18,24 +18,29 @@ namespace MoviesApiSample
 {
     class Program
     {
-        const string apiKey = "a45ba9acb6490460d706a8cca2817a63";
+        const string apiKey = Tokens.API_TOKEN;
         static void Main(string[] args)
         {
             Console.WriteLine("Test started");
 
             //SearchMovies("rocky");
-            //GetMoviesOfToday();
-            //GetPopularMovies();
+            // GetMoviesOfToday();
+           // GetPopularMovies();
             //GetPopularMoviesByGenre(16);
-            //GetMoviesByGenre(18);
+            //GetMoviesByGenre(10751);
             //GetTopNetflixMovies();
-            GetMovieDetails("436270");
+            // GetMovieDetails("436270");
+            //GetPopularNetflixMovies();
+            //GetPopularDisneyPlusMovies();
+            //GetPopularAmazonPrimeMovies();
 
+
+            //GetFrenchTitle("718930");
             //GetGenres();
 
             //SearchVfTorrents("american girl", 2022);
-            //SearchVoTorrents("dza ve", 2022);
-            // GetSubtitles("tt5315212", SubtitlesLanguage.French);
+            //SearchVoTorrents("Project Gemini", 2022);
+            GetSubtitles("tt1441105", SubtitlesLanguage.French);//tt16194408 "tt1441105"
 
             Console.ReadKey();
         }
@@ -58,13 +63,40 @@ namespace MoviesApiSample
             ShowMoviesList(await movieSearcher.GetPopularMoviesAsync());
         }
 
+        static async Task GetPopularNetflixMovies()
+        {
+            Console.WriteLine("Popular Netflix movies");
+
+            var movieSearcher = MoviesAPIFactory.Instance.CreateMovieSearcher(apiKey);
+
+            ShowMoviesList(await movieSearcher.GetPopularNetflixMoviesAsync());
+        }
+
+        static async Task GetPopularDisneyPlusMovies()
+        {
+            Console.WriteLine("Popular DisneyPlus movies");
+
+            var movieSearcher = MoviesAPIFactory.Instance.CreateMovieSearcher(apiKey);
+
+            ShowMoviesList(await movieSearcher.GetPopularDisneyPlusMoviesAsync());
+        }
+
+        static async Task GetPopularAmazonPrimeMovies()
+        {
+            Console.WriteLine("Popular Amazon prime movies");
+
+            var movieSearcher = MoviesAPIFactory.Instance.CreateMovieSearcher(apiKey);
+
+            ShowMoviesList(await movieSearcher.GetPopularAmazonPrimeMoviesAsync());
+        }
+
         static async Task GetPopularMoviesByGenre(int genreId)
         {
             Console.WriteLine($"Popular movies by genre : {genreId}");
 
             var movieSearcher = MoviesAPIFactory.Instance.CreateMovieSearcher(apiKey);
 
-            ShowMoviesList(await movieSearcher.GetPopularMoviesByGenre(genreId));
+            ShowMoviesList(await movieSearcher.GetPopularMoviesByGenreAsync(genreId));
         }
 
         static async Task GetMoviesByGenre(int genreId)
@@ -73,7 +105,7 @@ namespace MoviesApiSample
 
             var movieSearcher = MoviesAPIFactory.Instance.CreateMovieSearcher(apiKey);
 
-            ShowMoviesList(await movieSearcher.GetMoviesByGenre(genreId, 1));
+            ShowMoviesList(await movieSearcher.GetMoviesByGenreAsync(genreId, 1));
         }
 
         static async Task SearchMovies(string movieName)
@@ -91,12 +123,23 @@ namespace MoviesApiSample
 
             var movieSearcher = MoviesAPIFactory.Instance.CreateMovieSearcher(apiKey);
 
-            var genres = await movieSearcher.GetGenres();
+            var genres = await movieSearcher.GetGenresAsync();
 
             foreach (var genre in genres)
             {
                 Console.WriteLine(genre.Name);
             }
+        }
+
+        static async Task GetFrenchTitle(string movieId)
+        {
+            Console.WriteLine($"GetFrenchTitle {movieId}");
+
+            var movieSearcher = MoviesAPIFactory.Instance.CreateMovieSearcher(apiKey);
+
+            var title = await movieSearcher.GetFrenchTitleAsync(movieId);
+
+            Console.WriteLine(title);
         }
 
         static async Task GetTopNetflixMovies()
@@ -105,7 +148,7 @@ namespace MoviesApiSample
 
             var movieSearcher = MoviesAPIFactory.Instance.CreateMovieSearcher(apiKey);
 
-            ShowMoviesList(await movieSearcher.GetTopNetflixMovies());
+            ShowMoviesList(await movieSearcher.GetTopNetflixMoviesAsync());
         }
 
         static async Task GetMovieDetails(string movieId)
@@ -115,9 +158,9 @@ namespace MoviesApiSample
             var movieSearcher = MoviesAPIFactory.Instance.CreateMovieSearcher(apiKey);
 
 
-            var movie = await movieSearcher.GetMovieDetails(movieId);
+            var movie = await movieSearcher.GetMovieDetailsAsync(movieId);
 
-            Console.WriteLine($"{movie.MovieId}. {movie.Title}  ({movie.Year}), {movie.Rating}, background:{movie.BackgroundImageUrl}, cover:{movie.CoverImageUrl}, synopsis: {movie.Synopsis}");
+            Console.WriteLine($"{movie.Id}. {movie.Title}  ({movie.Year}), {movie.Rating}, background:{movie.BackgroundImageUrl}, cover:{movie.CoverImageUrl}, synopsis: {movie.Synopsis}");
             Console.WriteLine($"Genre: {movie.Genre}");
             Console.WriteLine($"Director: {movie.Director}");
             Console.WriteLine($"Cast: {movie.Cast}");
@@ -134,7 +177,7 @@ namespace MoviesApiSample
             {
                 foreach (var movie in movies)
                 {
-                    Console.WriteLine($"{movie.MovieId}. {movie.Title}  ({movie.Year}), {movie.Rating}, background:{movie.BackgroundImageUrl}, cover:{movie.CoverImageUrl}, synopsis: {movie.Synopsis}");
+                    Console.WriteLine($"{movie.Id}. {movie.Title}  ({movie.Year}), {movie.Rating}, background:{movie.BackgroundImageUrl}, cover:{movie.CoverImageUrl}, logo:{movie.LogoImageUrl}, synopsis: {movie.Synopsis}");
                 }
             }
         }
@@ -159,16 +202,16 @@ namespace MoviesApiSample
 
         static async Task SearchVoTorrents(string originalTitle, int year)
         {
-            Console.WriteLine($"Search vf torrents for {originalTitle}, {year}");
-            var vfTorrentSearcher = await MoviesAPIFactory.Instance.CreateTorrentSearchManagerAsync();
+            Console.WriteLine($"Search vo torrents for {originalTitle}, {year}");
+            var voTorrentSearcher = await MoviesAPIFactory.Instance.CreateTorrentSearchManagerAsync();
 
-            var vfTorrents = await vfTorrentSearcher.SearchVoTorrentsAsync(originalTitle, year);
+            var voTorrents = await voTorrentSearcher.SearchVoTorrentsAsync(originalTitle, year);
 
-            if (vfTorrents == null || !vfTorrents.Any())
+            if (voTorrents == null || !voTorrents.Any())
                 Console.WriteLine("No torrent found");
             else
             {
-                foreach (var vfTorrent in vfTorrents)
+                foreach (var vfTorrent in voTorrents)
                 {
                     Console.WriteLine($"Quanlity: {vfTorrent.Quality}, Url: {vfTorrent.DownloadUrl}");
                 }

@@ -16,11 +16,13 @@ namespace MoviesAPI.Services.Movies.Dtos
 
         public string BackgroundImageUrl { get; set; }
 
-        public string Rating { get; set; }
+        public double Rating { get; set; }
 
-        public string MovieId { get; set; }
+        public string Id { get; set; }
 
         public string Synopsis { get; set; }
+
+        public string LogoImageUrl { get; set; }
 
     }
 }
