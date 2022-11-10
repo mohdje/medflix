@@ -45,19 +45,25 @@ namespace WebHostStreaming.Controllers
         [HttpGet("startvlc")]
         public IActionResult StartVLC([FromQuery] string url)
         {
-            if (PlatformConfiguration.PlatformIsWindows)
+            try
             {
-                if (!System.IO.File.Exists(WINDOWS_VLC_PATH)) return NotFound();
-                System.Diagnostics.Process.Start(WINDOWS_VLC_PATH, url);
+                if (PlatformConfiguration.PlatformIsWindows)
+                {
+                    if (!System.IO.File.Exists(WINDOWS_VLC_PATH)) return NotFound();
+                    System.Diagnostics.Process.Start(WINDOWS_VLC_PATH, url);
+                }
+                else if (PlatformConfiguration.PlatformIsMacos)
+                {
+                    if (!System.IO.File.Exists(MACOS_VLC_PATH)) return NotFound();
+                    System.Diagnostics.Process.Start(MACOS_VLC_PATH, url.Replace(" ", "%20"));
+                }
+
+                return Ok();
             }
-            else if (PlatformConfiguration.PlatformIsMacos)
+            catch (Exception)
             {
-                if (!System.IO.File.Exists(MACOS_VLC_PATH)) return NotFound();
-                System.Diagnostics.Process.Start(MACOS_VLC_PATH, url.Replace(" ", "%20"));
-
+                return this.StatusCode(500);
             }
-
-            return Ok();
         }
 
         [HttpGet("platform")]

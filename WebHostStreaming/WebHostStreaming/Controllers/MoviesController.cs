@@ -3,15 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MoviesAPI.Services.CommonDtos;
 using MoviesAPI.Services;
 using WebHostStreaming.Providers;
 using System.IO;
 using WebHostStreaming.Models;
 using WebHostStreaming.Helpers;
 using System.Net;
-using MoviesAPI.Services.VOMovies;
-using MoviesAPI.Services.VFMovies.VFMoviesSearchers;
+using MoviesAPI.Services.Movies.Dtos;
+using MoviesAPI.Services.Torrent.Dtos;
 
 namespace WebHostStreaming.Controllers
 {
@@ -22,68 +21,110 @@ namespace WebHostStreaming.Controllers
         ISearchersProvider searchersProvider;
 
         IMovieStreamProvider movieStreamProvider;
-        ISeenMovieBookmarkProvider seenMovieBookmarkProvider;
-        IMovieToSeeBookmarkProvider movieToSeeBookmarkProvider;
+        IWatchedMoviesProvider watchedMoviesProvider;
+        IBookmarkedMoviesProvider bookmarkedMoviesProvider;
         public MoviesController(
             ISearchersProvider searchersProvider,
             IMovieStreamProvider movieStreamProvider,
-            ISeenMovieBookmarkProvider seenMovieBookmarkProvider,
-            IMovieToSeeBookmarkProvider movieToSeeBookmarkProvider)
+            IWatchedMoviesProvider watchedMoviesProvider,
+            IBookmarkedMoviesProvider bookmarkedMoviesProvider)
         {
             this.searchersProvider = searchersProvider;
 
             this.movieStreamProvider = movieStreamProvider;
-            this.seenMovieBookmarkProvider = seenMovieBookmarkProvider;
-            this.movieToSeeBookmarkProvider = movieToSeeBookmarkProvider;
+            this.watchedMoviesProvider = watchedMoviesProvider;
+            this.bookmarkedMoviesProvider = bookmarkedMoviesProvider;
         }
         [HttpGet("genres")]
-        public IEnumerable<string> GetMoviesGenres()
+        public async Task<IEnumerable<Genre>> GetMoviesGenres()
         {
-            return searchersProvider.ActiveVOMovieSearcher.GetMovieGenres();
+            return await searchersProvider.MovieSearcher.GetGenresAsync();
         }
 
-        [HttpGet("suggested")]
-        public async Task<IEnumerable<MovieDto>> GetSuggestedMovies()
+        [HttpGet("moviesoftoday")]
+        public async Task<IEnumerable<LiteMovieDto>> GetMoviesOfToday()
         {
-            return await searchersProvider.ActiveVOMovieSearcher.GetSuggestedMoviesAsync(5);
+            var movies = await searchersProvider.MovieSearcher.GetMoviesOfTodayAsync();
+
+            return movies.Where(m => !string.IsNullOrEmpty(m.LogoImageUrl)).Take(5);
         }
 
-        [HttpGet("genre/{genre}")]
-        public async Task<IEnumerable<MovieDto>> GetLastMoviesByGenre(string genre)
+        [HttpGet("netflix")]
+        public async Task<IEnumerable<LiteMovieDto>> GetPopularNetflixMovies()
         {
-            return await searchersProvider.ActiveVOMovieSearcher.GetLastMoviesByGenreAsync(15, genre);
+            return await searchersProvider.MovieSearcher.GetTopNetflixMoviesAsync();
         }
 
-        [HttpGet("genre/{genre}/{page}")]
-        public async Task<IEnumerable<MovieDto>> GetLastMoviesByGenre(string genre, int page)
+        [HttpGet("disneyplus")]
+        public async Task<IEnumerable<LiteMovieDto>> GetPopularDisneyPlusMovies()
         {
-            return await searchersProvider.ActiveVOMovieSearcher.GetMoviesByGenreAsync(genre, page);
+            return await searchersProvider.MovieSearcher.GetPopularDisneyPlusMoviesAsync();
+        }
+
+        [HttpGet("amazonprime")]
+        public async Task<IEnumerable<LiteMovieDto>> GetPopularAmazonPrimeMovies()
+        {
+            return await searchersProvider.MovieSearcher.GetPopularAmazonPrimeMoviesAsync();
+        }
+
+        [HttpGet("popular")]
+        public async Task<IEnumerable<LiteMovieDto>> GetPopularMovies()
+        {
+            return await searchersProvider.MovieSearcher.GetPopularMoviesAsync();
+        }
+
+        [HttpGet("recommandations")]
+        public async Task<IEnumerable<LiteMovieDto>> GetRecommandations()
+        {
+            var movies = watchedMoviesProvider.GetWatchedMovies();
+            if (movies == null || !movies.Any())
+                return null;
+
+            return await searchersProvider.MovieSearcher.GetRecommandationsAsync(movies.Last().Id);
+        }
+
+        [HttpGet("genre/{genreId}")]
+        public async Task<IEnumerable<LiteMovieDto>> GetPopularMoviesByGenre(int genreId)
+        {
+            return await searchersProvider.MovieSearcher.GetPopularMoviesByGenreAsync(genreId);
+        }
+
+        [HttpGet("genre/{genreId}/{page}")]
+        public async Task<IEnumerable<LiteMovieDto>> GetMoviesByGenre(int genreId, int page)
+        {
+            return await searchersProvider.MovieSearcher.GetMoviesByGenreAsync(genreId, page);
         }
 
         [HttpGet("search/{text}")]
-        public async Task<IEnumerable<MovieDto>> SearchMovies(string text)
+        public async Task<IEnumerable<LiteMovieDto>> SearchMovies(string text)
         {
-            return await searchersProvider.ActiveVOMovieSearcher.GetMoviesByNameAsync(text);
+            return await searchersProvider.MovieSearcher.SearchMoviesAsync(text);
         }
 
         [HttpGet("details/{id}")]
         public async Task<MovieDto> GetMovieDetails(string id)
         {
-            return await searchersProvider.ActiveVOMovieSearcher.GetMovieDetailsAsync(id);
+            return await searchersProvider.MovieSearcher.GetMovieDetailsAsync(id);
         }
 
         [HttpGet("topnetflix")]
-        public async Task<IEnumerable<MovieDto>> GetTopNetflixMovies()
+        public async Task<IEnumerable<LiteMovieDto>> GetTopNetflixMovies()
         {
-            return await searchersProvider.ActiveVOMovieSearcher.GetTopNetflixMovies();
+            return await searchersProvider.MovieSearcher.GetTopNetflixMoviesAsync();
         }
 
         [HttpGet("vf")]
-        public  async Task<IEnumerable<MovieTorrent>> SearchVF([FromQuery(Name = "title")] string title, [FromQuery(Name = "year")] string year)
+        public  async Task<IEnumerable<MovieTorrent>> SearchVFTorrents([FromQuery(Name = "movieId")] string movieId, [FromQuery(Name = "originalTitle")] string originalTitle, [FromQuery(Name = "year")] int year)
         {
-            var movies = await searchersProvider.ActiveVFMovieSearcher.GetMovieTorrentsAsync(title, int.Parse(year), true);
+            var frenchTitle = await searchersProvider.MovieSearcher.GetFrenchTitleAsync(movieId);
 
-            return movies;
+            return await searchersProvider.TorrentSearchManager.SearchVfTorrentsAsync(string.IsNullOrEmpty(frenchTitle) ? originalTitle : frenchTitle, year);
+        }
+
+        [HttpGet("vo")]
+        public async Task<IEnumerable<MovieTorrent>> SearchVOTorrents([FromQuery(Name = "title")] string title, [FromQuery(Name = "year")] int year)
+        {
+            return await searchersProvider.TorrentSearchManager.SearchVoTorrentsAsync(title, year); ;
         }
 
         [HttpGet("stream")]
@@ -100,7 +141,7 @@ namespace WebHostStreaming.Controllers
             {
                 var acceptedFormat = userAgent.StartsWith("VLC") ? "*" : ".mp4";
                 var streamDto = movieStreamProvider.GetStream(url, offset, acceptedFormat);
-            
+                
                 if (streamDto != null)
                     return File(streamDto.Stream, streamDto.ContentType, true); 
                 else
@@ -123,50 +164,42 @@ namespace WebHostStreaming.Controllers
                 return Ok(state);
         }
 
-        [HttpGet("lastseenmovies")]
-        public IEnumerable<MovieBookmark> GetLastSeenMovies()
+        [HttpGet("watchedmovies")]
+        public IEnumerable<LiteMovieDto> GetWatchedMovies()
         {
-            var lastSeenMovies = seenMovieBookmarkProvider.GetMovieBookmarks();
-            return lastSeenMovies?.Reverse();
+            var movies = watchedMoviesProvider.GetWatchedMovies();
+            return movies?.Reverse();
         }
 
-        [HttpPut("lastseenmovies")]
-        public async void SaveLastSeenMovie([FromBody] MovieDto movie)
+        [HttpPut("watchedmovies")]
+        public async Task<IActionResult> SaveWatchedMovie([FromBody] LiteMovieDto movie)
         {
-            var serviceInfo = await searchersProvider.GetSelectedVOMoviesServiceInfoAsync(false);
-
-            var movieBookmark = new MovieBookmark()
+            try
             {
-                Movie = movie,
-                ServiceName = serviceInfo.Description,
-                ServiceId = serviceInfo.Id
-            };
+                watchedMoviesProvider.SaveWatchedMovie(movie);
+            }
+            catch (Exception)
+            {
 
-            seenMovieBookmarkProvider.SaveMovieBookmark(movieBookmark, 7);
+                return StatusCode((int)HttpStatusCode.InternalServerError);
+            }
+
+            return StatusCode((int)HttpStatusCode.OK);
         }
 
         [HttpGet("bookmarks")]
-        public IEnumerable<MovieBookmark> GetBookmarkedMovies()
+        public IEnumerable<LiteMovieDto> GetBookmarkedMovies()
         {
-            var lastSeenMovies = movieToSeeBookmarkProvider.GetMovieBookmarks();
-            return lastSeenMovies?.Reverse();
+            var movies = bookmarkedMoviesProvider.GetBookmarkedMovies();
+            return movies?.Reverse();
         }
 
         [HttpPut("bookmarks")]
-        public async Task<IActionResult> BookmarkMovie([FromBody] MovieDto movie)
+        public async Task<IActionResult> BookmarkMovie([FromBody] LiteMovieDto movieToBookmark)
         {
-            var serviceInfo = await searchersProvider.GetSelectedVOMoviesServiceInfoAsync(false);
-
-            var movieBookmark = new MovieBookmark()
-            {
-                Movie = movie,
-                ServiceName = serviceInfo.Description,
-                ServiceId = serviceInfo.Id
-            };
-
             try
             {
-                movieToSeeBookmarkProvider.SaveMovieBookmark(movieBookmark);
+                bookmarkedMoviesProvider.SaveMovieBookmark(movieToBookmark);
             }
             catch (Exception)
             {
@@ -178,11 +211,11 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpDelete("bookmarks")]
-        public IActionResult DeleteBookmarkMovie([FromBody] MovieBookmark movieBookmark)
+        public IActionResult DeleteBookmarkMovie([FromBody] LiteMovieDto movieBookmarkToDelete)
         {
             try
             {
-                movieToSeeBookmarkProvider.DeleteMovieBookmark(movieBookmark.Movie.Id, movieBookmark.ServiceId);
+                bookmarkedMoviesProvider.DeleteMovieBookmark(movieBookmarkToDelete.Id);
             }
             catch (Exception)
             {
@@ -194,12 +227,11 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("bookmarks/exists")]
-        public IActionResult MovieBookmarkExists([FromQuery] string movieId, [FromQuery] string serviceId)
+        public IActionResult MovieBookmarkExists([FromQuery] string movieId)
         {
-            int id;
-            if (int.TryParse(serviceId, out id))
+            if (!string.IsNullOrEmpty(movieId))
             {
-                return Ok(movieToSeeBookmarkProvider.MovieBookmarkExists(movieId, id));
+                return Ok(bookmarkedMoviesProvider.MovieBookmarkExists(movieId));
             }
             else
                 return BadRequest();

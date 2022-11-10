@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MoviesAPI.Services.CommonDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +6,7 @@ using System.Threading.Tasks;
 using WebHostStreaming.Providers;
 using MoviesAPI.Services.Subtitles;
 using MoviesAPI.Services.Subtitles.DTOs;
+using WebHostStreaming.Models;
 
 namespace WebHostStreaming.Controllers
 {
@@ -21,36 +21,26 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("available/{imdbCode}")]
-        public async Task<IEnumerable<SubtitlesSearchResultDto>> GetAvailableSubtitles(string imdbCode)
+        public async Task<IEnumerable<SubtitlesSourcesDto>> GetAvailableSubtitles(string imdbCode)
         {
-            var subtitlesDownloaders = new Task<SubtitlesSearchResultDto>[]
-            {
-                searchersProvider.ActiveSubtitlesSearcher.GetAvailableSubtitlesAsync(imdbCode, SubtitlesLanguage.French),
-                searchersProvider.ActiveSubtitlesSearcher.GetAvailableSubtitlesAsync(imdbCode, SubtitlesLanguage.English)
-            };
+            var frenchSubtitlesSourcesDto = await searchersProvider.SubtitlesSearchManager.GetAvailableSubtitlesUrlsAsync(imdbCode, SubtitlesLanguage.French);
+            var englishSubtitlesSourcesDto = await searchersProvider.SubtitlesSearchManager.GetAvailableSubtitlesUrlsAsync(imdbCode, SubtitlesLanguage.English);
 
-            var subtitles = new List<SubtitlesSearchResultDto>();
+            var subtitles = new List<SubtitlesSourcesDto>();
 
-            await Task.WhenAll(subtitlesDownloaders).ContinueWith(s =>
-            {
-                try
+            if (frenchSubtitlesSourcesDto != null && frenchSubtitlesSourcesDto.Any())
+                subtitles.Add(new SubtitlesSourcesDto()
                 {
-                    if (s?.Result != null)
-                    {
-                        foreach (var openSubtitleDto in s.Result)
-                        {
-                            if (openSubtitleDto?.SubtitlesSourceUrls != null && openSubtitleDto.SubtitlesSourceUrls.Any())
-                                subtitles.Add(openSubtitleDto);
-                        }
-                    }
-                }
-                catch (Exception)
-                {
+                    Language = "French",
+                    SubtitlesSourceUrls = frenchSubtitlesSourcesDto.ToArray()
+                });
 
-                   
-                }
-               
-            });
+            if (englishSubtitlesSourcesDto != null && englishSubtitlesSourcesDto.Any())
+                subtitles.Add(new SubtitlesSourcesDto()
+                {
+                    Language = "English",
+                    SubtitlesSourceUrls = englishSubtitlesSourcesDto.ToArray()
+                });
 
             return subtitles;
         }
@@ -58,7 +48,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet]
         public async Task<IEnumerable<SubtitlesDto>> GetSubtitles([FromQuery(Name = "sourceUrl")] string sourceUrl)
         {
-            return await searchersProvider.ActiveSubtitlesSearcher.GetSubtitlesAsync(sourceUrl);
+            return await searchersProvider.SubtitlesSearchManager.GetSubtitlesAsync(sourceUrl);
         }
     }
 }

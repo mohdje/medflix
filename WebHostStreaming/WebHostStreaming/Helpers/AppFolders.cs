@@ -8,10 +8,11 @@ namespace WebHostStreaming.Helpers
 {
     public static class AppFolders
     {
-        public static string SubtitlesFolder => Path.Combine(AppContext.BaseDirectory, "subtitles");
-        public static string TorrentsFolder => Path.Combine(AppContext.BaseDirectory, "torrents");
-        public static string ViewFolder => Path.Combine(AppContext.BaseDirectory, "view");
         public static string CurrentFolder => AppContext.BaseDirectory;
+        public static string DataFolder => Path.Combine(CurrentFolder, "data");
+        public static string SubtitlesFolder => Path.Combine(CurrentFolder, "subtitles");
+        public static string TorrentsFolder => Path.Combine(CurrentFolder, "torrents");
+        public static string ViewFolder => Path.Combine(CurrentFolder, "view");
 
         public static void SetupTorrentsFolder()
         {

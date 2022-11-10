@@ -1,7 +1,13 @@
-﻿namespace WebHostStreaming.Providers
+﻿using MoviesAPI.Services.Movies;
+using MoviesAPI.Services.Subtitles;
+using MoviesAPI.Services.Torrent;
+
+namespace WebHostStreaming.Providers
 {
-    public interface ISearchersProvider : ISubtitlesSearcherProvider, IVFMovieSearcherProvider, IVOMovieSearcherProvider
+    public interface ISearchersProvider
     {
-        void SaveSources();
+        IMovieSearcher MovieSearcher { get; }
+        TorrentSearchManager TorrentSearchManager { get; }
+        SubtitlesSearchManager SubtitlesSearchManager { get; }
     }
 }
