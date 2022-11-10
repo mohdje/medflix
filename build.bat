@@ -3,8 +3,6 @@
 set params=%1
 
 if not "%params:web=%"=="%params%" (  
-    "D:\Projets\ReplaceLine\ReplaceLine\bin\Release\net6.0\ReplaceLine.exe" ".\WebHostStreaming\WebHostStreaming\appsettings.json" 15 """Platform"":""web"""
-    
    npm run build --prefix ".\Front\react-streaming-client"
     
     if exist ".\WebHostStreaming\WebHostStreaming\bin\Release\net6.0" (
@@ -15,23 +13,21 @@ if not "%params:web=%"=="%params%" (
 
     xcopy ".\Front\react-streaming-client\build\" ".\WebHostStreaming\WebHostStreaming\bin\Release\net6.0\view\" /E
 
+    "D:\Projets\ReplaceLine\ReplaceLine\bin\Release\net6.0\ReplaceLine.exe" ".\WebHostStreaming\WebHostStreaming\appsettings.json" 15 """Platform"":""web"""
+
     echo Web application is ready
 )
 
-if not "%params:electron=%"=="%params%" (  
-     if exist "Front\electron-application\view\" (
+if not "%params:win=%"=="%params%" (  
+    npm run build --prefix ".\Front\react-streaming-client"
+
+    if exist "Front\electron-application\view\" (
         rmdir "Front\electron-application\view\" /s /q
     )
     
     xcopy "Front\react-streaming-client\build\" "Front\electron-application\view\" /E
 
     npm run make --prefix ".\Front\electron-application"
-
-    echo Electron application is ready
-)
-
-if not "%params:win=%"=="%params%" (  
-    "D:\Projets\ReplaceLine\ReplaceLine\bin\Release\net6.0\ReplaceLine.exe" "WebHostStreaming\WebHostStreaming\appsettings.json" 15 """Platform"":""windows"""
 
     if exist ".\WebHostStreaming\WebHostStreaming\bin\Release Background\net6.0" (
         rmdir ".\WebHostStreaming\WebHostStreaming\bin\Release Background\net6.0" /s /q
@@ -40,6 +36,8 @@ if not "%params:win=%"=="%params%" (
     "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" ".\WebHostStreaming\WebHostStreaming.sln" /p:Configuration="Release Background" /p:Platform="Any CPU"
 
     xcopy ".\Front\electron-application\out\Medflix-win32-x64\" ".\WebHostStreaming\WebHostStreaming\bin\Release Background\net6.0\windows-app\" /E
+
+    "D:\Projets\ReplaceLine\ReplaceLine\bin\Release\net6.0\ReplaceLine.exe" "WebHostStreaming\WebHostStreaming\appsettings.json" 15 """Platform"":""windows"""
 
     echo Windows application is ready
 )
