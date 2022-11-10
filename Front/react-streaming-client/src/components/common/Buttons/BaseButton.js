@@ -1,7 +1,7 @@
 import "../../../style/button.css";
 import { useState } from 'react';
 
-function BaseButton({ color, content, centered, onClick }) {
+function BaseButton({ color, content, centered, rounded, onClick }) {
 
     const [showRippleEffect, setShowRippleEffect] = useState(false);
 
@@ -17,6 +17,7 @@ function BaseButton({ color, content, centered, onClick }) {
         let className = "standard-button";
         if (color) className += " " + color;
         if (centered) className += " center";
+        if(rounded) className += " rounded";
         return className;
     }
 
