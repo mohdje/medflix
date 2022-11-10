@@ -15,20 +15,24 @@ function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick }) {
 
     const buildVideoQualitiesOptions = (sources) => {
         var options = [];
+        console.log("sources", sources);
        if(!sources) return;
        sources.forEach(source => {
             var qualities = options.filter(o => o.label.startsWith(source.quality));
 
             var option = {
                 label: qualities && qualities.length > 0 ? source.quality + ' (' + (qualities.length + 1) + ')': source.quality,
-                selected: false,
+                selected: source.selected,
                 data: {
                     url: MoviesAPI.apiStreamUrl(source.downloadUrl)
                 }
             }
             options.push(option);
         });
-        options[0].selected = true;
+
+        if(options.filter(o => o.selected).length === 0)
+            options[0].selected = true;
+            
         setVideoQualitiesOptions(options);
     }
 

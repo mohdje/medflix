@@ -2,16 +2,16 @@ import MoviesAPI from "../js/moviesAPI.js";
 import MoviesIntermediatePresentationList from "../components/movies/list/MoviesIntermediatePresentationList";
 import { useEffect, useState } from 'react';
 
-var bookmarkedMovieLastClicked = null;
+var lastClickedMovie = null;
 
-function BookmarkedMoviesView({ centerToLastClickedBookmark, onMoreClick }) {
+function BookmarkedMoviesView({ centerToLastClickedMovie, onMovieClick }) {
 
     const [moviesBookmarks, setMoviesBookmarks] = useState([]);
     const [loadingVisible, setLoadingVisible] = useState(true);
 
     useEffect(() => {
-        if(!centerToLastClickedBookmark)
-            bookmarkedMovieLastClicked = null;
+        if(!centerToLastClickedMovie)
+            lastClickedMovie = null;
 
         MoviesAPI.getBookmarkedMovies((bookmarkedMovies) => {
             setLoadingVisible(false);
@@ -22,27 +22,18 @@ function BookmarkedMoviesView({ centerToLastClickedBookmark, onMoreClick }) {
         });
     }, []);
 
-    const deleteBookmark = (movieBookmark) => {
-        MoviesAPI.deleteBookmarkedMovie(movieBookmark, () => {
-            var newMovieBookmarksList = moviesBookmarks.filter(m => !(m.movie.id === movieBookmark.movie.id && m.serviceName === movieBookmark.serviceName));
-            setMoviesBookmarks(newMovieBookmarksList);
-        });
-    };
-
-    const handleMoreClick = (movieBookmark) => {
-        bookmarkedMovieLastClicked = movieBookmark;
-        onMoreClick(movieBookmark.movie.id);
+    const handleMovieClick = (movie) => {
+        lastClickedMovie = movie;
+        onMovieClick(movie.id);
     }
 
     return (
         <MoviesIntermediatePresentationList
-            title={"You can see here the movies you have bookmarked"}
+            title={moviesBookmarks && moviesBookmarks.length > 0 ? "You can see here the movies you have bookmarked" : "No bookmarked movies"}
             loadingProgressVisible={loadingVisible}
-            moviesBookmarks={moviesBookmarks}
-            showDeleteButton={true}
-            centerToMovieBookmark={bookmarkedMovieLastClicked}
-            onMoreClick={(movieBookmark) => handleMoreClick(movieBookmark)}
-            onDeleteClick={(movieBookmark) => deleteBookmark(movieBookmark)} />
+            movies={moviesBookmarks}
+            centerToMovie={lastClickedMovie}
+            onClick={(movie) => handleMovieClick(movie)}/>
     )
 }
 

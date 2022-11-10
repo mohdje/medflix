@@ -13,10 +13,10 @@ function ModalListGenre({ genres, visible, onCloseClick, onGenreClick }) {
                 <CircularProgressBar color={'white'} size={'60px'} position={'center'} visible={loading} />
                 <div className="list-genres">
                     {genres.map(genre =>
-                        <div key={genre}
+                        <div key={genre.id}
                             className="genre"
                             onClick={() => onGenreClick(genre)}>
-                            {genre}
+                            {genre.name}
                         </div>)}
                 </div>
             </div>

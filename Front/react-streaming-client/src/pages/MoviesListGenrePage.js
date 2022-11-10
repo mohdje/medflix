@@ -11,14 +11,14 @@ import MoviesAPI from "../js/moviesAPI.js";
 import { useEffect, useState } from 'react';
 
 const cache = {
-    update(genre, movies, pageIndex, elemId) {
-        this.genre = genre;
+    update(genreId, movies, pageIndex, elemId) {
+        this.genreId = genreId;
         this.movies = movies;
         this.pageIndex = pageIndex;
         this.movieElementId = elemId;
     },
-    get(genre) {
-        return this.genre === genre ?
+    get(genreId) {
+        return this.genreId === genreId ?
             {
                 movies: this.movies,
                 pageIndex: this.pageIndex,
@@ -27,10 +27,10 @@ const cache = {
             : null;
     },
     clear() {
-        this.genre = '';
+        this.genreId = '';
         this.movies = null;
     },
-    genre: '',
+    genreId: '',
     movies: null,
     pageIndex: 0,
     movieElementId: ''
@@ -51,7 +51,7 @@ function MoviesListGenrePage({ genre, loadFromCache, onMovieClick }) {
 
     const performSearch = () => {
         setSearchInProgress(true);
-        MoviesAPI.getMoviesByGenre(genre, pageIndex,
+        MoviesAPI.getMoviesByGenre(genre.id, pageIndex,
             (moviesOfGenre) => {
                 setSearchInProgress(false);
                 if (moviesOfGenre && moviesOfGenre.length > 0) {
@@ -64,18 +64,18 @@ function MoviesListGenrePage({ genre, loadFromCache, onMovieClick }) {
 
 
     useEffect(() => {
-        const cacheMovies = cache.get(genre);
+        const cacheMovies = cache.get(genre.id);
         if (loadFromCache && cacheMovies) 
             setPageIndex(cacheMovies.pageIndex);
         else {           
             setPageIndex(1); 
             if(pageIndex === 1) performSearch(); 
         }
-    }, [genre]);
+    }, [genre.id]);
 
     useEffect(() => {
         if (pageIndex > 0) {       
-            const cacheMovies = cache.get(genre);
+            const cacheMovies = cache.get(genre.id);
             if (cacheMovies) setMovies(cacheMovies.movies);
             else performSearch();
         }
@@ -84,7 +84,7 @@ function MoviesListGenrePage({ genre, loadFromCache, onMovieClick }) {
     useEffect(() => {
         if (movies && movies.length > 0) {
             if (loadFromCache) {
-                const cacheMovies = cache.get(genre);
+                const cacheMovies = cache.get(genre.id);
                 if (cacheMovies) {
                     scrollToMovie(cacheMovies.movieElementId);
                     cache.clear();
@@ -105,14 +105,14 @@ function MoviesListGenrePage({ genre, loadFromCache, onMovieClick }) {
     }
 
     const handleMovieClick = (movieId, elementId) => {
-        cache.update(genre, movies, pageIndex, elementId);
+        cache.update(genre.id, movies, pageIndex, elementId);
         onMovieClick(movieId);
     }
 
     return (
         <div className="movies-list-by-genre-container">
             <div className="movies-list-by-genre-header">
-                <div className="movies-list-genre">{genre}</div>
+                <div className="movies-list-genre">{genre.name}</div>
                 <CircularProgressBar size={'30px'} color={'white'} visible={searchInProgress} />
             </div>
             <div className="movies-list-container full">

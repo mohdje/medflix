@@ -8,18 +8,23 @@ import ModalMovieTrailer from '../components/modal/ModalMovieTrailer';
 import VideoPlayerWindow from '../components/video/VideoPlayerWindow';
 import CircularProgressBar from "../components/common/CircularProgressBar";
 
+import BaseButton from "../components/common/buttons/BaseButton";
 import TrailerButton from "../components/common/buttons/TrailerButton";
 import PlayWithVLCButton from "../components/common/buttons/PlayWithVLCButton";
-import BookmarkButton from "../components/common/buttons/BookmarkButton";
+import {AddBookmarkButton, RemoveBookmarkButton} from "../components/common/buttons/BookmarkButton";
 import PlayButton from "../components/common/buttons/PlayButton";
-import ModalPlayWithVLCInstructions from "../components/modal/ModalPlayWithVLCInstructions";
-import ModalChangeSources from "../components/modal/ModalChangeSources";
 
+import SecondaryInfo from "../components/common/text/SecondaryInfo";
+import Paragraph from "../components/common/text/Paragraph";
+import Title from "../components/common/text/Title";
+import TitleAndContent from "../components/common/TitleAndContent";
+import Rating from "../components/common/Rating";
+import DropDown from "../components/common/DropDown";
 
 import MoviesAPI from "../js/moviesAPI.js";
 import fadeTransition from "../js/customStyles.js";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 
 function MovieFullPresentation({ movieId, onCloseClick }) {
@@ -27,28 +32,20 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
     const [dataLoaded, setDataLoaded] = useState(false);
     const [movieDetails, setMovieDetails] = useState({});
 
-    const [selectedVersion, setSelectedVersion] = useState("VO");
-    const [vfState, setVfState] = useState("not available");
-    const [VOMovieSources, setVOMovieSources] = useState([]);
-    const [VFMovieSources, setVFMovieSources] = useState([]);
+    const versionsSources = useRef([]);
+    const [voSourcesSearching, setVoSourcesSearching] = useState(false);
+    const [vfSourcesSearching, setVfSourcesSearching] = useState(false);
 
-    const [selectedMovieSources, setSelectedMovieSources] = useState([]);
-    const [movieSubtitles, setMovieSubtitles] = useState([]);
+    const [selectedVersionSources, setSelectedVersionSources] = useState([]);
+    const [selectedVersionSourceLink, setSelectedVersionSourceLink] = useState('');
+
+
+    const [movieSubtitlesSources, setMovieSubtitlesSources] = useState([]);
     const [loadingSubtitles, setLoadingSubtitles] = useState(false);
 
     const [showMoviePlayer, setShowMoviePlayer] = useState(false);
     const [showMovieTrailer, setShowMovieTrailer] = useState(false);
-    const [showVLCPlayerInstructions, setShowVLCPlayerInstructions] = useState(false);
     const [addBookmarkButtonVisible, setAddBookmarkButtonVisible] = useState(true);
-    const [showChangeSourcesModal, setShowChangeSourcesModal] = useState({visible: false, setting: ''});
-
-    const [isDesktopApp, setIsDesktopApp] = useState(false);
-
-    useEffect(()=>{
-        MoviesAPI.getPlatform((isDesktopApp)=>{
-            setIsDesktopApp(isDesktopApp);
-        })
-    }, []);
 
     useEffect(() => {
         setDataLoaded(false);
@@ -57,67 +54,92 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                 (details) => {
                     if (details) {
                         setMovieDetails(details);
-                        setVOMovieSources(details.torrents);
                         setDataLoaded(true);
+                        MoviesAPI.isMovieBookmarked(movieId, (isMovieBookmarked) => {
+                            isMovieBookmarked = isMovieBookmarked === 'true';
+                            setAddBookmarkButtonVisible(!isMovieBookmarked);
+                        });
                     }
                 });
-            MoviesAPI.getActiveVOMovieService((service) => {           
-                MoviesAPI.isMovieBookmarked(movieId, service.id, (isMovieBookmarked) => {
-                    isMovieBookmarked = isMovieBookmarked === 'true';
-                    setAddBookmarkButtonVisible(!isMovieBookmarked);
-                });
-            });
+           
         }
     }, [movieId]);
 
     useEffect(() => {
-        if (movieDetails.title) getVfSources()
-        if (movieDetails.imdbCode) getAvailableSubtitles();
-        
+        if (movieDetails.imdbId) getAvailableSubtitles(movieDetails.imdbId);
+        if (movieDetails.id && movieDetails.title && movieDetails.year) {
+            searchVfSources(movieDetails.id, movieDetails.title, movieDetails.year);
+            searchVoSources(movieDetails.title, movieDetails.year);
+        }
     }, [movieDetails]);
 
-    useEffect(() => {
-        if(selectedVersion === "VO" && VOMovieSources && VOMovieSources.length > 0)
-            setSelectedMovieSources(VOMovieSources);
-        else if(selectedVersion === "VF" && VFMovieSources && VFMovieSources.length > 0)
-            setSelectedMovieSources(VFMovieSources);
-    }, [selectedVersion, VOMovieSources, VFMovieSources]);
 
     useEffect(() => {
-        if (showMoviePlayer && movieDetails) MoviesAPI.saveLastSeenMovie(movieDetails);
+        if (showMoviePlayer && movieDetails) MoviesAPI.saveWacthedMovie(movieDetails);
     }, [showMoviePlayer]);
 
-    const getVideoQualities = (torrents) => {
-        if (!torrents)
-            return;
-        var qualities = torrents.map(t => t.quality);
-        var withoutDoublons = qualities.filter((q, index) => qualities.indexOf(q) === index);
-        return withoutDoublons.length > 3 ? withoutDoublons.slice(0, 3).join(", ") + "..." : withoutDoublons.join(", ");
+    useEffect(() => {
+        if (versionsSources.current?.length > 0) {
+            setSelectedVersionSources(versionsSources.current[0].sources);
+        }
+    }, [versionsSources.current.length]);
+
+    useEffect(()=>{
+        const selectedVersionSource = selectedVersionSources.find(s => s.selected);
+        if(!selectedVersionSource && selectedVersionSources.length > 0)
+            changeSelectedSource(0);
+        
+    },[selectedVersionSources]);
+
+    const changeSelectedSource = (index) => {
+        for (let i = 0; i < selectedVersionSources.length; i++) {
+            selectedVersionSources[i].selected = index == i;
+        }
+        setSelectedVersionSourceLink(selectedVersionSources.length > 0 ? MoviesAPI.apiStreamUrl(selectedVersionSources[index].downloadUrl) : '');
     }
 
-    const getVfSources = () => {
-        setVfState('loading');
-            MoviesAPI.searchVFSources(movieDetails.title, movieDetails.year,
-                (sources) => {
-                    if (sources && sources.length > 0) {
-                        setVFMovieSources(sources);
-                        setVfState('available');
-                    }
-                    else
-                        setVfState('not available');
-                }, () => {
-                    setVfState('not available');
+    const searchVfSources = (movieId, movieTitle, movieYear) => {
+        setVfSourcesSearching(true);
+        MoviesAPI.searchVFSources(movieId, movieTitle, movieYear,
+            (sources) => {
+                setVfSourcesSearching(false);
+                if (sources && sources.length > 0) {
+                    versionsSources.current.push({
+                        versionLabel: "VF",
+                        sources: sources
+                    });
                 }
-            );
+
+            }, () => {
+                setVfSourcesSearching(false);
+            }
+        );
     }
 
-    const getAvailableSubtitles = () => {
+    const searchVoSources = (movieTitle, movieYear) => {
+        setVoSourcesSearching(true);
+        MoviesAPI.searchVOSources(movieTitle, movieYear,
+            (sources) => {
+                setVoSourcesSearching(false);
+                if (sources && sources.length > 0) {
+                    versionsSources.current.unshift({
+                        versionLabel: "VO",
+                        sources: sources
+                    });
+                }
+            }, () => {
+                setVoSourcesSearching(false);
+            }
+        );
+    }
+
+    const getAvailableSubtitles = (imdbCode) => {
         setLoadingSubtitles(true);
-        MoviesAPI.getAvailableSubtitles(movieDetails.imdbCode,
+        MoviesAPI.getAvailableSubtitles(imdbCode,
             (availableSubtitles) => {
-                setMovieSubtitles(availableSubtitles);
-                setTimeout(()=> setLoadingSubtitles(false), 1000);
-        })   
+                setMovieSubtitlesSources(availableSubtitles);
+                setTimeout(() => setLoadingSubtitles(false), 1000);
+            })
     }
 
     const bookmarkMovie = () => {
@@ -125,74 +147,64 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
             setAddBookmarkButtonVisible(false);
         });
     }
-    
-    const getMovieInfo = () => {
-        let info = movieDetails?.year;
-        if(movieDetails?.rating)
-            info += " - " + movieDetails.rating.replace(',','.');
 
-        if(movieDetails?.duration)
-            info +=" - " + movieDetails.duration.replace(/\s/g, "");
-
-        return info;
-    }
-
-    const getSubtitlesLanguages = () => {     
-        return movieSubtitles?.length > 0 ? movieSubtitles.map(s => s.language).join(", ") : 'No subtitles';
-    }
-
-    const changeSource = () => {
-        if(showChangeSourcesModal.setting === 'subs') getAvailableSubtitles();
-        else if(showChangeSourcesModal.setting === 'vf') getVfSources();
+    const unbookmarkMovie = () => {
+        MoviesAPI.deleteBookmarkedMovie(movieDetails, () => {
+            setAddBookmarkButtonVisible(true);
+        });
     }
 
     return (
-        <div style={{ height: '100%' }}>
+        <div style={{ height: '100%' }}>          
+            <VideoPlayerWindow visible={showMoviePlayer} sources={selectedVersionSources} subtitles={movieSubtitlesSources} onCloseClick={() => setShowMoviePlayer(false)} /> 
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />
-            <ModalPlayWithVLCInstructions 
-                visible={showVLCPlayerInstructions} 
-                sources={selectedMovieSources} 
-                movieDetails={movieDetails}
-                isDesktopApp={isDesktopApp} 
-                onCloseClick={() => setShowVLCPlayerInstructions(false)} />
-            <ModalChangeSources visible={showChangeSourcesModal.visible} setting={showChangeSourcesModal.setting} onCloseClick={(changes)=> { if(changes) changeSource(); setShowChangeSourcesModal({visible: false})}}/>
             <ModalMovieTrailer visible={showMovieTrailer} youtubeTrailerUrl={movieDetails.youtubeTrailerUrl} onCloseClick={() => setShowMovieTrailer(false)}/>
-            <VideoPlayerWindow visible={showMoviePlayer} sources={selectedMovieSources} subtitles={movieSubtitles} onCloseClick={() => setShowMoviePlayer(false)} />
- 
+
             <div style={fadeTransition(dataLoaded)} className="movie-presentation-page-container">
                 <div className="back-btn" onClick={() => onCloseClick()}>
                     <ArrowBackIcon className="back-arrow" />
                 </div>
-                <div className="illustration" style={{ backgroundImage: 'url(' + movieDetails.backgroundImageUrl + ')' }}>
-                    <img className="cover" src={movieDetails.coverImageUrl} />
-                </div>
-                <div className="info">
-                    <div className="title">{movieDetails.title}</div>
-                    <div className="details">{getMovieInfo()}</div>
-                    <MovieInfo infoTitle={"Director"} infoContent={movieDetails.director} />
-                    <MovieInfo infoTitle={"Cast"} infoContent={movieDetails.cast} />
-                    <MovieInfo infoTitle={"Genre"} infoContent={movieDetails.genres} />
-                    <MovieInfo infoTitle={"Synopsis"} infoContent={movieDetails.synopsis} />
-                    <MovieInfo infoTitle={"Qualities"} infoContent={getVideoQualities(movieDetails.torrents)} />
-                    <MovieInfo 
-                        infoTitle={"Subtitles"} 
-                        infoContent={<SubtitlesSelector 
-                                        text={getSubtitlesLanguages()} 
-                                        loading={loadingSubtitles} 
-                                        onChangeSourceClick={()=>setShowChangeSourcesModal({visible: true, setting: 'subs'})}/>} 
-                        />
-                    <MovieInfo 
-                        infoTitle={"Versions"} 
-                        infoContent={<VersionSelector  
-                                        vfState={vfState} 
-                                        onVersionSelected={(version) => setSelectedVersion(version)} 
-                                        onChangeSourceClick={()=> setShowChangeSourcesModal({visible: true, setting: 'vf'})} />}
-                    />
-                    <div className="actions">
-                        <TrailerButton visible={movieDetails?.youtubeTrailerUrl} onClick={() => setShowMovieTrailer(true)} />
-                        <PlayButton onClick={() => setShowMoviePlayer(true)} />
-                        <PlayWithVLCButton onClick={() => setShowVLCPlayerInstructions(true)} />
-                        <BookmarkButton onClick={() => bookmarkMovie()} visible={addBookmarkButtonVisible} />
+                <div className="presentation" style={{ backgroundImage: 'url(' + movieDetails.backgroundImageUrl + ')' }}>
+                    <div className="info-container">
+                        <div className="info">
+                            <div className="title">
+                                {
+                                    movieDetails.logoImageUrl ? <img src={movieDetails.logoImageUrl} /> : <Title text={movieDetails.title} />
+                                }
+                            </div>
+                            <div className="info-content">
+                                <Rating rating={movieDetails.rating} size="50px" />
+                                <SecondaryInfo center text={movieDetails.year + "  -  " + movieDetails.duration} />
+                                <div className="horizontal">
+                                    <TrailerButton visible={movieDetails?.youtubeTrailerUrl} onClick={() => setShowMovieTrailer(true)} />
+                                    <AddBookmarkButton onClick={() => bookmarkMovie()} visible={addBookmarkButtonVisible} />
+                                    <RemoveBookmarkButton onClick={() => unbookmarkMovie()} visible={!addBookmarkButtonVisible} />
+                                </div>
+                                <div className="play-options">
+                                    <AvailableSubtitles loading={loadingSubtitles} availableSubtitlesSources={movieSubtitlesSources} />
+                                    <AvailableVersions
+                                        loading={voSourcesSearching || vfSourcesSearching}
+                                        availableVersionsSources={versionsSources.current}
+                                        onVersionSelected={(versionSources) => setSelectedVersionSources(versionSources.sources)} />
+                                    <div style={fadeTransition(Boolean(selectedVersionSources) && selectedVersionSources.length > 0)} >
+                                        <QualitySelector versionSources={selectedVersionSources} onQualityChanged={(i) => changeSelectedSource(i)} />
+                                        <div className="horizontal">
+                                            <PlayButton onClick={() => setShowMoviePlayer(true)} />
+                                            <PlayWithVLCButton 
+                                                videoUrl={selectedVersionSourceLink}
+                                                onClick={() => {if(movieDetails) MoviesAPI.saveWacthedMovie(movieDetails)}} />
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div className="extra">
+                            <TitleAndContent title="Director" content={movieDetails.director} justify="left" />
+                            <TitleAndContent title="Cast" content={movieDetails.cast} justify="left" />
+                            <Paragraph text={movieDetails.synopsis}></Paragraph>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -201,68 +213,60 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
 }
 export default MovieFullPresentation;
 
-function MovieInfo({ infoTitle, infoContent }) {
-    if(infoContent){
-        return (
-            <div className="extra">
-                <div className="title">{infoTitle}</div>
-                <div className="content">{infoContent}</div>
-            </div>
-        )
-    }
-    else 
-        return null; 
+
+function AvailableSubtitles({ availableSubtitlesSources, loading }) {
+    const availableSubtitles = availableSubtitlesSources?.length > 0 ? availableSubtitlesSources.map(s => s.language).join(", ") : 'No subtitles available';
+    const content = loading ? <CircularProgressBar color={'white'} size={'15px'} visible={true} /> : availableSubtitles;
+    return (
+        <TitleAndContent title="Subtitles" content={content} />
+    )
 }
 
-function SubtitlesSelector({text, loading, onChangeSourceClick}){
-    if(loading)    
-        return <CircularProgressBar color={'white'} size={'15px'} visible={true} />;
-    else
-        return (
-            <div style={{display: 'flex'}}>
-                <div>{text}</div>
-                <div className={"text-button"} onClick={()=> onChangeSourceClick()}>Change source</div>
-            </div>
-        )
-}
+function AvailableVersions({ availableVersionsSources, loading, onVersionSelected }) {
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    let content;
 
-function VersionSelector({ vfState, onVersionSelected, onChangeSourceClick }) {
+    const onVersionClick = (index) => {
+        setSelectedIndex(index);
+        onVersionSelected(availableVersionsSources[index]);
+    };
 
-    const [selectedVersion, setSelectedVersion] = useState("VO");
-
-    const toggleSelection = (selectedVersion) => {
-        setSelectedVersion(selectedVersion);
-        onVersionSelected(selectedVersion);
-    }
-
-    if (vfState === 'available') {
-        return (
-            <div className="movie-version-selector">
-                <div className={"standard-button " + (selectedVersion === "VO" ? 'red' : 'grey')} onClick={() => toggleSelection("VO")}>VO</div>
-                <div className={"standard-button " + (selectedVersion === "VF" ? 'red' : 'grey')} onClick={() => toggleSelection("VF")}>VF</div>
-                <div className={"text-button"} onClick={()=> onChangeSourceClick()}>Change source</div>
-            </div>
-        );
-    }
-    else if (vfState === 'loading') {
-        return (
-            <div className="movie-version-selector">
-                <div className="version">VO</div>
-                <div className="version loading">
-                    <div>VF</div>
-                    <CircularProgressBar color={'white'} size={'15px'} visible={true} />
-                </div>
-            </div>
-        );
-
-    }
+    if (loading)
+        content = <CircularProgressBar color={'white'} size={'15px'} visible={true} />;
     else {
-        return (
-            <div className="movie-version-selector">
-                <div className="version">VO</div>
-                <div className={"text-button"} onClick={()=> onChangeSourceClick()}>Change source</div>
-            </div>
-        )
+        if (availableVersionsSources?.length > 0) {
+            content = availableVersionsSources.map((v, i) => <BaseButton
+                key={i}
+                color={selectedIndex == i ? "red" : "grey"}
+                content={v.versionLabel}
+                onClick={() => onVersionClick(i)} />);
+        }
+        else
+            content = 'No version available';
     }
 
+    return (
+        <TitleAndContent title="Versions" content={content} />
+    )
 }
+
+function QualitySelector({ versionSources, onQualityChanged }) {
+    if (!versionSources || versionSources.length === 0)
+        return null;
+
+    const qualities = [];
+    versionSources.forEach(source => {
+
+        const nbSameQualities = qualities.filter(q => q.startsWith(source.quality)).length;
+        qualities.push(source.quality + (nbSameQualities > 0 ? " (" + nbSameQualities + ")" : ""));
+    });
+
+    const content = <DropDown
+        values={qualities}
+        width="120px"
+        onValueChanged={(index) => onQualityChanged(index)} />
+
+    return <TitleAndContent title="Qualities" content={content} justify="left"/>
+
+}
+

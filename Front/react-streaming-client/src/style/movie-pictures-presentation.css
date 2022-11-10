@@ -1,0 +1,110 @@
+.movies-pictures-container{
+    --suggested-container-height: 300px;
+    height: var(--suggested-container-height);
+    margin: 0 auto;
+    width: 100%;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.movie-pictures{
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 1s, opacity 1s linear;
+}
+
+.movie-pictures .logo-title{
+    position: absolute;
+    height: var(--suggested-container-height);
+    width: 100%;
+    z-index: 2;
+    background: rgb(0,0,0);
+    background: linear-gradient(90deg, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 30%, rgba(0,0,0,0.7343312324929971) 40%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.6923144257703081) 60%, rgba(0,0,0,1) 70%, rgba(0,0,0,1) 85%);
+}
+
+.movie-pictures .logo-title img{
+    position: absolute;
+    left: 15%;
+    top: 50%;
+    transform: translateY(-50%);
+    max-height: 150px;
+    width: auto;
+    max-width: 400px;
+}
+
+.movie-pictures .background-image{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, 0);
+    z-index: 1;
+    height: calc(var(--suggested-container-height) + 50px);
+    width: auto;
+}
+
+.movie-pictures.hidden{
+    visibility: hidden;
+    opacity: 0;
+}
+
+.movies-pictures-nav-controls{
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.movies-pictures-play-pause{
+    z-index: 2;
+    background-color: #00000096;
+    border-radius: 50%;
+    height: 35px;
+    width: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px 20px;
+}
+
+.movies-pictures-play-pause > .icon{
+    color: white;
+    width: 25px;
+    height: 25px;
+}
+
+.movies-pictures-play-pause:hover{
+    background-color:rgb(71, 71, 71);
+    cursor: pointer;
+}
+
+.movies-pictures-play-pause:active{
+    background-color: rgb(146, 142, 142)!important;
+}
+
+.movies-pictures-nav{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+}
+
+.movies-pictures-nav > .nav-elem{
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(97, 97, 97, 0.671);
+    margin: 15px 10px;
+}
+
+.movies-pictures-nav > .nav-elem.selected{
+    background-color: white;
+}
+
+.movies-pictures-nav > .nav-elem:hover{
+    background-color: #8f8f8fde;
+    cursor: pointer;
+}
+

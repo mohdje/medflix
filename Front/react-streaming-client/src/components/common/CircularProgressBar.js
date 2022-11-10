@@ -10,8 +10,7 @@ function CircularProgressBar({ position, color, size, visible, text }) {
     const textStyle = {
         color: 'white',
         fontSize: '20px',
-        fontWeigth: 'bold',
-        marginBottom: '10px'
+        fontWeigth: 'bold'
     };
 
     useEffect(() => {

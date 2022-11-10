@@ -43,6 +43,15 @@
     margin: 7px auto;
 }
 
+.standard-button.rounded{
+    border-radius: 100%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .standard-button .ripple-effect{
     position: absolute;
     z-index: 10;
@@ -90,6 +99,16 @@
 
 .standard-button.grey:hover{
     background-color: #1a1a1a;
+    cursor: pointer;
+}
+
+.standard-button.white{
+    color: black;
+    background-color: white;
+}
+
+.standard-button.white:hover{
+    background-color: #cacaca;
     cursor: pointer;
 }
 

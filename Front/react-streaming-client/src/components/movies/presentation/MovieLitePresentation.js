@@ -1,6 +1,8 @@
 
 import "../../../style/movie-lite-presentation.css";
 
+import Rating from "../../common/Rating";
+
 import { useState, useEffect } from 'react';
 import fadeTransition from "../../../js/customStyles.js";
 
@@ -25,14 +27,16 @@ function MovieLitePresentation({ movie, onMovieClick, hoverEffect }) {
     }
 
     const formatMovieRating = (rating) => {
-        return rating ? rating.replace(',', '.') : '';
+        return rating ? rating.toString().replace(',', '.') : '';
     };
 
     return (
         <div style={fadeTransition(dataLoaded)}>
             <div className={"movie-lite-presentation " + (hoverEffect ? "hover-effect": "")} onClick={() => handleClick()}>
-                <div className={"movie-lite-presentation-img"}  style={{ backgroundImage: 'url(' + movie.coverImageUrl + ')' }}>
-                    <div className="rating">{formatMovieRating(movie.rating)}</div>
+                <div className={"movie-lite-presentation-img"}  style={{ backgroundImage: 'url(' + movie.coverImageUrl + ')' }}>                
+                    <div className="rating">
+                        <Rating rating={formatMovieRating(movie.rating)} size="small"/>
+                    </div>
                 </div>
                 <div className="infos">
                     <div className="title">{truncate(movie.title, 25)}</div>

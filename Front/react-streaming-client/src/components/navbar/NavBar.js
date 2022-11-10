@@ -8,7 +8,7 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import LinkIcon from '@material-ui/icons/Link';
 
-function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onLastSeenMoviesClick, onBookmarkedMoviesClick, onTorrentLinkClick, onSettingsClick }) {
+function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onWatchedMoviesClick, onBookmarkedMoviesClick, onTorrentLinkClick }) {
 
     const navBarIconStyle = {
         color: 'white',
@@ -23,7 +23,7 @@ function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onLastSeenMovies
                 <div className="nav-bar-btn" onClick={() => onHomeClick()}>
                     <HomeIcon style={navBarIconStyle} />
                 </div>
-                <div className="nav-bar-btn" onClick={() => onLastSeenMoviesClick()}>
+                <div className="nav-bar-btn" onClick={() => onWatchedMoviesClick()}>
                     <VisibilityIcon style={navBarIconStyle} />
                 </div>
                 <div className="nav-bar-btn" onClick={() => onBookmarkedMoviesClick()}>
@@ -37,9 +37,6 @@ function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onLastSeenMovies
                 </div>
                 <div className="nav-bar-btn" onClick={() => onTorrentLinkClick()}>
                     <LinkIcon style={navBarIconStyle} />
-                </div>
-                <div className="nav-bar-btn" onClick={() => onSettingsClick()}>
-                    <SettingsIcon style={navBarIconStyle} />
                 </div>
             </div>
         </div>

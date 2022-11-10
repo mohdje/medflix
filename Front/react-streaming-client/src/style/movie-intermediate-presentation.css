@@ -2,6 +2,11 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    cursor: pointer;
+}
+
+.movie-intermediate-presentation-container:hover{
+   
 }
 
 .movie-intermediate-presentation-content{

@@ -2,25 +2,19 @@ import "../../../style/movie-intermediate-presentation.css";
 
 import MovieLitePresentation from "./MovieLitePresentation";
 import MoreButton from "../../common/buttons/MoreButton";
-import DeleteButton from "../../common/buttons/DeleteButton";
 
-function MovieIntermediatePresentation({ movieBookmark, deleteButtonAvailable, onPlayClick, onMoreClick, onDeleteClick }) {
+function MovieIntermediatePresentation({ movie, onClick }) {
     const truncateText = (text) =>{
         if(text.length > 400) return text.substring(0, 300) + '...';
         else return text;
     };
 
     return (
-        <div className="movie-intermediate-presentation-container">
-            <MovieLitePresentation movie={movieBookmark.movie} />
+        <div className="movie-intermediate-presentation-container" onClick={() => onClick()}>
+            <MovieLitePresentation movie={movie} />
             <div className="movie-intermediate-presentation-content">
                 <div className="movie-intermediate-presentation-info">
-                    <div className="info"><span className="info-title">Service:</span> {movieBookmark.serviceName}</div>
-                    <div className="info"><span className="info-title">Synopsis:</span> {truncateText(movieBookmark.movie.synopsis)}</div>
-                </div>
-                <div className="movie-intermediate-presentation-actions">
-                    <MoreButton onClick={() => onMoreClick()} color="grey" />
-                    <DeleteButton onClick={() => onDeleteClick()} visible={deleteButtonAvailable}/>
+                    <div className="info"><span className="info-title">Synopsis:</span> {truncateText(movie.synopsis)}</div>
                 </div>
             </div>
         </div>);

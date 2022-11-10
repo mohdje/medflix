@@ -25,6 +25,5 @@
  }
 
  .list-genres > .genre:active{
-    font-size: 3rem;
-    color: rgb(207, 175, 175);
+    color: rgb(201, 22, 22);
  }

@@ -1,79 +1,84 @@
 .movie-presentation-page-container{
-    height: 100%;
+    min-height: 100%;
     display: flex;
     width: 100%;
     position: relative;
+    background-color: black;
 }
 
-.movie-presentation-page-container .illustration{
+.movie-presentation-page-container .presentation{
+    background-repeat: no-repeat;
+    background-size:  cover;
+    width: 100%;
+}
+
+.movie-presentation-page-container .presentation .info-container{
+    height: 100%;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 6%, rgba(0,0,0,0.7343312324929971) 19%, rgba(0,0,0,0) 51%, rgba(0,0,0,0.6923144257703081) 72%, rgba(0,0,0,1) 99%, rgba(0,0,0,1) 100%);
+}
+
+.movie-presentation-page-container .presentation .info-container .info{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    padding-left: 3%;
+    width: 35%;
+    flex-grow: 1;
+}
+
+.movie-presentation-page-container .presentation .info-container .info .title{
+    padding: 10px;
+    min-height: 200px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    width: 40%;
 }
 
-.movie-presentation-page-container .illustration img.cover{
-    height: 60%;
-    width: auto;
-    box-shadow: 1px 3px 9px 3px #101010c9;
+.movie-presentation-page-container .presentation .info-container .info .title img{
+    width: 100%;
+    max-width: 400px;
+    max-height: 250px;
+    height: auto;
 }
 
-.movie-presentation-page-container .info{
-    background-color: black;
-    height: 100%;
-    width: 60%;
-    box-shadow: -5px 0px 20px 20px #000000;
-    color: white;
-    overflow-y: scroll;
-}
-
-.movie-presentation-page-container .info > .title{
-    font-size: 30px;
-    margin: 20px;
-}
-
-.movie-presentation-page-container .info .details{
-    font-size: 18px;
-    color:#cecbcbd7;
-    margin: 20px;
-    font-weight: 600;
-}
-
-.movie-presentation-page-container .info .extra{
-    margin: 20px;
+.movie-presentation-page-container .presentation .info-container .info .info-content{
+    width: 100%;
     display: flex;
-    justify-content: flex-start;
-    align-items: baseline;
-    /* width: 90%; */
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0, 0, 0, 0.7);
+    box-shadow: rgb(0 0 0 / 70%) 0px 0px 13px 20px;
+    margin-top: 20px;
 }
 
-.movie-presentation-page-container .info .extra > .title{
-    color: red;
-    font-size: 22px;
-    font-weight: 600;
-    text-align: left;
-    margin-right: 10px;
-    width: 90px;
-}
-
-.movie-presentation-page-container .info .extra .content{
-    font-size: 16px;
-    text-align: left;
-}
-
-.movie-presentation-page-container .info .actions{
-    margin: 50px 20px;
+.movie-presentation-page-container .presentation .info-container .info .info-content .play-options{
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.movie-presentation-page-container .presentation .info-container .extra{
+    flex-grow: 4;
+    padding: 3px 3%;
+    background: rgba(0, 0, 0, 0.9);
+    box-shadow:rgba(0, 0, 0, 0.9) -2px -1px 13px 20px;
+    margin-top: 30px;
+}
+
+.movie-presentation-page-container .presentation .horizontal{
+    display: flex;
     align-items: center;
 }
 
 .movie-presentation-page-container .back-btn{
     position: absolute;
-    left: 20px;
-    top:20px;
+    left: 40px;
+    top: 10px;
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -97,26 +102,5 @@
     color: white;
     font-size: 30px !important;
     border-radius: 50%;
-}
-
-.movie-presentation-page-container .movie-version-selector{
-    display: flex;
-    align-items: center;
-}
-
-.movie-presentation-page-container .movie-version-selector .version{
-    margin-right: 15px;
-}
-
-.movie-presentation-page-container .movie-version-selector .version.loading{
-    position: relative;
-    color: grey;
-}
-
-.movie-presentation-page-container .movie-version-selector .version.loading > div{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%)
 }
 

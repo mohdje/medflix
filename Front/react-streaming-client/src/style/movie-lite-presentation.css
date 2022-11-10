@@ -29,17 +29,6 @@
 
 
 .movie-lite-presentation .rating{
-    color: white;
-    font-size: 0.9rem;
-    font-weight: bold;
-    margin: 0 auto;
-    background-color: #52525263;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 35px;
-    width: 35px;
     position: absolute;
     right: 2px;
     bottom: 2px;

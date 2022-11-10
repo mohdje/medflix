@@ -2,7 +2,7 @@ import { movies } from "./fakeData";
 const MoviesAPI = {
     apiUrl(route) { return 'http://localhost:5000/' + route },
     apiMoviesUrl(route) { return this.apiUrl( 'movies/' + route) },
-    apiLastSeenMoviesUrl() { return this.apiMoviesUrl('lastseenmovies') },
+    apiWatchedMoviesurl() { return this.apiMoviesUrl('watchedmovies') },
     apiBookmarkedMoviesUrl(route) { return route ? this.apiMoviesUrl('bookmarks/' + route)  : this.apiMoviesUrl('bookmarks')},
     apiStreamUrl(url) { return this.apiMoviesUrl('stream?url=' + url)},
     apiSubtitlesUrl(route) { return this.apiUrl('subtitles/' + route) },
@@ -14,18 +14,18 @@ const MoviesAPI = {
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
-    getLastMoviesByGenre(genre, onSuccess, onFail) {
-        var url = this.apiMoviesUrl('genre/' + genre);
+    getPopularMoviesByGenre(genreId, onSuccess, onFail) {
+        var url = this.apiMoviesUrl('genre/' + genreId);
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
-    getSuggestedMovies(onSuccess, onFail) {
-        var url = this.apiMoviesUrl('suggested')
+    getMoviesOfToday(onSuccess, onFail) {
+        var url = this.apiMoviesUrl('moviesoftoday')
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
-    getMoviesByGenre(genre, page, onSuccess, onFail) {
-        var url = this.apiMoviesUrl('genre/' + genre + '/' + page);
+    getMoviesByGenre(genreId, page, onSuccess, onFail) {
+        var url = this.apiMoviesUrl('genre/' + genreId + '/' + page);
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
     getMovieDetails(id, onSuccess, onFail) {
@@ -38,21 +38,61 @@ const MoviesAPI = {
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
-    getTopNetflixMovies(onSuccess, onFail) {
-        var url = this.apiMoviesUrl('topnetflix');
+    getPopularNetflixMovies(onSuccess, onFail) {
+        var url = this.apiMoviesUrl('netflix');
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
-    searchVFSources(title, year, onSuccess, onFail) {
+    getPopularDisneyPlusMovies(onSuccess, onFail) {
+        var url = this.apiMoviesUrl('disneyplus');
+        this.sendRequest(url, [], true, onSuccess, onFail);
+    },
+
+    getPopularAmazonPrimeMovies(onSuccess, onFail) {
+        var url = this.apiMoviesUrl('amazonprime');
+        this.sendRequest(url, [], true, onSuccess, onFail);
+    },
+
+    getPopularMovies(onSuccess, onFail) {
+        var url = this.apiMoviesUrl('popular');
+        this.sendRequest(url, [], true, onSuccess, onFail);
+    },
+
+    getRecommandedMovies(onSuccess, onFail) {
+        var url = this.apiMoviesUrl('recommandations');
+        this.sendRequest(url, [], true, onSuccess, onFail);
+    },
+
+    searchVFSources(movieId, movieTitle, movieYear, onSuccess, onFail) {
         var url = this.apiMoviesUrl('vf');
         var parameters = [
             {
-                name: 'title',
-                value: title
+                name: 'movieId',
+                value: movieId
+            },
+            {
+                name: 'originalTitle',
+                value: movieTitle
             },
             {
                 name: 'year',
-                value: year
+                value: movieYear
+            }
+        ];
+
+        this.sendRequest(url, parameters, true, onSuccess, onFail);
+    },
+
+    searchVOSources(movieTitle, movieYear, onSuccess, onFail) {
+        var url = this.apiMoviesUrl('vo');
+        var parameters = [
+            {
+                name: 'title',
+                value: movieTitle
+            },
+            {
+                name: 'year',
+                value: movieYear
             }
         ];
 
@@ -68,42 +108,13 @@ const MoviesAPI = {
         return this.apiSubtitlesUrl("?sourceUrl=" + subtitlesSourceUrl);
     },
 
-    getActiveVOMovieService(onSuccess, onFail) {
-        this.sendRequest(this.apiServicesUrl("vo/selected"), [], true, onSuccess, onFail);
+    getWatchedMovies(onSuccess, onFail) {
+        this.sendRequest(this.apiWatchedMoviesurl(), [], true, onSuccess, onFail);
     },
 
-    getVOMovieServices(onSuccess, onFail) {
-        this.sendRequest(this.apiServicesUrl("vo"), [], true, onSuccess, onFail);
-    },
-
-    getVFMovieServices(onSuccess, onFail) {
-        this.sendRequest(this.apiServicesUrl("vf"), [], true, onSuccess, onFail);
-    },
-
-    getSubtitlesMovieServices(onSuccess, onFail) {
-        this.sendRequest(this.apiServicesUrl("subtitles"), [], true, onSuccess, onFail);
-    },
-
-    selectVOMovieService(serviceId, onSuccess, onFail) {
-        this.performPost(this.apiServicesUrl("vo"), 'selectedServiceId=' + serviceId, onSuccess, onFail);
-    },
-
-    saveSelectedServices(selectedServices, onSuccess, onFail) {
-        let parameters = [];
-        if (selectedServices.vo >= 0) parameters.push("selectedVOServiceId=" + selectedServices.vo);
-        if (selectedServices.vf >= 0) parameters.push("selectedVFServiceId=" + selectedServices.vf);
-        if (selectedServices.subs >= 0) parameters.push("selectedSubtitlesServiceId=" + selectedServices.subs);
-
-        this.performPost(this.apiServicesUrl("save"), parameters.join('&'), onSuccess, onFail);
-    },
-
-    getLastSeenMovies(onSuccess, onFail) {
-        this.sendRequest(this.apiLastSeenMoviesUrl(), [], true, onSuccess, onFail);
-    },
-
-    saveLastSeenMovie(movie) {
+    saveWacthedMovie(movie) {
         var xhttp = new XMLHttpRequest();
-        xhttp.open("PUT", this.apiLastSeenMoviesUrl(), true);
+        xhttp.open("PUT", this.apiWatchedMoviesurl(), true);
         xhttp.setRequestHeader("Content-Type", "application/json");
         xhttp.send(JSON.stringify(movie));
     },
@@ -125,11 +136,11 @@ const MoviesAPI = {
         }
     },
 
-    deleteBookmarkedMovie(movieBookmark, onSuccess) {
+    deleteBookmarkedMovie(movie, onSuccess) {
         var xhttp = new XMLHttpRequest();
         xhttp.open("DELETE", this.apiBookmarkedMoviesUrl(), true);
         xhttp.setRequestHeader("Content-Type", "application/json");
-        xhttp.send(JSON.stringify(movieBookmark));
+        xhttp.send(JSON.stringify(movie));
 
         xhttp.onreadystatechange = function () {
             if (this.readyState === 4)
@@ -138,15 +149,11 @@ const MoviesAPI = {
         }
     },
 
-    isMovieBookmarked(movieId, serviceId, onSuccess, onFail) {
+    isMovieBookmarked(movieId, onSuccess, onFail) {
         var parameters = [
             {
                 name: 'movieId',
                 value: movieId
-            },
-            {
-                name: 'serviceId',
-                value: serviceId
             }
         ];
         this.sendRequest(this.apiBookmarkedMoviesUrl('exists'), parameters, false, onSuccess, onFail);
@@ -175,12 +182,12 @@ const MoviesAPI = {
         this.sendRequest(this.apiApplicationUrl('startvlc'), parameters, false, onSuccess, onFail);
     },
 
-    getPlatform(onSuccess, onFail) {
-        if (this.isDesktopApplication) onSuccess(this.isDesktopApplication);
+    isDesktopApplication(onSuccess, onFail) {
+        if (this.isDesktopApp) onSuccess(this.isDesktopApp);
         else {
             const self = this;
             this.sendRequest(self.apiApplicationUrl('platform'), null, true, (response) => {
-                self.isDesktopApplication = response.isDesktopApplication;
+                self.isDesktopApp = response.isDesktopApplication;
                 onSuccess(response.isDesktopApplication);
             }, onFail);
         }
