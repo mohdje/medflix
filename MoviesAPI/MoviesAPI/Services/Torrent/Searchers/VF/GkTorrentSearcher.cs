@@ -40,7 +40,7 @@ namespace MoviesAPI.Services.Torrent
                 {
                     var linkNode = doc.DocumentNode.SelectSingleNode("/a");
                     if (linkNode != null
-                        && linkNode.InnerText.Contains(frenchMovieName, StringComparison.OrdinalIgnoreCase)
+                        && linkNode.InnerText.RemoveSpecialCharacters().Contains(frenchMovieName.RemoveSpecialCharacters(), StringComparison.OrdinalIgnoreCase)
                         && linkNode.InnerText.Contains("FRENCH")
                         && linkNode.InnerText.EndsWith(year.ToString())
                         && !linkNode.InnerText.Contains("MD")

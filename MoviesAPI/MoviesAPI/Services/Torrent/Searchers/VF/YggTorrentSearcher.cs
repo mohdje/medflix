@@ -11,19 +11,19 @@ using System.Threading.Tasks;
 
 namespace MoviesAPI.Services.Torrent
 {
-    internal class ZeTorrentsSearcher : ITorrentSearcher
+    internal class YggTorrentSearcher : ITorrentSearcher
     {
-        private const string baseUrl = "https://www.zetorrents.biz";
+        private const string baseUrl = "https://www2.yggtorrent.co";
 
         public async Task<IEnumerable<MovieTorrent>> GetTorrentLinksAsync(string frenchMovieName, int year)
         {
             frenchMovieName = frenchMovieName.RemoveSpecialCharacters();
 
-            var searchUrl = $"{baseUrl}/recherche/" + frenchMovieName.ToLower();
+            var searchUrl = $"{baseUrl}/search_torrent/films/" + frenchMovieName.ToLower();
 
             var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
 
-            var searchResultList = doc.DocumentNode.SelectNodes("//div[@class='content-list-torrent']//div[@class='maxi']");
+            var searchResultList = doc.DocumentNode.SelectNodes("//div[@class='table-responsive']//tr");
 
             var result = new List<MovieTorrent>();
 
@@ -36,19 +36,21 @@ namespace MoviesAPI.Services.Torrent
             {
                 doc = new HtmlDocument();
                 doc.LoadHtml(node.InnerHtml);
-                var linkNode = doc.DocumentNode.SelectSingleNode("/a");
+                var labelNode = doc.DocumentNode.SelectSingleNode("//h3");
 
-                if (linkNode != null
-                    && linkNode.InnerText.Replace(" ","").RemoveSpecialCharacters().Contains(frenchMovieName.Replace(" ",""), StringComparison.OrdinalIgnoreCase)
-                    && linkNode.InnerText.Contains("FRENCH")
-                    && linkNode.InnerText.EndsWith(year.ToString())
-                    && !linkNode.InnerText.Contains("MD")
-                    && (linkNode.InnerText.Contains("720p") || linkNode.InnerText.Contains("1080p") || linkNode.InnerText.Contains("DVDRIP") || linkNode.InnerText.Contains("WEBRIP"))
+                if (labelNode != null
+                    && labelNode.InnerText.Replace(" ","").RemoveSpecialCharacters().Contains(frenchMovieName.Replace(" ",""), StringComparison.OrdinalIgnoreCase)
+                    && labelNode.InnerText.Contains("FRENCH")
+                    && labelNode.InnerText.EndsWith(year.ToString())
+                    && !labelNode.InnerText.Contains("MD")
+                    && (labelNode.InnerText.Contains("720p") || labelNode.InnerText.Contains("1080p") || labelNode.InnerText.Contains("DVDRIP") || labelNode.InnerText.Contains("WEBRIP"))
                     )
                 {
+                    var linkNode = doc.DocumentNode.SelectSingleNode("//a");
+
                     getTorrentTasks.Add(Task.Run(async() =>
                     {
-                        var downloadUrl = await GetTorrentLinkAsync(baseUrl + linkNode.Attributes["href"].Value);
+                        var downloadUrl = await GetTorrentLinkAsync($"{baseUrl}/{linkNode.Attributes["href"].Value}");
 
                         if (!string.IsNullOrEmpty(downloadUrl))
                         {
@@ -57,7 +59,8 @@ namespace MoviesAPI.Services.Torrent
                                 Quality = linkNode.InnerText.GetMovieQuality(),
                                 DownloadUrl = downloadUrl
                             });
-                        } 
+                        }
+                       
                     }));
                 }
             }
@@ -75,15 +78,19 @@ namespace MoviesAPI.Services.Torrent
 
         private async Task<string> GetTorrentLinkAsync(string moviePageUrl)
         {
-            var htmlPage = await HttpRequester.GetAsync(new Uri(moviePageUrl));
+            var doc = await HttpRequester.GetHtmlDocumentAsync(moviePageUrl);
 
-            var startIndex = htmlPage.IndexOf("/telecharger/");
-            var lastIndex = startIndex > 0 ? htmlPage.IndexOf("'", startIndex) : 0;
+            var downloadNodes = doc.DocumentNode.SelectNodes("//a[@class='btn btn-danger download']");
 
-            if (startIndex * lastIndex > 0)
-                return baseUrl + htmlPage.Substring(startIndex, lastIndex - startIndex);
-            else
-                return null;
+            foreach (var downloadNode in downloadNodes)
+            {
+                var link = downloadNode.Attributes["href"]?.Value;
+                if (!string.IsNullOrEmpty(link) && link.StartsWith("magnet:?"))
+                    return link;
+            }
+
+            return null;
+
         }
     }
 }

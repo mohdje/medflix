@@ -52,6 +52,7 @@ namespace MoviesAPI.Services
         {
             return new List<ITorrentSearcher>()
             {
+                new YggTorrentSearcher(),
                 new GkTorrentSearcher(),
                 new ZeTorrentsSearcher()
             };
@@ -61,8 +62,9 @@ namespace MoviesAPI.Services
         {
             return new List<ITorrentSearcher>()
             {
+                new YtsHtmlV2Searcher(new YtsHtmlRsUrlProvider()),
                 new YtsHtmlSearcher(new YtsHtmlOneUrlProvider()),
-                new YtsApiSearcher(new YtsApiUrlMxProvider())
+                new YtsApiSearcher(new YtsApiUrlMxProvider()),
             };
         }
 

@@ -28,5 +28,15 @@ namespace MoviesAPI.Extensions
 
             return string.Empty;
         }
+
+        public static string RemoveSpecialCharacters(this string text)
+        {
+            if (!string.IsNullOrEmpty(text))
+            {
+                return text.Replace(":", "").Replace("-", "").Replace("'", "");
+            }
+
+            return string.Empty;
+        }
     }
 }
