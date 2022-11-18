@@ -30,11 +30,13 @@ namespace WebHostStreaming.Providers
             return new ClientEngine(settingsBuilder.ToSettings());
         }
 
-        public StreamDto GetStream(string torrentUri, int offset, string videoFormat)
+        public async Task<StreamDto> GetStreamAsync(string torrentUri, int offset, string videoFormat)
         {
-            var movieStream = GetMovieStream(torrentUri, videoFormat);
+            var movieStream = await GetMovieStreamAsync(torrentUri, videoFormat);
 
-            return movieStream.GetStream(offset);
+            await PauseInactiveDownloads(torrentUri);
+
+            return await movieStream.GetStreamAsync(offset);
         }
 
         public DownloadingState GetStreamDownloadingState(string torrentUri)
@@ -47,18 +49,26 @@ namespace WebHostStreaming.Providers
             return movieStream.GetDownloadingState();
         }
 
-        private MovieStream GetMovieStream(string torrentUri, string videoFormat)
+        private async Task PauseInactiveDownloads(string activeTorrentUri)
         {
-            foreach (var stream in movieStreams.Where(m => m.TorrentUri != torrentUri))
-                stream.PauseDownloadAsync();
+            var tasks = new List<Task>();
+            foreach (var stream in movieStreams.Where(m => m.TorrentUri != activeTorrentUri))
+                tasks.Add(stream.PauseDownloadAsync());
 
+            await Task.WhenAll(tasks);
+        }
+
+        private async Task<MovieStream> GetMovieStreamAsync(string torrentUri, string videoFormat)
+        {
             var movieStream = movieStreams.SingleOrDefault(m => m.TorrentUri == torrentUri);
 
             if (movieStream == null)
             {
-                movieStream = MovieStream.CreateMovieStream(clientEngine, torrentUri, videoFormat);
+                movieStream = new MovieStream(torrentUri, videoFormat, clientEngine);
                 movieStreams.Add(movieStream);
             }
+            else if (movieStream.VideoFormat != videoFormat)
+                movieStream.UpdateVideoFormat(videoFormat);
 
             return movieStream;
         }

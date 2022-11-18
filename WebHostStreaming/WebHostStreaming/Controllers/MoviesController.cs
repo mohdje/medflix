@@ -128,8 +128,11 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("stream")]
-        public IActionResult GetStream([FromQuery(Name = "url")] string url)
+        public async Task<IActionResult> GetStream([FromQuery(Name = "url")] string url)
         {
+            if(string.IsNullOrEmpty(url))
+                return NoContent();
+
             var rangeHeaderValue = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "Range").Value.FirstOrDefault();
             var userAgent = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "User-Agent").Value.FirstOrDefault();
 
@@ -140,7 +143,7 @@ namespace WebHostStreaming.Controllers
             try
             {
                 var acceptedFormat = userAgent.StartsWith("VLC") ? "*" : ".mp4";
-                var streamDto = movieStreamProvider.GetStream(url, offset, acceptedFormat);
+                var streamDto = await movieStreamProvider.GetStreamAsync(url, offset, acceptedFormat);
                 
                 if (streamDto != null)
                     return File(streamDto.Stream, streamDto.ContentType, true); 
@@ -149,6 +152,7 @@ namespace WebHostStreaming.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine("GetStream error:" + ex);
                 return NoContent();
             }
         }
@@ -156,6 +160,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("streamdownloadstate")]
         public IActionResult GetStreamDownloadState([FromQuery(Name = "torrentUrl")] string torrentUrl)
         {
+           // torrentUrl = Helpers.TestData.JungleBookTorrentUrl;
             var state = movieStreamProvider.GetStreamDownloadingState(torrentUrl);
 
             if (state == null)

@@ -9,7 +9,7 @@ namespace WebHostStreaming.Providers
 {
     public interface IMovieStreamProvider
     {
-        StreamDto GetStream(string torrentUri, int offset, string videoFormat);
+        Task<StreamDto> GetStreamAsync(string torrentUri, int offset, string videoFormat);
         DownloadingState GetStreamDownloadingState(string torrentUri);
     }
 }
