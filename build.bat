@@ -9,11 +9,11 @@ if not "%params:web=%"=="%params%" (
         rmdir ".\WebHostStreaming\WebHostStreaming\bin\Release\net6.0" /s /q
     )
 
+     "D:\Projets\ReplaceLine\ReplaceLine\bin\Release\net6.0\ReplaceLine.exe" ".\WebHostStreaming\WebHostStreaming\appsettings.json" 15 """Platform"":""web"""
+
     "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" ".\WebHostStreaming\WebHostStreaming.sln" /p:Configuration="Release" /p:Platform="Any CPU"
 
     xcopy ".\Front\react-streaming-client\build\" ".\WebHostStreaming\WebHostStreaming\bin\Release\net6.0\view\" /E
-
-    "D:\Projets\ReplaceLine\ReplaceLine\bin\Release\net6.0\ReplaceLine.exe" ".\WebHostStreaming\WebHostStreaming\appsettings.json" 15 """Platform"":""web"""
 
     echo Web application is ready
 )
@@ -33,11 +33,11 @@ if not "%params:win=%"=="%params%" (
         rmdir ".\WebHostStreaming\WebHostStreaming\bin\Release Background\net6.0" /s /q
     )
 
+    "D:\Projets\ReplaceLine\ReplaceLine\bin\Release\net6.0\ReplaceLine.exe" "WebHostStreaming\WebHostStreaming\appsettings.json" 15 """Platform"":""windows"""
+
     "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" ".\WebHostStreaming\WebHostStreaming.sln" /p:Configuration="Release Background" /p:Platform="Any CPU"
 
     xcopy ".\Front\electron-application\out\Medflix-win32-x64\" ".\WebHostStreaming\WebHostStreaming\bin\Release Background\net6.0\windows-app\" /E
-
-    "D:\Projets\ReplaceLine\ReplaceLine\bin\Release\net6.0\ReplaceLine.exe" "WebHostStreaming\WebHostStreaming\appsettings.json" 15 """Platform"":""windows"""
 
     echo Windows application is ready
 )
