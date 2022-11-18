@@ -15,7 +15,6 @@ function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick }) {
 
     const buildVideoQualitiesOptions = (sources) => {
         var options = [];
-        console.log("sources", sources);
        if(!sources) return;
        sources.forEach(source => {
             var qualities = options.filter(o => o.label.startsWith(source.quality));
@@ -81,14 +80,18 @@ function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick }) {
 
     useOnClickOutside(videoPlayerContainerRef, () => onCloseClick());
 
+    const videoPlayerContainer = (<div ref={videoPlayerContainerRef} className="video-player-container">
+    <VideoPlayer 
+        videoQualitiesOptions={videoQualitiesOptions} 
+        videoSubtitlesOptions={subtitlesOptions}
+        mustPauseVideo={!visible} />
+    </div>);
+
     return (
-        <div style={fadeTransition(visible)} className="video-player-window-container">
-            <div ref={videoPlayerContainerRef} className="video-player-container">
-                <VideoPlayer 
-                    videoQualitiesOptions={videoQualitiesOptions} 
-                    videoSubtitlesOptions={subtitlesOptions}
-                    mustPauseVideo={!visible} />
-            </div>
+        <div style={fadeTransition(visible, null, 20)} className="video-player-window-container">
+            {
+                visible ? videoPlayerContainer : null
+            }
         </div>
     );
 }

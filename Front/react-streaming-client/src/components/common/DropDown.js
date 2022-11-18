@@ -18,11 +18,14 @@ function DropDown({values, width, onValueChanged}){
     const shouldUpdateDropDownValues = (values) => {
         if (dropDownValues.length !== values.length)
             return true;
-        
+
+        let nbDifferentValues = 0;
         dropDownValues.forEach((v, i) => {
             if(values[i] !== v) 
-                return true;
+                nbDifferentValues += 1;
         });
+
+        return nbDifferentValues > 0;
     }
 
     const containerStyle = {    

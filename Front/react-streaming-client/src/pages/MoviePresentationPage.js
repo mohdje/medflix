@@ -85,17 +85,19 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
     }, [versionsSources.current.length]);
 
     useEffect(()=>{
-        const selectedVersionSource = selectedVersionSources.find(s => s.selected);
-        if(!selectedVersionSource && selectedVersionSources.length > 0)
+        if(!selectedVersionSourceLink && selectedVersionSources.length > 0)
             changeSelectedSource(0);
         
     },[selectedVersionSources]);
 
     const changeSelectedSource = (index) => {
+        const newTab = [];
         for (let i = 0; i < selectedVersionSources.length; i++) {
-            selectedVersionSources[i].selected = index == i;
+            newTab.push(selectedVersionSources[i]);
+            newTab[i].selected = index == i;
         }
         setSelectedVersionSourceLink(selectedVersionSources.length > 0 ? MoviesAPI.apiStreamUrl(selectedVersionSources[index].downloadUrl) : '');
+        setSelectedVersionSources(newTab);
     }
 
     const searchVfSources = (movieId, movieTitle, movieYear) => {
@@ -185,7 +187,7 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                                     <AvailableVersions
                                         loading={voSourcesSearching || vfSourcesSearching}
                                         availableVersionsSources={versionsSources.current}
-                                        onVersionSelected={(versionSources) => setSelectedVersionSources(versionSources.sources)} />
+                                        onVersionSelected={(versionSources) =>{setSelectedVersionSourceLink(null);setSelectedVersionSources(versionSources.sources)} } />
                                     <div style={fadeTransition(Boolean(selectedVersionSources) && selectedVersionSources.length > 0)} >
                                         <QualitySelector versionSources={selectedVersionSources} onQualityChanged={(i) => changeSelectedSource(i)} />
                                         <div className="horizontal">

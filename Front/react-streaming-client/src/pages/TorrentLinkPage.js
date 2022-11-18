@@ -15,7 +15,7 @@ function TorrentLinkPage() {
     const [showMoviePlayer, setShowMoviePlayer] = useState(false);
 
     const [movieSources, setMovieSources] = useState([]);
-    const [showVlcNotInstalledMsg, setShowVlcNotInstalledMsg]= useState(false);
+
 
     useEffect(()=>{
         setMovieSources([{
@@ -24,16 +24,7 @@ function TorrentLinkPage() {
         }]);
     }, [torrentLink]);
 
-    const playWithVLC = ()=>{
-        
-        MoviesAPI.playWithVlc( 
-            MoviesAPI.apiStreamUrl(torrentLink), 
-            null, 
-            ()=>{
-                setShowVlcNotInstalledMsg(true);
-            }
-        );
-    }
+
     return (
         <div className="torrent-link-page-container">
             <div className="title">Enter a torrent url or magnet and press Play to watch</div>
@@ -41,9 +32,8 @@ function TorrentLinkPage() {
 
            <div className="play-buttons-container">
                 <PlayButton onClick={()=> setShowMoviePlayer(true)}/>
-                <PlayWithVLCButton onClick={()=> playWithVLC()}/>
+                <PlayWithVLCButton videoUrl={MoviesAPI.apiStreamUrl(torrentLink)}/>
            </div>
-           <div className="message" style={{display:  showVlcNotInstalledMsg ? '' : 'none'}}>It seems you don't have VLC installed on your computer</div>
            <VideoPlayerWindow visible={showMoviePlayer} sources={movieSources} onCloseClick={() => setShowMoviePlayer(false)} />
         </div>
     )

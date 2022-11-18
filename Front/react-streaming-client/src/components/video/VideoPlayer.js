@@ -20,8 +20,8 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
     const [errorMessage, setErrorMessage] = useState();
 
     const checkDownloadStateRef = useRef(false);
-    const videoDownloadStateRef =  useRef('');
-
+    const [videoDownloadState, setVideoDownloadState] =  useState('Loading');
+    
     const [videoSource, setVideoSource] = useState('');
     const [videoIsLoading, setVideoIsLoading] = useState(false);
 
@@ -33,19 +33,20 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
     const lastTimeMouseMovedRef = useRef(0);
 
     const checkMovieDownloadState = (url) => {
-        if (checkDownloadStateRef.current && videoRef.current) {       
-            MoviesAPI.getMovieDownloadState(url, (response) => {      
-                if(response.error) {
-                    checkDownloadStateRef.current = false;
-                    setErrorMessage(response.message);
-                }                
-                else{
-                    videoDownloadStateRef.current = response.message; 
-                    setTimeout(() => {
-                        checkMovieDownloadState(url);
-                    }, 3000);
+        if (checkDownloadStateRef.current && videoRef.current) {      
+            MoviesAPI.getMovieDownloadState(url, (response) => { 
+                if(decodeURIComponent(url) === decodeURIComponent(videoRef.current?.src)){
+                    if(response.error) {
+                        checkDownloadStateRef.current = false;
+                        setErrorMessage(response.message);
+                    }                
+                    else{
+                        setVideoDownloadState(response.message ? response.message : 'Loading'); 
+                        setTimeout(() => {
+                            checkMovieDownloadState(url);
+                        }, 3000);
+                    }                
                 }
-              
             })
         }
     };
@@ -90,7 +91,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
     useEffect(() => {
         const videoErrorHandler = (e) => {
             if (videoRef?.current?.attributes.src.value) {
-                if(!errorMessage) setErrorMessage("An error occured");
+                setErrorMessage(errorMessage ? errorMessage : "An error occured");
                 setVideoIsLoading(false);
             }
         }
@@ -98,7 +99,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
 
         const onVideoPlaying = () => {        
             checkDownloadStateRef.current = false;
-            videoDownloadStateRef.current = '';
+            setVideoDownloadState('');
             setVideoIsLoading(false);
         };
         videoRef.current.addEventListener('canplay', onVideoPlaying, true);
@@ -187,7 +188,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
 
     return (
         <div ref={videoPlayerContainerRef} className="video-player-content" >
-            <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={videoSource && videoIsLoading} text={videoDownloadStateRef.current} />
+            <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={videoSource && videoIsLoading} text={videoDownloadState} />
             <div className="video-player-error-message" style={{ display: errorMessage ? '' : 'none' }}>{errorMessage}</div>
             <video ref={videoRef} className="video-player" src={videoSource}></video>
             <div className="video-player-bottom">

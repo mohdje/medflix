@@ -20,7 +20,7 @@ function PlayWithVLCButton({ onClick, videoUrl }) {
 
     const handleClick = () => {
         setShowModal(true);
-        onClick();
+        if(onClick) onClick();
     }
 
     return (
@@ -62,12 +62,10 @@ function ModalForVlc({ visible, videoUrl, onCloseClick }) {
 function ModalContent({ videoUrl, launchPlay, onCloseClick }) {
     const [isDesktopApp, setIsDesktopApp] = useState(null);
     const inputLinkUrlRef = useRef(null);
-    const videoDownloadStateRef = useRef('Loading');
-    const autoCheckDownloadStateRef = useRef(false);
-
+    const [videoDownloadState, setVideoDownloadState] = useState(null);
+    const checkDownloadStateRef = useRef(false);
 
     useEffect(() => {
-
         if (isDesktopApp === null) {
             MoviesAPI.isDesktopApplication((isDesktopApp) => {
                 setIsDesktopApp(isDesktopApp);
@@ -77,17 +75,36 @@ function ModalContent({ videoUrl, launchPlay, onCloseClick }) {
 
     useEffect(() => {
         if (launchPlay && isDesktopApp && videoUrl) {
+            setVideoDownloadState({
+                message: 'Loading'
+            });
             MoviesAPI.playWithVlc(
                 videoUrl,
                 () => {
-                    autoCheckDownloadStateRef.current = true;
-                    checkVideoDownloadState(videoUrl)
+                    setVideoDownloadState({
+                        message: 'Loading',
+                        url: videoUrl,
+                        checkState: true
+                    });
                 },
                 () => {
-                    videoDownloadStateRef.current = "Error trying to open VLC. Make sure it is correctly installed.";
+                    setVideoDownloadState({
+                         message: "Error trying to open VLC. Make sure it is correctly installed.",
+                         checkState: false,
+                         error: true
+                        });
                 });
         }
     }, [launchPlay]);
+
+    useEffect(()=>{
+        checkDownloadStateRef.current = videoDownloadState?.checkState;
+        if(videoDownloadState?.checkState)
+            setTimeout(()=> checkVideoDownloadState(videoDownloadState.url), 3000);
+        
+      
+        
+    },[videoDownloadState]);
 
     const onCopyClick = () => {
         if (inputLinkUrlRef?.current) {
@@ -97,20 +114,23 @@ function ModalContent({ videoUrl, launchPlay, onCloseClick }) {
         }
     }
 
-    const checkVideoDownloadState = (url) => {
-        MoviesAPI.getMovieDownloadState(url, (response) => {
-            videoDownloadStateRef.current = response.message;
-            if (response.error) {
-                autoCheckDownloadStateRef.current = false;
-                videoDownloadStateRef.current = "An error occured";
-            }
-            else {
-                setTimeout(() => {
-                    if (autoCheckDownloadStateRef)
-                        checkVideoDownloadState(url);
-                }, 3000);
-            }
+    const handleCloseClick = () => {
+        setVideoDownloadState(null);
+        onCloseClick();
+    }
 
+    const checkVideoDownloadState = (url) => {
+        MoviesAPI.getMovieDownloadState(url, (response) => {            
+            if(decodeURIComponent(videoDownloadState.url) === decodeURIComponent(url)){
+                if(checkDownloadStateRef.current){
+                    setVideoDownloadState({
+                        message: response.message,
+                        checkState: !response.error,
+                        error: Boolean(response.error),
+                        url: url
+                    }); 
+                }
+            }
         })
     };
 
@@ -118,7 +138,8 @@ function ModalContent({ videoUrl, launchPlay, onCloseClick }) {
         return {
             display: 'flex', 
             alignItems: 'center', 
-            justifyContent: 'center',
+            height: '100%',
+            justifyContent: 'space-around',
             flexDirection: vertical ? 'column' : ''
         }
     }
@@ -128,9 +149,9 @@ function ModalContent({ videoUrl, launchPlay, onCloseClick }) {
         return (
             <div style={centerStyle(true)}>
                 <Title text={"Play with VLC"} />
-                <SecondaryInfo text={videoDownloadStateRef.current} center/>
-                <CircularProgress style={{ color: "white", width: "50px", height: 'auto', margin: '40px auto' }} />
-                <BaseButton content={"Close"} color={"red"} onClick={() => onCloseClick()} />
+                <SecondaryInfo text={videoDownloadState?.message} center/>
+                <CircularProgress style={{display: !videoDownloadState?.error ? '' : 'none', color: "white", width: "50px", height: 'auto', margin: '40px auto' }} />
+                <BaseButton content={"Close"} color={"red"} onClick={() => handleCloseClick()} />
             </div>);
     }
     else
@@ -145,7 +166,7 @@ function ModalContent({ videoUrl, launchPlay, onCloseClick }) {
                     value={Boolean(videoUrl) ? videoUrl : ''} />
                 <div style={centerStyle()}>
                     <CopyButton onClick={() => onCopyClick()} />
-                    <BaseButton content={"Close"} color={"red"} onClick={() => onCloseClick()} />
+                    <BaseButton content={"Close"} color={"red"} onClick={() => handleCloseClick()} />
                 </div>
 
             </div>);
