@@ -2,9 +2,10 @@ import { movies } from "./fakeData";
 const MoviesAPI = {
     apiUrl(route) { return 'http://localhost:5000/' + route },
     apiMoviesUrl(route) { return this.apiUrl( 'movies/' + route) },
+    apiTorrentUrl(route) { return this.apiUrl( 'torrent/' + route) },
     apiWatchedMoviesurl() { return this.apiMoviesUrl('watchedmovies') },
     apiBookmarkedMoviesUrl(route) { return route ? this.apiMoviesUrl('bookmarks/' + route)  : this.apiMoviesUrl('bookmarks')},
-    apiStreamUrl(url) { return this.apiMoviesUrl('stream?url=' + url)},
+    apiStreamUrl(url) { return this.apiTorrentUrl('stream?url=' + url)},
     apiSubtitlesUrl(route) { return this.apiUrl('subtitles/' + route) },
     apiServicesUrl(route) { return this.apiUrl('services/' + route) },
     apiApplicationUrl(route) { return this.apiUrl('application/' + route) },
@@ -64,7 +65,7 @@ const MoviesAPI = {
     },
 
     searchVFSources(movieId, movieTitle, movieYear, onSuccess, onFail) {
-        var url = this.apiMoviesUrl('vf');
+        var url = this.apiTorrentUrl('vf');
         var parameters = [
             {
                 name: 'movieId',
@@ -84,7 +85,7 @@ const MoviesAPI = {
     },
 
     searchVOSources(movieTitle, movieYear, onSuccess, onFail) {
-        var url = this.apiMoviesUrl('vo');
+        var url = this.apiTorrentUrl('vo');
         var parameters = [
             {
                 name: 'title',
@@ -167,7 +168,7 @@ const MoviesAPI = {
             }
         ];
 
-        this.sendRequest(this.apiMoviesUrl('streamdownloadstate'), parameters, true, onSuccess, onFail);
+        this.sendRequest(this.apiTorrentUrl('streamdownloadstate'), parameters, true, onSuccess, onFail);
     },
 
     playWithVlc(streamUrl, onSuccess, onFail){
