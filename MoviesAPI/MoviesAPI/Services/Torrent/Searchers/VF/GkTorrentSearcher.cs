@@ -14,11 +14,9 @@ namespace MoviesAPI.Services.Torrent
     {
         private const string baseUrl = "https://www.gktorrents.cc";
 
-        private const string baseSearchUrl = "https://www.gktorrents.cc/recherche/";
-
         public async Task<IEnumerable<MovieTorrent>> GetTorrentLinksAsync(string frenchMovieName, int year)
         {
-            var searchUrl = baseSearchUrl + frenchMovieName;
+            var searchUrl = $"{baseUrl}/recherche/{frenchMovieName}";
 
             var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
 

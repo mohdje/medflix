@@ -33,7 +33,16 @@ namespace MoviesAPI.Extensions
         {
             if (!string.IsNullOrEmpty(text))
             {
-                return text.Replace(":", "").Replace("-", "").Replace("'", "");
+                return text.Replace(":", "")
+                            .Replace("-", "")
+                            .Replace("'", "")
+                            .Replace("é", "e")
+                            .Replace("è", "e")
+                            .Replace("ê", "e")
+                            .Replace("à", "a")
+                            .Replace("î", "i")
+                            .Replace("ï", "i")
+                            .Replace("ù", "u");
             }
 
             return string.Empty;
