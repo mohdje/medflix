@@ -13,7 +13,7 @@ namespace WebHostStreaming.StartupExtensions
         public static void AddProviders(this IServiceCollection services)
         {
             services.AddSingleton<ISearchersProvider, SearchersProvider>();
-            services.AddSingleton<IMovieStreamProvider, MovieStreamProvider>();
+            services.AddSingleton<ITorrentVideoStreamProvider, TorrentVideoStreamProvider>();
             services.AddSingleton<IBookmarkedMoviesProvider, BookmarkedMoviesProvider>();
             services.AddSingleton<IWatchedMoviesProvider, WatchedMoviesProvider>();
         }

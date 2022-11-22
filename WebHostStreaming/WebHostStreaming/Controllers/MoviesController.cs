@@ -20,18 +20,18 @@ namespace WebHostStreaming.Controllers
     {
         ISearchersProvider searchersProvider;
 
-        IMovieStreamProvider movieStreamProvider;
+        ITorrentVideoStreamProvider torrentVideoStreamProvider;
         IWatchedMoviesProvider watchedMoviesProvider;
         IBookmarkedMoviesProvider bookmarkedMoviesProvider;
         public MoviesController(
             ISearchersProvider searchersProvider,
-            IMovieStreamProvider movieStreamProvider,
+            ITorrentVideoStreamProvider torrentVideoStreamProvider,
             IWatchedMoviesProvider watchedMoviesProvider,
             IBookmarkedMoviesProvider bookmarkedMoviesProvider)
         {
             this.searchersProvider = searchersProvider;
 
-            this.movieStreamProvider = movieStreamProvider;
+            this.torrentVideoStreamProvider = torrentVideoStreamProvider;
             this.watchedMoviesProvider = watchedMoviesProvider;
             this.bookmarkedMoviesProvider = bookmarkedMoviesProvider;
         }
@@ -130,7 +130,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("stream")]
         public async Task<IActionResult> GetStream([FromQuery(Name = "url")] string url)
         {
-            if(string.IsNullOrEmpty(url))
+            if (string.IsNullOrEmpty(url))
                 return NoContent();
 
             var rangeHeaderValue = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "Range").Value.FirstOrDefault();
@@ -143,7 +143,7 @@ namespace WebHostStreaming.Controllers
             try
             {
                 var acceptedFormat = userAgent.StartsWith("VLC") ? "*" : ".mp4";
-                var streamDto = await movieStreamProvider.GetStreamAsync(url, offset, acceptedFormat);
+                var streamDto = await torrentVideoStreamProvider.GetStreamAsync(url, offset, acceptedFormat);
                 
                 if (streamDto != null)
                     return File(streamDto.Stream, streamDto.ContentType, true); 
@@ -160,8 +160,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("streamdownloadstate")]
         public IActionResult GetStreamDownloadState([FromQuery(Name = "torrentUrl")] string torrentUrl)
         {
-           // torrentUrl = Helpers.TestData.JungleBookTorrentUrl;
-            var state = movieStreamProvider.GetStreamDownloadingState(torrentUrl);
+            var state = torrentVideoStreamProvider.GetStreamDownloadingState(torrentUrl);
 
             if (state == null)
                 return BadRequest();

@@ -25,18 +25,5 @@ namespace WebHostStreaming.Extensions
                 return sb.ToString();
             }
         }
-
-        public static bool MatchVideoFormat(this string fileName, string videoFormat)
-        {
-            if(videoFormat == "*")
-                return fileName.EndsWith(".mp4") || fileName.EndsWith(".avi") || fileName.EndsWith(".mkv");
-            else
-                return fileName.EndsWith(videoFormat);
-        }
-
-        public static bool IsMagnetLink(this string link)
-        {
-            return link.StartsWith("magnet:?xt=urn:btih");
-        }
     }
 }
