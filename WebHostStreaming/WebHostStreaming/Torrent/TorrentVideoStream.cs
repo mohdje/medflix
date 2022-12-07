@@ -9,8 +9,6 @@ namespace WebHostStreaming.Torrent
 {
     public class TorrentVideoStream
     {
-        private readonly ClientEngine clientEngine;
-
         private readonly TorrentDownloader torrentDownloader;
         private TorrentManagerWrapper torrentManagerWrapper;
         private CancellationTokenSource cancellationTokenSource;
@@ -18,10 +16,9 @@ namespace WebHostStreaming.Torrent
         public string TorrentUri { get; }
         public DownloadingState Status => GetStatus();
         public bool IsInitialized => torrentManagerWrapper != null;
-        public TorrentVideoStream(string torrentUri, ClientEngine clientEngine)
+        public TorrentVideoStream(string torrentUri)
         {
-            torrentDownloader = new TorrentDownloader(clientEngine, torrentUri);
-            this.clientEngine = clientEngine;
+            torrentDownloader = new TorrentDownloader(torrentUri);
             TorrentUri = torrentUri;
         }
 
@@ -38,7 +35,7 @@ namespace WebHostStreaming.Torrent
                     await torrentDownloader.DownloadTorrentFileAsync(cancellationTokenSource.Token);
 
                 if (torrentDownloader.Status == TorrentDownloaderStatus.DownloadCompleted && torrentManagerWrapper == null)
-                    torrentManagerWrapper = await TorrentManagerWrapper.BuildTorrentManagerWrapperAsync(clientEngine, torrentDownloader.TorrentFilePath, torrentDownloader.TorrentDownloadDirectory);
+                    torrentManagerWrapper = await TorrentManagerWrapper.BuildTorrentManagerWrapperAsync(torrentDownloader.TorrentFilePath, torrentDownloader.TorrentDownloadDirectory);
             }
             catch(Exception ex)
             {

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using WebHostStreaming.Helpers;
 
@@ -43,19 +44,20 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("startvlc")]
-        public IActionResult StartVLC([FromQuery] string url)
+        public IActionResult StartVLC([FromQuery] string data)
         {
+            var parameters = Encoding.UTF8.GetString(Convert.FromBase64String(data));
             try
             {
                 if (PlatformConfiguration.PlatformIsWindows)
                 {
                     if (!System.IO.File.Exists(WINDOWS_VLC_PATH)) return NotFound();
-                    System.Diagnostics.Process.Start(WINDOWS_VLC_PATH, url);
+                    System.Diagnostics.Process.Start(WINDOWS_VLC_PATH, parameters);
                 }
                 else if (PlatformConfiguration.PlatformIsMacos)
                 {
                     if (!System.IO.File.Exists(MACOS_VLC_PATH)) return NotFound();
-                    System.Diagnostics.Process.Start(MACOS_VLC_PATH, url.Replace(" ", "%20"));
+                    System.Diagnostics.Process.Start(MACOS_VLC_PATH, parameters.Replace(" ", "%20"));
                 }
 
                 return Ok();

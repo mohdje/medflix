@@ -5,7 +5,7 @@ const MoviesAPI = {
     apiTorrentUrl(route) { return this.apiUrl( 'torrent/' + route) },
     apiWatchedMoviesurl() { return this.apiMoviesUrl('watchedmovies') },
     apiBookmarkedMoviesUrl(route) { return route ? this.apiMoviesUrl('bookmarks/' + route)  : this.apiMoviesUrl('bookmarks')},
-    apiStreamUrl(url) { return this.apiTorrentUrl('stream?url=' + url)},
+    apiStreamUrl(url, fileName) { return this.apiTorrentUrl('stream?url=' + url + (Boolean(fileName) ? '&fileName=' + fileName : ''))},
     apiSubtitlesUrl(route) { return this.apiUrl('subtitles/' + route) },
     apiServicesUrl(route) { return this.apiUrl('services/' + route) },
     apiApplicationUrl(route) { return this.apiUrl('application/' + route) },
@@ -161,10 +161,11 @@ const MoviesAPI = {
     },
 
     getMovieDownloadState(streamUrl, onSuccess, onFail) {
+        const streamUrlParams = new URLSearchParams(streamUrl.replace(this.apiTorrentUrl('stream')+'?',''));
         var parameters = [
             {
                 name: 'torrentUrl',
-                value: streamUrl.replace(this.apiStreamUrl(''), '')
+                value: streamUrlParams.get('url')
             }
         ];
 
@@ -175,12 +176,23 @@ const MoviesAPI = {
 
         var parameters = [
             {
-                name: 'url',
-                value: streamUrl
+                name: 'data',
+                value: btoa(streamUrl)
             }
         ];
 
         this.sendRequest(this.apiApplicationUrl('startvlc'), parameters, false, onSuccess, onFail);
+    },
+
+    getTorrentFiles(torrentUrl, onSuccess, onFail){
+        var parameters = [
+            {
+                name: 'torrentUrl',
+                value: torrentUrl
+            }
+        ];
+
+        this.sendRequest(this.apiTorrentUrl('files'), parameters, true, onSuccess, onFail);
     },
 
     isDesktopApplication(onSuccess, onFail) {

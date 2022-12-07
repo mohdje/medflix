@@ -1,4 +1,5 @@
 ﻿using MonoTorrent.Client;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,24 +10,18 @@ using WebHostStreaming.Torrent;
 
 namespace WebHostStreaming.Providers
 {
-    public class TorrentVideoStreamProvider : ITorrentVideoStreamProvider
+    public class TorrentContentProvider : ITorrentContentProvider
     {
 
         List<TorrentVideoStream> torrentVideoStreams;
         SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
-        ClientEngine clientEngine;
-        public TorrentVideoStreamProvider()
+        CancellationTokenSource cancellationTokenSource;
+
+        public TorrentContentProvider()
         {
-            clientEngine = CreateEngine();
             torrentVideoStreams = new List<TorrentVideoStream>();
         }
-        private ClientEngine CreateEngine()
-        {
-            EngineSettingsBuilder settingsBuilder = new EngineSettingsBuilder();
-            settingsBuilder.AllowedEncryption.Add(EncryptionType.PlainText | EncryptionType.RC4Full | EncryptionType.RC4Header);
-
-            return new ClientEngine(settingsBuilder.ToSettings());
-        }
+       
         public DownloadingState GetStreamDownloadingState(string torrentUri)
         {
             var torrentVideoStream = torrentVideoStreams.SingleOrDefault(m => m.TorrentUri == torrentUri);
@@ -36,7 +31,7 @@ namespace WebHostStreaming.Providers
 
             return torrentVideoStream.Status;
         }
-        public async Task<StreamDto> GetStreamAsync(string torrentUri, int offset, string videoExtension)
+        public async Task<StreamDto> GetStreamAsync(string torrentUri, int offset, Func<string, bool> torrentFileSelector)
         {
             var torrentVideoStream = await GetOrCreateTorrentVideoStreamAsync(torrentUri);
 
@@ -45,7 +40,26 @@ namespace WebHostStreaming.Providers
             if (!torrentVideoStream.IsInitialized)
                 await torrentVideoStream.InitAsync();
 
-            return await torrentVideoStream.GetStreamAsync(filePath => MatchVideoFormat(filePath, videoExtension), offset);
+            return await torrentVideoStream.GetStreamAsync(torrentFileSelector, offset);
+        }
+
+        public async Task<IEnumerable<string>> GetTorrentFilesAsync(string torrentUri)
+        {
+            if (cancellationTokenSource != null)
+                cancellationTokenSource.Cancel();
+
+            cancellationTokenSource = new CancellationTokenSource();
+
+            var torrentDownloader = new TorrentDownloader(torrentUri);
+
+            await torrentDownloader.DownloadTorrentFileAsync(cancellationTokenSource.Token);
+
+            if (torrentDownloader.Status != TorrentDownloaderStatus.DownloadCompleted)
+                return null;
+
+            var torrentManager = await TorrentClientEngine.Instance.GetTorrentManagerAsync(torrentDownloader.TorrentFilePath, torrentDownloader.TorrentDownloadDirectory);
+
+            return torrentManager?.Files.Select(f => f.Path);
         }
 
         private async Task<TorrentVideoStream> GetOrCreateTorrentVideoStreamAsync(string torrentUri)
@@ -55,7 +69,7 @@ namespace WebHostStreaming.Providers
 
             if (torrentVideoStream == null)
             {
-                torrentVideoStream = new TorrentVideoStream(torrentUri, clientEngine);
+                torrentVideoStream = new TorrentVideoStream(torrentUri);
                 torrentVideoStreams.Add(torrentVideoStream);
             }
 
@@ -73,14 +87,5 @@ namespace WebHostStreaming.Providers
 
             await Task.WhenAll(tasks);
         }
-
-        private bool MatchVideoFormat(string fileName, string videoFormat)
-        {
-            if (videoFormat == "*")
-                return fileName.EndsWith(".mp4") || fileName.EndsWith(".avi") || fileName.EndsWith(".mkv");
-            else
-                return fileName.EndsWith(videoFormat);
-        }
-
     }
 }

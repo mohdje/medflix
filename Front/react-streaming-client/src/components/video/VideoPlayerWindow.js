@@ -23,7 +23,7 @@ function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick }) {
                 label: qualities && qualities.length > 0 ? source.quality + ' (' + (qualities.length + 1) + ')': source.quality,
                 selected: source.selected,
                 data: {
-                    url: MoviesAPI.apiStreamUrl(source.downloadUrl)
+                    url: MoviesAPI.apiStreamUrl(source.downloadUrl, source.fileName)
                 }
             }
             options.push(option);

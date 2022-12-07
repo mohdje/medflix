@@ -1,11 +1,11 @@
 .torrent-link-page-container{
-    height: 100%;
     width: 100%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     color: white;
+    padding-bottom: 50px;
 }
 
 .torrent-link-page-container .title{
@@ -27,6 +27,6 @@
 .play-buttons-container{
     display: flex;
     align-items: center;
-    justify-content: space-around;
-    margin-top: 20px;
+    justify-content: center;
+    margin-top: 10px;
 }

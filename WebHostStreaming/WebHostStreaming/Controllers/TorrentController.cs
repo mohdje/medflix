@@ -2,6 +2,7 @@
 using MoviesAPI.Services.Torrent.Dtos;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WebHostStreaming.Providers;
@@ -13,10 +14,10 @@ namespace WebHostStreaming.Controllers
     public class TorrentController : ControllerBase
     {
         ISearchersProvider searchersProvider;
-        ITorrentVideoStreamProvider torrentVideoStreamProvider;
+        ITorrentContentProvider torrentVideoStreamProvider;
         public TorrentController(
            ISearchersProvider searchersProvider,
-           ITorrentVideoStreamProvider torrentVideoStreamProvider)
+           ITorrentContentProvider torrentVideoStreamProvider)
         {
             this.searchersProvider = searchersProvider;
             this.torrentVideoStreamProvider = torrentVideoStreamProvider;
@@ -37,7 +38,7 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("stream")]
-        public async Task<IActionResult> GetStream([FromQuery(Name = "url")] string url)
+        public async Task<IActionResult> GetStream([FromQuery(Name = "url")] string url, [FromQuery(Name = "fileName")] string fileName)
         {
             if (string.IsNullOrEmpty(url))
                 return NoContent();
@@ -52,7 +53,7 @@ namespace WebHostStreaming.Controllers
             try
             {
                 var acceptedFormat = userAgent.StartsWith("VLC") ? "*" : ".mp4";
-                var streamDto = await torrentVideoStreamProvider.GetStreamAsync(url, offset, acceptedFormat);
+                var streamDto = await torrentVideoStreamProvider.GetStreamAsync(url, offset, torrentFilePath => FileSelector(torrentFilePath, acceptedFormat, fileName));
 
                 if (streamDto != null)
                     return File(streamDto.Stream, streamDto.ContentType, true);
@@ -77,6 +78,23 @@ namespace WebHostStreaming.Controllers
                 return Ok(state);
         }
 
+        [HttpGet("files")]
+        public async Task<IEnumerable<string>> GetTorrentFiles([FromQuery(Name = "torrentUrl")] string torrentUrl)
+        {
+            var files = await torrentVideoStreamProvider.GetTorrentFilesAsync(torrentUrl);
 
+            return files;
+        }
+
+        private bool FileSelector(string filePath, string accepetedVideoExtension, string fileNameToSelect)
+        {
+            if (!string.IsNullOrEmpty(fileNameToSelect))
+                return Path.GetFileName(filePath) == fileNameToSelect;
+
+            if (accepetedVideoExtension == "*")
+                return filePath.EndsWith(".mp4") || filePath.EndsWith(".avi") || filePath.EndsWith(".mkv");
+            else
+                return filePath.EndsWith(accepetedVideoExtension);
+        }
     }
 }

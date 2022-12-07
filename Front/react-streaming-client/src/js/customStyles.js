@@ -1,5 +1,4 @@
 function fadeTransition(visible, speedTransition, zIndex){
-
     var speed = speedTransition ? speedTransition + 's' : '0.5s';
 
     const transitionStyle = {

@@ -19,7 +19,6 @@ namespace WebHostStreaming.Torrent
     }
     public class TorrentDownloader
     {
-        private readonly ClientEngine clientEngine;
         private readonly string torrentUri;
         private static HttpClient client = new HttpClient();
 
@@ -34,9 +33,8 @@ namespace WebHostStreaming.Torrent
 
         public TorrentDownloaderStatus Status { get; private set; }
 
-        public TorrentDownloader(ClientEngine clientEngine, string torrentUri)
+        public TorrentDownloader(string torrentUri)
         {
-            this.clientEngine = clientEngine;
             this.torrentUri = torrentUri;
         }
 
@@ -60,7 +58,7 @@ namespace WebHostStreaming.Torrent
             try
             {
                 if (IsMagnetLink)
-                    bytes = await clientEngine.DownloadMetadataAsync(MagnetLink.Parse(torrentUri), cancellationToken);
+                    bytes = await TorrentClientEngine.Instance.ClientEngine.DownloadMetadataAsync(MagnetLink.Parse(torrentUri), cancellationToken);
                 else
                     bytes = await client.GetByteArrayAsync(torrentUri, cancellationToken);
             }

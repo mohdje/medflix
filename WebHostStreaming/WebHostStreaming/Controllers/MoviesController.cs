@@ -23,7 +23,7 @@ namespace WebHostStreaming.Controllers
         IBookmarkedMoviesProvider bookmarkedMoviesProvider;
         public MoviesController(
             ISearchersProvider searchersProvider,
-            ITorrentVideoStreamProvider torrentVideoStreamProvider,
+            ITorrentContentProvider torrentVideoStreamProvider,
             IWatchedMoviesProvider watchedMoviesProvider,
             IBookmarkedMoviesProvider bookmarkedMoviesProvider)
         {

@@ -11,10 +11,8 @@ namespace WebHostStreaming.Torrent
 {
     public class TorrentManagerWrapper
     {
-        private readonly ClientEngine clientEngine;
         private TorrentManager torrentManager;
         private TorrentDownloadStatusWatcher torrentDownloadStatusWatcher;
-        private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
         public IEnumerable<ITorrentFileInfo> Files => torrentManager.Files;
 
@@ -24,33 +22,21 @@ namespace WebHostStreaming.Torrent
         public bool DownloadStarted => torrentDownloadStatusWatcher.DownloadStarted;
         public bool DownloadInProgress => torrentDownloadStatusWatcher.DownloadInProgress;
 
-        public static async Task<TorrentManagerWrapper> BuildTorrentManagerWrapperAsync(ClientEngine clientEngine, string torrentFilePath, string torrentDownloadDirectory)
+        public static async Task<TorrentManagerWrapper> BuildTorrentManagerWrapperAsync(string torrentFilePath, string torrentDownloadDirectory)
         {
-            var torrentManagerWrapper = new TorrentManagerWrapper(clientEngine);
+            var torrentManagerWrapper = new TorrentManagerWrapper();
             await torrentManagerWrapper.InitTorrentManagerAsync(torrentFilePath, torrentDownloadDirectory);
 
             return torrentManagerWrapper;
         }
-        private TorrentManagerWrapper(ClientEngine clientEngine)
-        {
-            this.clientEngine = clientEngine;
-        }
 
         private async Task InitTorrentManagerAsync(string torrentFilePath, string torrentDownloadDirectory)
         {
-            await semaphoreSlim.WaitAsync();
-            try
-            {
-                if (torrentManager == null)
-                    torrentManager = await clientEngine.AddStreamingAsync(torrentFilePath, torrentDownloadDirectory);
+            if (torrentManager == null)
+                torrentManager = await TorrentClientEngine.Instance.GetTorrentManagerAsync(torrentFilePath, torrentDownloadDirectory);
 
-                if (torrentManager != null)
-                    torrentDownloadStatusWatcher = new TorrentDownloadStatusWatcher(torrentManager);
-            }
-            finally
-            {
-                semaphoreSlim.Release();
-            }
+            if (torrentManager != null)
+                torrentDownloadStatusWatcher = new TorrentDownloadStatusWatcher(torrentManager);            
         } 
 
         public async Task StartDownloadFileAsync(Func<ITorrentFileInfo, bool> downloadFilePredicate)
