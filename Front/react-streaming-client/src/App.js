@@ -88,7 +88,8 @@ function App() {
         render: (<MoviesListGenrePage
           genre={selectedGenre}
           loadFromCache={loadFullListGenrefromCache}
-          onMovieClick={(movieId) => showMovieFullPresentation(movieId)} />)
+          onMovieClick={(movieId) => showMovieFullPresentation(movieId)} />),
+        containerStyle: { height: '100%'}
       },
       {
         id: routerIds.moviePresentationPage,

@@ -1,7 +1,5 @@
 .home-page-container{
-    height: 100%;
     overflow-x: hidden;
-    overflow-y: scroll;
 }
 
 .home-page-container .blur-divider {

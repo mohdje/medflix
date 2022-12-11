@@ -10,7 +10,7 @@ function Router({ components, activeComponentId }) {
         if(component) setActiveComponent(component);
     },[components, activeComponentId]);
 
-    return <div>{activeComponent?.render}</div>;
+    return <div style={activeComponent?.containerStyle}>{activeComponent?.render}</div>;
 }
 
 export default Router;

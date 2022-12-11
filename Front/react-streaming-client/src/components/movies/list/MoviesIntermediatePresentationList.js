@@ -20,9 +20,8 @@ function MoviesIntermediatePresentationList({ title, movies, centerToMovie, load
     }, [movies, centerToMovie]);
 
     return (
-        <div className="movie-intermediate-list-container">
-            <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={loadingProgressVisible} />
-           
+        <div>
+            <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={loadingProgressVisible} />          
             <div className="movie-intermediate-list-title-page">{title}</div>
             <div className="movie-intermediate-list-content">
                 {movies.map((movie, index) =>
