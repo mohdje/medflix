@@ -9,9 +9,9 @@ namespace WebHostStreaming.Providers
 {
     public interface IBookmarkedMoviesProvider
     {
-        IEnumerable<LiteMovieDto> GetBookmarkedMovies();
-        void SaveMovieBookmark(LiteMovieDto movieToBookmark);
-        void DeleteMovieBookmark(string movieId);
-        bool MovieBookmarkExists(string movieId);
+        Task<IEnumerable<LiteMovieDto>> GetBookmarkedMoviesAsync();
+        Task SaveMovieBookmarkAsync(LiteMovieDto movieToBookmark);
+        Task DeleteMovieBookmarkAsync(string movieId);
+        Task<bool> MovieBookmarkExistsAsync(string movieId);
     }
 }

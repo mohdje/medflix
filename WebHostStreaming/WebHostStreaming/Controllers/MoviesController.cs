@@ -72,7 +72,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("recommandations")]
         public async Task<IEnumerable<LiteMovieDto>> GetRecommandations()
         {
-            var movies = watchedMoviesProvider.GetWatchedMovies();
+            var movies = await watchedMoviesProvider.GetWatchedMoviesAsync();
             if (movies == null || !movies.Any())
                 return null;
 
@@ -111,9 +111,9 @@ namespace WebHostStreaming.Controllers
 
 
         [HttpGet("watchedmovies")]
-        public IEnumerable<LiteMovieDto> GetWatchedMovies()
+        public async Task<IEnumerable<LiteMovieDto>> GetWatchedMovies()
         {
-            var movies = watchedMoviesProvider.GetWatchedMovies();
+            var movies = await watchedMoviesProvider.GetWatchedMoviesAsync();
             return movies?.Reverse();
         }
 
@@ -122,7 +122,7 @@ namespace WebHostStreaming.Controllers
         {
             try
             {
-                watchedMoviesProvider.SaveWatchedMovie(movie);
+                await watchedMoviesProvider.SaveWatchedMovieAsync(movie);
             }
             catch (Exception)
             {
@@ -134,9 +134,9 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("bookmarks")]
-        public IEnumerable<LiteMovieDto> GetBookmarkedMovies()
+        public async Task<IEnumerable<LiteMovieDto>> GetBookmarkedMovies()
         {
-            var movies = bookmarkedMoviesProvider.GetBookmarkedMovies();
+            var movies = await bookmarkedMoviesProvider.GetBookmarkedMoviesAsync();
             return movies?.Reverse();
         }
 
@@ -145,7 +145,7 @@ namespace WebHostStreaming.Controllers
         {
             try
             {
-                bookmarkedMoviesProvider.SaveMovieBookmark(movieToBookmark);
+                await bookmarkedMoviesProvider.SaveMovieBookmarkAsync(movieToBookmark);
             }
             catch (Exception)
             {
@@ -157,11 +157,11 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpDelete("bookmarks")]
-        public IActionResult DeleteBookmarkMovie([FromBody] LiteMovieDto movieBookmarkToDelete)
+        public async Task<IActionResult> DeleteBookmarkMovie([FromBody] LiteMovieDto movieBookmarkToDelete)
         {
             try
             {
-                bookmarkedMoviesProvider.DeleteMovieBookmark(movieBookmarkToDelete.Id);
+                await bookmarkedMoviesProvider.DeleteMovieBookmarkAsync(movieBookmarkToDelete.Id);
             }
             catch (Exception)
             {
@@ -173,11 +173,11 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("bookmarks/exists")]
-        public IActionResult MovieBookmarkExists([FromQuery] string movieId)
+        public async Task<IActionResult> MovieBookmarkExists([FromQuery] string movieId)
         {
             if (!string.IsNullOrEmpty(movieId))
             {
-                return Ok(bookmarkedMoviesProvider.MovieBookmarkExists(movieId));
+                return Ok(await bookmarkedMoviesProvider.MovieBookmarkExistsAsync(movieId));
             }
             else
                 return BadRequest();

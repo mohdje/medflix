@@ -172,6 +172,10 @@ const MoviesAPI = {
         this.sendRequest(this.apiTorrentUrl('streamdownloadstate'), parameters, true, onSuccess, onFail);
     },
 
+    getTorrentHistory(onSuccess, onFail) {
+        this.sendRequest(this.apiTorrentUrl('history'), null, true, onSuccess, onFail);
+    },
+
     playWithVlc(streamUrl, onSuccess, onFail){
 
         var parameters = [

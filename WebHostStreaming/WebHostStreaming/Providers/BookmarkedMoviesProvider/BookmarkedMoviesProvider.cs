@@ -9,42 +9,37 @@ using WebHostStreaming.Models;
 
 namespace WebHostStreaming.Providers
 {
-    public class BookmarkedMoviesProvider : IBookmarkedMoviesProvider
+    public class BookmarkedMoviesProvider : DataProvider, IBookmarkedMoviesProvider 
     {
-        private const int MaxLimit = 30;
-
-        private string FilePath = AppFiles.BookmarkedMovies;
-
-        public void DeleteMovieBookmark(string movieId)
+        protected override string FilePath()
         {
-            var movieBookmarks = GetBookmarkedMovies();
+            return AppFiles.BookmarkedMovies; 
+        }
+
+        protected override int MaxLimit()
+        {
+            return 30;
+        }
+
+        public async Task DeleteMovieBookmarkAsync(string movieId)
+        {
+            var movieBookmarks = await GetBookmarkedMoviesAsync();
 
             if (movieBookmarks != null)
             {
                 movieBookmarks = movieBookmarks.Where(m => m.Id != movieId);
-                JsonHelper.SerializeToFileAsync(FilePath, movieBookmarks);
+                JsonHelper.SerializeToFileAsync(FilePath(), movieBookmarks);
             }
         }
 
-        public IEnumerable<LiteMovieDto> GetBookmarkedMovies()
+        public async Task<IEnumerable<LiteMovieDto>> GetBookmarkedMoviesAsync()
         {
-            var filePath = FilePath;
-            if (!System.IO.File.Exists(filePath))
-                return null;
-
-            try
-            {
-                return JsonHelper.DeserializeFromFile<LiteMovieDto[]>(filePath);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return await GetDataAsync<LiteMovieDto>();
         }
 
-        public bool MovieBookmarkExists(string movieId)
+        public async Task<bool> MovieBookmarkExistsAsync(string movieId)
         {
-            var movieBookmarks = GetBookmarkedMovies();
+            var movieBookmarks = await GetBookmarkedMoviesAsync();
 
             if (movieBookmarks != null)
                 return movieBookmarks.Any(m => m.Id == movieId);
@@ -52,29 +47,11 @@ namespace WebHostStreaming.Providers
             return false;
         }
 
-        public void SaveMovieBookmark(LiteMovieDto movieToBookmark)
+        public async Task SaveMovieBookmarkAsync(LiteMovieDto movieToBookmark)
         {
-            var movieBookmarks = GetBookmarkedMovies();
-
-            if (movieBookmarks != null)
-            {
-                if (movieBookmarks.Any(m => m.Id == movieToBookmark.Id))
-                    return;
-
-                var movieBookmarksList = movieBookmarks.ToList();
-                if (movieBookmarks.Count() == MaxLimit)
-                    movieBookmarksList.RemoveAt(0);
-
-                movieBookmarksList.Add(movieToBookmark);
-                movieBookmarks = movieBookmarksList.ToArray();
-            }
-            else
-                movieBookmarks = new LiteMovieDto[] { movieToBookmark };
-
-            if (!Directory.Exists(AppFolders.DataFolder))
-                Directory.CreateDirectory(AppFolders.DataFolder);
-
-            JsonHelper.SerializeToFileAsync(FilePath, movieBookmarks);
+            await SaveDataAsync(movieToBookmark, (m1, m2) => m1.Id == m2.Id);
         }
+
+       
     }
 }

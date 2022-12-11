@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using WebHostStreaming.Models;
 using WebHostStreaming.Providers;
 
 namespace WebHostStreaming.Controllers
@@ -15,12 +16,15 @@ namespace WebHostStreaming.Controllers
     {
         ISearchersProvider searchersProvider;
         ITorrentContentProvider torrentVideoStreamProvider;
+        ITorrentHistoryProvider torrentHistoryProvider;
         public TorrentController(
            ISearchersProvider searchersProvider,
-           ITorrentContentProvider torrentVideoStreamProvider)
+           ITorrentContentProvider torrentVideoStreamProvider,
+           ITorrentHistoryProvider torrentHistoryProvider)
         {
             this.searchersProvider = searchersProvider;
             this.torrentVideoStreamProvider = torrentVideoStreamProvider;
+            this.torrentHistoryProvider = torrentHistoryProvider;
         }
 
         [HttpGet("vf")]
@@ -83,7 +87,19 @@ namespace WebHostStreaming.Controllers
         {
             var files = await torrentVideoStreamProvider.GetTorrentFilesAsync(torrentUrl);
 
+            if (files != null)
+            {
+                await torrentHistoryProvider.SaveTorrentFileHistoryAsync(new TorrentInfoDto() { LastOpenedDateTime = DateTime.Now, Link = torrentUrl });
+            }
+
             return files;
+        }
+
+        [HttpGet("history")]
+        public async Task<IEnumerable<TorrentInfoDto>> GetTorrentFilesHistory()
+        {
+            var torrentFiles = await torrentHistoryProvider.GetTorrentFilesHistoryAsync();
+            return torrentFiles?.OrderByDescending(f => f.LastOpenedDateTime);
         }
 
         private bool FileSelector(string filePath, string accepetedVideoExtension, string fileNameToSelect)

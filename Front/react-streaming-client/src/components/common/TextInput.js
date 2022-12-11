@@ -6,7 +6,11 @@ import fadeTransition from "../../js/customStyles.js";
 
 import { useEffect, useState, useRef, useReducer } from 'react';
 
-function TextInput({ placeHolder, onTextChanged, large}){
+function TextInput({ placeHolder, onTextChanged, large, value}){
+
+    useEffect(()=>{
+        setText(value);
+    },[value]);
 
     const [text, setText] = useState('');
 

@@ -3,55 +3,33 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using WebHostStreaming.Helpers;
 
 namespace WebHostStreaming.Providers
 {
-    public class WatchedMoviesProvider : IWatchedMoviesProvider
+    public class WatchedMoviesProvider : DataProvider, IWatchedMoviesProvider
     {
-        private const int MaxLimit = 30;
-
-        private string FilePath = AppFiles.WatchedMovies;
-
-        public IEnumerable<LiteMovieDto> GetWatchedMovies()
+        protected override string FilePath()
         {
-            var filePath = FilePath;
-            if (!System.IO.File.Exists(filePath))
-                return null;
-
-            try
-            {
-                return JsonHelper.DeserializeFromFile<LiteMovieDto[]>(filePath);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return AppFiles.WatchedMovies;
         }
 
-        public void SaveWatchedMovie(LiteMovieDto movieToSave)
+        protected override int MaxLimit()
         {
-            var watchedMovies = GetWatchedMovies();
-
-            if (watchedMovies != null)
-            {
-                if (watchedMovies.Any(m => m.Id == movieToSave.Id))
-                    return;
-
-                var watchedMoviesList = watchedMovies.ToList();
-                if (watchedMovies.Count() == MaxLimit)
-                    watchedMoviesList.RemoveAt(0);
-
-                watchedMoviesList.Add(movieToSave);
-                watchedMovies = watchedMoviesList.ToArray();
-            }
-            else
-                watchedMovies = new LiteMovieDto[] { movieToSave };
-
-            if (!Directory.Exists(AppFolders.DataFolder))
-                Directory.CreateDirectory(AppFolders.DataFolder);
-
-            JsonHelper.SerializeToFileAsync(FilePath, watchedMovies);
+            return 30;
         }
+
+        public async Task<IEnumerable<LiteMovieDto>> GetWatchedMoviesAsync()
+        {
+            return await GetDataAsync<LiteMovieDto>();
+        }
+
+        public async Task SaveWatchedMovieAsync(LiteMovieDto movieToSave)
+        {
+            await SaveDataAsync(movieToSave, (m1, m2) => m1.Id == m2.Id);
+        }
+
+      
     }
 }

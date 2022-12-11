@@ -15,6 +15,7 @@ function TorrentLinkPage() {
 
     const [torrentLink, setTorrentLink] = useState('');
     const [openingTorrentLink, setOpeningTorrentLink] = useState(false);
+    const [torrentHistory, setTorrentHistory] = useState([]);
     const [torrentFiles, setTorrentFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState('');
 
@@ -23,13 +24,26 @@ function TorrentLinkPage() {
     const [movieSources, setMovieSources] = useState([]);
 
 
-    useEffect(()=>{
+    useEffect(() => {
         setMovieSources([{
             quality: 'Movie',
             downloadUrl: torrentLink,
             fileName: selectedFile
         }]);
+
+        if (!torrentLink)
+            getTorrentHistory();
     }, [torrentLink, selectedFile]);
+
+    const getTorrentHistory = () => {
+        MoviesAPI.getTorrentHistory(
+            (files) => {
+                setTorrentHistory(files);
+            },
+            () => {
+                setTorrentHistory([]);
+            });
+    };
 
     const changeTorrentLink = (torrentLink) => {
         setOpeningTorrentLink(false);
@@ -41,7 +55,7 @@ function TorrentLinkPage() {
     const openTorrent = () => {
         setTorrentFiles([]);
         setOpeningTorrentLink(true);
-        MoviesAPI.getTorrentFiles(torrentLink, 
+        MoviesAPI.getTorrentFiles(torrentLink,
             (response) => {
                 setOpeningTorrentLink(false);
                 setTorrentFiles(response);
@@ -57,46 +71,73 @@ function TorrentLinkPage() {
         setShowMoviePlayer(true);
     }
 
+    const torrentFilesAreLoaded = () => {
+        return !openingTorrentLink && torrentFiles && torrentFiles.length > 0;
+    }
+
 
     return (
         <div className="torrent-link-page-container">
             <div className="title">Enter a torrent url or magnet and click on Open to see the list of files</div>
-           <TextInput placeHolder="Torrent link or magnet..." large onTextChanged={(text) => changeTorrentLink(text)} />
+            <TextInput placeHolder="Torrent link or magnet..." large onTextChanged={(text) => changeTorrentLink(text)} value={torrentLink}/>
 
-            <div style={{margin: "10px 0"}}>
-                <OpenButton visible={!openingTorrentLink} onClick={() => openTorrent()}/>
-                { Boolean(openingTorrentLink) ? <CircularProgressBar visible size="30px" color="white"/> : null }
-                
+            <div style={{ margin: "10px 0" }}>
+                <OpenButton visible={!torrentFilesAreLoaded()} onClick={() => openTorrent()} />
+                {Boolean(openingTorrentLink) ? <CircularProgressBar visible size="30px" color="white" /> : null}
             </div>
-           <FileList torrentLink={torrentLink} files={torrentFiles} onPlayFileClick={(file)=> onPlayFileClick(file)}/>
-          
-           <VideoPlayerWindow visible={showMoviePlayer} sources={movieSources} onCloseClick={() => setShowMoviePlayer(false)} />
+            <TorrentHistory visible={!torrentFilesAreLoaded()} files={torrentHistory} onClick={(torrentLink) => {changeTorrentLink(torrentLink)}}/>
+            <TorrentFilesList visible={torrentFilesAreLoaded()} torrentLink={torrentLink} files={torrentFiles} onPlayFileClick={(file) => onPlayFileClick(file)} />
+
+            <VideoPlayerWindow visible={showMoviePlayer} sources={movieSources} onCloseClick={() => setShowMoviePlayer(false)} />
         </div>
     )
 }
 
 export default TorrentLinkPage;
 
-function FileList({torrentLink, files, onPlayFileClick}){
+function TorrentFilesList({ visible, torrentLink, files, onPlayFileClick }) {
+    if(!visible)
+        return null;
+
+    return <FilesList 
+        torrentLink={torrentLink}
+        files={files}
+        onPlayFileClick={(file) => onPlayFileClick(file)}
+        contentType="fileFromTorrent"
+        listTitle="Torrent files" />
+}
+
+function TorrentHistory({ visible, files, onClick }) {
+    if(!visible)
+        return null;
+
+    return <FilesList 
+        files={files}
+        onFileClick={(torrentLink) => onClick(torrentLink)}
+        contentType="torrentFile"
+        listTitle="Last opened torrent files" />
+}
+
+function FilesList({ torrentLink, files, onFileClick, onPlayFileClick, contentType, listTitle }) {
 
     const [selectedFileIndex, setSelectedFileIndex] = useState(null);
 
-    useEffect(()=>{
+    useEffect(() => {
         setSelectedFileIndex(null);
-    },[files]);
+    }, [files]);
 
-    
-    if(!files || files.length === 0)
+
+    if (!files || files.length === 0)
         return null;
 
     const fileListStyle = {
         background: 'linear-gradient(342deg, rgba(42,42,42,1) 0%, rgba(0,0,0,1) 65%)',
         borderRadius: '15px',
-        padding:'5px 0',
+        padding: '5px 0',
         minWidth: '50%'
     };
 
-    const fileStyle = {
+    const textStyle = {
         padding: '10px 7px',
         fontSize: '18px',
         fontWeight: '500',
@@ -104,39 +145,110 @@ function FileList({torrentLink, files, onPlayFileClick}){
         cursor: 'pointer'
     };
 
-    const selectedFileStyle = {
-        ...fileStyle,
+    const selectedTextStyle = {
+        ...textStyle,
         background: '#5c2525'
     };
 
-    const playButtons = (file, index) =>{
-        if(index === selectedFileIndex){
-            return ( 
-                <div className="play-buttons-container">
-                    <PlayButton onClick={()=> onPlayFileClick(file)}/>
-                    <PlayWithVLCButton videoUrl={MoviesAPI.apiStreamUrl(torrentLink, file)}/>
-                </div>)
+    const titleStyle = {
+        ...textStyle,
+        fontSize: '20px',
+        color: '#858585'
+    };
+
+
+    const getComponent = (file, index) => {
+        if(contentType === 'fileFromTorrent'){
+            return <FileFromTorrent 
+                        torrentLink={torrentLink}
+                        file={file} 
+                        isSelected={index === selectedFileIndex} 
+                        onClick={()=> setSelectedFileIndex(index)}
+                        onPlayFileClick={() => onPlayFileClick(file)}/>
         }
-        else 
-            return null;   
+        else if(contentType === 'torrentFile'){
+            return <TorrentLink file={file} onClick={(torrentLink) => onFileClick(torrentLink)}/>
+        }
+    };
+
+    const onMouseHover = (index, enter) => {
+        if (index !== selectedFileIndex){
+            const element = document.getElementById('idfile_' + index);
+            element.style.background = enter ? '#362b2b' : '';
+        }
     }
 
-    return(
+    return (
         <div style={fileListStyle}>
-            {files.map((file, index) => 
-                <div>
-                    <div 
-                        key={index} 
-                        style={index === selectedFileIndex ? selectedFileStyle : fileStyle}
-                        onMouseEnter={(e)=> {if(index !== selectedFileIndex) e.target.style.background='#362b2b'}}
-                        onMouseLeave={(e)=> {if(index !== selectedFileIndex) e.target.style.background=''}}
-                        onClick={()=> setSelectedFileIndex(index)}>
-                        {file}
-                        {playButtons(file, index)}
-                    </div>
-                   
+            <div style={titleStyle}>{listTitle}</div>
+            {files.map((file, index) =>
+                <div
+                    id={'idfile_' + index}
+                    key={index}
+                    onMouseEnter={() => { onMouseHover(index, true) }}
+                    onMouseLeave={() => { onMouseHover(index, false) }} style={index === selectedFileIndex ? selectedTextStyle : textStyle}>
+                    {getComponent(file, index)}
                 </div>
-                )}
+            )}
         </div>
     )
+}
+
+function FileFromTorrent({ torrentLink, file, isSelected, onClick, onPlayFileClick }) {
+    let playButtons = null;
+    if (isSelected) {
+        playButtons = (
+            <div className="play-buttons-container">
+                <PlayButton onClick={() => onPlayFileClick()} />
+                <PlayWithVLCButton videoUrl={MoviesAPI.apiStreamUrl(torrentLink, file)} />
+            </div>)
+    }
+
+    return (
+        <div
+            onClick={() => onClick()}>
+            {file}
+            {playButtons}
+        </div>
+    );
+}
+
+function TorrentLink({ file, onClick }) {
+    const dateStyle = {
+        textAlign: 'left',
+        color: 'grey'
+    };
+
+    const formateDate = (fullDateTime) => {
+        const today = new Date();
+        
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        const date = new Date(fullDateTime);
+
+        let day = '';
+        if(yesterday.toDateString() === date.toDateString())
+            day = 'Yesterday';
+        else if(today.toDateString() === date.toDateString())
+            day = 'Today';
+        else {
+            let options = {year: "numeric", month: "long", day: "numeric"};
+            day = date.toLocaleString('en-US', options);
+        }
+          
+        const time = date.toLocaleTimeString(navigator.language, {
+            hour: '2-digit',
+            minute:'2-digit',
+            hour12: false
+          });
+        return day + ', ' + time;
+    }
+
+    return (
+        <div onClick={() => onClick(file.link)}>
+                <div style={dateStyle}>{formateDate(file.lastOpenedDateTime)}</div>
+                <div style={{textAlign: 'left'}}>{file.link}</div>
+        </div>
+    );
 }
