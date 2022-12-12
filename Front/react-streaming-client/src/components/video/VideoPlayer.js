@@ -74,11 +74,14 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
     useEffect(() => {
         const displayControls = () => {
             setShowVideoControls(true);
+            videoPlayerContainerRef.current.style.cursor = 'auto';
             lastTimeMouseMovedRef.current = Date.now();
             const waitingTime = 3000;
             setTimeout(() => {
-                if (videoPlayerContainerRef?.current && Date.now() > lastTimeMouseMovedRef.current + waitingTime)
+                if (videoPlayerContainerRef?.current && Date.now() > lastTimeMouseMovedRef.current + waitingTime){
                     setShowVideoControls(false);
+                    videoPlayerContainerRef.current.style.cursor = 'none';
+                }
             }, waitingTime + 500);
         };
         videoPlayerContainerRef.current.addEventListener("mousemove", displayControls);
