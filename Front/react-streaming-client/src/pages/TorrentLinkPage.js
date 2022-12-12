@@ -134,7 +134,9 @@ function FilesList({ torrentLink, files, onFileClick, onPlayFileClick, contentTy
         background: 'linear-gradient(342deg, rgba(42,42,42,1) 0%, rgba(0,0,0,1) 65%)',
         borderRadius: '15px',
         padding: '5px 0',
-        minWidth: '50%'
+        minWidth: '50%',
+        maxHeight: '300px',
+        overflowY: 'scroll'
     };
 
     const textStyle = {
@@ -179,8 +181,9 @@ function FilesList({ torrentLink, files, onFileClick, onPlayFileClick, contentTy
     }
 
     return (
-        <div style={fileListStyle}>
+        <div>
             <div style={titleStyle}>{listTitle}</div>
+            <div style={fileListStyle}>
             {files.map((file, index) =>
                 <div
                     id={'idfile_' + index}
@@ -190,7 +193,9 @@ function FilesList({ torrentLink, files, onFileClick, onPlayFileClick, contentTy
                     {getComponent(file, index)}
                 </div>
             )}
+            </div>
         </div>
+      
     )
 }
 
