@@ -130,11 +130,14 @@ function FilesList({ torrentLink, files, onFileClick, onPlayFileClick, contentTy
     if (!files || files.length === 0)
         return null;
 
+    const fileListContainerStyle = {
+        width: '50%'
+    };
+
     const fileListStyle = {
         background: 'linear-gradient(342deg, rgba(42,42,42,1) 0%, rgba(0,0,0,1) 65%)',
         borderRadius: '15px',
         padding: '5px 0',
-        minWidth: '50%',
         maxHeight: '300px',
         overflowY: 'scroll'
     };
@@ -181,7 +184,7 @@ function FilesList({ torrentLink, files, onFileClick, onPlayFileClick, contentTy
     }
 
     return (
-        <div>
+        <div style={fileListContainerStyle}>
             <div style={titleStyle}>{listTitle}</div>
             <div style={fileListStyle}>
             {files.map((file, index) =>
