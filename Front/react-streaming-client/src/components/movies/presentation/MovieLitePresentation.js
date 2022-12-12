@@ -9,15 +9,18 @@ import fadeTransition from "../../../js/customStyles.js";
 function MovieLitePresentation({ movie, onMovieClick, hoverEffect }) {
     const [dataLoaded, setDataLoaded] = useState(false);
 
+    useEffect(() => {
+        setDataLoaded(movie?.coverImageUrl);
+    }, [movie]);
+
+    if(!Boolean(movie?.coverImageUrl))
+        return null;
+
     const truncate = (text, maxLength) => {
         if (text && text.length > maxLength)
             return text.substring(0, maxLength) + '...';
         else return text;
     }
-
-    useEffect(() => {
-        setDataLoaded(movie?.coverImageUrl);
-    }, [movie]);
 
     const handleClick = () => {
         setTimeout(()=>{
