@@ -30,6 +30,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
     const [subtitlesAdjustTime, setSubtitlesAdjustTime] = useState(0);
 
     const [showVideoControls, setShowVideoControls] = useState(false);
+    const [videoToPause, setVideoToPause] = useState(true);
     const lastTimeMouseMovedRef = useRef(0);
 
     const checkMovieDownloadState = (url) => {
@@ -71,19 +72,20 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
         videoRef.current.currentTime = newTime;
     }
 
+    const displayControls = () => {
+        setShowVideoControls(true);
+        videoPlayerContainerRef.current.style.cursor = 'auto';
+        lastTimeMouseMovedRef.current = Date.now();
+        const waitingTime = 3000;
+        setTimeout(() => {
+            if (videoPlayerContainerRef?.current && Date.now() > lastTimeMouseMovedRef.current + waitingTime){
+                setShowVideoControls(false);
+                videoPlayerContainerRef.current.style.cursor = 'none';
+            }
+        }, waitingTime + 500);
+    };
+
     useEffect(() => {
-        const displayControls = () => {
-            setShowVideoControls(true);
-            videoPlayerContainerRef.current.style.cursor = 'auto';
-            lastTimeMouseMovedRef.current = Date.now();
-            const waitingTime = 3000;
-            setTimeout(() => {
-                if (videoPlayerContainerRef?.current && Date.now() > lastTimeMouseMovedRef.current + waitingTime){
-                    setShowVideoControls(false);
-                    videoPlayerContainerRef.current.style.cursor = 'none';
-                }
-            }, waitingTime + 500);
-        };
         videoPlayerContainerRef.current.addEventListener("mousemove", displayControls);
 
         return () => {
@@ -141,16 +143,49 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
         const onFullScreenChange = (e) => {
             setIsFullScreen(document.fullscreenElement);
         };
-        if (videoPlayerContainerRef.current)
+
+        const onKeyboardPress = (e) =>{
+
+            if(!videoRef?.current) return;
+
+            displayControls();
+            // Alert the key name and key code on keydown
+            console.log(` Key code value: ${e.keyCode}`);
+
+            if(e.keyCode === 32){
+                if(videoRef.current.paused) {
+                    playVideo();
+                    setVideoToPause(false);
+                }
+                else {
+                    pauseVideo();
+                    setVideoToPause(true);
+                } 
+            }
+            else if(e.keyCode === 37)
+                changeVideoTime(videoRef.current?.currentTime - 10);
+            else if(e.keyCode === 39)
+                changeVideoTime(videoRef.current?.currentTime + 10);
+        }
+        if (videoPlayerContainerRef.current){
             videoPlayerContainerRef.current.addEventListener('fullscreenchange', onFullScreenChange);
+            document.addEventListener('keyup', onKeyboardPress, false);
+        }
 
         return () => {
-            if (videoPlayerContainerRef.current) videoPlayerContainerRef.current.removeEventListener('fullscreenchange', onFullScreenChange);
+            if (videoPlayerContainerRef.current){
+                document.removeEventListener('keyup', onKeyboardPress);
+                videoPlayerContainerRef.current.removeEventListener('fullscreenchange', onFullScreenChange);
+            } 
         }
     },[]);
 
     useEffect(()=>{
-        if(mustPauseVideo) onPauseClick();
+        if(mustPauseVideo){
+            setVideoToPause(true);
+            pauseVideo();
+        }
+            
     },[mustPauseVideo]);
 
     useEffect(() => {
@@ -173,12 +208,12 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
             document.exitFullscreen();     
     }
 
-    const onPlayClick =()=>{
+    const playVideo =()=>{
         if(videoRef?.current)
             videoRef.current.play();
     }
 
-    const onPauseClick = ()=>{
+    const pauseVideo = ()=>{
         if(videoRef?.current)
             videoRef.current.pause();
     }
@@ -206,9 +241,9 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
                         videoCurrentTime={currentTime}
                         onTimeChanged={(newTime) => changeVideoTime(newTime)} />
                     <Controls
-                        videoPaused={mustPauseVideo}
-                        onPlayClick={() => onPlayClick()}
-                        onPauseClick={() => onPauseClick()}
+                        videoPaused={videoToPause}
+                        onPlayClick={() => playVideo()}
+                        onPauseClick={() => pauseVideo()}
                         onVolumeChanged={(newVolume)=> changeVideoVolume(newVolume)}
                         onPlayBackwardClick={() => changeVideoTime(currentTime - 10)}
                         onPlayForwardClick={() => changeVideoTime(currentTime + 10)}

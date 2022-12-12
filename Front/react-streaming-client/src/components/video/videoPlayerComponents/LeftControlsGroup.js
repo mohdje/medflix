@@ -19,7 +19,7 @@ function LeftControlsGroup({ videoPaused, onPlayClick, onPauseClick, onVolumeCha
     }
 
     useEffect(() => {
-        if (videoPaused) setShowPlayButton(true);
+        setShowPlayButton(videoPaused);
     }, [videoPaused]);
 
     return (
