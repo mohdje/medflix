@@ -210,6 +210,8 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
                         onPlayClick={() => onPlayClick()}
                         onPauseClick={() => onPauseClick()}
                         onVolumeChanged={(newVolume)=> changeVideoVolume(newVolume)}
+                        onPlayBackwardClick={() => changeVideoTime(currentTime - 10)}
+                        onPlayForwardClick={() => changeVideoTime(currentTime + 10)}
                         videoSubtitlesOptions={videoSubtitlesOptions}
                         videoQualitiesOptions={videoQualitiesOptions}
                         onSubtitleSizeChange={(pixelsToAdd) => setSubtitlesSize(subtitlesSize + pixelsToAdd <= 60 && subtitlesSize + pixelsToAdd >= 20 ? subtitlesSize + pixelsToAdd : subtitlesSize)}

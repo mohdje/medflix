@@ -51,6 +51,11 @@
     color: white;
     height: 25px;
     width: 25px;
+    margin: 0 3px;
+}
+
+.video-player-controls .controls-group .icon:active{
+    color: rgb(165, 165, 165);
 }
 
 .video-player-controls .controls-group .icon.big{

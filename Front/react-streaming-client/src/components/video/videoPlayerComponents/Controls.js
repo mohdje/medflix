@@ -6,6 +6,8 @@ function Controls({
     onPlayClick,
     onPauseClick,
     onVolumeChanged,
+    onPlayBackwardClick,
+    onPlayForwardClick,
     videoSubtitlesOptions, 
     videoQualitiesOptions,
     onSubtitlesChange,
@@ -21,7 +23,9 @@ function Controls({
                 videoPaused = {videoPaused}
                 onPlayClick={() => onPlayClick()} 
                 onPauseClick={() => onPauseClick()} 
-                onVolumeChanged={(newVolume) => onVolumeChanged(newVolume)}/>
+                onVolumeChanged={(newVolume) => onVolumeChanged(newVolume)}
+                onPlayBackwardClick={()=> onPlayBackwardClick()}
+                onPlayForwardClick={()=> onPlayForwardClick()}/>
             <RightControlsGroup
                 subtitlesOptions={videoSubtitlesOptions}
                 qualityOptions={videoQualitiesOptions}
