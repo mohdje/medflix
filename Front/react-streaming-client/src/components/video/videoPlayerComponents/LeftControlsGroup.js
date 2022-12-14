@@ -7,25 +7,19 @@ import Replay10Icon from '@material-ui/icons/Replay10';
 
 import Slider from './Slider';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
-function LeftControlsGroup({ videoPaused, onPlayClick, onPauseClick, onVolumeChanged, onPlayBackwardClick, onPlayForwardClick }) {
+function LeftControlsGroup({ videoIsPlaying, onPlayClick, onPauseClick, onVolumeChanged, onPlayBackwardClick, onPlayForwardClick }) {
     const [showPlayButton, setShowPlayButton] = useState(true);
 
-    const togglePlayButton = (play) => {
-        setShowPlayButton(!play);
-        if (play) onPlayClick();
-        else onPauseClick();
-    }
-
     useEffect(() => {
-        setShowPlayButton(videoPaused);
-    }, [videoPaused]);
+        setShowPlayButton(!videoIsPlaying);
+    }, [videoIsPlaying]);
 
     return (
         <div className="controls-group">
-            <PlayArrowIcon className="icon" style={{ display: showPlayButton ? '' : 'none' }} onClick={() => togglePlayButton(true)} />
-            <PauseIcon className="icon" style={{ display: showPlayButton ? 'none' : '' }} onClick={() => togglePlayButton(false)} />
+            <PlayArrowIcon className="icon" style={{ display: showPlayButton ? '' : 'none' }} onClick={() => onPlayClick()} />
+            <PauseIcon className="icon" style={{ display: showPlayButton ? 'none' : '' }} onClick={() => onPauseClick()} />
             <VolumeController onVolumeChanged={(newVolume) => onVolumeChanged(newVolume)} />
             <Replay10Icon className="icon" onClick={() => onPlayBackwardClick()}/>
             <Forward10Icon className="icon" onClick={() => onPlayForwardClick()}/>
@@ -36,30 +30,42 @@ export default LeftControlsGroup;
 
 
 function VolumeController({ onVolumeChanged }) {
-
     const defaultVolume = 70;
-    const [currentVolume, setCurrentVolume] = useState(defaultVolume);
+    const currentVolumeRef = useRef(0);
     const [previousVolume, setPreviousVolume] = useState(defaultVolume);
 
     const changeVolume = (percentage) => {
-        setCurrentVolume(percentage);
+        currentVolumeRef.current = percentage;
         onVolumeChanged(percentage / 100);
     };
 
     const muteVideo = () => {
-        setPreviousVolume(currentVolume);
+        setPreviousVolume(currentVolumeRef.current);
         changeVolume(0);
     }
 
-    useEffect(() => {
+    useEffect(()=>{
         changeVolume(defaultVolume);
-    }, []);
+      
+        const onKeyboardPress = (e) =>{
+            if(e.keyCode === 38 && currentVolumeRef.current < 100)
+                changeVolume(currentVolumeRef.current + 10);
+            else if(e.keyCode === 40 && currentVolumeRef.current > 0)
+                changeVolume(currentVolumeRef.current - 10);
+        }
+
+        document.addEventListener('keyup', onKeyboardPress, false);
+
+        return () => {
+            document.removeEventListener('keyup', onKeyboardPress);
+        }
+    },[]);
 
     return (<div className="video-volume-controller">
-        <VolumeUp className="icon" onClick={() => { muteVideo() }} style={{ display: currentVolume > 0 ? '' : 'none' }} />
-        <VolumeOffIcon className="icon" onClick={() => changeVolume(previousVolume)} style={{ display: currentVolume > 0 ? 'none' : '' }} />
+        <VolumeUp className="icon" onClick={() => { muteVideo() }} style={{ display: currentVolumeRef.current > 0 ? '' : 'none' }} />
+        <VolumeOffIcon className="icon" onClick={() => changeVolume(previousVolume)} style={{ display: currentVolumeRef.current > 0 ? 'none' : '' }} />
         <Slider
-            value={currentVolume}
+            value={currentVolumeRef.current}
             onCursorMoved={(percentage) => changeVolume(percentage)}
             onCursorEndMove={(percentage) => changeVolume(percentage)}
             width={'120px'}

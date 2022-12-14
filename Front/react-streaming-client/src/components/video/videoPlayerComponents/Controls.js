@@ -2,7 +2,7 @@ import LeftControlsGroup from "./LeftControlsGroup";
 import RightControlsGroup from "./RightControlsGroup";
 
 function Controls({
-    videoPaused,
+    videoIsPlaying,
     onPlayClick,
     onPauseClick,
     onVolumeChanged,
@@ -20,7 +20,7 @@ function Controls({
     return (
         <div className="video-player-controls">
             <LeftControlsGroup 
-                videoPaused = {videoPaused}
+                videoIsPlaying = {videoIsPlaying}
                 onPlayClick={() => onPlayClick()} 
                 onPauseClick={() => onPauseClick()} 
                 onVolumeChanged={(newVolume) => onVolumeChanged(newVolume)}
