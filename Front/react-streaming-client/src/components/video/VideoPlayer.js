@@ -1,5 +1,7 @@
 import "../../style/video-player.css";
 
+import fadeTransition from "../../js/customStyles";
+
 import CircularProgressBar from "../common/CircularProgressBar";
 
 import VideoSubtitles from './videoPlayerComponents/VideoSubtitles';
@@ -232,7 +234,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
                     urlSource={subtitlesUrl}
                     size={subtitlesSize}
                     subtitlesAdjustTime={subtitlesAdjustTime} />
-                <div className="video-player-controls-container" style={{ display: showVideoControls ? '' : 'none' }}>
+                <div className="video-player-controls-container" style={fadeTransition(showVideoControls)}>
                     <TimeController 
                         videoDuration={videoRef.current?.duration}
                         videoCurrentTime={currentTime}
