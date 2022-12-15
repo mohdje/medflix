@@ -28,8 +28,7 @@
 /*# Video player controls */
 .video-player-controls-container{
     width: 100%;
-    background: rgb(46,46,46);
-    background: linear-gradient(0deg, rgba(46,46,46,1) 0%, rgba(0,0,0,1) 100%);
+    background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7707457983193278) 35%, rgba(0,0,0,0) 100%);
     padding-top: 10px;
 }
 
@@ -111,13 +110,13 @@
     visibility: visible;
     opacity: 1;
     transition: visibility 0.5s, opacity 0.5s;
+    max-height: 100px;
+    overflow-y: auto;
 }
 
 .video-options-menu.suboptions{
     left: 0;
     transform: translateX(-100%);
-    max-height: 100px;
-    overflow-y: auto;
 }
 
 .video-options-menu.hidden{
