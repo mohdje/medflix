@@ -29,7 +29,7 @@ namespace WebHostStreaming.Providers
             }
         }
 
-        protected async Task SaveDataAsync<T>(T dataToSave, Func<T, T, bool> predicate) where T : class
+        protected async Task SaveDataAsync<T>(T dataToSave, Func<T, T, bool> predicate, bool overrideIfExists = false) where T : class
         {
             var data = await GetDataAsync<T>();
 
@@ -38,7 +38,12 @@ namespace WebHostStreaming.Providers
             if (dataList != null)
             {
                 if (predicate != null && dataList.Any(d => predicate(d, dataToSave)))
-                    return;
+                {
+                    if (overrideIfExists)
+                        dataList.RemoveAt(dataList.FindIndex(d => predicate(d, dataToSave)));
+                    else
+                        return;
+                }
 
                 if (dataList.Count() == MaxLimit())
                     dataList.RemoveAt(0);

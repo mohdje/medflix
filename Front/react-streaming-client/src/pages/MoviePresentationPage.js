@@ -5,8 +5,9 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import ModalMovieTrailer from '../components/modal/ModalMovieTrailer';
 
-import VideoPlayerWindow from '../components/video/VideoPlayerWindow';
+import { VideoPlayerWindow, ToTimeFormat } from '../components/video/VideoPlayerWindow';
 import CircularProgressBar from "../components/common/CircularProgressBar";
+import ProgressionBar from "../components/common/ProgressionBar";
 
 import BaseButton from "../components/common/buttons/BaseButton";
 import TrailerButton from "../components/common/buttons/TrailerButton";
@@ -25,12 +26,14 @@ import MoviesAPI from "../js/moviesAPI.js";
 import fadeTransition from "../js/customStyles.js";
 
 import { useEffect, useState, useRef } from 'react';
+import { Minimize } from "@material-ui/icons";
 
 
 function MovieFullPresentation({ movieId, onCloseClick }) {
 
     const [dataLoaded, setDataLoaded] = useState(false);
     const [movieDetails, setMovieDetails] = useState({});
+    const [movieProgression, setMovieProgression] = useState({});
 
     const versionsSources = useRef([]);
     const [voSourcesSearching, setVoSourcesSearching] = useState(false);
@@ -61,7 +64,10 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                         });
                     }
                 });
-           
+            MoviesAPI.getWatchedMovie(movieId, (watchedMovie) => {
+                if(watchedMovie?.progression)
+                    setMovieProgression(watchedMovie.progression);
+            });
         }
     }, [movieId]);
 
@@ -156,9 +162,23 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
         });
     }
 
+    const onWatchedTimeUpdate = (time) => {
+       const totalTime = movieDetails.duration * 60;
+       movieDetails.progression = time/totalTime;
+       MoviesAPI.saveWacthedMovie(movieDetails)
+    }
+
+    
+
     return (
         <div style={{ height: '100%' }}>          
-            <VideoPlayerWindow visible={showMoviePlayer} sources={selectedVersionSources} subtitles={movieSubtitlesSources} onCloseClick={() => setShowMoviePlayer(false)} /> 
+            <VideoPlayerWindow 
+                visible={showMoviePlayer} 
+                sources={selectedVersionSources} 
+                subtitles={movieSubtitlesSources} 
+                onCloseClick={() => setShowMoviePlayer(false)}
+                onWatchedTimeUpdate={(time) => onWatchedTimeUpdate(time)} 
+                goToTime={movieProgression * movieDetails.duration}/> 
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />
             <ModalMovieTrailer visible={showMovieTrailer} youtubeTrailerUrl={movieDetails.youtubeTrailerUrl} onCloseClick={() => setShowMovieTrailer(false)}/>
 
@@ -176,7 +196,8 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                             </div>
                             <div className="info-content">
                                 <Rating rating={movieDetails.rating} size="50px" />
-                                <SecondaryInfo center text={movieDetails.year + "  -  " + movieDetails.duration} />
+                                <SecondaryInfo center text={movieDetails.year  + " | " + ToTimeFormat(movieDetails.duration) + " | " +  movieDetails.genre} />
+                                <MovieProgression movieProgression={movieProgression} movieDuration={movieDetails.duration}/>
                                 <div className="horizontal">
                                     <TrailerButton visible={movieDetails?.youtubeTrailerUrl} onClick={() => setShowMovieTrailer(true)} />
                                     <AddBookmarkButton onClick={() => bookmarkMovie()} visible={addBookmarkButtonVisible} />
@@ -215,6 +236,19 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
 }
 export default MovieFullPresentation;
 
+
+function MovieProgression({movieProgression, movieDuration}){
+    if(movieProgression > 0){
+        return (
+            <div>
+                <ProgressionBar width="100%" value={movieProgression * 100}/>
+                <SecondaryInfo  text={ToTimeFormat(movieDuration - (movieDuration * movieProgression)) + ' remaining'} />
+            </div>
+        )
+    }
+    else 
+        return null;
+}
 
 function AvailableSubtitles({ availableSubtitlesSources, loading }) {
     const availableSubtitles = availableSubtitlesSources?.length > 0 ? availableSubtitlesSources.map(s => s.language).join(", ") : 'No subtitles available';
@@ -271,4 +305,5 @@ function QualitySelector({ versionSources, onQualityChanged }) {
     return <TitleAndContent title="Qualities" content={content} justify="left"/>
 
 }
+
 

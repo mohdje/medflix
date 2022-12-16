@@ -3,24 +3,26 @@ import "../../style/video-player-window.css";
 import "../../style/button.css";
 import MoviesAPI from "../../js/moviesAPI";
 import VideoPlayer from "./VideoPlayer";
+import Paragraph from "../common/text/Paragraph";
+import BaseButton from "../common/buttons/BaseButton";
+import ModalWindow from "../modal/ModalWindow";
 
-import { useEffect, useState, useRef } from 'react';
-import fadeTransition from "../../js/customStyles.js";
-import { useOnClickOutside} from '../../js/customHooks';
+import { useEffect, useState } from 'react';
 
-function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick }) {
+export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, onWatchedTimeUpdate, goToTime }) {
     const [subtitlesOptions, setSubtitlesOptions] = useState([]);
     const [videoQualitiesOptions, setVideoQualitiesOptions] = useState([]);
-    const videoPlayerContainerRef = useRef(null);
+    const [resumeMessageVisible, setResumeMessageVisible] = useState(true);
+    const [videoTime, setVideoTime] = useState(0);
 
     const buildVideoQualitiesOptions = (sources) => {
         var options = [];
-       if(!sources) return;
-       sources.forEach(source => {
+        if (!sources) return;
+        sources.forEach(source => {
             var qualities = options.filter(o => o.label.startsWith(source.quality));
 
             var option = {
-                label: qualities && qualities.length > 0 ? source.quality + ' (' + (qualities.length + 1) + ')': source.quality,
+                label: qualities && qualities.length > 0 ? source.quality + ' (' + (qualities.length + 1) + ')' : source.quality,
                 selected: source.selected,
                 data: {
                     url: MoviesAPI.apiStreamUrl(source.downloadUrl, source.fileName)
@@ -29,9 +31,9 @@ function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick }) {
             options.push(option);
         });
 
-        if(options.filter(o => o.selected).length === 0)
+        if (options.filter(o => o.selected).length === 0)
             options[0].selected = true;
-            
+
         setVideoQualitiesOptions(options);
     }
 
@@ -43,7 +45,7 @@ function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick }) {
                 selected: true
             });
 
-        if(subtitles && subtitles.length > 0){
+        if (subtitles && subtitles.length > 0) {
             subtitles.forEach(sub => {
                 var subtitlesOption = {
                     label: sub.language,
@@ -62,7 +64,7 @@ function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick }) {
                 newSubtitlesOptions.push(subtitlesOption);
             });
         }
-        
+
         setSubtitlesOptions(newSubtitlesOptions);
     }
 
@@ -78,21 +80,73 @@ function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick }) {
         }
     }, [subtitles, visible]);
 
-    useOnClickOutside(videoPlayerContainerRef, () => onCloseClick());
 
-    const videoPlayerContainer = (<div ref={videoPlayerContainerRef} className="video-player-container">
-    <VideoPlayer 
-        videoQualitiesOptions={videoQualitiesOptions} 
-        videoSubtitlesOptions={subtitlesOptions}
-        mustPauseVideo={!visible} />
-    </div>);
-
-    return (
-        <div style={fadeTransition(visible, null, 20)} className="video-player-window-container">
-            {
-                visible ? videoPlayerContainer : null
-            }
+    const content = (
+        <div className="video-player-window-container">
+            <ResumeMessage 
+                visible={goToTime > 0 && resumeMessageVisible} 
+                resumeTime={goToTime} 
+                onNoClick={() => setResumeMessageVisible(false)} 
+                onYesClick={() => {setVideoTime(goToTime * 60);setResumeMessageVisible(false)}} />
+            <VideoPlayerContainer 
+                visible={visible}
+                videoQualitiesOptions={videoQualitiesOptions} 
+                subtitlesOptions={subtitlesOptions} 
+                onWatchedTimeUpdate={(time) => onWatchedTimeUpdate(time)}
+                videoTime={videoTime}/>
         </div>
+    )
+    return (
+        <ModalWindow visible={visible} content={content} onCloseClick={() => onCloseClick()} />
     );
 }
-export default VideoPlayerWindow;
+
+export function ToTimeFormat(totalMinutes) {
+    const totalHours = totalMinutes / 60;
+
+    const hours = Math.trunc(totalHours);
+    const minutes = Math.trunc((totalHours - hours) * 60);
+
+    let timeFormat = '';
+    if (hours > 0)
+        timeFormat += hours + ' h ';
+
+    timeFormat += minutes + ' min';
+
+    return timeFormat;
+}
+
+
+function ResumeMessage({ visible, resumeTime, onYesClick, onNoClick }) {
+    const containerStyle = {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
+    if (visible) {
+        return (
+            <div style={containerStyle}>
+                <Paragraph text={"Do you want to resume the video to " + ToTimeFormat(resumeTime) + " ?"} />
+                <BaseButton color="red" content="Yes" onClick={() => onYesClick()} />
+                <BaseButton color="grey" content="No" onClick={() => onNoClick()} />
+            </div>
+        );
+    }
+    else
+        return null;
+}
+
+function VideoPlayerContainer({ visible, videoQualitiesOptions, subtitlesOptions, onWatchedTimeUpdate, videoTime }) {
+
+    if (visible) {
+        return <div className="video-player-container">
+            <VideoPlayer
+                videoQualitiesOptions={videoQualitiesOptions}
+                videoSubtitlesOptions={subtitlesOptions}
+                onWatchedTimeUpdate={(time) => onWatchedTimeUpdate(time)} 
+                videoTime={videoTime}/>
+        </div>;
+    }
+    else
+        return null;
+}

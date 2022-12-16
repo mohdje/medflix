@@ -6,7 +6,11 @@
 }
 
 .movie-intermediate-presentation-container:hover{
-   
+    background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(195,64,53,0.2665441176470589) 50%, rgba(195,64,53,0) 100%);
+}
+
+.movie-intermediate-presentation-container:active{
+    background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(131, 130, 130, 0.267) 50%, rgba(195,64,53,0) 100%);
 }
 
 .movie-intermediate-presentation-content{
@@ -15,7 +19,6 @@
 }
 
 .movie-intermediate-presentation-info{
-  
     margin-bottom: 20px;
     width: 500px;
     text-align: left;

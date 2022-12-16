@@ -12,9 +12,10 @@ import MoviesAPI from "../../js/moviesAPI";
 
 import { useEffect, useState, useRef } from 'react';
 
-function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVideo }) {
+function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, onWatchedTimeUpdate, videoTime }) {
     const videoRef = useRef(null);
     const videoPlayerContainerRef = useRef(null);
+    const watchedTimeUpdateTriggeredRef = useRef(0);
 
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
@@ -79,12 +80,12 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
         videoPlayerContainerRef.current.style.cursor = 'auto';
         lastTimeMouseMovedRef.current = Date.now();
         const waitingTime = 3000;
-        setTimeout(() => {
-            if (videoPlayerContainerRef?.current && Date.now() > lastTimeMouseMovedRef.current + waitingTime){
-                setShowVideoControls(false);
-                videoPlayerContainerRef.current.style.cursor = 'none';
-            }
-        }, waitingTime + 500);
+        // setTimeout(() => {
+        //     if (videoPlayerContainerRef?.current && Date.now() > lastTimeMouseMovedRef.current + waitingTime){
+        //         setShowVideoControls(false);
+        //         videoPlayerContainerRef.current.style.cursor = 'none';
+        //     }
+        // }, waitingTime + 500);
     };
 
     const onFullScreenStateChanged = (fullScreen) => {
@@ -158,9 +159,16 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
         };
         videoRef.current.addEventListener('waiting', onVideoWaiting, true);
 
-        const onTimeUpdated = () =>{
-            if (videoRef.current?.currentTime)
+        const onTimeUpdated = (e) =>{
+            if (videoRef.current?.currentTime){
                 setCurrentTime(videoRef.current?.currentTime);
+
+                let currentTime = Math.round(videoRef.current?.currentTime);
+                if(currentTime - watchedTimeUpdateTriggeredRef.current > 10){
+                    watchedTimeUpdateTriggeredRef.current = currentTime;
+                    onWatchedTimeUpdate(videoRef.current?.currentTime);
+                }
+            }
         };
         videoRef.current.addEventListener('timeupdate', onTimeUpdated);
 
@@ -209,19 +217,17 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, mustPauseVi
         }
     },[]);
 
-    useEffect(()=>{
-        if(mustPauseVideo){
-            pauseVideo();
-        }
-            
-    },[mustPauseVideo]);
-
     useEffect(() => {
         if (videoQualitiesOptions) {
             const videoQuality = videoQualitiesOptions.find(op => op.selected);
             if (videoQuality?.data?.url) changeVideoSource(videoQuality.data.url);
         }
     }, [videoQualitiesOptions]);
+
+    useEffect(() => {
+        if(videoTime > 0 && videoRef?.current)
+            videoRef.current.currentTime = videoTime;
+    },[videoTime]);
 
     return (
         <div ref={videoPlayerContainerRef} className="video-player-content" >

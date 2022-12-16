@@ -14,7 +14,7 @@ namespace MoviesAPI.Services.Movies.Dtos
 
         public string YoutubeTrailerUrl { get; set; }
 
-        public string Duration { get; set; }
+        public int Duration { get; set; }
 
         public string ImdbId { get; set; }
     }

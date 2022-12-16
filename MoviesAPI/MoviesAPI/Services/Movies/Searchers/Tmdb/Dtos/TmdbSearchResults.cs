@@ -38,7 +38,7 @@ namespace MoviesAPI.Services.Movies.Dtos
         public TmdbVideos Videos { get; set; }
 
         public Genre[] Genres { get; set; }
-        public string Runtime { get; set; }
+        public int? Runtime { get; set; }
 
         [JsonProperty("imdb_id")]
         public string ImdbId { get; set; }

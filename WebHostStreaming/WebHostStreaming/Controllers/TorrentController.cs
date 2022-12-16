@@ -44,6 +44,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("stream")]
         public async Task<IActionResult> GetStream([FromQuery(Name = "url")] string url, [FromQuery(Name = "fileName")] string fileName)
         {
+            url = Helpers.TestData.JungleBookTorrentUrl;
             if (string.IsNullOrEmpty(url))
                 return NoContent();
 

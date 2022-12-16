@@ -111,22 +111,28 @@ namespace WebHostStreaming.Controllers
 
 
         [HttpGet("watchedmovies")]
-        public async Task<IEnumerable<LiteMovieDto>> GetWatchedMovies()
+        public async Task<IEnumerable<WatchedMovieDto>> GetWatchedMovies()
         {
             var movies = await watchedMoviesProvider.GetWatchedMoviesAsync();
             return movies?.Reverse();
         }
 
+        [HttpGet("watchedmovies/{id}")]
+        public async Task<WatchedMovieDto> GetWatchedMovie(int id)
+        {
+            var movies = await watchedMoviesProvider.GetWatchedMoviesAsync();
+            return movies?.SingleOrDefault(m => m.Id == id.ToString());
+        }
+
         [HttpPut("watchedmovies")]
-        public async Task<IActionResult> SaveWatchedMovie([FromBody] LiteMovieDto movie)
+        public async Task<IActionResult> SaveWatchedMovie([FromBody] WatchedMovieDto watchedMovie)
         {
             try
             {
-                await watchedMoviesProvider.SaveWatchedMovieAsync(movie);
+                await watchedMoviesProvider.SaveWatchedMovieAsync(watchedMovie);
             }
             catch (Exception)
             {
-
                 return StatusCode((int)HttpStatusCode.InternalServerError);
             }
 
@@ -139,6 +145,8 @@ namespace WebHostStreaming.Controllers
             var movies = await bookmarkedMoviesProvider.GetBookmarkedMoviesAsync();
             return movies?.Reverse();
         }
+
+
 
         [HttpPut("bookmarks")]
         public async Task<IActionResult> BookmarkMovie([FromBody] LiteMovieDto movieToBookmark)

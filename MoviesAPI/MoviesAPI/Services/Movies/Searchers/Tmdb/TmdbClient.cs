@@ -120,7 +120,7 @@ namespace MoviesAPI.Services.Movies
                 Id = tmdbSearchResult.Id,
                 Synopsis = tmdbSearchResult.Overview,
                 Genre = tmdbSearchResult.Genres.Select(g => g.Name).Aggregate((a, b) => $"{a}, {b}"),
-                Duration = tmdbSearchResult.Runtime + " min.",
+                Duration = tmdbSearchResult.Runtime.GetValueOrDefault(0),
                 YoutubeTrailerUrl = GetYoutubeTrailerUrlVideo(tmdbSearchResult.Videos.Results),
                 Cast = tmdbCredits?.Cast?.Take(4).Select(c => c.Name).Aggregate((a, b) => $"{a}, {b}"),
                 Director = tmdbCredits?.Crew?.FirstOrDefault(c => c.Job.Equals("director", StringComparison.OrdinalIgnoreCase))?.Name,

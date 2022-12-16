@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WebHostStreaming.Helpers;
+using WebHostStreaming.Models;
 
 namespace WebHostStreaming.Providers
 {
@@ -20,14 +21,14 @@ namespace WebHostStreaming.Providers
             return 30;
         }
 
-        public async Task<IEnumerable<LiteMovieDto>> GetWatchedMoviesAsync()
+        public async Task<IEnumerable<WatchedMovieDto>> GetWatchedMoviesAsync()
         {
-            return await GetDataAsync<LiteMovieDto>();
+            return await GetDataAsync<WatchedMovieDto>();
         }
 
-        public async Task SaveWatchedMovieAsync(LiteMovieDto movieToSave)
+        public async Task SaveWatchedMovieAsync(WatchedMovieDto movieToSave)
         {
-            await SaveDataAsync(movieToSave, (m1, m2) => m1.Id == m2.Id);
+            await SaveDataAsync(movieToSave, (m1, m2) => m1.Id == m2.Id, true);
         }
 
       

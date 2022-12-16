@@ -3,7 +3,8 @@ const MoviesAPI = {
     apiUrl(route) { return 'http://localhost:5000/' + route },
     apiMoviesUrl(route) { return this.apiUrl( 'movies/' + route) },
     apiTorrentUrl(route) { return this.apiUrl( 'torrent/' + route) },
-    apiWatchedMoviesurl() { return this.apiMoviesUrl('watchedmovies') },
+    apiWatchedMoviesUrl() { return this.apiMoviesUrl('watchedmovies') },
+    apiWatchedMovieUrl(id) { return this.apiWatchedMoviesUrl() + '/' + id },
     apiBookmarkedMoviesUrl(route) { return route ? this.apiMoviesUrl('bookmarks/' + route)  : this.apiMoviesUrl('bookmarks')},
     apiStreamUrl(url, fileName) { return this.apiTorrentUrl('stream?url=' + url + (Boolean(fileName) ? '&fileName=' + fileName : ''))},
     apiSubtitlesUrl(route) { return this.apiUrl('subtitles/' + route) },
@@ -110,14 +111,18 @@ const MoviesAPI = {
     },
 
     getWatchedMovies(onSuccess, onFail) {
-        this.sendRequest(this.apiWatchedMoviesurl(), [], true, onSuccess, onFail);
+        this.sendRequest(this.apiWatchedMoviesUrl(), [], true, onSuccess, onFail);
     },
 
-    saveWacthedMovie(movie) {
+    getWatchedMovie(movieId, onSuccess, onFail) {
+        this.sendRequest(this.apiWatchedMovieUrl(movieId), [], true, onSuccess, onFail);
+    },
+
+    saveWacthedMovie(watchedMovie) {
         var xhttp = new XMLHttpRequest();
-        xhttp.open("PUT", this.apiWatchedMoviesurl(), true);
+        xhttp.open("PUT", this.apiWatchedMoviesUrl(), true);
         xhttp.setRequestHeader("Content-Type", "application/json");
-        xhttp.send(JSON.stringify(movie));
+        xhttp.send(JSON.stringify(watchedMovie));
     },
 
     getBookmarkedMovies(onSuccess, onFail) {
