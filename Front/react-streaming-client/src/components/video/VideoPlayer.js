@@ -80,12 +80,12 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, onWatchedTi
         videoPlayerContainerRef.current.style.cursor = 'auto';
         lastTimeMouseMovedRef.current = Date.now();
         const waitingTime = 3000;
-        // setTimeout(() => {
-        //     if (videoPlayerContainerRef?.current && Date.now() > lastTimeMouseMovedRef.current + waitingTime){
-        //         setShowVideoControls(false);
-        //         videoPlayerContainerRef.current.style.cursor = 'none';
-        //     }
-        // }, waitingTime + 500);
+        setTimeout(() => {
+            if (videoPlayerContainerRef?.current && Date.now() > lastTimeMouseMovedRef.current + waitingTime){
+                setShowVideoControls(false);
+                videoPlayerContainerRef.current.style.cursor = 'none';
+            }
+        }, waitingTime + 500);
     };
 
     const onFullScreenStateChanged = (fullScreen) => {

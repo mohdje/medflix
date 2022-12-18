@@ -115,9 +115,7 @@
 }
 
 .video-options-menu.suboptions{
-    position: absolute;
-    left: 0;
-    transform: translateX(-100%);
+    left: -150%;
 }
 
 .video-options-menu.hidden{
@@ -150,7 +148,7 @@
 
 .video-options-btn:hover{
     cursor: pointer;
-    background-color: rgb(39, 39, 39);
+    background-color: rgba(39, 39, 39, 0.37);
 }
 
 .video-options-btn:active{

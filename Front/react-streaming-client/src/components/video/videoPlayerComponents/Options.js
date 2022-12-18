@@ -1,12 +1,15 @@
-import { useEffect, useState, useRef } from 'react';
-import { useOnClickOutside } from '../../../js/customHooks';
+import { useEffect, useState } from 'react';
+
 
 export function VideoOptions({ options, icon, onOptionChanged }) {
 
     const [menuOptions, setMenuOptions] = useState([]);
+    const [menuSubOptions, setMenuSubOptions] = useState([]);
     const [showMenu, setShowMenu] = useState(false);
-    const [optionsDisplay, setOptionsDisplay] = useState('');
-    const optionsWindowRef = useRef(null);
+    const [showSubMenu, setShowSubMenu] = useState(false);
+
+    const [selectedOption, setSelectedOption] = useState(null);
+    const [selectedSubOption, setSelectedSubOption] = useState(null);
 
     const updateMenuOptions = (selectedOption, selectedSubOption) => {
 
@@ -49,47 +52,28 @@ export function VideoOptions({ options, icon, onOptionChanged }) {
         setMenuOptions(updatedOptions);
 
         setShowMenu(false);
+        setShowSubMenu(false);
 
         var option = updatedOptions.find(op => op.selected);
         if (option.subOptions) onOptionChanged(option.subOptions.find(subOp => subOp.selected));
         else onOptionChanged(option);
     }
 
-    const setSubOptionsVisibility = (option, visible) => {
-        var element = document.getElementById('suboption-' + option.label)
-        if (!element)
-            return;
-
-        if (visible) element.classList.remove("hidden");
-        else element.classList.add("hidden");
-    }
-
-    const getOptionsDisplay = (options) => {
-        return options.map(option =>
-        (<div key={option.label} className={"option " + (option.selected ? 'selected' : '')}
-            onClick={() => updateMenuOptions(option)}
-            onMouseOver={() => setSubOptionsVisibility(option, true)}
-            onMouseLeave={() => setSubOptionsVisibility(option, false)}>
+    const getOptionDisplay = (option) => {
+        return  (<div key={option.label} className={"option " + (option.selected ? 'selected' : '')}
+            onClick={() => {if(!option.subOptions)setSelectedOption(option)}}
+            onMouseEnter={() => {if(option.subOptions){setSelectedOption(option);setMenuSubOptions(!option || !option.subOptions ? [] : option.subOptions)}}}
+            >
             {option.label}
-            {getSubOptionsDisplay(option)}
-        </div>))
+        </div>)
     }
 
-    const getSubOptionsDisplay = (option) => {
-        if (!option?.subOptions)
-            return null;
-        else {
-            return (
-                <div id={'suboption-' + option.label} className="video-options-menu suboptions hidden">
-                    {option.subOptions.map(subOption =>
-                    (<div key={subOption.label} className={"option " + (subOption.selected ? 'selected' : '')}
-                        onClick={(event) => { updateMenuOptions(option, subOption); event.stopPropagation() }}>
-                        {subOption.label}
-                    </div>)
-                    )}
-                </div>
-            );
-        }
+    const getSubOptionDisplay = (subOption) => {
+        return  (<div key={subOption.label} className={"option " + (subOption.selected ? 'selected' : '')}
+            onClick={() => setSelectedSubOption(subOption)}
+            >
+            {subOption.label}
+        </div>)
     }
 
     useEffect(() => {
@@ -99,17 +83,25 @@ export function VideoOptions({ options, icon, onOptionChanged }) {
     }, [options]);
 
     useEffect(() => {
-        if (menuOptions?.length && menuOptions.length > 0) {
-            setOptionsDisplay(getOptionsDisplay(menuOptions));
-        }
-    }, [menuOptions]);
+        if(selectedOption && !selectedOption.subOptions)
+            updateMenuOptions(selectedOption, null);
+    }, [selectedOption]);
 
-    useOnClickOutside(optionsWindowRef, () => setShowMenu(false));
+    useEffect(() => {
+        if(selectedOption && selectedSubOption)
+            updateMenuOptions(selectedOption, selectedSubOption);
+    }, [selectedSubOption]);
+
 
     return (
-        <div ref={optionsWindowRef} className="video-options-container">
-            <div className={"video-options-menu " + (showMenu ? '' : 'hidden')}>
-                {optionsDisplay}
+        <div className="video-options-container" onMouseLeave={() => {setShowMenu(false);setShowSubMenu(false)}}>
+            <div className={"video-options-menu " + (showMenu ? '' : 'hidden')}
+                onMouseEnter={() => {setShowSubMenu(true)}}>
+                {menuOptions.map(option => getOptionDisplay(option))}
+            </div>
+            <div className={"video-options-menu suboptions " + (showSubMenu ? '' : 'hidden')}
+                onMouseLeave={() => {setShowSubMenu(false)}}>
+                {menuSubOptions.map(subOption => getSubOptionDisplay(subOption))}
             </div>
             <VideoOptionsButton icon={icon} onClick={() => setShowMenu(!showMenu)} />
         </div>
