@@ -47,7 +47,7 @@ namespace MoviesAPI.Services.Torrent
 
         private async Task<IEnumerable<MovieTorrent>> GetMovieTorrentsAsync(HtmlNode documentNode, string title, int year)
         {
-            var movies = documentNode.SelectNodes("//div[contains(@class, 'card')]");
+            var movies = documentNode.SelectNodes("//div[@class='card']");
 
             if (movies == null)
                 return new MovieTorrent[0];
@@ -69,10 +69,10 @@ namespace MoviesAPI.Services.Torrent
             var doc = new HtmlDocument();
             doc.LoadHtml(movieHtml);
 
-            var movieTitle = doc.DocumentNode.SelectSingleNode("//*[contains(@class, 'title')]")?.InnerText;
+            var movieTitle = doc.DocumentNode.SelectSingleNode("//*[contains(@class, 'title')]")?.InnerText.HtmlUnescape();
             int.TryParse(doc.DocumentNode.SelectSingleNode("//*[contains(@class, 'year')]")?.InnerText, out var movieYear);
 
-            if (movieTitle.Replace("\'", String.Empty).Equals(title.Replace("\'", String.Empty), StringComparison.OrdinalIgnoreCase) && movieYear == year)
+            if (movieTitle.RemoveSpecialCharacters().Equals(title.RemoveSpecialCharacters(), StringComparison.OrdinalIgnoreCase) && movieYear == year)
             {
                 var movieDetailsLink = htmlUrlProvider.GetMovieDetailsUrl(doc.DocumentNode.SelectSingleNode("//a[contains(@class, 'image-container-link')]")?.Attributes["href"].Value);
                 return await GetMovieTorrentsAsync(movieDetailsLink);
@@ -96,7 +96,7 @@ namespace MoviesAPI.Services.Torrent
                                                         {
                                                             DownloadUrl = htmlUrlProvider.GetTorrentUrl(n.Attributes["href"].Value),
                                                             Quality = n.InnerText
-                                                        });
+                                                        }).DistinctBy(t => t.DownloadUrl);
         }
 
         public string GetPingUrl()

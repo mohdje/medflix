@@ -69,10 +69,10 @@ namespace MoviesAPI.Services.Torrent
             var doc = new HtmlDocument();
             doc.LoadHtml(movieHtml);
 
-            var movieTitle = doc.DocumentNode.SelectSingleNode("//*[contains(@class, 'browse-movie-title')]")?.InnerText;
+            var movieTitle = doc.DocumentNode.SelectSingleNode("//*[contains(@class, 'browse-movie-title')]")?.InnerText.HtmlUnescape();
             int.TryParse(doc.DocumentNode.SelectSingleNode("//*[contains(@class, 'browse-movie-year')]")?.InnerText, out var movieYear);
 
-            if (movieTitle.Replace("\'", String.Empty).Equals(title.Replace("\'", String.Empty), StringComparison.OrdinalIgnoreCase) && movieYear == year)
+            if (movieTitle.RemoveSpecialCharacters().Equals(title.RemoveSpecialCharacters(), StringComparison.OrdinalIgnoreCase) && movieYear == year)
             {
                 var movieDetailsLink = htmlUrlProvider.GetMovieDetailsUrl(doc.DocumentNode.SelectSingleNode("/*[contains(@class, 'browse-movie-link')]")?.Attributes["href"].Value);
                 return await GetMovieTorrentsAsync(movieDetailsLink);

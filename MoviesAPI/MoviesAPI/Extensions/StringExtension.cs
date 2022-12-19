@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Web;
 
 namespace MoviesAPI.Extensions
 {
@@ -46,6 +47,11 @@ namespace MoviesAPI.Extensions
             }
 
             return string.Empty;
+        }
+
+        public static string HtmlUnescape(this string text)
+        {
+            return HttpUtility.HtmlDecode(text);
         }
     }
 }

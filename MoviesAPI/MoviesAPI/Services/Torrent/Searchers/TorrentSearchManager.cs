@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace MoviesAPI.Services.Torrent
 {
@@ -19,12 +20,14 @@ namespace MoviesAPI.Services.Torrent
 
         public async Task<IEnumerable<MovieTorrent>> SearchVfTorrentsAsync(string frenchMovieName, int year)
         {
-            return await SearchTorrents(vfTorrentSearchers, frenchMovieName, year);
+            var torrentLinks = await SearchTorrents(vfTorrentSearchers, frenchMovieName, year);
+            return torrentLinks.DistinctBy(t => t.DownloadUrl);
         }
 
         public async Task<IEnumerable<MovieTorrent>> SearchVoTorrentsAsync(string originalMovieName, int year)
         {
-            return await SearchTorrents(voTorrentSearchers, originalMovieName, year);
+            var torrentLinks = await SearchTorrents(voTorrentSearchers, originalMovieName, year);
+            return torrentLinks.DistinctBy(t => t.DownloadUrl);
         }
 
         private async Task<IEnumerable<MovieTorrent>> SearchTorrents(IEnumerable<ITorrentSearcher> torrentSearchers, string movieName, int year)

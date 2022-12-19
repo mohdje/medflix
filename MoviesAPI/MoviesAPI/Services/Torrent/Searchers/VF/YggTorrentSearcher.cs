@@ -13,7 +13,7 @@ namespace MoviesAPI.Services.Torrent
 {
     internal class YggTorrentSearcher : ITorrentSearcher
     {
-        private const string baseUrl = "https://www2.yggtorrent.co";
+        private const string baseUrl = "https://www2.yggtorrent.one";
 
         public async Task<IEnumerable<MovieTorrent>> GetTorrentLinksAsync(string frenchMovieName, int year)
         {
