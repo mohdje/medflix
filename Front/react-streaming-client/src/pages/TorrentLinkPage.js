@@ -9,11 +9,12 @@ import PlayWithVLCButton from '../components/common/buttons/PlayWithVLCButton';
 import { VideoPlayerWindow } from '../components/video/VideoPlayerWindow';
 import MoviesAPI from "../js/moviesAPI";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 function TorrentLinkPage() {
 
     const [torrentLink, setTorrentLink] = useState('');
+    const torrentLinkRef = useRef('');
     const [openingTorrentLink, setOpeningTorrentLink] = useState(false);
     const [torrentHistory, setTorrentHistory] = useState([]);
     const [torrentFiles, setTorrentFiles] = useState([]);
@@ -33,6 +34,9 @@ function TorrentLinkPage() {
 
         if (!torrentLink)
             getTorrentHistory();
+
+        torrentLinkRef.current = torrentLink;
+            
     }, [torrentLink, selectedFile]);
 
     const getTorrentHistory = () => {
@@ -55,14 +59,19 @@ function TorrentLinkPage() {
     const openTorrent = () => {
         setTorrentFiles([]);
         setOpeningTorrentLink(true);
+        
         MoviesAPI.getTorrentFiles(torrentLink,
             (response) => {
-                setOpeningTorrentLink(false);
-                setTorrentFiles(response);
+                if(torrentLinkRef.current === response.link){
+                    setOpeningTorrentLink(false);
+                    setTorrentFiles(response.files);
+                }
             },
-            () => {
-                setOpeningTorrentLink(false);
-                setTorrentFiles([]);
+            (response) => {
+                if(torrentLinkRef.current === response?.link){
+                    setOpeningTorrentLink(false);
+                    setTorrentFiles([]);
+                }
             });
     };
 
@@ -71,8 +80,8 @@ function TorrentLinkPage() {
         setShowMoviePlayer(true);
     }
 
-    const torrentFilesAreLoaded = () => {
-        return !openingTorrentLink && torrentFiles && torrentFiles.length > 0;
+    const torrentFilesAreLoadingOrLoaded = () => {
+        return openingTorrentLink || (torrentFiles && torrentFiles.length > 0);
     }
 
 
@@ -82,13 +91,13 @@ function TorrentLinkPage() {
             <TextInput placeHolder="Torrent link or magnet..." large onTextChanged={(text) => changeTorrentLink(text)} value={torrentLink}/>
 
             <div style={{ margin: "10px 0" }}>
-                <OpenButton visible={!torrentFilesAreLoaded()} onClick={() => openTorrent()} />
+                <OpenButton visible={!torrentFilesAreLoadingOrLoaded()} onClick={() => openTorrent()} />
                 {Boolean(openingTorrentLink) ? <CircularProgressBar visible size="30px" color="white" /> : null}
             </div>
-            <TorrentHistory visible={!torrentFilesAreLoaded()} files={torrentHistory} onClick={(torrentLink) => {changeTorrentLink(torrentLink)}}/>
-            <TorrentFilesList visible={torrentFilesAreLoaded()} torrentLink={torrentLink} files={torrentFiles} onPlayFileClick={(file) => onPlayFileClick(file)} />
+            <TorrentHistory visible={!torrentFilesAreLoadingOrLoaded()} files={torrentHistory} onClick={(torrentLink) => {changeTorrentLink(torrentLink)}}/>
+            <TorrentFilesList visible={torrentFilesAreLoadingOrLoaded()} torrentLink={torrentLink} files={torrentFiles} onPlayFileClick={(file) => onPlayFileClick(file)} />
 
-            <VideoPlayerWindow visible={showMoviePlayer} sources={movieSources} onCloseClick={() => setShowMoviePlayer(false)} />
+            <VideoPlayerWindow visible={showMoviePlayer} sources={movieSources} onCloseClick={() => setShowMoviePlayer(false)} onWatchedTimeUpdate={()=> {}}/>
         </div>
     )
 }
@@ -152,7 +161,7 @@ function FilesList({ torrentLink, files, onFileClick, onPlayFileClick, contentTy
 
     const selectedTextStyle = {
         ...textStyle,
-        background: '#5c2525'
+        background: 'linear-gradient(90deg, rgba(187,0,0,1) 0%, rgba(193,76,76,1) 35%, rgba(0,0,0,1) 100%)'
     };
 
     const titleStyle = {

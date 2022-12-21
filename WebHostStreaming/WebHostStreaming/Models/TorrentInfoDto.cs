@@ -7,5 +7,7 @@ namespace WebHostStreaming.Models
         public string Link { get; set; }
 
         public DateTime LastOpenedDateTime { get; set; }
+
+        public string[] Files { get; set; }
     }
 }

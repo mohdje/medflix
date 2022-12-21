@@ -44,7 +44,6 @@ namespace WebHostStreaming.Controllers
         [HttpGet("stream")]
         public async Task<IActionResult> GetStream([FromQuery(Name = "url")] string url, [FromQuery(Name = "fileName")] string fileName)
         {
-            url = Helpers.TestData.JungleBookTorrentUrl;
             if (string.IsNullOrEmpty(url))
                 return NoContent();
 
@@ -84,16 +83,24 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("files")]
-        public async Task<IEnumerable<string>> GetTorrentFiles([FromQuery(Name = "torrentUrl")] string torrentUrl)
+        public async Task<TorrentInfoDto> GetTorrentFiles([FromQuery(Name = "torrentUrl")] string torrentUrl)
         {
             var files = await torrentVideoStreamProvider.GetTorrentFilesAsync(torrentUrl);
+
+            var torrentInfoDto = new TorrentInfoDto()
+            {
+                LastOpenedDateTime = DateTime.Now,
+                Link = torrentUrl
+            };
 
             if (files != null)
             {
                 await torrentHistoryProvider.SaveTorrentFileHistoryAsync(new TorrentInfoDto() { LastOpenedDateTime = DateTime.Now, Link = torrentUrl });
+
+                torrentInfoDto.Files = files.ToArray();
             }
 
-            return files;
+            return torrentInfoDto;
         }
 
         [HttpGet("history")]

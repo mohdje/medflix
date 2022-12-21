@@ -15,7 +15,6 @@ namespace WebHostStreaming.Providers
 
         List<TorrentVideoStream> torrentVideoStreams;
         SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
-        CancellationTokenSource cancellationTokenSource;
 
         public TorrentContentProvider()
         {
@@ -45,10 +44,7 @@ namespace WebHostStreaming.Providers
 
         public async Task<IEnumerable<string>> GetTorrentFilesAsync(string torrentUri)
         {
-            if (cancellationTokenSource != null)
-                cancellationTokenSource.Cancel();
-
-            cancellationTokenSource = new CancellationTokenSource();
+            var cancellationTokenSource = new CancellationTokenSource();
 
             var torrentDownloader = new TorrentDownloader(torrentUri);
 
