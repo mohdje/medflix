@@ -1,7 +1,7 @@
 import BaseButton from './BaseButton';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
-import ControlPointOutlinedIcon from '@material-ui/icons/ControlPointOutlined';
-import RemoveCircleOutlineOutlinedIcon from '@material-ui/icons/RemoveCircleOutlineOutlined';
+import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
 
 
 export function AddBookmarkButton({ onClick, visible }) {
@@ -10,7 +10,7 @@ export function AddBookmarkButton({ onClick, visible }) {
                 onClick={onClick} 
                 visible={visible} 
                 color={"grey"}
-                insideIcon={<ControlPointOutlinedIcon style={{ fontSize: 16, color: 'grey' }} />}/>);
+                insideIcon={<AddIcon style={{ fontSize: 22, color: 'white' }} />}/>);
       
 }
 
@@ -19,8 +19,8 @@ export function RemoveBookmarkButton({ onClick, visible }) {
     return (<BookmarkButton 
                 onClick={onClick} 
                 visible={visible} 
-                color={"grey"}
-                insideIcon={<RemoveCircleOutlineOutlinedIcon style={{ fontSize: 16, color: 'grey' }} />}/>);
+                color={"dark-red"}
+                insideIcon={<RemoveIcon style={{ fontSize: 22, color: 'white' }} />}/>);
 
 }
 
@@ -36,10 +36,17 @@ function BookmarkButton({ onClick, visible, color, insideIcon }) {
 
         const insideIconStyle = {
             position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 3
+            top: '-2px',
+            right: '-2px',
+            padding: '1px',
+            zIndex: 3,
+            width: '15px',
+            height: '15px',
+            borderRadius: '100%',
+            backgroundColor: 'rgba(45,44,44,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
         };
 
         const content = (
