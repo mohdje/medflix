@@ -4,6 +4,7 @@
     width: 100vw;
     background-color: black;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 15;
@@ -13,9 +14,16 @@
     visibility: hidden;
     opacity: 0;
     transition: all 1s ease-in;
+    z-index: -1;
 }
 
 .splash-screen-container > img{
-    width: 250px;
+    width: 50%;
     height: auto;
+}
+
+.splash-screen-container .error-message{
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
 }

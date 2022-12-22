@@ -1,8 +1,7 @@
 import "../../style/nav-bar.css";
-import logo from '../../assets/medflix.png';
+import logo from '../../assets/medflix_logo.png';
 import SearchIcon from '@material-ui/icons/Search';
 import HomeIcon from '@material-ui/icons/Home';
-import SettingsIcon from '@material-ui/icons/Settings';
 import ViewModuleIcon from '@material-ui/icons/ViewModule';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import BookmarkIcon from '@material-ui/icons/Bookmark';

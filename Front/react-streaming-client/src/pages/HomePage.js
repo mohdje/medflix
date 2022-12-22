@@ -2,7 +2,6 @@
 import "../style/home-page.css";
 import MoviesOfToday from "../components/movies/list/MoviesOfTodayList";
 import MoviesListLiteWithTitle from "../components/movies/list/MoviesListLiteWithTitle";
-import CircularProgressBar from "../components/common/CircularProgressBar";
 
 import fadeTransition from "../js/customStyles.js";
 import MoviesAPI from "../js/moviesAPI.js";
@@ -10,7 +9,7 @@ import CacheService from "../js/cacheService";
 
 import { useState, useEffect, useRef } from 'react';
 
-function HomePage({ onMovieClick }) {
+function HomePage({ onMovieClick, onReady, onFail }) {
     const [dataLoaded, setDataLoaded] = useState(false);
 
     const moviesLists = useRef([]);
@@ -38,9 +37,12 @@ function HomePage({ onMovieClick }) {
         else{
             MoviesAPI.getPopularMovies((movies)=>{
                 addMovies("Popular movies", movies, true);
+                onReady();
+            }, ()=>{
+                onFail();
             });
             MoviesAPI.getRecommandedMovies((movies)=>{
-                addMovies("Movies recommanded for you", movies, true);
+                addMovies("Recommanded for you", movies, true);
             });
             MoviesAPI.getPopularNetflixMovies((movies)=>{
                 addMovies("Popular on Netflix", movies);
@@ -56,7 +58,6 @@ function HomePage({ onMovieClick }) {
 
     return (
         <div style={{height: '100%'}}>
-            <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />
             <div className="home-page-container" style={fadeTransition(dataLoaded)}>
                 <MoviesOfToday onClick={(movieId) => onMovieClick(movieId)} onDataLoaded={()=>setDataLoaded(true)}/>
                 <div className="blur-divider"></div>    

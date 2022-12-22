@@ -31,6 +31,7 @@ function App() {
   const [centerToLastClickedWatchedMovie, setCenterToLastClickedWatchedMovie] = useState(false);
 
   const [splashscreenVisible, setSplashscreenVisible] = useState(true);
+  const [homePageFailed, setHomePageFailed] = useState(false);
 
   const [modalListGenresVisible, setModalListGenresVisible] = useState(false);
   const [listGenres, setListGenres] = useState([]);
@@ -81,6 +82,8 @@ function App() {
         id: routerIds.homePage,
         render: (<HomePage
           genres={listGenres}
+          onReady={() => { setSplashscreenVisible(false) }}
+          onFail={() => { setHomePageFailed(true)}}
           onMovieClick={(movieId) => showMovieFullPresentation(movieId)} />)
       },
       {
@@ -123,7 +126,6 @@ function App() {
   const [routerPreviousComponentId, setRouterPreviousComponentId] = useState(routerIds.homePage);
 
   useEffect(() => {
-    setTimeout(() => { setSplashscreenVisible(false) }, 4000);
     MoviesAPI.getMoviesGenres(
       (genres) => {
         if (genres && genres.length > 0) {
@@ -135,7 +137,7 @@ function App() {
 
   return (
     <div className="App">
-      <SplashScreen visible={splashscreenVisible} />
+      <SplashScreen visible={splashscreenVisible} showErrorMessage={homePageFailed}/>
       <ModalListGenre
         genres={listGenres}
         visible={modalListGenresVisible}
