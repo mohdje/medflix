@@ -21,12 +21,12 @@ import Title from "../components/common/text/Title";
 import TitleAndContent from "../components/common/TitleAndContent";
 import Rating from "../components/common/Rating";
 import DropDown from "../components/common/DropDown";
+import MoviesListLiteWithTitle from "../components/movies/list/MoviesListLiteWithTitle";
 
 import MoviesAPI from "../js/moviesAPI.js";
 import fadeTransition from "../js/customStyles.js";
 
 import { useEffect, useState, useRef } from 'react';
-import { Minimize } from "@material-ui/icons";
 
 
 function MovieFullPresentation({ movieId, onCloseClick }) {
@@ -42,7 +42,6 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
     const [selectedVersionSources, setSelectedVersionSources] = useState([]);
     const [selectedVersionSourceLink, setSelectedVersionSourceLink] = useState('');
 
-
     const [movieSubtitlesSources, setMovieSubtitlesSources] = useState([]);
     const [loadingSubtitles, setLoadingSubtitles] = useState(false);
 
@@ -50,8 +49,51 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
     const [showMovieTrailer, setShowMovieTrailer] = useState(false);
     const [addBookmarkButtonVisible, setAddBookmarkButtonVisible] = useState(true);
 
+    const [recommandedMovies, setRecommandedMovies] = useState([]);
+    const navHistory = useRef([]);
+
+
     useEffect(() => {
+        if(movieId)
+            loadPage(movieId);
+    }, [movieId]);
+
+    useEffect(() => {
+        if (movieDetails.imdbId) getAvailableSubtitles(movieDetails.imdbId);
+        if (movieDetails.id && movieDetails.title && movieDetails.year) {
+            versionsSources.current = [];
+            searchVfSources(movieDetails.id, movieDetails.title, movieDetails.year);
+            searchVoSources(movieDetails.title, movieDetails.year);
+        }
+
+        const topPage = document.getElementsByClassName('back-btn')[0];
+        topPage.scrollIntoView();
+    }, [movieDetails]);
+
+
+    useEffect(() => {
+        if (showMoviePlayer && movieDetails) MoviesAPI.saveWacthedMovie(movieDetails);
+    }, [showMoviePlayer]);
+
+    useEffect(() => {
+        if (versionsSources.current?.length > 0) {
+            setSelectedVersionSources(versionsSources.current[0].sources);
+        }
+        else{
+            setSelectedVersionSources([]);
+            setSelectedVersionSourceLink('');
+        }
+    }, [versionsSources.current.length]);
+
+    useEffect(()=>{
+        if(!selectedVersionSourceLink && selectedVersionSources.length > 0)
+            changeSelectedSource(0);
+        
+    },[selectedVersionSources]);
+
+    const loadPage = (movieId) => {
         setDataLoaded(false);
+        setMovieDetails({});
         if (movieId) {
             MoviesAPI.getMovieDetails(movieId,
                 (details) => {
@@ -68,33 +110,12 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                 if(watchedMovie?.progression)
                     setMovieProgression(watchedMovie.progression);
             });
+            MoviesAPI.getRecommandedMovies(movieId, (recommandedMovies) => {
+                if(recommandedMovies && recommandedMovies.length > 0)
+                    setRecommandedMovies(recommandedMovies);
+            });
         }
-    }, [movieId]);
-
-    useEffect(() => {
-        if (movieDetails.imdbId) getAvailableSubtitles(movieDetails.imdbId);
-        if (movieDetails.id && movieDetails.title && movieDetails.year) {
-            searchVfSources(movieDetails.id, movieDetails.title, movieDetails.year);
-            searchVoSources(movieDetails.title, movieDetails.year);
-        }
-    }, [movieDetails]);
-
-
-    useEffect(() => {
-        if (showMoviePlayer && movieDetails) MoviesAPI.saveWacthedMovie(movieDetails);
-    }, [showMoviePlayer]);
-
-    useEffect(() => {
-        if (versionsSources.current?.length > 0) {
-            setSelectedVersionSources(versionsSources.current[0].sources);
-        }
-    }, [versionsSources.current.length]);
-
-    useEffect(()=>{
-        if(!selectedVersionSourceLink && selectedVersionSources.length > 0)
-            changeSelectedSource(0);
-        
-    },[selectedVersionSources]);
+    }
 
     const changeSelectedSource = (index) => {
         const newTab = [];
@@ -168,6 +189,20 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
        MoviesAPI.saveWacthedMovie(movieDetails)
     }
 
+    const onRecommandedMovieClick = (movieId) => {
+        navHistory.current.push(movieDetails.id);
+        loadPage(movieId);
+    }
+
+    const onBackClick = () => {      
+        if(navHistory.current.length > 0){
+            let lastMovieId = navHistory.current.pop();
+            loadPage(lastMovieId);
+        }
+        else 
+            onCloseClick();
+    }
+
     
 
     return (
@@ -183,7 +218,7 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
             <ModalMovieTrailer visible={showMovieTrailer} youtubeTrailerUrl={movieDetails.youtubeTrailerUrl} onCloseClick={() => setShowMovieTrailer(false)}/>
 
             <div style={fadeTransition(dataLoaded)} className="movie-presentation-page-container">
-                <div className="back-btn" onClick={() => onCloseClick()}>
+                <div className="back-btn" onClick={() => onBackClick()}>
                     <ArrowBackIcon className="back-arrow" />
                 </div>
                 <div className="presentation" style={{ backgroundImage: 'url(' + movieDetails.backgroundImageUrl + ')' }}>
@@ -227,6 +262,11 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                             <TitleAndContent title="Director" content={movieDetails.director} justify="left" />
                             <TitleAndContent title="Cast" content={movieDetails.cast} justify="left" />
                             <Paragraph text={movieDetails.synopsis}></Paragraph>
+                            <MoviesListLiteWithTitle 
+                                movies={recommandedMovies} 
+                                listTitle="You may also like" 
+                                visible={recommandedMovies && recommandedMovies.length > 0} 
+                                onMovieClick={(movieId) =>  {onRecommandedMovieClick(movieId)}}/>
                         </div>
                     </div>
                 </div>

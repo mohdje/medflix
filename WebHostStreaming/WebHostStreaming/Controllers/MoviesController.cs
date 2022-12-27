@@ -69,14 +69,28 @@ namespace WebHostStreaming.Controllers
             return await searchersProvider.MovieSearcher.GetPopularMoviesAsync();
         }
 
-        [HttpGet("recommandations")]
-        public async Task<IEnumerable<LiteMovieDto>> GetRecommandations()
+        [HttpGet("similar/{id}")]
+        public async Task<IEnumerable<LiteMovieDto>> GetSimilarMovies(string id)
         {
-            var movies = await watchedMoviesProvider.GetWatchedMoviesAsync();
-            if (movies == null || !movies.Any())
-                return null;
+            return await searchersProvider.MovieSearcher.GetRecommandationsAsync(id);
+        }
 
-            return await searchersProvider.MovieSearcher.GetRecommandationsAsync(movies.Last().Id);
+        [HttpGet("recommandations")]
+        public async Task<IEnumerable<LiteMovieDto>> GetRecommandations([FromQuery]string id)
+        {
+            var movieId = string.Empty;
+            if (string.IsNullOrEmpty(id))
+            {
+                var movies = await watchedMoviesProvider.GetWatchedMoviesAsync();
+                if (movies == null || !movies.Any())
+                    return null;
+                else
+                    movieId = movies.Last().Id;
+            }
+            else
+                movieId = id;
+
+            return await searchersProvider.MovieSearcher.GetRecommandationsAsync(movieId);
         }
 
         [HttpGet("genre/{genreId}")]

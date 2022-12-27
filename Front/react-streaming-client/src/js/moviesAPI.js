@@ -60,9 +60,15 @@ const MoviesAPI = {
         this.sendRequest(url, [], true, onSuccess, onFail);
     },
 
-    getRecommandedMovies(onSuccess, onFail) {
+    getRecommandedMovies(movieId, onSuccess, onFail) {
         var url = this.apiMoviesUrl('recommandations');
-        this.sendRequest(url, [], true, onSuccess, onFail);
+        var parameters = [
+            {
+                name: 'id',
+                value: movieId ? movieId : ''
+            }
+        ];
+        this.sendRequest(url, parameters, true, onSuccess, onFail);
     },
 
     searchVFSources(movieId, movieTitle, movieYear, onSuccess, onFail) {

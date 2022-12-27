@@ -41,7 +41,7 @@ function HomePage({ onMovieClick, onReady, onFail }) {
             }, ()=>{
                 onFail();
             });
-            MoviesAPI.getRecommandedMovies((movies)=>{
+            MoviesAPI.getRecommandedMovies(null, (movies)=>{
                 addMovies("Recommanded for you", movies, true);
             });
             MoviesAPI.getPopularNetflixMovies((movies)=>{
