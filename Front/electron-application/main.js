@@ -22,10 +22,10 @@ function createWindow () {
       },
       
     });
-
+    mainWindow.maximize();
     mainWindow.loadFile('view/index.html');
     mainTitleBar.attachTitlebarToWindow(mainWindow);
-
+    
    // mainWindow.webContents.openDevTools();
 }
 
