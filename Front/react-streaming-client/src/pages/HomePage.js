@@ -12,7 +12,9 @@ import { useState, useEffect, useRef } from 'react';
 function HomePage({ onMovieClick, onReady, onFail }) {
     const [dataLoaded, setDataLoaded] = useState(false);
 
-    const moviesLists = useRef([]);
+    const moviesListsRef = useRef([]);
+
+    const [moviesLists, setMoviesLists] = useState([]);
 
     const cacheId = "popularmovieslists";
 
@@ -22,17 +24,22 @@ function HomePage({ onMovieClick, onReady, onFail }) {
                 title: listTitle,
                 movies: movies
             }
-            if(insertAtBeginning)moviesLists.current.unshift(data);
-            else moviesLists.current.push(data);
-            CacheService.setCache(cacheId, moviesLists.current);
+            if(insertAtBeginning)moviesListsRef.current.unshift(data);
+            else moviesListsRef.current.push(data);
+            CacheService.setCache(cacheId, moviesListsRef.current);
+            const newArray = [...moviesListsRef.current];
+            setMoviesLists(newArray);
         }
     };
+
+    
 
     useEffect(()=>{
         let cache = CacheService.getCache(cacheId);
 
         if(cache){
-            moviesLists.current = cache.data;
+            moviesListsRef.current = cache.data;
+            setMoviesLists(moviesListsRef.current);
         }
         else{
             MoviesAPI.getPopularMovies((movies)=>{
@@ -61,7 +68,7 @@ function HomePage({ onMovieClick, onReady, onFail }) {
             <div className="home-page-container" style={fadeTransition(dataLoaded)}>
                 <MoviesOfToday onClick={(movieId) => onMovieClick(movieId)} onDataLoaded={()=>setDataLoaded(true)}/>
                 <div className="blur-divider"></div>    
-                 {moviesLists.current.map((moviesList) =>
+                 {moviesLists.map((moviesList) =>
                 (
                     <MoviesListLiteWithTitle
                         key={moviesList.title}
