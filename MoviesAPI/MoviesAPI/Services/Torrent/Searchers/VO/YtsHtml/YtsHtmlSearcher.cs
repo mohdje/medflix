@@ -6,7 +6,6 @@ using System.Linq;
 using HtmlAgilityPack;
 using MoviesAPI.Extensions;
 using MoviesAPI.Helpers;
-using MoviesAPI.Services.Movies.Dtos;
 using MoviesAPI.Services.Torrent.Dtos;
 
 namespace MoviesAPI.Services.Torrent

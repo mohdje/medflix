@@ -1,5 +1,5 @@
 ﻿using MoviesAPI.Helpers;
-using MoviesAPI.Services.Movies;
+using MoviesAPI.Services.Tmdb;
 using MoviesAPI.Services.Subtitles;
 using MoviesAPI.Services.Subtitles.Searchers;
 using MoviesAPI.Services.Torrent;
@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MoviesAPI.Services.Content;
 
 namespace MoviesAPI.Services
 {
@@ -36,7 +37,12 @@ namespace MoviesAPI.Services
        
         public IMovieSearcher CreateMovieSearcher(string apiKey)
         {
-            return new TmdbClient(apiKey);
+            return new TmdbMovieClient(apiKey);
+        }
+
+        public ISeriesSearcher CreateSeriesSearcher(string apiKey)
+        {
+            return new TmdbSeriesClient(apiKey);
         }
 
         #region Torrent

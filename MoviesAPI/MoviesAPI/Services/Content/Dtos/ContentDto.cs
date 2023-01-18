@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MoviesAPI.Services.Movies.Dtos
+namespace MoviesAPI.Services.Content.Dtos
 {
-    public class MovieDto : LiteMovieDto
+    public class ContentDto : LiteContentDto
     {
 
         public string Genre { get; set; }
@@ -17,5 +17,7 @@ namespace MoviesAPI.Services.Movies.Dtos
         public int Duration { get; set; }
 
         public string ImdbId { get; set; }
+
+        public int SeasonsCount { get; set; }
     }
 }

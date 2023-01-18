@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Linq;
 using MoviesAPI.Services.VOMovies.YtsApi.DTOs;
 using MoviesAPI.Helpers;
-using MoviesAPI.Services.Movies.Dtos;
 using MoviesAPI.Services.Torrent.Dtos;
 
 namespace MoviesAPI.Services.Torrent

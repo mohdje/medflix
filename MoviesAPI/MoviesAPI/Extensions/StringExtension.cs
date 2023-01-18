@@ -53,5 +53,16 @@ namespace MoviesAPI.Extensions
         {
             return HttpUtility.HtmlDecode(text);
         }
+
+        public static int GetYear(this string date)
+        {
+            if (string.IsNullOrEmpty(date))
+                return 0;
+
+            int year;
+            int.TryParse(date.Split('-')[0], out year);
+
+            return year;
+        }
     }
 }

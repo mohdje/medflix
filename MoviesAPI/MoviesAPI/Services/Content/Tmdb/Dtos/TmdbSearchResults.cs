@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using MoviesAPI.Extensions;
 
-namespace MoviesAPI.Services.Movies.Dtos
+namespace MoviesAPI.Services.Tmdb.Dtos
 {
     internal class TmdbSearchResults
     {
@@ -16,11 +17,15 @@ namespace MoviesAPI.Services.Movies.Dtos
     {
         public string Id { get; set; }
         public string Title { get; set; }
+        public string Name { get; set; }
 
         [JsonProperty("release_date")]
         public string ReleaseDate { get; set; }
 
-        public int Year => int.Parse(ReleaseDate.Split('-')[0]);
+        [JsonProperty("first_air_date")]
+        public string FirstAirDate { get; set; }
+
+        public int Year => !string.IsNullOrEmpty(FirstAirDate) ? FirstAirDate.GetYear() : ReleaseDate.GetYear();
 
         [JsonProperty("poster_path")]
         public string PosterPath { get; set; }
@@ -43,5 +48,7 @@ namespace MoviesAPI.Services.Movies.Dtos
         [JsonProperty("imdb_id")]
         public string ImdbId { get; set; }
 
+        [JsonProperty("number_of_seasons")]
+        public int SeasonsCount { get; set; }
     }
 }

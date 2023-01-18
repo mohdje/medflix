@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MoviesAPI.Services.Movies
+namespace MoviesAPI.Services.Tmdb.Dtos
 {
     internal class TmdbImages
     {

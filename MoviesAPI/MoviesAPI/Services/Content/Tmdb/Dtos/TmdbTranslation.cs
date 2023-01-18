@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MoviesAPI.Services.Movies.Dtos
+namespace MoviesAPI.Services.Tmdb.Dtos
 {
     public class TmdbTranslations
     {
@@ -21,5 +21,6 @@ namespace MoviesAPI.Services.Movies.Dtos
     public class Data
     {
         public string Title { get; set; }
+        public string Name { get; set; }
     }
 }

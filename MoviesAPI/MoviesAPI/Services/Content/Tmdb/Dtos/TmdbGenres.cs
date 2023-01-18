@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MoviesAPI.Services.Movies.Dtos
+namespace MoviesAPI.Services.Tmdb.Dtos
 {
     internal class TmdbGenres
     {

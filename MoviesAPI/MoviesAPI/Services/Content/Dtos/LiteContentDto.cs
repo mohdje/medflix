@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MoviesAPI.Services.Movies.Dtos
+namespace MoviesAPI.Services.Content.Dtos
 {
-    public class LiteMovieDto
+    public class LiteContentDto
     {
         public string Title { get; set; }
 
-        public string Year { get; set; }
+        public int Year { get; set; }
 
         public string CoverImageUrl { get; set; }
 
