@@ -6,8 +6,23 @@ import ViewModuleIcon from '@material-ui/icons/ViewModule';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import LinkIcon from '@material-ui/icons/Link';
+import { useEffect, useState } from 'react';
+import AppMode from '../../js/appMode';
 
-function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onWatchedMoviesClick, onBookmarkedMoviesClick, onTorrentLinkClick }) {
+function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onWatchedMoviesClick, onBookmarkedMoviesClick, onTorrentLinkClick, onAppModeSwitch }) {
+
+    const [modes, setModes] = useState([]);
+
+    useEffect(()=>{
+        setModes(AppMode.modes);
+    },[]);
+
+    const switchAppMode = () => {
+        AppMode.switchActiveMode();
+        const updatedModes = [...AppMode.modes];
+        setModes(updatedModes);
+        onAppModeSwitch(AppMode.getActiveMode());
+    }
 
     const navBarIconStyle = {
         color: 'white',
@@ -17,6 +32,9 @@ function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onWatchedMoviesC
 
     return (
         <div className="nav-bar-container">
+            <div className="nav-bar-left">
+                {modes.map(mode => <div key={mode.label} className={"mode " + (mode.isActive ? 'active' : '')} onClick={()=> {if(!mode.isActive)switchAppMode()}}>{mode.label}</div>)}
+            </div>
             <img className="nav-bar-logo" alt="" src={logo} />
             <div className="nav-bar-right">
                 <div className="nav-bar-btn" onClick={() => onHomeClick()}>

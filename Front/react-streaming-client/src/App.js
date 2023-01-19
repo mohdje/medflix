@@ -1,11 +1,7 @@
-// import logo from './logo.svg';
 import './App.css';
 import MoviesAPI from "./js/moviesAPI.js";
-
 import NavBar from "./components/navbar/NavBar";
-
 import SplashScreen from "./components/SplashScreen";
-
 import ModalListGenre from "./components/modal/ModalListGenre.js";
 
 import MoviesListGenrePage from "./pages/MoviesListGenrePage";
@@ -81,10 +77,9 @@ function App() {
       {
         id: routerIds.homePage,
         render: (<HomePage
-          genres={listGenres}
           onReady={() => { setSplashscreenVisible(false) }}
           onFail={() => { setHomePageFailed(true)}}
-          onMovieClick={(movieId) => showMovieFullPresentation(movieId)} />)
+          onMovieClick={(movieId) => showMovieFullPresentation(movieId)}/>)
       },
       {
         id: routerIds.moviesListGenrePage,
@@ -150,7 +145,8 @@ function App() {
         onGenreMenuClick={() => setModalListGenresVisible(true)}
         onWatchedMoviesClick={() => { setCenterToLastClickedWatchedMovie(false); setRouterActiveComponentId(routerIds.watchedMoviesListPage) }}
         onBookmarkedMoviesClick={() => { setCenterToLastClickedBookmark(false); setRouterActiveComponentId(routerIds.bookmarkedMoviesListPage) }}
-        onTorrentLinkClick={()=>{ setRouterActiveComponentId(routerIds.torrentLinkPage) }}/>
+        onTorrentLinkClick={()=>{ setRouterActiveComponentId(routerIds.torrentLinkPage) }}
+        onAppModeSwitch={()=> {setRouterActiveComponentId(routerIds.homePage)}}/>
       <div className="app-content">
         <Router components={router.components} activeComponentId={routerActiveComponentId} />
       </div>

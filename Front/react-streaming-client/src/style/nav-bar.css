@@ -19,6 +19,27 @@
     display: flex;
 }
 
+.nav-bar-left{
+    position: absolute;
+    left: 2%;
+    display: flex;
+}
+
+.nav-bar-left .mode{
+    color: #a7a7a7;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 18px;
+}
+
+.nav-bar-left .mode:hover{
+    cursor: pointer;
+}
+
+.nav-bar-left .mode.active{
+    color: white;
+}
+
 .nav-bar-btn{
     border-radius: 50%;
     width: 40px;

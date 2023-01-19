@@ -1,9 +1,10 @@
-import { movies } from "./fakeData";
+import AppMode from "./appMode";
+
 const MoviesAPI = {
     apiUrl(route) { return 'http://localhost:5000/' + route },
-    apiMoviesUrl(route) { return this.apiUrl( 'movies/' + route) },
+    apiMoviesUrl(route) { return this.apiUrl( this.getActiveMode() + '/' + route) },
     apiTorrentUrl(route) { return this.apiUrl( 'torrent/' + route) },
-    apiWatchedMoviesUrl() { return this.apiMoviesUrl('watchedmovies') },
+    apiWatchedMoviesUrl() { return this.apiMoviesUrl('watchedmedia') },
     apiWatchedMovieUrl(id) { return this.apiWatchedMoviesUrl() + '/' + id },
     apiBookmarkedMoviesUrl(route) { return route ? this.apiMoviesUrl('bookmarks/' + route)  : this.apiMoviesUrl('bookmarks')},
     apiStreamUrl(url, fileName) { return this.apiTorrentUrl('stream?url=' + url + (Boolean(fileName) ? '&fileName=' + fileName : ''))},
@@ -11,6 +12,9 @@ const MoviesAPI = {
     apiServicesUrl(route) { return this.apiUrl('services/' + route) },
     apiApplicationUrl(route) { return this.apiUrl('application/' + route) },
 
+    getActiveMode(){
+        return AppMode.getActiveMode().urlKey;
+    },
     getMoviesGenres(onSuccess, onFail) {
         var url = this.apiMoviesUrl('genres');
         this.sendRequest(url, [], true, onSuccess, onFail);
