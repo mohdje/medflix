@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using WebHostStreaming.Helpers;
 using WebHostStreaming.Models;
 using WebHostStreaming.Providers;
 
@@ -30,7 +31,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("vf")]
         public async Task<IEnumerable<MovieTorrent>> SearchVFTorrents([FromQuery(Name = "movieId")] string movieId, [FromQuery(Name = "originalTitle")] string originalTitle, [FromQuery(Name = "year")] int year)
         {
-            var frenchTitle = await searchersProvider.MovieSearcher.GetFrenchTitleAsync(movieId);
+            var frenchTitle = await searchersProvider.MovieSearcher.GetMovieFrenchTitleAsync(movieId);
 
             return await searchersProvider.TorrentSearchManager.SearchVfTorrentsAsync(string.IsNullOrEmpty(frenchTitle) ? originalTitle : frenchTitle, year);
         }

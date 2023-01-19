@@ -9,15 +9,18 @@ namespace WebHostStreaming.Models
     public class StreamDto
     {
         public Stream Stream { get; }
-        public string ContentType { get; set; }
-        public StreamDto(Stream stream, string videoFormat)
+        public string ContentType => GetContentType();
+        public string FilePath { get; }
+        public StreamDto(Stream stream, string filePath)
         {
             Stream = stream;
-            ContentType = GetContentType(videoFormat);
+            FilePath = filePath;
         }
 
-        private string GetContentType(string videoFormat)
+        private string GetContentType()
         {
+            var videoFormat = Path.GetExtension(FilePath);
+
             if (videoFormat == ".mp4")
                 return "video/mp4";
             else if (videoFormat == ".avi")

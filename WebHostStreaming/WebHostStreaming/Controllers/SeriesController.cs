@@ -17,12 +17,12 @@ namespace WebHostStreaming.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class MoviesController : ControllerBase
+    public class SeriesController : ControllerBase
     {
         ISearchersProvider searchersProvider;
         IWatchedMediaProvider watchedMediaProvider;
         IBookmarkedMediaProvider bookmarkedMediaProvider;
-        public MoviesController(
+        public SeriesController(
             ISearchersProvider searchersProvider,
             IWatchedMediaProvider watchedMediaProvider,
             IBookmarkedMediaProvider bookmarkedMediaProvider)
@@ -32,47 +32,47 @@ namespace WebHostStreaming.Controllers
             this.bookmarkedMediaProvider = bookmarkedMediaProvider;
         }
         [HttpGet("genres")]
-        public async Task<IEnumerable<Genre>> GetMoviesGenres()
+        public async Task<IEnumerable<Genre>> GetSeriesGenres()
         {
-            return await searchersProvider.MovieSearcher.GetMovieGenresAsync();
+            return await searchersProvider.SeriesSearcher.GetSerieGenresAsync();
         }
 
         [HttpGet("moviesoftoday")]
-        public async Task<IEnumerable<LiteContentDto>> GetMoviesOfToday()
+        public async Task<IEnumerable<LiteContentDto>> GetSeriesOfToday()
         {
-            var movies = await searchersProvider.MovieSearcher.GetMoviesOfTodayAsync();
+            var movies = await searchersProvider.SeriesSearcher.GetSeriesOfTodayAsync();
 
             return movies.Where(m => !string.IsNullOrEmpty(m.LogoImageUrl)).Take(5);
         }
 
         [HttpGet("netflix")]
-        public async Task<IEnumerable<LiteContentDto>> GetPopularNetflixMovies()
+        public async Task<IEnumerable<LiteContentDto>> GetPopularNetflixSeries()
         {
-            return await searchersProvider.MovieSearcher.GetPopularNetflixMoviesAsync();
+            return await searchersProvider.SeriesSearcher.GetPopularNetflixSeriesAsync();
         }
 
         [HttpGet("disneyplus")]
-        public async Task<IEnumerable<LiteContentDto>> GetPopularDisneyPlusMovies()
+        public async Task<IEnumerable<LiteContentDto>> GetPopularDisneyPlusSeries()
         {
-            return await searchersProvider.MovieSearcher.GetPopularDisneyPlusMoviesAsync();
+            return await searchersProvider.SeriesSearcher.GetPopularDisneyPlusSeriesAsync();
         }
 
         [HttpGet("amazonprime")]
-        public async Task<IEnumerable<LiteContentDto>> GetPopularAmazonPrimeMovies()
+        public async Task<IEnumerable<LiteContentDto>> GetPopularAmazonPrimeSeries()
         {
-            return await searchersProvider.MovieSearcher.GetPopularAmazonPrimeMoviesAsync();
+            return await searchersProvider.SeriesSearcher.GetPopularAmazonPrimeSeriesAsync();
         }
 
         [HttpGet("popular")]
-        public async Task<IEnumerable<LiteContentDto>> GetPopularMovies()
+        public async Task<IEnumerable<LiteContentDto>> GetPopularSeries()
         {
-            return await searchersProvider.MovieSearcher.GetPopularMoviesAsync();
+            return await searchersProvider.SeriesSearcher.GetPopularSeriesAsync();
         }
 
         [HttpGet("similar/{id}")]
-        public async Task<IEnumerable<LiteContentDto>> GetSimilarMovies(string id)
+        public async Task<IEnumerable<LiteContentDto>> GetSimilarSeries(string id)
         {
-            return await searchersProvider.MovieSearcher.GetRecommandationsAsync(id);
+            return await searchersProvider.SeriesSearcher.GetRecommandationsAsync(id);
         }
 
         [HttpGet("recommandations")]
@@ -81,7 +81,7 @@ namespace WebHostStreaming.Controllers
             var movieId = string.Empty;
             if (string.IsNullOrEmpty(id))
             {
-                var movies = await watchedMediaProvider.GetWatchedMoviesAsync();
+                var movies = await watchedMediaProvider.GetWatchedSeriesAsync();
                 if (movies == null || !movies.Any())
                     return null;
                 else
@@ -90,53 +90,53 @@ namespace WebHostStreaming.Controllers
             else
                 movieId = id;
 
-            return await searchersProvider.MovieSearcher.GetRecommandationsAsync(movieId);
+            return await searchersProvider.SeriesSearcher.GetRecommandationsAsync(movieId);
         }
 
         [HttpGet("genre/{genreId}")]
-        public async Task<IEnumerable<LiteContentDto>> GetPopularMoviesByGenre(int genreId)
+        public async Task<IEnumerable<LiteContentDto>> GetPopularSeriesByGenre(int genreId)
         {
-            return await searchersProvider.MovieSearcher.GetPopularMoviesByGenreAsync(genreId);
+            return await searchersProvider.SeriesSearcher.GetPopularSeriesByGenreAsync(genreId);
         }
 
         [HttpGet("genre/{genreId}/{page}")]
-        public async Task<IEnumerable<LiteContentDto>> GetMoviesByGenre(int genreId, int page)
+        public async Task<IEnumerable<LiteContentDto>> GetSeriesByGenre(int genreId, int page)
         {
-            return await searchersProvider.MovieSearcher.GetMoviesByGenreAsync(genreId, page);
+            return await searchersProvider.SeriesSearcher.GetSeriesByGenreAsync(genreId, page);
         }
 
         [HttpGet("search/{text}")]
-        public async Task<IEnumerable<LiteContentDto>> SearchMovies(string text)
+        public async Task<IEnumerable<LiteContentDto>> SearchSeries(string text)
         {
-            return await searchersProvider.MovieSearcher.SearchMoviesAsync(text);
+            return await searchersProvider.SeriesSearcher.SearchSeriesAsync(text);
         }
 
         [HttpGet("details/{id}")]
         public async Task<ContentDto> GetMovieDetails(string id)
         {
-            return await searchersProvider.MovieSearcher.GetMovieDetailsAsync(id);
+            return await searchersProvider.SeriesSearcher.GetSerieDetailsAsync(id);
         }
 
         [HttpGet("watchedmedia")]
-        public async Task<IEnumerable<WatchedMediaDto>> GetWatchedMovies()
+        public async Task<IEnumerable<WatchedMediaDto>> GetWatchedSeries()
         {
-            var movies = await watchedMediaProvider.GetWatchedMoviesAsync();
+            var movies = await watchedMediaProvider.GetWatchedSeriesAsync();
             return movies?.Reverse();
         }
 
         [HttpGet("watchedmedia/{id}")]
-        public async Task<WatchedMediaDto> GetWatchedMovie(int id)
+        public async Task<WatchedMediaDto> GetWatchedSerie(int id)
         {
-            var movies = await watchedMediaProvider.GetWatchedMoviesAsync();
+            var movies = await watchedMediaProvider.GetWatchedSeriesAsync();
             return movies?.SingleOrDefault(m => m.Id == id.ToString());
         }
 
         [HttpPut("watchedmedia")]
-        public async Task<IActionResult> SaveWatchedMovie([FromBody] WatchedMediaDto watchedMovie)
+        public async Task<IActionResult> SaveWatchedMovie([FromBody] WatchedMediaDto watchedSerie)
         {
             try
             {
-                await watchedMediaProvider.SaveWatchedMovieAsync(watchedMovie);
+                await watchedMediaProvider.SaveWatchedSerieAsync(watchedSerie);
             }
             catch (Exception)
             {
@@ -147,20 +147,20 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("bookmarks")]
-        public async Task<IEnumerable<LiteContentDto>> GetBookmarkedMovies()
+        public async Task<IEnumerable<LiteContentDto>> GetBookmarkedSeries()
         {
-            var movies = await bookmarkedMediaProvider.GetBookmarkedMoviesAsync();
+            var movies = await bookmarkedMediaProvider.GetBookmarkedSeriesAsync();
             return movies?.Reverse();
         }
 
 
 
         [HttpPut("bookmarks")]
-        public async Task<IActionResult> BookmarkMovie([FromBody] LiteContentDto movieToBookmark)
+        public async Task<IActionResult> BookmarkMovie([FromBody] LiteContentDto serieToBookmark)
         {
             try
             {
-                await bookmarkedMediaProvider.SaveMovieBookmarkAsync(movieToBookmark);
+                await bookmarkedMediaProvider.SaveSerieBookmarkAsync(serieToBookmark);
             }
             catch (Exception)
             {
@@ -172,11 +172,11 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpDelete("bookmarks")]
-        public async Task<IActionResult> DeleteBookmarkMovie([FromBody] LiteContentDto movieBookmarkToDelete)
+        public async Task<IActionResult> DeleteBookmarkMovie([FromBody] LiteContentDto serieBookmarkToDelete)
         {
             try
             {
-                await bookmarkedMediaProvider.DeleteMovieBookmarkAsync(movieBookmarkToDelete.Id);
+                await bookmarkedMediaProvider.DeleteSerieBookmarkAsync(serieBookmarkToDelete.Id);
             }
             catch (Exception)
             {
@@ -188,11 +188,11 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("bookmarks/exists")]
-        public async Task<IActionResult> MovieBookmarkExists([FromQuery] string movieId)
+        public async Task<IActionResult> MovieBookmarkExists([FromQuery] string serieId)
         {
-            if (!string.IsNullOrEmpty(movieId))
+            if (!string.IsNullOrEmpty(serieId))
             {
-                return Ok(await bookmarkedMediaProvider.MovieBookmarkExistsAsync(movieId));
+                return Ok(await bookmarkedMediaProvider.SerieBookmarkExistsAsync(serieId));
             }
             else
                 return BadRequest();

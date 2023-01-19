@@ -8,10 +8,7 @@ namespace WebHostStreaming.Providers
 {
     public class TorrentHistoryProvider : DataProvider, ITorrentHistoryProvider
     {
-        protected override string FilePath()
-        {
-            return AppFiles.TorrentHistory; 
-        }
+        private readonly string TorrentHistoryFile = AppFiles.TorrentHistory;
 
         protected override int MaxLimit()
         {
@@ -19,12 +16,12 @@ namespace WebHostStreaming.Providers
         }
         public async Task<IEnumerable<TorrentInfoDto>> GetTorrentFilesHistoryAsync()
         {
-            return await GetDataAsync<TorrentInfoDto>();
+            return await GetDataAsync<TorrentInfoDto>(TorrentHistoryFile);
         }
 
         public async Task SaveTorrentFileHistoryAsync(TorrentInfoDto torrentInfoDto)
         {
-            await SaveDataAsync(torrentInfoDto, null);
+            await SaveDataAsync(TorrentHistoryFile, torrentInfoDto, null);
         }
 
         

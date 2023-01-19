@@ -11,11 +11,8 @@ namespace WebHostStreaming.Providers
     {
         protected abstract int MaxLimit();
 
-        protected abstract string FilePath();
-
-        protected async Task<IEnumerable<T>> GetDataAsync<T>() where T : class
+        protected async Task<IEnumerable<T>> GetDataAsync<T>(string filePath) where T : class
         {
-            var filePath = FilePath();
             if (!System.IO.File.Exists(filePath))
                 return null;
 
@@ -29,9 +26,9 @@ namespace WebHostStreaming.Providers
             }
         }
 
-        protected async Task SaveDataAsync<T>(T dataToSave, Func<T, T, bool> predicate, bool overrideIfExists = false) where T : class
+        protected async Task SaveDataAsync<T>(string filePath, T dataToSave, Func<T, T, bool> predicate, bool overrideIfExists = false) where T : class
         {
-            var data = await GetDataAsync<T>();
+            var data = await GetDataAsync<T>(filePath);
 
             var dataList = data?.ToList();
 
@@ -56,7 +53,7 @@ namespace WebHostStreaming.Providers
             if (!Directory.Exists(AppFolders.DataFolder))
                 Directory.CreateDirectory(AppFolders.DataFolder);
 
-            JsonHelper.SerializeToFileAsync(FilePath(), dataList);
+            JsonHelper.SerializeToFileAsync(filePath, dataList);
         }
     }
 }
