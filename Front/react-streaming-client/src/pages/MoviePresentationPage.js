@@ -4,6 +4,7 @@ import "../style/movie-presentation-page.css";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import ModalMovieTrailer from '../components/modal/ModalMovieTrailer';
+import ModalEpisodeSelector from '../components/modal/ModalEpisodeSelector';
 
 import { VideoPlayerWindow, ToTimeFormat } from '../components/video/VideoPlayerWindow';
 import CircularProgressBar from "../components/common/CircularProgressBar";
@@ -231,7 +232,7 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                             </div>
                             <div className="info-content">
                                 <Rating rating={movieDetails.rating} size="50px" />
-                                <SecondaryInfo center text={movieDetails.year  + " | " + ToTimeFormat(movieDetails.duration) + " | " +  movieDetails.genre} />
+                                <SecondaryInfo center text={movieDetails.year  + " | " + (movieDetails.duration ? ToTimeFormat(movieDetails.duration) + " | " : '') +  movieDetails.genre} />
                                 <MovieProgression movieProgression={movieProgression} movieDuration={movieDetails.duration}/>
                                 <div className="horizontal">
                                     <TrailerButton visible={movieDetails?.youtubeTrailerUrl} onClick={() => setShowMovieTrailer(true)} />
@@ -239,12 +240,13 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                                     <RemoveBookmarkButton onClick={() => unbookmarkMovie()} visible={!addBookmarkButtonVisible} />
                                 </div>
                                 <div className="play-options">
+                                    <EpisodeSelector serieId={movieDetails.id} seasonsCount={movieDetails.seasonsCount}/>
                                     <AvailableSubtitles loading={loadingSubtitles} availableSubtitlesSources={movieSubtitlesSources} />
                                     <AvailableVersions
                                         loading={voSourcesSearching || vfSourcesSearching}
                                         availableVersionsSources={versionsSources.current}
                                         onVersionSelected={(versionSources) =>{setSelectedVersionSourceLink(null);setSelectedVersionSources(versionSources.sources)} } />
-                                    <div style={fadeTransition(Boolean(selectedVersionSources) && selectedVersionSources.length > 0)} >
+                                    <div style={fadeTransition(!(voSourcesSearching || vfSourcesSearching) && Boolean(selectedVersionSources) && selectedVersionSources.length > 0)} >
                                         <QualitySelector versionSources={selectedVersionSources} onQualityChanged={(i) => changeSelectedSource(i)} />
                                         <div className="horizontal">
                                             <PlayButton onClick={() => setShowMoviePlayer(true)} />
@@ -344,6 +346,47 @@ function QualitySelector({ versionSources, onQualityChanged }) {
 
     return <TitleAndContent title="Qualities" content={content} justify="left"/>
 
+}
+
+function EpisodeSelector({serieId, seasonsCount}){
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedSeasonNumber, setSelectedSeasonNumber] = useState(1)
+    const [selectedEpisodeNumber, setSelectedEpisodeNumber] = useState(1)
+
+    useEffect(() => {
+        setSelectedSeasonNumber(1);
+        setSelectedEpisodeNumber(1);
+    },[seasonsCount]);
+
+    if(!seasonsCount)
+        return null;
+
+    const onButtonClick = () => {
+        setModalVisible(true);
+    }
+
+    const containerStyle = {
+        margin: '12px auto',
+    }
+
+    const onEpisodeSelected = (seasonNumber, episodeNumber) => {
+        setSelectedSeasonNumber(seasonNumber);
+        setSelectedEpisodeNumber(episodeNumber);
+        setModalVisible(false);
+    }
+
+    return <div style={containerStyle}>
+            <ModalEpisodeSelector 
+                visible={modalVisible} 
+                serieId={serieId} 
+                numberOfSeasons={seasonsCount} 
+                onEpisodeSelected={(seasonNumber, episodeNumber)=> onEpisodeSelected(seasonNumber, episodeNumber)}
+                onCloseClick={()=> setModalVisible(false)}/>
+            <BaseButton 
+                color="red" 
+                content={"Season " + selectedSeasonNumber + " - Episode " + selectedEpisodeNumber}
+                onClick={()=> onButtonClick()}/>
+        </div>
 }
 
 

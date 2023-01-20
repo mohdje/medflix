@@ -75,6 +75,11 @@ const MoviesAPI = {
         this.sendRequest(url, parameters, true, onSuccess, onFail);
     },
 
+    getEpisodes(serieId, seasonNumber, onSuccess, onFail){
+        var url = this.apiMoviesUrl('episodes/'+ serieId + '/' + seasonNumber);
+        this.sendRequest(url, [], true, onSuccess, onFail);
+    },
+
     searchVFSources(movieId, movieTitle, movieYear, onSuccess, onFail) {
         var url = this.apiTorrentUrl('vf');
         var parameters = [

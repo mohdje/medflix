@@ -1,12 +1,14 @@
 import BaseButton from './buttons/BaseButton';
 import ArrowDropDownOutlinedIcon  from '@material-ui/icons/ArrowDropDownOutlined';
-import { useEffect, useState } from 'react';
+import { useOnClickOutside } from '../../js/customHooks';
+import { useEffect, useState, useRef } from 'react';
 
-function DropDown({values, width, onValueChanged}){
+function DropDown({values, width, onValueChanged, textAlignement}){
 
     const [showList, setShowList] = useState(false);
     const [selectedValue, setSelectedValue] = useState('');
     const [dropDownValues, setDropDownValues] = useState([]);
+    const dropdownRef = useRef(null);
 
     useEffect(()=>{
         if(shouldUpdateDropDownValues(values)){
@@ -14,6 +16,8 @@ function DropDown({values, width, onValueChanged}){
             setSelectedValue(values[0]);
         }
     },[values])
+
+    useOnClickOutside(dropdownRef, () => setShowList(false));
 
     const shouldUpdateDropDownValues = (values) => {
         if (dropDownValues.length !== values.length)
@@ -40,13 +44,15 @@ function DropDown({values, width, onValueChanged}){
         transform: 'translate(-50%, 100%)',
         borderRadius: '5px',
         boxShadow: 'rgb(0 0 0 / 91%) 0px 19px 20px 8px, rgb(0 0 0) 0px 15px 20px 0px',
-        backgroundColor: 'white',
-        color: 'black',
+        backgroundColor: '#141414',
+        color: 'white',
         fontSize: '16px',
+        fontWeight: '500',
         maxHeight: '100px',
         width: width,
         overflowY: 'scroll',
-        zIndex: '5'
+        zIndex: '5',
+        textAlign: textAlignement ? textAlignement : 'left' 
     }
 
     const buttonContentStyle = {
@@ -82,7 +88,7 @@ function DropDown({values, width, onValueChanged}){
     }
 
     return (
-        <div style={containerStyle}>
+        <div ref={dropdownRef} style={containerStyle}>
             <BaseButton color="red" content={buttonContent} onClick={() => setShowList(!showList)}/>
             <div style={listStyle}>
                 {dropDownValues.map((v,i) => <div 

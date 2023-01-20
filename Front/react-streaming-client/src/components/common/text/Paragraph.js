@@ -1,5 +1,8 @@
-function Paragraph({text}){
+function Paragraph({text, visible}){
 
+    if(visible === false)
+        return null;
+        
     const style = {
         fontSize: '17px',
         fontWeight: '500',
