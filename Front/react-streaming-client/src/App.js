@@ -1,5 +1,4 @@
 import './App.css';
-import MoviesAPI from "./js/moviesAPI.js";
 import NavBar from "./components/navbar/NavBar";
 import SplashScreen from "./components/SplashScreen";
 import ModalListGenre from "./components/modal/ModalListGenre.js";
@@ -12,9 +11,8 @@ import BookmarkedMoviesPage from "./pages/BookmarkedMoviesPage";
 import ResearchPage from "./pages/ResearchPage";
 import TorrentLinkPage from "./pages/TorrentLinkPage";
 
-
 import Router from "./components/Router";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 
 function App() {
@@ -30,7 +28,6 @@ function App() {
   const [homePageFailed, setHomePageFailed] = useState(false);
 
   const [modalListGenresVisible, setModalListGenresVisible] = useState(false);
-  const [listGenres, setListGenres] = useState([]);
 
   const [movieId, setMovieId] = useState('');
 
@@ -120,21 +117,10 @@ function App() {
   const [routerActiveComponentId, setRouterActiveComponentId] = useState(routerIds.homePage);
   const [routerPreviousComponentId, setRouterPreviousComponentId] = useState(routerIds.homePage);
 
-  useEffect(() => {
-    MoviesAPI.getMoviesGenres(
-      (genres) => {
-        if (genres && genres.length > 0) {
-          setListGenres(genres);
-        }
-      }
-    );
-  }, []);
-
   return (
     <div className="App">
       <SplashScreen visible={splashscreenVisible} showErrorMessage={homePageFailed}/>
       <ModalListGenre
-        genres={listGenres}
         visible={modalListGenresVisible}
         onGenreClick={(genre) => { setModalListGenresVisible(false); showMoviesFullListofGenre(genre) }}
         onCloseClick={() => setModalListGenresVisible(false)}
