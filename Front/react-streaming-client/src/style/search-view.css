@@ -7,12 +7,12 @@
     align-items: center;
 }
 
-.movies-search-result{
+.medias-search-result{
     width: 98%;
     margin: 20px auto 0 auto;
 }
 
-.movies-search-result > .label-result{
+.medias-search-result > .label-result{
     margin-top: 10px;
     color: white;
     font-size: 1.4rem;

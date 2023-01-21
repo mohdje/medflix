@@ -106,7 +106,7 @@ function App() {
       },
       {
         id: routerIds.researchPage,
-        render: (<ResearchPage loadFromCache={loadResearchfromCache}  onMovieClick={(movieId) => showMovieFullPresentation(movieId)}/>)
+        render: (<ResearchPage loadFromCache={loadResearchfromCache}  onMediaClick={(mediaId) => showMovieFullPresentation(mediaId)}/>)
       },
       {
         id: routerIds.torrentLinkPage,

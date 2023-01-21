@@ -1,6 +1,6 @@
 import "../style/search-view.css";
 
-import MoviesListLite from "../components/movies/list/MediasListLite";
+import MediasListLite from "../components/movies/list/MediasListLite";
 import CircularProgressBar from "../components/common/CircularProgressBar";
 import TextInput from '../components/common/TextInput';
 import MoviesAPI from "../js/moviesAPI.js";
@@ -10,9 +10,9 @@ import { useEffect, useState, useRef, useReducer } from 'react';
 const cacheResearch = {
     searchValue: '',
     result: [],
-    save(searchValue, movies){
+    save(searchValue, medias){
         this.searchValue = searchValue;
-        this.result = movies;
+        this.result = medias;
     },
     clean(){
         this.searchValue = '';
@@ -20,17 +20,17 @@ const cacheResearch = {
     }
 }; 
 
-function ResearchPage({ loadFromCache, onMovieClick }) {
+function ResearchPage({ loadFromCache, onMediaClick }) {
     const [searchValue, setSearchValue] = useState('');
-    const [movies, setMovies] = useState([]);
+    const [medias, setMedias] = useState([]);
     const [searchInProgress, setSearchInProgress] = useState(false);
 
     const searchValueRef = useRef(searchValue);
 
-    const searchResultLabelReducer = (state, moviesLength) => {
-        if (moviesLength === 0) return "No result found";
-        else if (moviesLength === 1) return "Only one movie found";
-        else if (moviesLength > 1) return moviesLength + " movies found";
+    const searchResultLabelReducer = (state, mediasLength) => {
+        if (mediasLength === 0) return "Nothing found";
+        else if (mediasLength === 1) return "one result";
+        else if (mediasLength > 1) return mediasLength + " results";
         else return "";
     };
     const [searchResultLabel, searchResultLabelDispatch] = useReducer(searchResultLabelReducer, '');
@@ -45,16 +45,16 @@ function ResearchPage({ loadFromCache, onMovieClick }) {
                 if (searchValue === searchValueRef.current) {
                     setSearchInProgress(true);
                     searchResultLabelDispatch(-1);                
-                    setMovies([]);
+                    setMedias([]);
                     cacheResearch.clean();
                     MoviesAPI.searchMovies(searchValue,
-                        (movies) => {
+                        (medias) => {
                             setSearchInProgress(false);
                             if(searchValueRef.current && searchValue === searchValueRef.current){
-                                searchResultLabelDispatch(movies.length);
-                                if (movies && movies.length > 0){
-                                    setMovies(movies);
-                                    cacheResearch.save(searchValue, movies);
+                                searchResultLabelDispatch(medias.length);
+                                if (medias && medias.length > 0){
+                                    setMedias(medias);
+                                    cacheResearch.save(searchValue, medias);
                                 } 
                             }
                         },
@@ -67,13 +67,13 @@ function ResearchPage({ loadFromCache, onMovieClick }) {
         }
         else {
             searchResultLabelDispatch(-1);
-            setMovies([]);
+            setMedias([]);
         }
     }, [searchValue]);
 
     useEffect(() => {
         if(loadFromCache){
-            setMovies(cacheResearch.result);
+            setMedias(cacheResearch.result);
             searchResultLabelDispatch(cacheResearch.result.length);
             setSearchValue(cacheResearch.searchValue);
         }
@@ -81,10 +81,10 @@ function ResearchPage({ loadFromCache, onMovieClick }) {
 
     return (
         <div className="search-view-container">    
-            <TextInput placeHolder="Enter a movie name" onTextChanged={(text) => { setSearchValue(text) }} />
+            <TextInput placeHolder="Type here to start search..." onTextChanged={(text) => { setSearchValue(text) }} />
             <CircularProgressBar color={'white'} size={'40px'} visible={searchInProgress} />
-            <div className="movies-search-result">
-                <MoviesListLite movies={movies} onMovieClick={(movieId) => onMovieClick(movieId)} />
+            <div className="medias-search-result">
+                <MediasListLite medias={medias} onMediaClick={(mediaId) => onMediaClick(mediaId)} />
                 <div className="label-result">{searchResultLabel}</div>
             </div>
         </div>
