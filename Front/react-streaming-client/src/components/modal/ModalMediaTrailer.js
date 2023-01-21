@@ -1,6 +1,6 @@
 import ModalWindow from "./ModalWindow";
 
-function ModalMovieTrailer({visible, youtubeTrailerUrl, onCloseClick}){
+function ModalMediaTrailer({visible, youtubeTrailerUrl, onCloseClick}){
 
 
     const trailerStyle = {      
@@ -23,4 +23,4 @@ function ModalMovieTrailer({visible, youtubeTrailerUrl, onCloseClick}){
     );
 }
 
-export default ModalMovieTrailer; 
+export default ModalMediaTrailer; 

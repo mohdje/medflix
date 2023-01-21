@@ -4,7 +4,7 @@ import SplashScreen from "./components/SplashScreen";
 import ModalListGenre from "./components/modal/ModalListGenre.js";
 
 import MediaListGenrePage from "./pages/MediaListGenrePage";
-import MoviePresentationPage from "./pages/MoviePresentationPage";
+import MediaPresentationPage from "./pages/MediaPresentationPage";
 import HomePage from "./pages/HomePage";
 import WatchedMediasPage from "./pages/WatchedMediasPage";
 import BookmarkedMediasPage from "./pages/BookmarkedMediasPage";
@@ -88,8 +88,8 @@ function App() {
       },
       {
         id: routerIds.moviePresentationPage,
-        render: (<MoviePresentationPage
-          movieId={movieId}
+        render: (<MediaPresentationPage
+          mediaId={movieId}
           onCloseClick={() => onMovieFullPresentationClose()} />)
       },
       {

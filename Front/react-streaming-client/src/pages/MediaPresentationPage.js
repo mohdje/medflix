@@ -1,9 +1,9 @@
 
-import "../style/movie-presentation-page.css";
+import "../style/media-presentation-page.css";
 
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
-import ModalMovieTrailer from '../components/modal/ModalMovieTrailer';
+import ModalMediaTrailer from '../components/modal/ModalMediaTrailer';
 import ModalEpisodeSelector from '../components/modal/ModalEpisodeSelector';
 
 import { VideoPlayerWindow, ToTimeFormat } from '../components/video/VideoPlayerWindow';
@@ -30,11 +30,11 @@ import fadeTransition from "../js/customStyles.js";
 import { useEffect, useState, useRef } from 'react';
 
 
-function MovieFullPresentation({ movieId, onCloseClick }) {
+function MediaFullPresentation({ mediaId, onCloseClick }) {
 
     const [dataLoaded, setDataLoaded] = useState(false);
-    const [movieDetails, setMovieDetails] = useState({});
-    const [movieProgression, setMovieProgression] = useState({});
+    const [mediaDetails, setMediaDetails] = useState({});
+    const [mediaProgression, setMediaProgression] = useState({});
 
     const versionsSources = useRef([]);
     const [voSourcesSearching, setVoSourcesSearching] = useState(false);
@@ -43,38 +43,38 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
     const [selectedVersionSources, setSelectedVersionSources] = useState([]);
     const [selectedVersionSourceLink, setSelectedVersionSourceLink] = useState('');
 
-    const [movieSubtitlesSources, setMovieSubtitlesSources] = useState([]);
+    const [mediaSubtitlesSources, setMediaSubtitlesSources] = useState([]);
     const [loadingSubtitles, setLoadingSubtitles] = useState(false);
 
-    const [showMoviePlayer, setShowMoviePlayer] = useState(false);
-    const [showMovieTrailer, setShowMovieTrailer] = useState(false);
+    const [showMediaPlayer, setShowMediaPlayer] = useState(false);
+    const [showMediaTrailer, setShowMediaTrailer] = useState(false);
     const [addBookmarkButtonVisible, setAddBookmarkButtonVisible] = useState(true);
 
-    const [recommandedMovies, setRecommandedMovies] = useState([]);
+    const [recommandedMedias, setRecommandedMedias] = useState([]);
     const navHistory = useRef([]);
 
 
     useEffect(() => {
-        if(movieId)
-            loadPage(movieId);
-    }, [movieId]);
+        if(mediaId)
+            loadPage(mediaId);
+    }, [mediaId]);
 
     useEffect(() => {
-        if (movieDetails.imdbId) getAvailableSubtitles(movieDetails.imdbId);
-        if (movieDetails.id && movieDetails.title && movieDetails.year) {
+        if (mediaDetails.imdbId) getAvailableSubtitles(mediaDetails.imdbId);
+        if (mediaDetails.id && mediaDetails.title && mediaDetails.year) {
             versionsSources.current = [];
-            searchVfSources(movieDetails.id, movieDetails.title, movieDetails.year);
-            searchVoSources(movieDetails.title, movieDetails.year);
+            searchVfSources(mediaDetails.id, mediaDetails.title, mediaDetails.year);
+            searchVoSources(mediaDetails.title, mediaDetails.year);
         }
 
         const topPage = document.getElementsByClassName('back-btn')[0];
         topPage.scrollIntoView();
-    }, [movieDetails]);
+    }, [mediaDetails]);
 
 
     useEffect(() => {
-        if (showMoviePlayer && movieDetails) MoviesAPI.saveWacthedMovie(movieDetails);
-    }, [showMoviePlayer]);
+        if (showMediaPlayer && mediaDetails) MoviesAPI.saveWacthedMovie(mediaDetails);
+    }, [showMediaPlayer]);
 
     useEffect(() => {
         if (versionsSources.current?.length > 0) {
@@ -92,29 +92,29 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
         
     },[selectedVersionSources]);
 
-    const loadPage = (movieId) => {
+    const loadPage = (mediaId) => {
         setDataLoaded(false);
-        setMovieDetails({});
-        setMovieProgression({});
-        if (movieId) {
-            MoviesAPI.getMovieDetails(movieId,
+        setMediaDetails({});
+        setMediaProgression({});
+        if (mediaId) {
+            MoviesAPI.getMovieDetails(mediaId,
                 (details) => {
                     if (details) {
-                        setMovieDetails(details);
+                        setMediaDetails(details);
                         setDataLoaded(true);
-                        MoviesAPI.isMovieBookmarked(movieId, (isMovieBookmarked) => {
-                            isMovieBookmarked = isMovieBookmarked === 'true';
-                            setAddBookmarkButtonVisible(!isMovieBookmarked);
+                        MoviesAPI.isMovieBookmarked(mediaId, (isMediaBookmarked) => {
+                            isMediaBookmarked = isMediaBookmarked === 'true';
+                            setAddBookmarkButtonVisible(!isMediaBookmarked);
                         });
                     }
                 });
-            MoviesAPI.getWatchedMovie(movieId, (watchedMovie) => {
-                if(watchedMovie?.progression)
-                    setMovieProgression(watchedMovie.progression);
+            MoviesAPI.getWatchedMovie(mediaId, (watchedMedia) => {
+                if(watchedMedia?.progression)
+                    setMediaProgression(watchedMedia.progression);
             });
-            MoviesAPI.getRecommandedMovies(movieId, (recommandedMovies) => {
-                if(recommandedMovies && recommandedMovies.length > 0)
-                    setRecommandedMovies(recommandedMovies);
+            MoviesAPI.getRecommandedMovies(mediaId, (recommandedMedias) => {
+                if(recommandedMedias && recommandedMedias.length > 0)
+                    setRecommandedMedias(recommandedMedias);
             });
         }
     }
@@ -129,9 +129,9 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
         setSelectedVersionSources(newTab);
     }
 
-    const searchVfSources = (movieId, movieTitle, movieYear) => {
+    const searchVfSources = (mediaId, mediaTitle, mediaYear) => {
         setVfSourcesSearching(true);
-        MoviesAPI.searchVFSources(movieId, movieTitle, movieYear,
+        MoviesAPI.searchVFSources(mediaId, mediaTitle, mediaYear,
             (sources) => {
                 setVfSourcesSearching(false);
                 if (sources && sources.length > 0) {
@@ -147,9 +147,9 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
         );
     }
 
-    const searchVoSources = (movieTitle, movieYear) => {
+    const searchVoSources = (mediaTitle, mediaYear) => {
         setVoSourcesSearching(true);
-        MoviesAPI.searchVOSources(movieTitle, movieYear,
+        MoviesAPI.searchVOSources(mediaTitle, mediaYear,
             (sources) => {
                 setVoSourcesSearching(false);
                 if (sources && sources.length > 0) {
@@ -168,38 +168,38 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
         setLoadingSubtitles(true);
         MoviesAPI.getAvailableSubtitles(imdbCode,
             (availableSubtitles) => {
-                setMovieSubtitlesSources(availableSubtitles);
+                setMediaSubtitlesSources(availableSubtitles);
                 setTimeout(() => setLoadingSubtitles(false), 1000);
             })
     }
 
-    const bookmarkMovie = () => {
-        MoviesAPI.addBookmarkedMovie(movieDetails, () => {
+    const bookmarkMedia = () => {
+        MoviesAPI.addBookmarkedMovie(mediaDetails, () => {
             setAddBookmarkButtonVisible(false);
         });
     }
 
-    const unbookmarkMovie = () => {
-        MoviesAPI.deleteBookmarkedMovie(movieDetails, () => {
+    const unbookmarkMedia = () => {
+        MoviesAPI.deleteBookmarkedMovie(mediaDetails, () => {
             setAddBookmarkButtonVisible(true);
         });
     }
 
     const onWatchedTimeUpdate = (time) => {
-       const totalTime = movieDetails.duration * 60;
-       movieDetails.progression = time/totalTime;
-       MoviesAPI.saveWacthedMovie(movieDetails)
+       const totalTime = mediaDetails.duration * 60;
+       mediaDetails.progression = time/totalTime;
+       MoviesAPI.saveWacthedMovie(mediaDetails)
     }
 
-    const onRecommandedMovieClick = (movieId) => {
-        navHistory.current.push(movieDetails.id);
-        loadPage(movieId);
+    const onRecommandedMediaClick = (mediaId) => {
+        navHistory.current.push(mediaDetails.id);
+        loadPage(mediaId);
     }
 
     const onBackClick = () => {      
         if(navHistory.current.length > 0){
-            let lastMovieId = navHistory.current.pop();
-            loadPage(lastMovieId);
+            let lastMediaId = navHistory.current.pop();
+            loadPage(lastMediaId);
         }
         else 
             onCloseClick();
@@ -210,39 +210,39 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
     return (
         <div style={{ height: '100%' }}>          
             <VideoPlayerWindow 
-                visible={showMoviePlayer} 
+                visible={showMediaPlayer} 
                 sources={selectedVersionSources} 
-                subtitles={movieSubtitlesSources} 
-                onCloseClick={() => setShowMoviePlayer(false)}
+                subtitles={mediaSubtitlesSources} 
+                onCloseClick={() => setShowMediaPlayer(false)}
                 onWatchedTimeUpdate={(time) => onWatchedTimeUpdate(time)} 
-                goToTime={movieProgression * movieDetails.duration}/> 
+                goToTime={mediaProgression * mediaDetails.duration}/> 
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />
-            <ModalMovieTrailer visible={showMovieTrailer} youtubeTrailerUrl={movieDetails.youtubeTrailerUrl} onCloseClick={() => setShowMovieTrailer(false)}/>
+            <ModalMediaTrailer visible={showMediaTrailer} youtubeTrailerUrl={mediaDetails.youtubeTrailerUrl} onCloseClick={() => setShowMediaTrailer(false)}/>
 
-            <div style={fadeTransition(dataLoaded)} className="movie-presentation-page-container">
+            <div style={fadeTransition(dataLoaded)} className="media-presentation-page-container">
                 <div className="back-btn" onClick={() => onBackClick()}>
                     <ArrowBackIcon className="back-arrow" />
                 </div>
-                <div className="presentation" style={{ backgroundImage: 'url(' + movieDetails.backgroundImageUrl + ')' }}>
+                <div className="presentation" style={{ backgroundImage: 'url(' + mediaDetails.backgroundImageUrl + ')' }}>
                     <div className="info-container">
                         <div className="info">
                             <div className="title">
                                 {
-                                    movieDetails.logoImageUrl ? <img src={movieDetails.logoImageUrl} /> : <Title text={movieDetails.title} />
+                                    mediaDetails.logoImageUrl ? <img src={mediaDetails.logoImageUrl} /> : <Title text={mediaDetails.title} />
                                 }
                             </div>
                             <div className="info-content">
-                                <Rating rating={movieDetails.rating} size="50px" />
-                                <SecondaryInfo center text={movieDetails.year  + " | " + (movieDetails.duration ? ToTimeFormat(movieDetails.duration) + " | " : '') +  movieDetails.genre} />
-                                <MovieProgression movieProgression={movieProgression} movieDuration={movieDetails.duration}/>
+                                <Rating rating={mediaDetails.rating} size="50px" />
+                                <SecondaryInfo center text={mediaDetails.year  + " | " + (mediaDetails.duration ? ToTimeFormat(mediaDetails.duration) + " | " : '') +  mediaDetails.genre} />
+                                <MediaProgression mediaProgression={mediaProgression} mediaDuration={mediaDetails.duration}/>
                                 <div className="horizontal">
-                                    <TrailerButton visible={movieDetails?.youtubeTrailerUrl} onClick={() => setShowMovieTrailer(true)} />
-                                    <AddBookmarkButton onClick={() => bookmarkMovie()} visible={addBookmarkButtonVisible} />
-                                    <RemoveBookmarkButton onClick={() => unbookmarkMovie()} visible={!addBookmarkButtonVisible} />
+                                    <TrailerButton visible={mediaDetails?.youtubeTrailerUrl} onClick={() => setShowMediaTrailer(true)} />
+                                    <AddBookmarkButton onClick={() => bookmarkMedia()} visible={addBookmarkButtonVisible} />
+                                    <RemoveBookmarkButton onClick={() => unbookmarkMedia()} visible={!addBookmarkButtonVisible} />
                                 </div>
                                 <div className="play-options">
-                                    <EpisodeSelector serieId={movieDetails.id} seasonsCount={movieDetails.seasonsCount}/>
-                                    <AvailableSubtitles loading={loadingSubtitles} availableSubtitlesSources={movieSubtitlesSources} />
+                                    <EpisodeSelector serieId={mediaDetails.id} seasonsCount={mediaDetails.seasonsCount}/>
+                                    <AvailableSubtitles loading={loadingSubtitles} availableSubtitlesSources={mediaSubtitlesSources} />
                                     <AvailableVersions
                                         loading={voSourcesSearching || vfSourcesSearching}
                                         availableVersionsSources={versionsSources.current}
@@ -250,10 +250,10 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                                     <div style={fadeTransition(!(voSourcesSearching || vfSourcesSearching) && Boolean(selectedVersionSources) && selectedVersionSources.length > 0)} >
                                         <QualitySelector versionSources={selectedVersionSources} onQualityChanged={(i) => changeSelectedSource(i)} />
                                         <div className="horizontal">
-                                            <PlayButton onClick={() => setShowMoviePlayer(true)} />
+                                            <PlayButton onClick={() => setShowMediaPlayer(true)} />
                                             <PlayWithVLCButton 
                                                 videoUrl={selectedVersionSourceLink}
-                                                onClick={() => {if(movieDetails) MoviesAPI.saveWacthedMovie(movieDetails)}} />
+                                                onClick={() => {if(mediaDetails) MoviesAPI.saveWacthedMovie(mediaDetails)}} />
                                         </div>
                                     </div>
                                 </div>
@@ -262,14 +262,14 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                         </div>
 
                         <div className="extra">
-                            <TitleAndContent title="Director" content={movieDetails.director} justify="left" />
-                            <TitleAndContent title="Cast" content={movieDetails.cast} justify="left" />
-                            <Paragraph text={movieDetails.synopsis}></Paragraph>
+                            <TitleAndContent title="Director" content={mediaDetails.director} justify="left" />
+                            <TitleAndContent title="Cast" content={mediaDetails.cast} justify="left" />
+                            <Paragraph text={mediaDetails.synopsis}></Paragraph>
                             <MediasListLiteWithTitle 
-                                medias={recommandedMovies} 
+                                medias={recommandedMedias} 
                                 listTitle="You may also like" 
-                                visible={recommandedMovies && recommandedMovies.length > 0} 
-                                onMediaClick={(mediaId) =>  {onRecommandedMovieClick(mediaId)}}/>
+                                visible={recommandedMedias && recommandedMedias.length > 0} 
+                                onMediaClick={(mediaId) =>  {onRecommandedMediaClick(mediaId)}}/>
                         </div>
                     </div>
                 </div>
@@ -277,15 +277,15 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
         </div>
     );
 }
-export default MovieFullPresentation;
+export default MediaFullPresentation;
 
 
-function MovieProgression({movieProgression, movieDuration}){
-    if(movieProgression > 0){
+function MediaProgression({mediaProgression, mediaDuration}){
+    if(mediaProgression > 0){
         return (
             <div>
-                <ProgressionBar width="100%" value={movieProgression * 100}/>
-                <SecondaryInfo  text={ToTimeFormat(movieDuration - (movieDuration * movieProgression)) + ' remaining'} />
+                <ProgressionBar width="100%" value={mediaProgression * 100}/>
+                <SecondaryInfo  text={ToTimeFormat(mediaDuration - (mediaDuration * mediaProgression)) + ' remaining'} />
             </div>
         )
     }
