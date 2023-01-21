@@ -9,7 +9,7 @@ import LinkIcon from '@material-ui/icons/Link';
 import { useEffect, useState } from 'react';
 import AppMode from '../../js/appMode';
 
-function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onWatchedMoviesClick, onBookmarkedMoviesClick, onTorrentLinkClick, onAppModeSwitch }) {
+function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onWatchedMediasClick, onBookmarkedMediasClick, onTorrentLinkClick, onAppModeSwitch }) {
 
     const [modes, setModes] = useState([]);
 
@@ -40,10 +40,10 @@ function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onWatchedMoviesC
                 <div className="nav-bar-btn" onClick={() => onHomeClick()}>
                     <HomeIcon style={navBarIconStyle} />
                 </div>
-                <div className="nav-bar-btn" onClick={() => onWatchedMoviesClick()}>
+                <div className="nav-bar-btn" onClick={() => onWatchedMediasClick()}>
                     <VisibilityIcon style={navBarIconStyle} />
                 </div>
-                <div className="nav-bar-btn" onClick={() => onBookmarkedMoviesClick()}>
+                <div className="nav-bar-btn" onClick={() => onBookmarkedMediasClick()}>
                     <BookmarkIcon style={navBarIconStyle} />
                 </div>
                 <div className="nav-bar-btn" onClick={() => onGenreMenuClick()}>

@@ -22,49 +22,49 @@ function App() {
   const [loadResearchfromCache, setLoadResearchfromCache] = useState(false);
 
   const [centerToLastClickedBookmark, setCenterToLastClickedBookmark] = useState(false);
-  const [centerToLastClickedWatchedMovie, setCenterToLastClickedWatchedMovie] = useState(false);
+  const [centerToLastClickedWatchedMedia, setCenterToLastClickedWatchedMedia] = useState(false);
 
   const [splashscreenVisible, setSplashscreenVisible] = useState(true);
   const [homePageFailed, setHomePageFailed] = useState(false);
 
   const [modalListGenresVisible, setModalListGenresVisible] = useState(false);
 
-  const [movieId, setMovieId] = useState('');
+  const [mediaId, setMediaId] = useState('');
 
   const showComponent = (componentId) => {
     setRouterPreviousComponentId(routerActiveComponentId);
     setRouterActiveComponentId(componentId);
   }
 
-  const showMoviesFullListofGenre = (genre) => {
+  const showMediasFullListofGenre = (genre) => {
     setSelectedGenre(genre);
     setLoadFullListGenrefromCache(false);
-    showComponent(routerIds.moviesListGenrePage);
+    showComponent(routerIds.mediasListGenrePage);
   }
 
-  const showMovieFullPresentation = (movieId) => {
-    setMovieId(movieId);
-    showComponent(routerIds.moviePresentationPage);
+  const showMediaFullPresentation = (mediaId) => {
+    setMediaId(mediaId);
+    showComponent(routerIds.mediaPresentationPage);
   }
 
   const goToPreviousComponent = () => {
     showComponent(routerPreviousComponentId);
   }
 
-  const onMovieFullPresentationClose = () => {
+  const onMediaFullPresentationClose = () => {
     setLoadFullListGenrefromCache(true);
     setCenterToLastClickedBookmark(true);
-    setCenterToLastClickedWatchedMovie(true);
+    setCenterToLastClickedWatchedMedia(true);
     setLoadResearchfromCache(true);
     goToPreviousComponent();
   }
 
   const routerIds = {
     homePage: 'homePage',
-    moviesListGenrePage: 'moviesOfGenre',
-    moviePresentationPage: 'moviePresentationPage',
-    watchedMoviesListPage: 'watchedMoviesListPage',
-    bookmarkedMoviesListPage: 'bookmarkedMoviesListPage',
+    mediasListGenrePage: 'mediasOfGenre',
+    mediaPresentationPage: 'mediaPresentationPage',
+    watchedMediasListPage: 'watchedMediasListPage',
+    bookmarkedMediasListPage: 'bookmarkedMediasListPage',
     researchPage: 'researchPage',
     torrentLinkPage: 'torrentLinkPage'
   }
@@ -76,37 +76,37 @@ function App() {
         render: (<HomePage
           onReady={() => { setSplashscreenVisible(false) }}
           onFail={() => { setHomePageFailed(true)}}
-          onMediaClick={(mediaId) => showMovieFullPresentation(mediaId)}/>)
+          onMediaClick={(mediaId) => showMediaFullPresentation(mediaId)}/>)
       },
       {
-        id: routerIds.moviesListGenrePage,
+        id: routerIds.mediasListGenrePage,
         render: (<MediaListGenrePage
           genre={selectedGenre}
           loadFromCache={loadFullListGenrefromCache}
-          onMediaClick={(movieId) => showMovieFullPresentation(movieId)} />),
+          onMediaClick={(mediaId) => showMediaFullPresentation(mediaId)} />),
         containerStyle: { height: '100%'}
       },
       {
-        id: routerIds.moviePresentationPage,
+        id: routerIds.mediaPresentationPage,
         render: (<MediaPresentationPage
-          mediaId={movieId}
-          onCloseClick={() => onMovieFullPresentationClose()} />)
+          mediaId={mediaId}
+          onCloseClick={() => onMediaFullPresentationClose()} />)
       },
       {
-        id: routerIds.watchedMoviesListPage,
+        id: routerIds.watchedMediasListPage,
         render: (<WatchedMediasPage
-          centerToLastClickedMedia={centerToLastClickedWatchedMovie}
-          onMediaClick={(mediaId) => showMovieFullPresentation(mediaId)} />)
+          centerToLastClickedMedia={centerToLastClickedWatchedMedia}
+          onMediaClick={(mediaId) => showMediaFullPresentation(mediaId)} />)
       },
       {
-        id: routerIds.bookmarkedMoviesListPage,
+        id: routerIds.bookmarkedMediasListPage,
         render: (<BookmarkedMediasPage
           centerToLastClickedMedia={centerToLastClickedBookmark}
-          onMediaClick={(mediaId) => showMovieFullPresentation(mediaId)} />)
+          onMediaClick={(mediaId) => showMediaFullPresentation(mediaId)} />)
       },
       {
         id: routerIds.researchPage,
-        render: (<ResearchPage loadFromCache={loadResearchfromCache}  onMediaClick={(mediaId) => showMovieFullPresentation(mediaId)}/>)
+        render: (<ResearchPage loadFromCache={loadResearchfromCache}  onMediaClick={(mediaId) => showMediaFullPresentation(mediaId)}/>)
       },
       {
         id: routerIds.torrentLinkPage,
@@ -122,15 +122,15 @@ function App() {
       <SplashScreen visible={splashscreenVisible} showErrorMessage={homePageFailed}/>
       <ModalListGenre
         visible={modalListGenresVisible}
-        onGenreClick={(genre) => { setModalListGenresVisible(false); showMoviesFullListofGenre(genre) }}
+        onGenreClick={(genre) => { setModalListGenresVisible(false); showMediasFullListofGenre(genre) }}
         onCloseClick={() => setModalListGenresVisible(false)}
       />
       <NavBar
         onSearchClick={() => { setLoadResearchfromCache(false); setRouterActiveComponentId(routerIds.researchPage) }}
         onHomeClick={() => setRouterActiveComponentId(routerIds.homePage)}
         onGenreMenuClick={() => setModalListGenresVisible(true)}
-        onWatchedMoviesClick={() => { setCenterToLastClickedWatchedMovie(false); setRouterActiveComponentId(routerIds.watchedMoviesListPage) }}
-        onBookmarkedMoviesClick={() => { setCenterToLastClickedBookmark(false); setRouterActiveComponentId(routerIds.bookmarkedMoviesListPage) }}
+        onWatchedMediasClick={() => { setCenterToLastClickedWatchedMedia(false); setRouterActiveComponentId(routerIds.watchedMediasListPage) }}
+        onBookmarkedMediasClick={() => { setCenterToLastClickedBookmark(false); setRouterActiveComponentId(routerIds.bookmarkedMediasListPage) }}
         onTorrentLinkClick={()=>{ setRouterActiveComponentId(routerIds.torrentLinkPage) }}
         onAppModeSwitch={()=> {setRouterActiveComponentId(routerIds.homePage)}}/>
       <div className="app-content">
