@@ -9,7 +9,7 @@ import RestoreIcon from '@material-ui/icons/Restore';
 import { VideoOptions, VideoOptionsButton } from './Options';
 
 import { useState, useRef, useEffect } from 'react';
-import { useOnClickOutside } from '../../../js/customHooks';
+import { useOnClickOutside } from '../../../services/customHooks';
 
 function RightControlsGroup({
     subtitlesOptions,

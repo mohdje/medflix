@@ -6,7 +6,7 @@ import AddIcon from '@material-ui/icons/Add';
 import CircularProgressBar from "../components/common/CircularProgressBar";
 
 import MediaLitePresentation from "../components/movies/presentation/MediaLitePresentation";
-import MoviesAPI from "../js/moviesAPI.js";
+import MoviesAPI from "../services/moviesAPI.js";
 
 import { useEffect, useState } from 'react';
 

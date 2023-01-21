@@ -5,7 +5,7 @@ import CircularProgressBar from "../common/CircularProgressBar";
 import SecondaryInfo from "../common/text/SecondaryInfo";
 import Paragraph from "../common/text/Paragraph";
 import DropDown from "../common/DropDown";
-import MoviesAPI from "../../js/moviesAPI";
+import MoviesAPI from "../../services/moviesAPI";
 import { useEffect, useState, useRef } from "react";
 
 import "../../style/modal-episode-selector.css";

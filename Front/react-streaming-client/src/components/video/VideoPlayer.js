@@ -1,6 +1,6 @@
 import "../../style/video-player.css";
 
-import fadeTransition from "../../js/customStyles";
+import fadeTransition from "../../services/customStyles";
 
 import CircularProgressBar from "../common/CircularProgressBar";
 
@@ -8,7 +8,7 @@ import VideoSubtitles from './videoPlayerComponents/VideoSubtitles';
 import TimeController from './videoPlayerComponents/TimeController';
 import Controls from './videoPlayerComponents/Controls';
 
-import MoviesAPI from "../../js/moviesAPI";
+import MoviesAPI from "../../services/moviesAPI";
 
 import { useEffect, useState, useRef } from 'react';
 

@@ -7,7 +7,7 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import LinkIcon from '@material-ui/icons/Link';
 import { useEffect, useState } from 'react';
-import AppMode from '../../js/appMode';
+import AppMode from '../../services/appMode';
 
 function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onWatchedMediasClick, onBookmarkedMediasClick, onTorrentLinkClick, onAppModeSwitch }) {
 

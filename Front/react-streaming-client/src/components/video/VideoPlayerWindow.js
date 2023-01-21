@@ -1,7 +1,7 @@
 
 import "../../style/video-player-window.css";
 import "../../style/button.css";
-import MoviesAPI from "../../js/moviesAPI";
+import MoviesAPI from "../../services/moviesAPI";
 import VideoPlayer from "./VideoPlayer";
 import Paragraph from "../common/text/Paragraph";
 import BaseButton from "../common/buttons/BaseButton";

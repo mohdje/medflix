@@ -6,7 +6,7 @@ import MediaLitePresentation from "../presentation/MediaLitePresentation";
 import ArrowForwardIosRounded from '@material-ui/icons/ArrowForwardIosRounded';
 import ArrowBackIosRounded from '@material-ui/icons/ArrowBackIosRounded';
 
-import fadeTransition from "../../../js/customStyles.js";
+import fadeTransition from "../../../services/customStyles.js";
 import { useEffect, useRef, useState } from 'react';
 
 function MediasListLite({ medias, onMediaClick }) {

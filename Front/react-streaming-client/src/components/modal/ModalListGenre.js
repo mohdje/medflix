@@ -1,8 +1,8 @@
 import "../../style/list-genres-view.css";
 import ModalWindow from "./ModalWindow";
 import CircularProgressBar from "../common/CircularProgressBar";
-import MoviesAPI from "../../js/moviesAPI.js";
-import AppMode from "../../js/appMode";
+import MoviesAPI from "../../services/moviesAPI.js";
+import AppMode from "../../services/appMode";
 
 import { useEffect, useState } from 'react';
 

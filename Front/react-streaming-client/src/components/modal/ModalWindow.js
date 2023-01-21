@@ -1,6 +1,6 @@
 import "../../style/modal-window.css";
 import ClearIcon from '@material-ui/icons/Clear';
-import fadeTransition from "../../js/customStyles.js";
+import fadeTransition from "../../services/customStyles.js";
 
 function ModalWindow({ visible, content, onCloseClick }) {
     return (

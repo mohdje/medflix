@@ -2,7 +2,7 @@ import "../../style/text-input.css";
 
 import TextField from '@material-ui/core/TextField';
 import ClearIcon from '@material-ui/icons/Clear';
-import fadeTransition from "../../js/customStyles.js";
+import fadeTransition from "../../services/customStyles.js";
 
 import { useEffect, useState, useRef, useReducer } from 'react';
 

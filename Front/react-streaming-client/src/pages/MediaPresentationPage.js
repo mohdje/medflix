@@ -24,8 +24,8 @@ import Rating from "../components/common/Rating";
 import DropDown from "../components/common/DropDown";
 import MediasListLiteWithTitle from "../components/movies/list/MediasListLiteWithTitle";
 
-import MoviesAPI from "../js/moviesAPI.js";
-import fadeTransition from "../js/customStyles.js";
+import MoviesAPI from "../services/moviesAPI.js";
+import fadeTransition from "../services/customStyles.js";
 
 import { useEffect, useState, useRef } from 'react';
 

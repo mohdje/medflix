@@ -4,10 +4,10 @@ import MediasOfToday from "../components/movies/list/MediasOfTodayList";
 import MediasListLiteWithTitle from "../components/movies/list/MediasListLiteWithTitle";
 import CircularProgressBar from "../components/common/CircularProgressBar";
 
-import fadeTransition from "../js/customStyles.js";
-import MoviesAPI from "../js/moviesAPI.js";
-import CacheService from "../js/cacheService";
-import AppMode from "../js/appMode";
+import fadeTransition from "../services/customStyles.js";
+import MoviesAPI from "../services/moviesAPI.js";
+import CacheService from "../services/cacheService";
+import AppMode from "../services/appMode";
 
 import { useState, useEffect, useRef } from 'react';
 

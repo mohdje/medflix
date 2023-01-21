@@ -7,7 +7,7 @@ import CircularProgressBar from '../components/common/CircularProgressBar';
 import PlayButton from '../components/common/buttons/PlayButton';
 import PlayWithVLCButton from '../components/common/buttons/PlayWithVLCButton';
 import { VideoPlayerWindow } from '../components/video/VideoPlayerWindow';
-import MoviesAPI from "../js/moviesAPI";
+import MoviesAPI from "../services/moviesAPI";
 
 import { useEffect, useState, useRef } from 'react';
 

@@ -4,7 +4,7 @@ import "../../../style/media-lite-presentation.css";
 import Rating from "../../common/Rating";
 
 import { useState, useEffect } from 'react';
-import fadeTransition from "../../../js/customStyles.js";
+import fadeTransition from "../../../services/customStyles.js";
 
 function MediaLitePresentation({ media, onMediaClick, hoverEffect }) {
     const [dataLoaded, setDataLoaded] = useState(false);

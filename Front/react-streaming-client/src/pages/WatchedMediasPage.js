@@ -1,7 +1,7 @@
-import MoviesAPI from "../js/moviesAPI.js";
+import MoviesAPI from "../services/moviesAPI.js";
 import MediasIntermediatePresentationList from "../components/movies/list/MediasIntermediatePresentationList";
 import { useEffect, useState } from 'react';
-import AppMode from "../js/appMode.js";
+import AppMode from "../services/appMode.js";
 
 var watchedMediaLastClicked = null;
 

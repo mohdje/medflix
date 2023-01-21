@@ -7,7 +7,7 @@ import CopyButton from "./CopyButton";
 import BaseButton from "./BaseButton";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import MoviesAPI from "../../../js/moviesAPI.js";
+import MoviesAPI from "../../../services/moviesAPI.js";
 import { useEffect, useState, useRef } from 'react';
 
 function PlayWithVLCButton({ onClick, videoUrl }) {

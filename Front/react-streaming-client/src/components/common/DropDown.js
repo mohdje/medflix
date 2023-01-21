@@ -1,6 +1,6 @@
 import BaseButton from './buttons/BaseButton';
 import ArrowDropDownOutlinedIcon  from '@material-ui/icons/ArrowDropDownOutlined';
-import { useOnClickOutside } from '../../js/customHooks';
+import { useOnClickOutside } from '../../services/customHooks';
 import { useEffect, useState, useRef } from 'react';
 
 function DropDown({values, width, onValueChanged, textAlignement}){

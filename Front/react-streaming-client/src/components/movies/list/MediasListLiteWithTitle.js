@@ -1,6 +1,6 @@
 import "../../../style/medias-list.css";
 import MediasListLite from "./MediasListLite";
-import fadeTransition from "../../../js/customStyles.js";
+import fadeTransition from "../../../services/customStyles.js";
 
 function MediasListLiteWithTitle({ listTitle, medias, visible, onMediaClick}) {
     return (
