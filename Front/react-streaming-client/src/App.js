@@ -3,7 +3,7 @@ import NavBar from "./components/navbar/NavBar";
 import SplashScreen from "./components/SplashScreen";
 import ModalListGenre from "./components/modal/ModalListGenre.js";
 
-import MoviesListGenrePage from "./pages/MoviesListGenrePage";
+import MediaListGenrePage from "./pages/MediaListGenrePage";
 import MoviePresentationPage from "./pages/MoviePresentationPage";
 import HomePage from "./pages/HomePage";
 import WatchedMediasPage from "./pages/WatchedMediasPage";
@@ -80,10 +80,10 @@ function App() {
       },
       {
         id: routerIds.moviesListGenrePage,
-        render: (<MoviesListGenrePage
+        render: (<MediaListGenrePage
           genre={selectedGenre}
           loadFromCache={loadFullListGenrefromCache}
-          onMovieClick={(movieId) => showMovieFullPresentation(movieId)} />),
+          onMediaClick={(movieId) => showMovieFullPresentation(movieId)} />),
         containerStyle: { height: '100%'}
       },
       {

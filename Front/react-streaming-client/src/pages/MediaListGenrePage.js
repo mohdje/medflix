@@ -11,34 +11,34 @@ import MoviesAPI from "../js/moviesAPI.js";
 import { useEffect, useState } from 'react';
 
 const cache = {
-    update(genreId, movies, pageIndex, elemId) {
+    update(genreId, medias, pageIndex, elemId) {
         this.genreId = genreId;
-        this.movies = movies;
+        this.medias = medias;
         this.pageIndex = pageIndex;
-        this.movieElementId = elemId;
+        this.mediaElementId = elemId;
     },
     get(genreId) {
         return this.genreId === genreId ?
             {
-                movies: this.movies,
+                medias: this.medias,
                 pageIndex: this.pageIndex,
-                movieElementId: this.movieElementId
+                mediaElementId: this.mediaElementId
             }
             : null;
     },
     clear() {
         this.genreId = '';
-        this.movies = null;
+        this.medias = null;
     },
     genreId: '',
-    movies: null,
+    medias: null,
     pageIndex: 0,
-    movieElementId: ''
+    mediaElementId: ''
 }
 
-function MoviesListGenrePage({ genre, loadFromCache, onMovieClick }) {
+function MediasListGenrePage({ genre, loadFromCache, onMediaClick }) {
 
-    const [movies, setMovies] = useState([]);
+    const [medias, setMedias] = useState([]);
     const [pageIndex, setPageIndex] = useState(0);
     const [searchInProgress, setSearchInProgress] = useState(false);
 
@@ -52,11 +52,11 @@ function MoviesListGenrePage({ genre, loadFromCache, onMovieClick }) {
     const performSearch = () => {
         setSearchInProgress(true);
         MoviesAPI.getMoviesByGenre(genre.id, pageIndex,
-            (moviesOfGenre) => {
+            (mediasOfGenre) => {
                 setSearchInProgress(false);
-                if (moviesOfGenre && moviesOfGenre.length > 0) {
-                    if (pageIndex === 1) setMovies(moviesOfGenre);
-                    else setMovies(movies.concat(moviesOfGenre));
+                if (mediasOfGenre && mediasOfGenre.length > 0) {
+                    if (pageIndex === 1) setMedias(mediasOfGenre);
+                    else setMedias(medias.concat(mediasOfGenre));
                 }
             },
             () => setSearchInProgress(false));
@@ -64,9 +64,9 @@ function MoviesListGenrePage({ genre, loadFromCache, onMovieClick }) {
 
 
     useEffect(() => {
-        const cacheMovies = cache.get(genre.id);
-        if (loadFromCache && cacheMovies) 
-            setPageIndex(cacheMovies.pageIndex);
+        const cacheMedias = cache.get(genre.id);
+        if (loadFromCache && cacheMedias) 
+            setPageIndex(cacheMedias.pageIndex);
         else {           
             setPageIndex(1); 
             if(pageIndex === 1) performSearch(); 
@@ -75,26 +75,26 @@ function MoviesListGenrePage({ genre, loadFromCache, onMovieClick }) {
 
     useEffect(() => {
         if (pageIndex > 0) {       
-            const cacheMovies = cache.get(genre.id);
-            if (cacheMovies) setMovies(cacheMovies.movies);
+            const cacheMedias = cache.get(genre.id);
+            if (cacheMedias) setMedias(cacheMedias.medias);
             else performSearch();
         }
     }, [pageIndex]);
 
     useEffect(() => {
-        if (movies && movies.length > 0) {
+        if (medias && medias.length > 0) {
             if (loadFromCache) {
-                const cacheMovies = cache.get(genre.id);
-                if (cacheMovies) {
-                    scrollToMovie(cacheMovies.movieElementId);
+                const cacheMedias = cache.get(genre.id);
+                if (cacheMedias) {
+                    scrollToMedia(cacheMedias.mediaElementId);
                     cache.clear();
                 }
             }
-            else if(pageIndex === 1)  scrollToMovie("movielite0");
+            else if(pageIndex === 1)  scrollToMedia("medialite0");
         }
-    }, [movies]);
+    }, [medias]);
 
-    const scrollToMovie = (elemId) => {
+    const scrollToMedia = (elemId) => {
         var elem = document.getElementById(elemId);
         if (elem) {
             elem.scrollIntoView({
@@ -104,24 +104,24 @@ function MoviesListGenrePage({ genre, loadFromCache, onMovieClick }) {
         }
     }
 
-    const handleMovieClick = (movieId, elementId) => {
-        cache.update(genre.id, movies, pageIndex, elementId);
-        onMovieClick(movieId);
+    const handleMediaClick = (mediaId, elementId) => {
+        cache.update(genre.id, medias, pageIndex, elementId);
+        onMediaClick(mediaId);
     }
 
     return (
-        <div className="movies-list-by-genre-container">
-            <div className="movies-list-by-genre-header">
-                <div className="movies-list-genre">{genre.name}</div>
+        <div className="medias-list-by-genre-container">
+            <div className="medias-list-by-genre-header">
+                <div className="medias-list-genre">{genre.name}</div>
                 <CircularProgressBar size={'30px'} color={'white'} visible={searchInProgress} />
             </div>
-            <div className="movies-list-container full">
-                <div className="movies-list wrap-content">
-                    {movies.map((movie, index) =>
-                    (<div id={"movielite" + index} key={index}>
-                        <MediaLitePresentation media={movie} hoverEffect={true} onMediaClick={(movieId) => handleMovieClick(movieId, "movielite" + index)} />
+            <div className="medias-list-container full">
+                <div className="medias-list wrap-content">
+                    {medias.map((media, index) =>
+                    (<div id={"medialite" + index} key={index}>
+                        <MediaLitePresentation media={media} hoverEffect={true} onMediaClick={(mediaId) => handleMediaClick(mediaId, "medialite" + index)} />
                     </div>))}
-                    <div className="movies-list-more">
+                    <div className="medias-list-more">
                         <div className="round-btn grey"
                             style={{ visibility: !searchInProgress ? 'visible' : 'hidden' }}
                             onClick={() => { if (!searchInProgress) setPageIndex(pageIndex + 1) }}>
@@ -134,4 +134,4 @@ function MoviesListGenrePage({ genre, loadFromCache, onMovieClick }) {
     );
 }
 
-export default MoviesListGenrePage;
+export default MediasListGenrePage;
