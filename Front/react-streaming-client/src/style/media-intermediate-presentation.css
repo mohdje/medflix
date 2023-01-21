@@ -1,38 +1,38 @@
-.movie-intermediate-presentation-container{
+.media-intermediate-presentation-container{
     display: flex;
     justify-content: center;
     align-items: flex-start;
     cursor: pointer;
 }
 
-.movie-intermediate-presentation-container:hover{
+.media-intermediate-presentation-container:hover{
     background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(195,64,53,0.2665441176470589) 50%, rgba(195,64,53,0) 100%);
 }
 
-.movie-intermediate-presentation-container:active{
+.media-intermediate-presentation-container:active{
     background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(131, 130, 130, 0.267) 50%, rgba(195,64,53,0) 100%);
 }
 
-.movie-intermediate-presentation-content{
+.media-intermediate-presentation-content{
     margin-top: 20px;
     margin-left: 10px;
 }
 
-.movie-intermediate-presentation-info{
+.media-intermediate-presentation-info{
     margin-bottom: 20px;
     width: 500px;
     text-align: left;
 }
 
-.movie-intermediate-presentation-info .info{
+.media-intermediate-presentation-info .info{
    color: #aaaaaa;
 }
 
-.movie-intermediate-presentation-info .info-title{
+.media-intermediate-presentation-info .info-title{
     font-weight: bold;
 }
 
-.movie-intermediate-presentation-actions{
+.media-intermediate-presentation-actions{
     display: flex;
     justify-content: space-evenly;
     align-items: flex-start;

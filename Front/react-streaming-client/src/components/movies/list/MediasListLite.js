@@ -1,7 +1,7 @@
-import "../../../style/movies-list.css";
+import "../../../style/medias-list.css";
 import "../../../style/button.css";
 
-import MovieLitePresentation from "../presentation/MovieLitePresentation";
+import MediaLitePresentation from "../presentation/MediaLitePresentation";
 
 import ArrowForwardIosRounded from '@material-ui/icons/ArrowForwardIosRounded';
 import ArrowBackIosRounded from '@material-ui/icons/ArrowBackIosRounded';
@@ -9,7 +9,7 @@ import ArrowBackIosRounded from '@material-ui/icons/ArrowBackIosRounded';
 import fadeTransition from "../../../js/customStyles.js";
 import { useEffect, useRef, useState } from 'react';
 
-function MoviesListLite({ movies, onMovieClick }) {
+function MediasListLite({ medias, onMediaClick }) {
   const listRef = useRef(null);
   const [hideBackArrow, setHideBackArrow] = useState(true);
   const [hideForwardArrow, setHideForwardArrow] = useState(false);
@@ -21,12 +21,12 @@ function MoviesListLite({ movies, onMovieClick }) {
   }, []);
 
   useEffect(() => {
-    if (!movies || movies.length === 0) {
+    if (!medias || medias.length === 0) {
       setHideForwardArrow(true);
       setHideBackArrow(true);
     }
     else showHideNavArrows();
-  }, [movies]);
+  }, [medias]);
 
   useEffect(()=>{ showHideNavArrows(); }, [hideBackArrow, hideForwardArrow]);
 
@@ -88,17 +88,17 @@ function MoviesListLite({ movies, onMovieClick }) {
   }
 
   return (
-    <div className={"movies-list-container"}>
+    <div className={"medias-list-container"}>
       <div style={fadeTransition(!hideBackArrow)} className="floating-navigation-btn left" onClick={() => navToLeft()}>
         <ArrowBackIosRounded style={{ fontSize: 40, color: 'white' }} />
       </div>
       <div style={fadeTransition(!hideForwardArrow)} className="floating-navigation-btn right" onClick={() => navToRight()}>
         <ArrowForwardIosRounded style={{ fontSize: 40, color: 'white' }} />
       </div>
-      <div ref={listRef} className={"movies-list"+ (hideBackArrow && hideForwardArrow ? ' center' : '')}>
-        {movies.map((movie, index) => (<MovieLitePresentation key={index} movie={movie} hoverEffect={true} onMovieClick={(movieId)=>onMovieClick(movieId)}/>))}
+      <div ref={listRef} className={"medias-list"+ (hideBackArrow && hideForwardArrow ? ' center' : '')}>
+        {medias.map((media, index) => (<MediaLitePresentation key={index} media={media} hoverEffect={true} onMediaClick={(mediaId)=>onMediaClick(mediaId)}/>))}
       </div>
     </div>
   );
 }
-export default MoviesListLite;
+export default MediasListLite;

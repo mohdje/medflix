@@ -1,24 +1,24 @@
-.movie-lite-presentation{
+.media-lite-presentation{
     margin: 10px;
     width: 150px;
 }
 
-.movie-lite-presentation.hover-effect {
+.media-lite-presentation.hover-effect {
     transition: all 400ms ease-in-out;
 }
 
-.movie-lite-presentation.hover-effect:hover{
+.media-lite-presentation.hover-effect:hover{
     transform: translateY(-10px);
     transition: transform 400ms ease-in-out;
     cursor: pointer;
 }
 
-.movie-lite-presentation.hover-effect:active{
+.media-lite-presentation.hover-effect:active{
     transform: scale(1.02, 1.02);
     transition: transform 100ms ease-in-out;
 }
 
-.movie-lite-presentation-img{
+.media-lite-presentation-img{
     width: 100%;
     height: 225px;
     background-repeat: no-repeat;
@@ -28,13 +28,13 @@
 }
 
 
-.movie-lite-presentation .rating{
+.media-lite-presentation .rating{
     position: absolute;
     right: 2px;
     bottom: 2px;
 }
 
-.movie-lite-presentation .infos{
+.media-lite-presentation .infos{
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -44,7 +44,7 @@
     width: 100%;
 }
 
-.movie-lite-presentation .infos .title{
+.media-lite-presentation .infos .title{
     color: white;
     font-weight: 600;
     font-size: 1rem;
@@ -55,7 +55,7 @@
 }
 
 
-.movie-lite-presentation .infos .year{
+.media-lite-presentation .infos .year{
     color: #b6b6b6;
     font-size: 0.9rem;
     text-overflow: ellipsis;

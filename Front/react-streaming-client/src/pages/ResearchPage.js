@@ -1,6 +1,6 @@
 import "../style/search-view.css";
 
-import MoviesListLite from "../components/movies/list/MoviesListLite";
+import MoviesListLite from "../components/movies/list/MediasListLite";
 import CircularProgressBar from "../components/common/CircularProgressBar";
 import TextInput from '../components/common/TextInput';
 import MoviesAPI from "../js/moviesAPI.js";

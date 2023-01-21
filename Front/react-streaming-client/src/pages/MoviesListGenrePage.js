@@ -1,11 +1,11 @@
-import "../style/movie-lite-presentation.css";
-import "../style/movies-list.css";
+import "../style/media-lite-presentation.css";
+import "../style/medias-list.css";
 import "../style/button.css";
 
 import AddIcon from '@material-ui/icons/Add';
 import CircularProgressBar from "../components/common/CircularProgressBar";
 
-import MovieLitePresentation from "../components/movies/presentation/MovieLitePresentation";
+import MediaLitePresentation from "../components/movies/presentation/MediaLitePresentation";
 import MoviesAPI from "../js/moviesAPI.js";
 
 import { useEffect, useState } from 'react';
@@ -119,7 +119,7 @@ function MoviesListGenrePage({ genre, loadFromCache, onMovieClick }) {
                 <div className="movies-list wrap-content">
                     {movies.map((movie, index) =>
                     (<div id={"movielite" + index} key={index}>
-                        <MovieLitePresentation movie={movie} hoverEffect={true} onMovieClick={(movieId) => handleMovieClick(movieId, "movielite" + index)} />
+                        <MediaLitePresentation media={movie} hoverEffect={true} onMediaClick={(movieId) => handleMovieClick(movieId, "movielite" + index)} />
                     </div>))}
                     <div className="movies-list-more">
                         <div className="round-btn grey"

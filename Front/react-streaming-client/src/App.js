@@ -6,8 +6,8 @@ import ModalListGenre from "./components/modal/ModalListGenre.js";
 import MoviesListGenrePage from "./pages/MoviesListGenrePage";
 import MoviePresentationPage from "./pages/MoviePresentationPage";
 import HomePage from "./pages/HomePage";
-import WatchedMoviesPage from "./pages/WatchedMoviesPage";
-import BookmarkedMoviesPage from "./pages/BookmarkedMoviesPage";
+import WatchedMediasPage from "./pages/WatchedMediasPage";
+import BookmarkedMediasPage from "./pages/BookmarkedMediasPage";
 import ResearchPage from "./pages/ResearchPage";
 import TorrentLinkPage from "./pages/TorrentLinkPage";
 
@@ -76,7 +76,7 @@ function App() {
         render: (<HomePage
           onReady={() => { setSplashscreenVisible(false) }}
           onFail={() => { setHomePageFailed(true)}}
-          onMovieClick={(movieId) => showMovieFullPresentation(movieId)}/>)
+          onMediaClick={(mediaId) => showMovieFullPresentation(mediaId)}/>)
       },
       {
         id: routerIds.moviesListGenrePage,
@@ -94,15 +94,15 @@ function App() {
       },
       {
         id: routerIds.watchedMoviesListPage,
-        render: (<WatchedMoviesPage
-          centerToLastClickedMovie={centerToLastClickedWatchedMovie}
-          onMovieClick={(movieId) => showMovieFullPresentation(movieId)} />)
+        render: (<WatchedMediasPage
+          centerToLastClickedMedia={centerToLastClickedWatchedMovie}
+          onMediaClick={(mediaId) => showMovieFullPresentation(mediaId)} />)
       },
       {
         id: routerIds.bookmarkedMoviesListPage,
-        render: (<BookmarkedMoviesPage
-          centerToLastClickedBookmark={centerToLastClickedBookmark}
-          onMovieClick={(movieId) => showMovieFullPresentation(movieId)} />)
+        render: (<BookmarkedMediasPage
+          centerToLastClickedMedia={centerToLastClickedBookmark}
+          onMediaClick={(mediaId) => showMovieFullPresentation(mediaId)} />)
       },
       {
         id: routerIds.researchPage,

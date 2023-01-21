@@ -22,7 +22,7 @@ import Title from "../components/common/text/Title";
 import TitleAndContent from "../components/common/TitleAndContent";
 import Rating from "../components/common/Rating";
 import DropDown from "../components/common/DropDown";
-import MoviesListLiteWithTitle from "../components/movies/list/MoviesListLiteWithTitle";
+import MediasListLiteWithTitle from "../components/movies/list/MediasListLiteWithTitle";
 
 import MoviesAPI from "../js/moviesAPI.js";
 import fadeTransition from "../js/customStyles.js";
@@ -95,6 +95,7 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
     const loadPage = (movieId) => {
         setDataLoaded(false);
         setMovieDetails({});
+        setMovieProgression({});
         if (movieId) {
             MoviesAPI.getMovieDetails(movieId,
                 (details) => {
@@ -264,11 +265,11 @@ function MovieFullPresentation({ movieId, onCloseClick }) {
                             <TitleAndContent title="Director" content={movieDetails.director} justify="left" />
                             <TitleAndContent title="Cast" content={movieDetails.cast} justify="left" />
                             <Paragraph text={movieDetails.synopsis}></Paragraph>
-                            <MoviesListLiteWithTitle 
-                                movies={recommandedMovies} 
+                            <MediasListLiteWithTitle 
+                                medias={recommandedMovies} 
                                 listTitle="You may also like" 
                                 visible={recommandedMovies && recommandedMovies.length > 0} 
-                                onMovieClick={(movieId) =>  {onRecommandedMovieClick(movieId)}}/>
+                                onMediaClick={(mediaId) =>  {onRecommandedMovieClick(mediaId)}}/>
                         </div>
                     </div>
                 </div>

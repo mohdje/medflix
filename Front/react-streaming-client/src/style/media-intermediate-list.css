@@ -1,0 +1,17 @@
+.media-intermediate-list-title-page{
+    font-weight: 600;
+    font-size: 22px;
+    color: white;
+    margin: 50px auto 20px auto;
+    padding: auto;
+    height: 10%;
+}
+
+.media-intermediate-list-content{
+    height: 90%;
+    overflow-y: auto;
+    position: relative;
+}
+
+
+

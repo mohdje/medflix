@@ -1,7 +1,8 @@
 
 import "../style/home-page.css";
-import MoviesOfToday from "../components/movies/list/MoviesOfTodayList";
-import MoviesListLiteWithTitle from "../components/movies/list/MoviesListLiteWithTitle";
+import MediasOfToday from "../components/movies/list/MediasOfTodayList";
+import MediasListLiteWithTitle from "../components/movies/list/MediasListLiteWithTitle";
+import CircularProgressBar from "../components/common/CircularProgressBar";
 
 import fadeTransition from "../js/customStyles.js";
 import MoviesAPI from "../js/moviesAPI.js";
@@ -10,13 +11,13 @@ import AppMode from "../js/appMode";
 
 import { useState, useEffect, useRef } from 'react';
 
-function HomePage({ onMovieClick, onReady, onFail }) {
+function HomePage({ onMediaClick, onReady, onFail }) {
     const [dataLoaded, setDataLoaded] = useState(false);
 
-    const moviesListsRef = useRef([]);
+    const mediaListref = useRef([]);
     const cacheIdRef = useRef("");
 
-    const [moviesLists, setMoviesLists] = useState([]);
+    const [mediaLists, setMediaLists] = useState([]);
 
     const buildCacheId = (appMode) => {
         return 'homepage' + appMode;
@@ -24,17 +25,17 @@ function HomePage({ onMovieClick, onReady, onFail }) {
 
     const todayTrendingTitle = "todayTrending"
 
-    const addMovies = (listTitle, movies, insertAtBeginning)=> {
-        if(movies && movies.length > 0){ 
+    const addMedias = (listTitle, medias, insertAtBeginning)=> {
+        if(medias && medias.length > 0){ 
             let data = {
                 title: listTitle,
-                movies: movies
+                medias: medias
             }
-            if(insertAtBeginning)moviesListsRef.current.unshift(data);
-            else moviesListsRef.current.push(data);
-            CacheService.setCache(cacheIdRef.current, moviesListsRef.current);
-            const newArray = [...moviesListsRef.current];
-            setMoviesLists(newArray);
+            if(insertAtBeginning)mediaListref.current.unshift(data);
+            else mediaListref.current.push(data);
+            CacheService.setCache(cacheIdRef.current, mediaListref.current);
+            const newArray = [...mediaListref.current];
+            setMediaLists(newArray);
         }
     };
 
@@ -42,36 +43,36 @@ function HomePage({ onMovieClick, onReady, onFail }) {
         cacheIdRef.current = buildCacheId(AppMode.getActiveMode().label);
 
         let cache = CacheService.getCache(cacheIdRef.current);
-        moviesListsRef.current = [];
+        mediaListref.current = [];
 
         if(cache){
-            moviesListsRef.current = cache.data;
-            setMoviesLists(moviesListsRef.current);
+            mediaListref.current = cache.data;
+            setMediaLists(mediaListref.current);
             setDataLoaded(true);
         }
         else{
             MoviesAPI.getMoviesOfToday(
-            (movies) => {
-                addMovies(todayTrendingTitle, movies);
+            (medias) => {
+                addMedias(todayTrendingTitle, medias);
                 setDataLoaded(true);
                 onReady();
             });
-            MoviesAPI.getPopularMovies((movies)=>{
-                addMovies("Popular movies", movies, true);
+            MoviesAPI.getPopularMovies((medias)=>{
+                addMedias("Popular " + AppMode.getActiveMode().label.toLocaleLowerCase(), medias, true);
             }, ()=>{
                 onFail();
             });
-            MoviesAPI.getRecommandedMovies(null, (movies)=>{
-                addMovies("Recommanded for you", movies, true);
+            MoviesAPI.getRecommandedMovies(null, (medias)=>{
+                addMedias("Recommanded for you", medias, true);
             });
-            MoviesAPI.getPopularNetflixMovies((movies)=>{
-                addMovies("Popular on Netflix", movies);
+            MoviesAPI.getPopularNetflixMovies((medias)=>{
+                addMedias("Popular on Netflix", medias);
             });
-            MoviesAPI.getPopularDisneyPlusMovies((movies)=>{
-                addMovies("Popular on Disney Plus", movies);
+            MoviesAPI.getPopularDisneyPlusMovies((medias)=>{
+                addMedias("Popular on Disney Plus", medias);
             });
-            MoviesAPI.getPopularAmazonPrimeMovies((movies)=>{
-                addMovies("Popular on Amazon Prime", movies);
+            MoviesAPI.getPopularAmazonPrimeMovies((medias)=>{
+                addMedias("Popular on Amazon Prime", medias);
             });
         }
     }
@@ -85,17 +86,18 @@ function HomePage({ onMovieClick, onReady, onFail }) {
 
     return (
         <div style={{height: '100%'}}>
+            <CircularProgressBar position={"center"} visible={!dataLoaded} color={"white"} size={"60px"}/>
             <div className="home-page-container" style={fadeTransition(dataLoaded)}>
-                <MoviesOfToday movies={moviesLists.find(list => list.title === todayTrendingTitle)?.movies} onClick={(movieId) => onMovieClick(movieId)}/>
+                <MediasOfToday medias={mediaLists.find(list => list.title === todayTrendingTitle)?.medias} onClick={(mediaId) => onMediaClick(mediaId)}/>
                 <div className="blur-divider"></div>    
-                 {moviesLists.filter(list => list.title !== todayTrendingTitle).map((moviesList) =>
+                 {mediaLists.filter(list => list.title !== todayTrendingTitle).map((mediasList) =>
                 (
-                    <MoviesListLiteWithTitle
-                        key={moviesList.title}
+                    <MediasListLiteWithTitle
+                        key={mediasList.title}
                         visible={true}
-                        listTitle={moviesList.title}
-                        movies={moviesList.movies}
-                        onMovieClick={(movieId) => onMovieClick(movieId)} />
+                        listTitle={mediasList.title}
+                        medias={mediasList.medias}
+                        onMediaClick={(mediaId) => onMediaClick(mediaId)} />
                 ))}    
             </div>
         </div>
