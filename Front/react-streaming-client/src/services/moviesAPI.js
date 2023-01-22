@@ -61,20 +61,7 @@ const MoviesAPI = {
         return this.apiSubtitlesUrl("?sourceUrl=" + subtitlesSourceUrl);
     },
 
-    getWatchedMovies(onSuccess, onFail) {
-        this.sendRequest(this.apiWatchedMoviesUrl(), [], true, onSuccess, onFail);
-    },
-
-    getWatchedMovie(movieId, onSuccess, onFail) {
-        this.sendRequest(this.apiWatchedMovieUrl(movieId), [], true, onSuccess, onFail);
-    },
-
-    saveWacthedMovie(watchedMovie) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("PUT", this.apiWatchedMoviesUrl(), true);
-        xhttp.setRequestHeader("Content-Type", "application/json");
-        xhttp.send(JSON.stringify(watchedMovie));
-    },
+   
 
 
 

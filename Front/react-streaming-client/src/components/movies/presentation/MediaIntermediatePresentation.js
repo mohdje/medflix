@@ -4,9 +4,9 @@ import MediaLitePresentation from "./MediaLitePresentation";
 import ProgressionBar from "../../common/ProgressionBar";
 import SecondaryInfo from "../../common/text/SecondaryInfo";
 
-function MovieIntermediatePresentation({ media, onClick }) {
+function MediaIntermediatePresentation({ media, onClick }) {
     const truncateText = (text) =>{
-        if(text.length > 400) return text.substring(0, 300) + '...';
+        if(text && text.length > 400) return text.substring(0, 300) + '...';
         else return text;
     };
 
@@ -22,4 +22,4 @@ function MovieIntermediatePresentation({ media, onClick }) {
         </div>);
 }
 
-export default MovieIntermediatePresentation;
+export default MediaIntermediatePresentation;

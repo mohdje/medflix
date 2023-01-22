@@ -74,7 +74,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
 
 
     useEffect(() => {
-        if (showMediaPlayer && mediaDetails) MoviesAPI.saveWacthedMovie(mediaDetails);
+        if (showMediaPlayer && mediaDetails) AppServices.watchedMediaApiService.saveWacthedMedia(mediaDetails);
     }, [showMediaPlayer]);
 
     useEffect(() => {
@@ -109,7 +109,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                         });
                     }
                 });
-            MoviesAPI.getWatchedMovie(mediaId, (watchedMedia) => {
+                AppServices.watchedMediaApiService.getWatchedMedia(mediaId, (watchedMedia) => {
                 if(watchedMedia?.progression)
                     setMediaProgression(watchedMedia.progression);
             });
@@ -189,7 +189,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
     const onWatchedTimeUpdate = (time) => {
        const totalTime = mediaDetails.duration * 60;
        mediaDetails.progression = time/totalTime;
-       MoviesAPI.saveWacthedMovie(mediaDetails)
+       AppServices.watchedMediaApiService.saveWacthedMedia(mediaDetails)
     }
 
     const onRecommandedMediaClick = (mediaId) => {
@@ -254,7 +254,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                                             <PlayButton onClick={() => setShowMediaPlayer(true)} />
                                             <PlayWithVLCButton 
                                                 videoUrl={selectedVersionSourceLink}
-                                                onClick={() => {if(mediaDetails) MoviesAPI.saveWacthedMovie(mediaDetails)}} />
+                                                onClick={() => {if(mediaDetails) AppServices.watchedMediaApiService.saveWacthedMedia(mediaDetails)}} />
                                         </div>
                                     </div>
                                 </div>

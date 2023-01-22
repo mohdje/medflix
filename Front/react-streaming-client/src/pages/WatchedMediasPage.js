@@ -1,4 +1,4 @@
-import MoviesAPI from "../services/moviesAPI.js";
+import AppServices from "../services/AppServices";
 import MediasIntermediatePresentationList from "../components/movies/list/MediasIntermediatePresentationList";
 import { useEffect, useState } from 'react';
 import AppMode from "../services/appMode.js";
@@ -14,7 +14,7 @@ function WatchedMediasPage({centerToLastClickedMedia, onMediaClick }) {
         if(!centerToLastClickedMedia)
             watchedMediaLastClicked = null;
 
-        MoviesAPI.getWatchedMovies((medias) => {
+            AppServices.watchedMediaApiService.getWatchedMedias((medias) => {
             setLoadingVisible(false);
             if (medias && medias.length > 0)
                 setMedias(medias);

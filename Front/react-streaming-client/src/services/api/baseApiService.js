@@ -63,9 +63,8 @@ class BaseApiService {
         xhttp.send(JSON.stringify(obj));
 
         xhttp.onreadystatechange = function () {
-            if (this.readyState === 4)
-                if (this.status === 200)
-                    onSuccess();
+            if (this.readyState === 4 && this.status === 200 && Boolean(onSuccess))
+                onSuccess();
         }
     }
 
