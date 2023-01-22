@@ -36,17 +36,7 @@ const MoviesAPI = {
     },
 
    
-    isDesktopApplication(onSuccess, onFail) {
-        if (this.isDesktopApp) onSuccess(this.isDesktopApp);
-        else {
-            const self = this;
-            this.sendRequest(self.apiApplicationUrl('platform'), null, true, (response) => {
-                self.isDesktopApp = response.isDesktopApplication;
-                onSuccess(response.isDesktopApplication);
-            }, onFail);
-        }
-    },
-
+    
     sendRequest(url, parameters, deserializeResult, onSuccess, onFail) {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {

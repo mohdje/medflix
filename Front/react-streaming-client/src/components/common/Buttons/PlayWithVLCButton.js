@@ -68,7 +68,7 @@ function ModalContent({ videoUrl, launchPlay, onCloseClick }) {
 
     useEffect(() => {
         if (isDesktopApp === null) {
-            MoviesAPI.isDesktopApplication((isDesktopApp) => {
+            AppServices.appInfoApiService.isDesktopApplication((isDesktopApp) => {
                 setIsDesktopApp(isDesktopApp);
             });
         }
