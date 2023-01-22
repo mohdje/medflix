@@ -167,7 +167,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
 
     const getAvailableSubtitles = (imdbCode) => {
         setLoadingSubtitles(true);
-        MoviesAPI.getAvailableSubtitles(imdbCode,
+        AppServices.subtitlesApiService.getAvailableSubtitles(imdbCode,
             (availableSubtitles) => {
                 setMediaSubtitlesSources(availableSubtitles);
                 setTimeout(() => setLoadingSubtitles(false), 1000);

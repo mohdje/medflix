@@ -17,16 +17,7 @@ const MoviesAPI = {
     },
 
    
-    getAvailableSubtitles(imdbId, onSuccess, onFail) {
-        var url = this.apiSubtitlesUrl('available/' + imdbId);
-        this.sendRequest(url, [], true, onSuccess, onFail);
-    },
-
-    getSubtitlesApiUrl(subtitlesSourceUrl) {
-        return this.apiSubtitlesUrl("?sourceUrl=" + subtitlesSourceUrl);
-    },
-
-   
+ 
 
 
 

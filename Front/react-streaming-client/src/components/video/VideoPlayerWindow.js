@@ -1,7 +1,7 @@
 
 import "../../style/video-player-window.css";
 import "../../style/button.css";
-import MoviesAPI from "../../services/moviesAPI";
+import AppServices from "../../services/AppServices";
 import VideoPlayer from "./VideoPlayer";
 import Paragraph from "../common/text/Paragraph";
 import BaseButton from "../common/buttons/BaseButton";
@@ -25,7 +25,7 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
                 label: qualities && qualities.length > 0 ? source.quality + ' (' + (qualities.length + 1) + ')' : source.quality,
                 selected: source.selected,
                 data: {
-                    url: MoviesAPI.apiStreamUrl(source.downloadUrl, source.fileName)
+                    url: AppServices.torrentApiService.buildStreamUrl(source.downloadUrl, source.fileName)
                 }
             }
             options.push(option);
@@ -57,7 +57,7 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
                         label: sub.language + ' ' + (index + 1),
                         selected: false,
                         data: {
-                            url: MoviesAPI.getSubtitlesApiUrl(sourceUrl)
+                            url: AppServices.subtitlesApiService.getSubtitlesApiUrl(sourceUrl)
                         }
                     });
                 })
