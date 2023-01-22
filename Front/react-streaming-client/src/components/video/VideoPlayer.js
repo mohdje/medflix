@@ -8,7 +8,7 @@ import VideoSubtitles from './videoPlayerComponents/VideoSubtitles';
 import TimeController from './videoPlayerComponents/TimeController';
 import Controls from './videoPlayerComponents/Controls';
 
-import MoviesAPI from "../../services/moviesAPI";
+import AppServices from "../../services/AppServices";
 
 import { useEffect, useState, useRef } from 'react';
 
@@ -38,7 +38,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, onWatchedTi
 
     const checkMovieDownloadState = (url) => {
         if (checkDownloadStateRef.current && videoRef.current) {      
-            MoviesAPI.getMovieDownloadState(url, (response) => { 
+            AppServices.torrentApiService.getDownloadState(url, (response) => { 
                 if(decodeURIComponent(url) === decodeURIComponent(videoRef.current?.src)){
                     if(response.error) {
                         checkDownloadStateRef.current = false;

@@ -16,42 +16,7 @@ const MoviesAPI = {
         return AppMode.getActiveMode().urlKey;
     },
 
-    searchVFSources(movieId, movieTitle, movieYear, onSuccess, onFail) {
-        var url = this.apiTorrentUrl('vf');
-        var parameters = [
-            {
-                name: 'movieId',
-                value: movieId
-            },
-            {
-                name: 'originalTitle',
-                value: movieTitle
-            },
-            {
-                name: 'year',
-                value: movieYear
-            }
-        ];
-
-        this.sendRequest(url, parameters, true, onSuccess, onFail);
-    },
-
-    searchVOSources(movieTitle, movieYear, onSuccess, onFail) {
-        var url = this.apiTorrentUrl('vo');
-        var parameters = [
-            {
-                name: 'title',
-                value: movieTitle
-            },
-            {
-                name: 'year',
-                value: movieYear
-            }
-        ];
-
-        this.sendRequest(url, parameters, true, onSuccess, onFail);
-    },
-
+   
     getAvailableSubtitles(imdbId, onSuccess, onFail) {
         var url = this.apiSubtitlesUrl('available/' + imdbId);
         this.sendRequest(url, [], true, onSuccess, onFail);
@@ -65,22 +30,8 @@ const MoviesAPI = {
 
 
 
-    getMovieDownloadState(streamUrl, onSuccess, onFail) {
-        const streamUrlParams = new URLSearchParams(streamUrl.replace(this.apiTorrentUrl('stream')+'?',''));
-        var parameters = [
-            {
-                name: 'torrentUrl',
-                value: streamUrlParams.get('url')
-            }
-        ];
 
-        this.sendRequest(this.apiTorrentUrl('streamdownloadstate'), parameters, true, onSuccess, onFail);
-    },
-
-    getTorrentHistory(onSuccess, onFail) {
-        this.sendRequest(this.apiTorrentUrl('history'), null, true, onSuccess, onFail);
-    },
-
+    
     playWithVlc(streamUrl, onSuccess, onFail){
 
         var parameters = [
@@ -93,17 +44,7 @@ const MoviesAPI = {
         this.sendRequest(this.apiApplicationUrl('startvlc'), parameters, false, onSuccess, onFail);
     },
 
-    getTorrentFiles(torrentUrl, onSuccess, onFail){
-        var parameters = [
-            {
-                name: 'torrentUrl',
-                value: torrentUrl
-            }
-        ];
-
-        this.sendRequest(this.apiTorrentUrl('files'), parameters, true, onSuccess, onFail);
-    },
-
+   
     isDesktopApplication(onSuccess, onFail) {
         if (this.isDesktopApp) onSuccess(this.isDesktopApp);
         else {

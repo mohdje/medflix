@@ -132,7 +132,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
 
     const searchVfSources = (mediaId, mediaTitle, mediaYear) => {
         setVfSourcesSearching(true);
-        MoviesAPI.searchVFSources(mediaId, mediaTitle, mediaYear,
+        AppServices.torrentApiService.searchVFSources(mediaId, mediaTitle, mediaYear,
             (sources) => {
                 setVfSourcesSearching(false);
                 if (sources && sources.length > 0) {
@@ -150,7 +150,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
 
     const searchVoSources = (mediaTitle, mediaYear) => {
         setVoSourcesSearching(true);
-        MoviesAPI.searchVOSources(mediaTitle, mediaYear,
+        AppServices.torrentApiService.searchVOSources(mediaTitle, mediaYear,
             (sources) => {
                 setVoSourcesSearching(false);
                 if (sources && sources.length > 0) {

@@ -8,6 +8,7 @@ import PlayButton from '../components/common/buttons/PlayButton';
 import PlayWithVLCButton from '../components/common/buttons/PlayWithVLCButton';
 import { VideoPlayerWindow } from '../components/video/VideoPlayerWindow';
 import MoviesAPI from "../services/moviesAPI";
+import AppServices from "../services/AppServices";
 
 import { useEffect, useState, useRef } from 'react';
 
@@ -40,7 +41,7 @@ function TorrentLinkPage() {
     }, [torrentLink, selectedFile]);
 
     const getTorrentHistory = () => {
-        MoviesAPI.getTorrentHistory(
+        AppServices.torrentApiService.getTorrentHistory(
             (files) => {
                 setTorrentHistory(files);
             },
@@ -60,7 +61,7 @@ function TorrentLinkPage() {
         setTorrentFiles([]);
         setOpeningTorrentLink(true);
         
-        MoviesAPI.getTorrentFiles(torrentLink,
+        AppServices.torrentApiService.getTorrentFiles(torrentLink,
             (response) => {
                 if(torrentLinkRef.current === response.link){
                     setOpeningTorrentLink(false);

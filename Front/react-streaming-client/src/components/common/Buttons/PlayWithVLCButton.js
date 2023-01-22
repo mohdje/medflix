@@ -7,7 +7,8 @@ import CopyButton from "./CopyButton";
 import BaseButton from "./BaseButton";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import MoviesAPI from "../../../services/moviesAPI.js";
+import MoviesAPI from "../../../services/moviesAPI";
+import AppServices from "../../../services/AppServices";
 import { useEffect, useState, useRef } from 'react';
 
 function PlayWithVLCButton({ onClick, videoUrl }) {
@@ -120,7 +121,7 @@ function ModalContent({ videoUrl, launchPlay, onCloseClick }) {
     }
 
     const checkVideoDownloadState = (url) => {
-        MoviesAPI.getMovieDownloadState(url, (response) => {            
+        AppServices.torrentApiService.getDownloadState(url, (response) => {            
             if(decodeURIComponent(videoDownloadState.url) === decodeURIComponent(url)){
                 if(checkDownloadStateRef.current){
                     setVideoDownloadState({
