@@ -5,7 +5,7 @@ import "../style/button.css";
 import AddIcon from '@material-ui/icons/Add';
 import CircularProgressBar from "../components/common/CircularProgressBar";
 
-import MediaLitePresentation from "../components/movies/presentation/MediaLitePresentation";
+import MediaLitePresentation from "../components/media/presentation/MediaLitePresentation";
 import AppServices from "../services/AppServices";
 
 import { useEffect, useState } from 'react';

@@ -1,6 +1,6 @@
 import AppServices from "../services/AppServices";
 import AppMode from "../services/appMode.js";
-import MediasIntermediatePresentationList from "../components/movies/list/MediasIntermediatePresentationList";
+import MediasIntermediatePresentationList from "../components/media/list/MediasIntermediatePresentationList";
 import { useEffect, useState } from 'react';
 
 var lastClickedMedia = null;

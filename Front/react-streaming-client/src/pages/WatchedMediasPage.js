@@ -1,5 +1,5 @@
 import AppServices from "../services/AppServices";
-import MediasIntermediatePresentationList from "../components/movies/list/MediasIntermediatePresentationList";
+import MediasIntermediatePresentationList from "../components/media/list/MediasIntermediatePresentationList";
 import { useEffect, useState } from 'react';
 import AppMode from "../services/appMode.js";
 

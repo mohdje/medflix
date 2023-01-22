@@ -22,7 +22,7 @@ import Title from "../components/common/text/Title";
 import TitleAndContent from "../components/common/TitleAndContent";
 import Rating from "../components/common/Rating";
 import DropDown from "../components/common/DropDown";
-import MediasListLiteWithTitle from "../components/movies/list/MediasListLiteWithTitle";
+import MediasListLiteWithTitle from "../components/media/list/MediasListLiteWithTitle";
 
 import AppServices from "../services/AppServices";
 import fadeTransition from "../services/customStyles.js";

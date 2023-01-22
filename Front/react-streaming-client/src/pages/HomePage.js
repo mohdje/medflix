@@ -1,7 +1,7 @@
 
 import "../style/home-page.css";
-import MediasOfToday from "../components/movies/list/MediasOfTodayList";
-import MediasListLiteWithTitle from "../components/movies/list/MediasListLiteWithTitle";
+import MediasOfToday from "../components/media/list/MediasOfTodayList";
+import MediasListLiteWithTitle from "../components/media/list/MediasListLiteWithTitle";
 import CircularProgressBar from "../components/common/CircularProgressBar";
 
 import fadeTransition from "../services/customStyles.js";
