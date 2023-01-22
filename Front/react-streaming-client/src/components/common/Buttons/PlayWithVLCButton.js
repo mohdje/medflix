@@ -7,7 +7,6 @@ import CopyButton from "./CopyButton";
 import BaseButton from "./BaseButton";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import MoviesAPI from "../../../services/moviesAPI";
 import AppServices from "../../../services/AppServices";
 import { useEffect, useState, useRef } from 'react';
 
@@ -79,7 +78,7 @@ function ModalContent({ videoUrl, launchPlay, onCloseClick }) {
             setVideoDownloadState({
                 message: 'Loading'
             });
-            MoviesAPI.playWithVlc(
+            AppServices.appInfoApiService.playWithVlc(
                 videoUrl,
                 () => {
                     setVideoDownloadState({

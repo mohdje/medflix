@@ -1,16 +1,16 @@
 import BaseApiService from "./baseApiService";
 
 class TorrentApiService extends BaseApiService {
-    buildSearchUrl(url){
+    buildTorrentUrl(url){
         return this.buildUrl('torrent/' + (url ? url : ''));
     }
 
     buildStreamUrl(url, fileName){
-        return this.buildSearchUrl('stream?url=' + url + (Boolean(fileName) ? '&fileName=' + fileName : ''));
+        return this.buildTorrentUrl('stream?url=' + url + (Boolean(fileName) ? '&fileName=' + fileName : ''));
     }
 
     searchVFSources(movieId, movieTitle, movieYear, onSuccess, onFail) {
-        var url = this.buildSearchUrl('vf');
+        var url = this.buildTorrentUrl('vf');
         var parameters = [
             {
                 name: 'movieId',
@@ -30,7 +30,7 @@ class TorrentApiService extends BaseApiService {
     }
 
     searchVOSources(movieTitle, movieYear, onSuccess, onFail) {
-        var url = this.buildSearchUrl('vo');
+        var url = this.buildTorrentUrl('vo');
         var parameters = [
             {
                 name: 'title',
@@ -46,7 +46,7 @@ class TorrentApiService extends BaseApiService {
     }
 
     getDownloadState(streamUrl, onSuccess, onFail) {
-        const streamUrlParams = new URLSearchParams(streamUrl.replace(this.buildSearchUrl('stream')+'?',''));
+        const streamUrlParams = new URLSearchParams(streamUrl.replace(this.buildTorrentUrl('stream')+'?',''));
         var parameters = [
             {
                 name: 'torrentUrl',
@@ -54,7 +54,7 @@ class TorrentApiService extends BaseApiService {
             }
         ];
 
-        this.getRequest(this.buildSearchUrl('streamdownloadstate'), parameters, true, onSuccess, onFail);
+        this.getRequest(this.buildTorrentUrl('streamdownloadstate'), parameters, true, onSuccess, onFail);
     }
 
     getTorrentFiles(torrentUrl, onSuccess, onFail){
@@ -65,13 +65,12 @@ class TorrentApiService extends BaseApiService {
             }
         ];
 
-        this.getRequest(this.buildSearchUrl('files'), parameters, true, onSuccess, onFail);
+        this.getRequest(this.buildTorrentUrl('files'), parameters, true, onSuccess, onFail);
     }
 
     getTorrentHistory(onSuccess, onFail) {
-        this.getRequest(this.buildSearchUrl('history'), null, true, onSuccess, onFail);
+        this.getRequest(this.buildTorrentUrl('history'), null, true, onSuccess, onFail);
     }
-
 }
 
 export default TorrentApiService;

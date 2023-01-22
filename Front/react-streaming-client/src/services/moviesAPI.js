@@ -17,23 +17,6 @@ const MoviesAPI = {
     },
 
    
- 
-
-
-
-
-    
-    playWithVlc(streamUrl, onSuccess, onFail){
-
-        var parameters = [
-            {
-                name: 'data',
-                value: btoa(streamUrl)
-            }
-        ];
-
-        this.sendRequest(this.apiApplicationUrl('startvlc'), parameters, false, onSuccess, onFail);
-    },
 
    
     

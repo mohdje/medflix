@@ -15,6 +15,17 @@ class AppInfoApiService extends BaseApiService {
             }, onFail);
         }
     }
+
+    playWithVlc(streamUrl, onSuccess, onFail){
+        var parameters = [
+            {
+                name: 'data',
+                value: btoa(streamUrl)
+            }
+        ];
+
+        this.getRequest(this.buildAppInfoUrl('startvlc'), parameters, false, onSuccess, onFail);
+    }
 }
 
 export default AppInfoApiService;
