@@ -11,11 +11,14 @@ import BookmarkedMediasPage from "./pages/BookmarkedMediasPage";
 import ResearchPage from "./pages/ResearchPage";
 import TorrentLinkPage from "./pages/TorrentLinkPage";
 
+import AppServices from './services/AppServices';
 import Router from "./components/Router";
 import { useState } from 'react';
 
 
 function App() {
+  AppServices.init();
+
   const [selectedGenre, setSelectedGenre] = useState(null);
   const [loadFullListGenrefromCache, setLoadFullListGenrefromCache] = useState(false);
 

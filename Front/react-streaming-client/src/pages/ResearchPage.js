@@ -3,7 +3,7 @@ import "../style/search-view.css";
 import MediasListLite from "../components/movies/list/MediasListLite";
 import CircularProgressBar from "../components/common/CircularProgressBar";
 import TextInput from '../components/common/TextInput';
-import MoviesAPI from "../services/moviesAPI.js";
+import AppServices from "../services/AppServices";
 
 import { useEffect, useState, useRef, useReducer } from 'react';
 
@@ -47,7 +47,7 @@ function ResearchPage({ loadFromCache, onMediaClick }) {
                     searchResultLabelDispatch(-1);                
                     setMedias([]);
                     cacheResearch.clean();
-                    MoviesAPI.searchMovies(searchValue,
+                    AppServices.searchMediaService.searchMedias(searchValue,
                         (medias) => {
                             setSearchInProgress(false);
                             if(searchValueRef.current && searchValue === searchValueRef.current){

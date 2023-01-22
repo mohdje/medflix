@@ -37,7 +37,7 @@ namespace WebHostStreaming.Controllers
             return await searchersProvider.SeriesSearcher.GetSerieGenresAsync();
         }
 
-        [HttpGet("moviesoftoday")]
+        [HttpGet("mediasoftoday")]
         public async Task<IEnumerable<LiteContentDto>> GetSeriesOfToday()
         {
             var movies = await searchersProvider.SeriesSearcher.GetSeriesOfTodayAsync();
@@ -105,8 +105,8 @@ namespace WebHostStreaming.Controllers
             return await searchersProvider.SeriesSearcher.GetSeriesByGenreAsync(genreId, page);
         }
 
-        [HttpGet("search/{text}")]
-        public async Task<IEnumerable<LiteContentDto>> SearchSeries(string text)
+        [HttpGet("search")]
+        public async Task<IEnumerable<LiteContentDto>> SearchSeries([FromQuery(Name = "t")] string text)
         {
             return await searchersProvider.SeriesSearcher.SearchSeriesAsync(text);
         }

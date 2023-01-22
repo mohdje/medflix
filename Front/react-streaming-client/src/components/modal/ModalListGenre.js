@@ -1,7 +1,7 @@
 import "../../style/list-genres-view.css";
 import ModalWindow from "./ModalWindow";
 import CircularProgressBar from "../common/CircularProgressBar";
-import MoviesAPI from "../../services/moviesAPI.js";
+import AppServices from "../../services/AppServices";
 import AppMode from "../../services/appMode";
 
 import { useEffect, useState } from 'react';
@@ -12,7 +12,7 @@ function ModalListGenre({ visible, onCloseClick, onGenreClick }) {
 
     const loadGenres = () => {
         setListGenres([]);
-        MoviesAPI.getMoviesGenres(
+        AppServices.searchMediaService.getMediaGenres(
             (genres) => {
               if (genres && genres.length > 0) {
                 setListGenres(genres);

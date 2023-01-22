@@ -6,7 +6,7 @@ import AddIcon from '@material-ui/icons/Add';
 import CircularProgressBar from "../components/common/CircularProgressBar";
 
 import MediaLitePresentation from "../components/movies/presentation/MediaLitePresentation";
-import MoviesAPI from "../services/moviesAPI.js";
+import AppServices from "../services/AppServices";
 
 import { useEffect, useState } from 'react';
 
@@ -51,7 +51,7 @@ function MediasListGenrePage({ genre, loadFromCache, onMediaClick }) {
 
     const performSearch = () => {
         setSearchInProgress(true);
-        MoviesAPI.getMoviesByGenre(genre.id, pageIndex,
+        AppServices.searchMediaService.getMediasByGenre(genre.id, pageIndex,
             (mediasOfGenre) => {
                 setSearchInProgress(false);
                 if (mediasOfGenre && mediasOfGenre.length > 0) {

@@ -6,6 +6,7 @@ import CircularProgressBar from "../components/common/CircularProgressBar";
 
 import fadeTransition from "../services/customStyles.js";
 import MoviesAPI from "../services/moviesAPI.js";
+import AppServices from "../services/AppServices";
 import CacheService from "../services/cacheService";
 import AppMode from "../services/appMode";
 
@@ -51,27 +52,27 @@ function HomePage({ onMediaClick, onReady, onFail }) {
             setDataLoaded(true);
         }
         else{
-            MoviesAPI.getMoviesOfToday(
+            AppServices.searchMediaService.getMediasOfToday(
             (medias) => {
                 addMedias(todayTrendingTitle, medias);
                 setDataLoaded(true);
                 onReady();
             });
-            MoviesAPI.getPopularMovies((medias)=>{
+            AppServices.searchMediaService.getPopularMedias((medias)=>{
                 addMedias("Popular " + AppMode.getActiveMode().label.toLocaleLowerCase(), medias, true);
             }, ()=>{
                 onFail();
             });
-            MoviesAPI.getRecommandedMovies(null, (medias)=>{
+            AppServices.searchMediaService.getRecommandedMedias(null, (medias)=>{
                 addMedias("Recommanded for you", medias, true);
             });
-            MoviesAPI.getPopularNetflixMovies((medias)=>{
+            AppServices.searchMediaService.getPopularNetflixMedias((medias)=>{
                 addMedias("Popular on Netflix", medias);
             });
-            MoviesAPI.getPopularDisneyPlusMovies((medias)=>{
+            AppServices.searchMediaService.getPopularDisneyPlusMedias((medias)=>{
                 addMedias("Popular on Disney Plus", medias);
             });
-            MoviesAPI.getPopularAmazonPrimeMovies((medias)=>{
+            AppServices.searchMediaService.getPopularAmazonPrimeMedias((medias)=>{
                 addMedias("Popular on Amazon Prime", medias);
             });
         }

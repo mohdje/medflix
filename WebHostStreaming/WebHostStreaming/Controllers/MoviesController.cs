@@ -37,7 +37,7 @@ namespace WebHostStreaming.Controllers
             return await searchersProvider.MovieSearcher.GetMovieGenresAsync();
         }
 
-        [HttpGet("moviesoftoday")]
+        [HttpGet("mediasoftoday")]
         public async Task<IEnumerable<LiteContentDto>> GetMoviesOfToday()
         {
             var movies = await searchersProvider.MovieSearcher.GetMoviesOfTodayAsync();
@@ -76,7 +76,7 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("recommandations")]
-        public async Task<IEnumerable<LiteContentDto>> GetRecommandations([FromQuery]string id)
+        public async Task<IEnumerable<LiteContentDto>> GetRecommandations([FromQuery] string id)
         {
             var movieId = string.Empty;
             if (string.IsNullOrEmpty(id))
@@ -105,8 +105,8 @@ namespace WebHostStreaming.Controllers
             return await searchersProvider.MovieSearcher.GetMoviesByGenreAsync(genreId, page);
         }
 
-        [HttpGet("search/{text}")]
-        public async Task<IEnumerable<LiteContentDto>> SearchMovies(string text)
+        [HttpGet("search")]
+        public async Task<IEnumerable<LiteContentDto>> SearchMovies([FromQuery(Name ="t")] string text)
         {
             return await searchersProvider.MovieSearcher.SearchMoviesAsync(text);
         }

@@ -1,11 +1,11 @@
 import ModalWindow from "./ModalWindow";
-import BaseButton from "../common/buttons/BaseButton";
 import TitleAndContent from "../common/TitleAndContent";
 import CircularProgressBar from "../common/CircularProgressBar";
 import SecondaryInfo from "../common/text/SecondaryInfo";
 import Paragraph from "../common/text/Paragraph";
 import DropDown from "../common/DropDown";
-import MoviesAPI from "../../services/moviesAPI";
+import AppServices from "../../services/AppServices";
+
 import { useEffect, useState, useRef } from "react";
 
 import "../../style/modal-episode-selector.css";
@@ -51,7 +51,7 @@ function ModalEpisodeSelector({visible, serieId, numberOfSeasons, onEpisodeSelec
             setEpisodes([]);
             setIsLoading(true);
             setNoEpisodeMessageVisible(false)
-            MoviesAPI.getEpisodes(serieId, selectedSeasonNumber,
+            AppServices.searchMediaService.getEpisodes(serieId, selectedSeasonNumber,
                 (episodes)=>{
                     if(episodeListRef.current)
                         episodeListRef.current.scrollTop = 0;

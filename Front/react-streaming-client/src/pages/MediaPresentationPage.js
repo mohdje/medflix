@@ -25,6 +25,7 @@ import DropDown from "../components/common/DropDown";
 import MediasListLiteWithTitle from "../components/movies/list/MediasListLiteWithTitle";
 
 import MoviesAPI from "../services/moviesAPI.js";
+import AppServices from "../services/AppServices";
 import fadeTransition from "../services/customStyles.js";
 
 import { useEffect, useState, useRef } from 'react';
@@ -97,7 +98,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
         setMediaDetails({});
         setMediaProgression({});
         if (mediaId) {
-            MoviesAPI.getMovieDetails(mediaId,
+            AppServices.searchMediaService.getMediaDetails(mediaId,
                 (details) => {
                     if (details) {
                         setMediaDetails(details);
@@ -112,7 +113,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                 if(watchedMedia?.progression)
                     setMediaProgression(watchedMedia.progression);
             });
-            MoviesAPI.getRecommandedMovies(mediaId, (recommandedMedias) => {
+            AppServices.searchMediaService.getRecommandedMedias(mediaId, (recommandedMedias) => {
                 if(recommandedMedias && recommandedMedias.length > 0)
                     setRecommandedMedias(recommandedMedias);
             });
