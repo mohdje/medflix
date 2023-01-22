@@ -2,20 +2,20 @@ import BaseApiService from "./baseApiService";
 import AppMode from "../appMode";
 
 class BookmarkApiService extends BaseApiService {
-    buildSearchUrl(url){
+    buildBookmarkUrl(url){
       return this.buildUrl(AppMode.getActiveMode().urlKey + '/bookmarks/' + (url ? url : ''));
     }
 
     getBookmarkedMedias(onSuccess, onFail) {
-        this.getRequest(this.buildSearchUrl(), [], true, onSuccess, onFail);
+        this.getRequest(this.buildBookmarkUrl(), [], true, onSuccess, onFail);
     }
 
     addBookmarkedMedia(mediaDto, onSuccess) {
-        this.putRequest(this.buildSearchUrl(), mediaDto, onSuccess);
+        this.putRequest(this.buildBookmarkUrl(), mediaDto, onSuccess);
     }
 
     deleteBookmarkedMedia(mediaDto, onSuccess) {
-        this.deleteRequest(this.buildSearchUrl(), mediaDto, onSuccess);
+        this.deleteRequest(this.buildBookmarkUrl(), mediaDto, onSuccess);
     }
 
     isMediaBookmarked(mediaId, onSuccess, onFail) {
@@ -25,7 +25,7 @@ class BookmarkApiService extends BaseApiService {
                 value: mediaId
             }
         ];
-        this.getRequest(this.buildSearchUrl('exists'), parameters, false, onSuccess, onFail);
+        this.getRequest(this.buildBookmarkUrl('exists'), parameters, false, onSuccess, onFail);
     }
 }
 

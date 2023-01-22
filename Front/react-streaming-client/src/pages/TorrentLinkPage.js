@@ -7,7 +7,6 @@ import CircularProgressBar from '../components/common/CircularProgressBar';
 import PlayButton from '../components/common/buttons/PlayButton';
 import PlayWithVLCButton from '../components/common/buttons/PlayWithVLCButton';
 import { VideoPlayerWindow } from '../components/video/VideoPlayerWindow';
-import MoviesAPI from "../services/moviesAPI";
 import AppServices from "../services/AppServices";
 
 import { useEffect, useState, useRef } from 'react';
@@ -218,7 +217,7 @@ function FileFromTorrent({ torrentLink, file, isSelected, onClick, onPlayFileCli
         playButtons = (
             <div className="play-buttons-container">
                 <PlayButton onClick={() => onPlayFileClick()} />
-                <PlayWithVLCButton videoUrl={MoviesAPI.apiStreamUrl(torrentLink, file)} />
+                <PlayWithVLCButton videoUrl={AppServices.torrentApiService.buildStreamUrl(torrentLink, file)} />
             </div>)
     }
 

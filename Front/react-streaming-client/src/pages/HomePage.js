@@ -5,7 +5,6 @@ import MediasListLiteWithTitle from "../components/movies/list/MediasListLiteWit
 import CircularProgressBar from "../components/common/CircularProgressBar";
 
 import fadeTransition from "../services/customStyles.js";
-import MoviesAPI from "../services/moviesAPI.js";
 import AppServices from "../services/AppServices";
 import CacheService from "../services/cacheService";
 import AppMode from "../services/appMode";

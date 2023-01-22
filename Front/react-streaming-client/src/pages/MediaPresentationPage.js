@@ -24,7 +24,6 @@ import Rating from "../components/common/Rating";
 import DropDown from "../components/common/DropDown";
 import MediasListLiteWithTitle from "../components/movies/list/MediasListLiteWithTitle";
 
-import MoviesAPI from "../services/moviesAPI.js";
 import AppServices from "../services/AppServices";
 import fadeTransition from "../services/customStyles.js";
 
@@ -126,7 +125,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
             newTab.push(selectedVersionSources[i]);
             newTab[i].selected = index == i;
         }
-        setSelectedVersionSourceLink(selectedVersionSources.length > 0 ? MoviesAPI.apiStreamUrl(selectedVersionSources[index].downloadUrl) : '');
+        setSelectedVersionSourceLink(selectedVersionSources.length > 0 ? AppServices.torrentApiService.buildStreamUrl(selectedVersionSources[index].downloadUrl) : '');
         setSelectedVersionSources(newTab);
     }
 
