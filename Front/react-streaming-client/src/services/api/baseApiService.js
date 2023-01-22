@@ -56,9 +56,22 @@ class BaseApiService {
         xhttp.send(parameters);
     }
 
-    putRequest(obj, onSuccess){
+    putRequest(url, obj, onSuccess){
         const xhttp = new XMLHttpRequest();
-        xhttp.open("PUT", this.apiBookmarkedMoviesUrl(), true);
+        xhttp.open("PUT", url, true);
+        xhttp.setRequestHeader("Content-Type", "application/json");
+        xhttp.send(JSON.stringify(obj));
+
+        xhttp.onreadystatechange = function () {
+            if (this.readyState === 4)
+                if (this.status === 200)
+                    onSuccess();
+        }
+    }
+
+    deleteRequest(url, obj, onSuccess) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("DELETE", url, true);
         xhttp.setRequestHeader("Content-Type", "application/json");
         xhttp.send(JSON.stringify(obj));
 

@@ -76,45 +76,7 @@ const MoviesAPI = {
         xhttp.send(JSON.stringify(watchedMovie));
     },
 
-    getBookmarkedMovies(onSuccess, onFail) {
-        this.sendRequest(this.apiBookmarkedMoviesUrl(), [], true, onSuccess, onFail);
-    },
 
-    addBookmarkedMovie(movie, onSuccess) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("PUT", this.apiBookmarkedMoviesUrl(), true);
-        xhttp.setRequestHeader("Content-Type", "application/json");
-        xhttp.send(JSON.stringify(movie));
-
-        xhttp.onreadystatechange = function () {
-            if (this.readyState === 4)
-                if (this.status === 200)
-                    onSuccess();
-        }
-    },
-
-    deleteBookmarkedMovie(movie, onSuccess) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("DELETE", this.apiBookmarkedMoviesUrl(), true);
-        xhttp.setRequestHeader("Content-Type", "application/json");
-        xhttp.send(JSON.stringify(movie));
-
-        xhttp.onreadystatechange = function () {
-            if (this.readyState === 4)
-                if (this.status === 200)
-                    onSuccess();
-        }
-    },
-
-    isMovieBookmarked(movieId, onSuccess, onFail) {
-        var parameters = [
-            {
-                name: 'movieId',
-                value: movieId
-            }
-        ];
-        this.sendRequest(this.apiBookmarkedMoviesUrl('exists'), parameters, false, onSuccess, onFail);
-    },
 
     getMovieDownloadState(streamUrl, onSuccess, onFail) {
         const streamUrlParams = new URLSearchParams(streamUrl.replace(this.apiTorrentUrl('stream')+'?',''));

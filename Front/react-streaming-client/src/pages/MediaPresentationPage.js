@@ -103,7 +103,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                     if (details) {
                         setMediaDetails(details);
                         setDataLoaded(true);
-                        MoviesAPI.isMovieBookmarked(mediaId, (isMediaBookmarked) => {
+                        AppServices.bookmarkApiService.isMediaBookmarked(mediaId, (isMediaBookmarked) => {
                             isMediaBookmarked = isMediaBookmarked === 'true';
                             setAddBookmarkButtonVisible(!isMediaBookmarked);
                         });
@@ -175,13 +175,13 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
     }
 
     const bookmarkMedia = () => {
-        MoviesAPI.addBookmarkedMovie(mediaDetails, () => {
+        AppServices.bookmarkApiService.addBookmarkedMedia(mediaDetails, () => {
             setAddBookmarkButtonVisible(false);
         });
     }
 
     const unbookmarkMedia = () => {
-        MoviesAPI.deleteBookmarkedMovie(mediaDetails, () => {
+        AppServices.bookmarkApiService.deleteBookmarkedMedia(mediaDetails, () => {
             setAddBookmarkButtonVisible(true);
         });
     }

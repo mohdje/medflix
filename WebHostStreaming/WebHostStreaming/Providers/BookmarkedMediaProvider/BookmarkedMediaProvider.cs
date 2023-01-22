@@ -67,7 +67,7 @@ namespace WebHostStreaming.Providers
 
         public async Task<bool> SerieBookmarkExistsAsync(string serieId)
         {
-            var serieBookmarks = await GetBookmarkedMoviesAsync();
+            var serieBookmarks = await GetBookmarkedSeriesAsync();
 
             if (serieBookmarks != null)
                 return serieBookmarks.Any(m => m.Id == serieId);

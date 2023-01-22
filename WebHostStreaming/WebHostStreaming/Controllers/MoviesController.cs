@@ -188,7 +188,7 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("bookmarks/exists")]
-        public async Task<IActionResult> MovieBookmarkExists([FromQuery] string movieId)
+        public async Task<IActionResult> BookmarkExists([FromQuery(Name = "id")] string movieId)
         {
             if (!string.IsNullOrEmpty(movieId))
             {

@@ -1,4 +1,4 @@
-import MoviesAPI from "../services/moviesAPI.js";
+import AppServices from "../services/AppServices";
 import AppMode from "../services/appMode.js";
 import MediasIntermediatePresentationList from "../components/movies/list/MediasIntermediatePresentationList";
 import { useEffect, useState } from 'react';
@@ -14,7 +14,7 @@ function BookmarkedMediasPage({ centerToLastClickedMedia, onMediaClick }) {
         if(!centerToLastClickedMedia)
             lastClickedMedia = null;
 
-        MoviesAPI.getBookmarkedMovies((bookmarkedMedias) => {
+            AppServices.bookmarkApiService.getBookmarkedMedias((bookmarkedMedias) => {
             setLoadingVisible(false);
             if (bookmarkedMedias && bookmarkedMedias.length > 0)
                 setMediasBookmarks(bookmarkedMedias);
