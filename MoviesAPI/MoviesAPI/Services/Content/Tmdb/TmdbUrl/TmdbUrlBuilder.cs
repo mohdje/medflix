@@ -133,5 +133,10 @@ namespace MoviesAPI.Services.Tmdb
         {
             return $"{BaseUrl}/tv/{tmdbContentId}/season/{seasonNumber}?api_key={apiKey}";
         }
+
+        public string BuildSerieGetExternalIds(string tmdbContentId)
+        {
+            return $"{BaseUrl}/tv/{tmdbContentId}/external_ids?api_key={apiKey}";
+        }
     }
 }

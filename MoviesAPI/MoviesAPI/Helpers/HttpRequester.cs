@@ -1,4 +1,5 @@
 ﻿
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -25,6 +26,7 @@ namespace MoviesAPI.Helpers
             }
         }
         #region Get
+    
         public static async Task<string> GetAsync(Uri url)
         {
             return await PerformGetStringCallAsync(url);
@@ -40,6 +42,25 @@ namespace MoviesAPI.Helpers
         public static async Task<T> GetAsync<T>(string url) where T : class
         {
             return await GetAsync<T>(new Uri(url));
+        }
+
+        public static async Task<T> GetAsync<T>(string url, IEnumerable<KeyValuePair<string, string>> httpRequestHeaders) where T : class
+        {
+            if (httpRequestHeaders != null)
+            {
+                foreach (var header in httpRequestHeaders)
+                    client.DefaultRequestHeaders.Add(header.Key, header.Value);
+            }
+
+            var result = await PerformGetStringCallAsync(new Uri(url));
+
+            if (httpRequestHeaders != null)
+            {
+                foreach (var header in httpRequestHeaders)
+                    client.DefaultRequestHeaders.Remove(header.Key);
+            }
+
+            return JsonHelper.ToObject<T>(result);
         }
 
         public static Task<string> GetAsync(string baseUrl, NameValueCollection parameters)
@@ -59,7 +80,7 @@ namespace MoviesAPI.Helpers
             return await PerformPostCallAsync(new Uri(url), JsonHelper.ToJson(payloadObject));
         }
 
-        public static async Task<byte[]> DownloadAsync(Uri url, IEnumerable<KeyValuePair<string, string>> httpRequestHeaders, bool keepHeaders)
+        public static async Task<byte[]> DownloadAsync(Uri url, IEnumerable<KeyValuePair<string, string>> httpRequestHeaders)
         {
             if(httpRequestHeaders != null)
             {
@@ -69,7 +90,7 @@ namespace MoviesAPI.Helpers
           
             var result = await DownloadFile(url);
 
-            if (!keepHeaders && httpRequestHeaders != null)
+            if (httpRequestHeaders != null)
             {
                 foreach (var header in httpRequestHeaders)
                     client.DefaultRequestHeaders.Remove(header.Key);

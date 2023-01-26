@@ -28,49 +28,55 @@ namespace WebHostStreaming.Controllers
             this.torrentHistoryProvider = torrentHistoryProvider;
         }
 
-        [HttpGet("vf")]
-        public async Task<IEnumerable<MovieTorrent>> SearchVFTorrents([FromQuery(Name = "movieId")] string movieId, [FromQuery(Name = "originalTitle")] string originalTitle, [FromQuery(Name = "year")] int year)
+        [HttpGet("movies/vf")]
+        public async Task<IEnumerable<MediaTorrent>> SearchVFMovieTorrents([FromQuery(Name = "movieId")] string movieId, [FromQuery(Name = "originalTitle")] string originalTitle, [FromQuery(Name = "year")] int year)
         {
             var frenchTitle = await searchersProvider.MovieSearcher.GetMovieFrenchTitleAsync(movieId);
 
-            return await searchersProvider.TorrentSearchManager.SearchVfTorrentsAsync(string.IsNullOrEmpty(frenchTitle) ? originalTitle : frenchTitle, year);
+            return await searchersProvider.TorrentSearchManager.SearchVfTorrentsMovieAsync(string.IsNullOrEmpty(frenchTitle) ? originalTitle : frenchTitle, year);
         }
 
-        [HttpGet("vo")]
-        public async Task<IEnumerable<MovieTorrent>> SearchVOTorrents([FromQuery(Name = "title")] string title, [FromQuery(Name = "year")] int year)
+        [HttpGet("movies/vo")]
+        public async Task<IEnumerable<MediaTorrent>> SearchVOMovieTorrents(string title, int year)
         {
-            return await searchersProvider.TorrentSearchManager.SearchVoTorrentsAsync(title, year); ;
+            return await searchersProvider.TorrentSearchManager.SearchVoTorrentsMovieAsync(title, year); ;
         }
 
-        [HttpGet("stream")]
-        public async Task<IActionResult> GetStream([FromQuery(Name = "url")] string url, [FromQuery(Name = "fileName")] string fileName)
+        [HttpGet("series/vo")]
+        public async Task<IEnumerable<MediaTorrent>> SearchVOSerieTorrents(string title, string imdbid, int season, int episode)
         {
-            if (string.IsNullOrEmpty(url))
-                return NoContent();
-
-            var rangeHeaderValue = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "Range").Value.FirstOrDefault();
-            var userAgent = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "User-Agent").Value.FirstOrDefault();
-
-            int offset = 0;
-            if (!string.IsNullOrEmpty(rangeHeaderValue))
-                int.TryParse(rangeHeaderValue.Replace("bytes=", string.Empty).Split("-")[0], out offset);
-
-            try
-            {
-                var acceptedFormat = userAgent.StartsWith("VLC") ? "*" : ".mp4";
-                var streamDto = await torrentVideoStreamProvider.GetStreamAsync(url, offset, torrentFilePath => FileSelector(torrentFilePath, acceptedFormat, fileName));
-
-                if (streamDto != null)
-                    return File(streamDto.Stream, streamDto.ContentType, true);
-                else
-                    return NoContent();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("GetStream error:" + ex);
-                return NoContent();
-            }
+            return await searchersProvider.TorrentSearchManager.SearchVoTorrentsSerieAsync(title, imdbid, season, episode); ;
         }
+
+        [HttpGet("series/vf")]
+        public async Task<IEnumerable<MediaTorrent>> SearchVFSerieTorrents(string title, string imdbid, int season, int episode)
+        {
+            return await searchersProvider.TorrentSearchManager.SearchVoTorrentsSerieAsync(title, imdbid, season, episode); ;
+        }
+
+        [HttpGet("stream/movies")]
+        public async Task<IActionResult> GetStream(string url)
+        {
+            url = Helpers.TestData.ParadiseCanyonTorrentUrl;
+          
+            var streamDto = await GetStreamDtoAsync(url, torrentFilePath => SelectFileByFormat(torrentFilePath, GetAcceptedFormat()));
+            return streamDto != null ? File(streamDto.Stream, streamDto.ContentType, true) : NoContent();
+        }
+
+        [HttpGet("stream/series")]
+        public async Task<IActionResult> GetStream(string url, int seasonNumber, int episodeNumber)
+        {
+            var streamDto = await GetStreamDtoAsync(url, torrentFilePath => SelectFileBySeasonAndEpisode(torrentFilePath, seasonNumber, episodeNumber));
+            return streamDto != null ? File(streamDto.Stream, streamDto.ContentType, true) : NoContent();
+        }
+
+        [HttpGet("stream/file")]
+        public async Task<IActionResult> GetStream(string url, string fileName)
+        {
+            var streamDto = await GetStreamDtoAsync(url, torrentFilePath => SelectFileByName(torrentFilePath, fileName));
+            return streamDto != null ? File(streamDto.Stream, streamDto.ContentType, true) : NoContent();
+        }
+
 
         [HttpGet("streamdownloadstate")]
         public IActionResult GetStreamDownloadState([FromQuery(Name = "torrentUrl")] string torrentUrl)
@@ -111,11 +117,51 @@ namespace WebHostStreaming.Controllers
             return torrentFiles?.OrderByDescending(f => f.LastOpenedDateTime);
         }
 
-        private bool FileSelector(string filePath, string accepetedVideoExtension, string fileNameToSelect)
+        private async Task<StreamDto> GetStreamDtoAsync(string url, Func<string,bool> fileSelector)
         {
-            if (!string.IsNullOrEmpty(fileNameToSelect))
-                return Path.GetFileName(filePath) == fileNameToSelect;
+            if (string.IsNullOrEmpty(url))
+                return null;
 
+            var rangeHeaderValue = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "Range").Value.FirstOrDefault();
+
+            int offset = 0;
+            if (!string.IsNullOrEmpty(rangeHeaderValue))
+                int.TryParse(rangeHeaderValue.Replace("bytes=", string.Empty).Split("-")[0], out offset);
+
+            try
+            {
+                
+                return await torrentVideoStreamProvider.GetStreamAsync(url, offset, fileSelector);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        private string GetAcceptedFormat()
+        {
+            var userAgent = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "User-Agent").Value.FirstOrDefault();
+            return userAgent != null && userAgent.StartsWith("VLC") ? "*" : ".mp4";
+        }
+
+        private bool SelectFileByName(string filePath, string fileNameToSelect)
+        {
+            return Path.GetFileName(filePath) == fileNameToSelect;
+        }
+
+        private bool SelectFileBySeasonAndEpisode(string filePath, int seasonNumber, int episodeNumber)
+        {
+            var fileName = Path.GetFileName(filePath);
+
+            var season = seasonNumber < 10 ? "0" + seasonNumber.ToString() : seasonNumber.ToString();
+            var episode = episodeNumber < 10 ? "0" + episodeNumber.ToString() : episodeNumber.ToString();
+
+            return fileName.Contains($"S{season}E{episode}");
+        }
+
+        private bool SelectFileByFormat(string filePath, string accepetedVideoExtension)
+        {
             if (accepetedVideoExtension == "*")
                 return filePath.EndsWith(".mp4") || filePath.EndsWith(".avi") || filePath.EndsWith(".mkv");
             else

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MoviesAPI.Services.Torrent.Dtos
 { 
-    public class MovieTorrent
+    public class MediaTorrent
     {
         public string DownloadUrl { get; set; }
 

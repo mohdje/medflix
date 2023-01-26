@@ -64,5 +64,11 @@ namespace MoviesAPI.Extensions
 
             return year;
         }
+
+        public static int? toInt(this string value)
+        {
+            int number;
+            return int.TryParse(value, out number) ? number : null;
+        }
     }
 }

@@ -1,16 +1,22 @@
 import BaseApiService from "./baseApiService";
+import AppMode from "../appMode";
 
 class TorrentApiService extends BaseApiService {
     buildTorrentUrl(url){
         return this.buildUrl('torrent/' + (url ? url : ''));
     }
 
-    buildStreamUrl(url, fileName){
-        return this.buildTorrentUrl('stream?url=' + url + (Boolean(fileName) ? '&fileName=' + fileName : ''));
+    buildStreamUrl(url, fileName, seasonNumber, episodeNumber){
+        if(fileName)
+            return this.buildTorrentUrl('stream/file?url=' + url + '&fileName=' + fileName);
+        else if(seasonNumber && episodeNumber)
+            return this.buildTorrentUrl('stream/series?url=' + url + '&seasonNumber=' + seasonNumber + '&episodeNumber=' + episodeNumber);
+        else
+            return this.buildTorrentUrl('stream/movies?url=' + url);
     }
 
     searchVFSources(movieId, movieTitle, movieYear, onSuccess, onFail) {
-        var url = this.buildTorrentUrl('vf');
+        var url = this.buildTorrentUrl(AppMode.getActiveMode().urlKey + '/vf');
         var parameters = [
             {
                 name: 'movieId',
@@ -29,16 +35,28 @@ class TorrentApiService extends BaseApiService {
         this.getRequest(url, parameters, true, onSuccess, onFail);
     }
 
-    searchVOSources(movieTitle, movieYear, onSuccess, onFail) {
-        var url = this.buildTorrentUrl('vo');
+    searchVOSources(title, year, imdbid, seasonNumber, episodeNumber, onSuccess, onFail) {
+        var url = this.buildTorrentUrl(AppMode.getActiveMode().urlKey + '/vo');
         var parameters = [
             {
                 name: 'title',
-                value: movieTitle
+                value: title
             },
             {
                 name: 'year',
-                value: movieYear
+                value: year
+            },
+            {
+                name: 'season',
+                value: seasonNumber
+            },
+            {
+                name: 'episode',
+                value: episodeNumber
+            },
+            {
+                name: 'imdbid',
+                value: imdbid
             }
         ];
 
@@ -46,7 +64,10 @@ class TorrentApiService extends BaseApiService {
     }
 
     getDownloadState(streamUrl, onSuccess, onFail) {
-        const streamUrlParams = new URLSearchParams(streamUrl.replace(this.buildTorrentUrl('stream')+'?',''));
+        const streamUrlParams = new URLSearchParams(streamUrl.replace(this.buildTorrentUrl('stream/'+ AppMode.getActiveMode().urlKey)+'?',''));
+        console.log("streamUrlParams", streamUrlParams)
+        console.log("streamUrl", streamUrl)
+
         var parameters = [
             {
                 name: 'torrentUrl',

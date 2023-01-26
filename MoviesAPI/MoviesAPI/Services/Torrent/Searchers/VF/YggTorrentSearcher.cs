@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace MoviesAPI.Services.Torrent
 {
-    internal class YggTorrentSearcher : ITorrentSearcher
+    internal class YggTorrentSearcher : ITorrentMovieSearcher
     {
         private const string baseUrl = "https://www2.yggtorrent.one";
 
-        public async Task<IEnumerable<MovieTorrent>> GetTorrentLinksAsync(string frenchMovieName, int year)
+        public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string frenchMovieName, int year)
         {
             frenchMovieName = frenchMovieName.RemoveSpecialCharacters();
 
@@ -25,7 +25,7 @@ namespace MoviesAPI.Services.Torrent
 
             var searchResultList = doc.DocumentNode.SelectNodes("//div[@class='table-responsive']//tr");
 
-            var result = new List<MovieTorrent>();
+            var result = new List<MediaTorrent>();
 
             if (searchResultList == null)
                 return result;
@@ -54,7 +54,7 @@ namespace MoviesAPI.Services.Torrent
 
                         if (!string.IsNullOrEmpty(downloadUrl))
                         {
-                            result.Add(new MovieTorrent()
+                            result.Add(new MediaTorrent()
                             {
                                 Quality = linkNode.InnerText.GetMovieQuality(),
                                 DownloadUrl = downloadUrl

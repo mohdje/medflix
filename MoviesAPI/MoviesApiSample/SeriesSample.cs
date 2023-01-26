@@ -9,29 +9,29 @@ using System.Threading.Tasks;
 
 namespace MoviesApiSample
 {
-    internal class Series
+    internal class SeriesSample
     {
         ISeriesSearcher seriesSearcher;
-        public Series(string apiKey)
+        public SeriesSample(string apiKey)
         {
             seriesSearcher = MoviesAPIFactory.Instance.CreateSeriesSearcher(apiKey);
         }
 
         public async Task Test()
         {
-            //await SearchSeries("dexter");
+            //await SearchSeries("patriot act");
             //await GetSeriesOfToday();
 
             //await GetPopularSeries();
             //await GetPopularSeriesByGenre(16);
             //await GetSeriesByGenre(10767);
-            // await GetSerieDetails("119051");
+            await GetSerieDetails("119051");
             //await GetPopularNetflixSeries();
             //await GetPopularDisneyPlusSeries();
             //await GetPopularAmazonPrimeSeries();
 
-            await GetFrenchTitle("119051");
-            await GetGenres();
+           // await GetFrenchTitle("119051");
+           // await GetGenres();
 
             //GetSerieEpisodesBySeason("1405", 2);
         }
@@ -107,6 +107,7 @@ namespace MoviesApiSample
             Console.WriteLine($"Cast: {serie.Cast}");
             Console.WriteLine($"Trailer: {serie.YoutubeTrailerUrl}");
             Console.WriteLine($"Seasons: {serie.SeasonsCount}");
+            Console.WriteLine($"ImdbId: {serie.ImdbId}");
 
         }
 

@@ -25,7 +25,7 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
                 label: qualities && qualities.length > 0 ? source.quality + ' (' + (qualities.length + 1) + ')' : source.quality,
                 selected: source.selected,
                 data: {
-                    url: AppServices.torrentApiService.buildStreamUrl(source.downloadUrl, source.fileName)
+                    url: AppServices.torrentApiService.buildStreamUrl(source.downloadUrl, source.fileName, source.seasonNumber, source.episodeNumber)
                 }
             }
             options.push(option);

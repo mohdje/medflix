@@ -25,7 +25,7 @@ namespace MoviesAPI.Services.Subtitles
             if (File.Exists(SubtitlesZipFile))
                 File.Delete(SubtitlesZipFile);
 
-            var result = await HttpRequester.DownloadAsync(new Uri(subtitlesSourceUrl), httpRequestHeaders, false);
+            var result = await HttpRequester.DownloadAsync(new Uri(subtitlesSourceUrl), httpRequestHeaders);
 
             File.WriteAllBytes(SubtitlesZipFile, result);
 

@@ -101,9 +101,6 @@ function ModalContent({ videoUrl, launchPlay, onCloseClick }) {
         checkDownloadStateRef.current = videoDownloadState?.checkState;
         if(videoDownloadState?.checkState)
             setTimeout(()=> checkVideoDownloadState(videoDownloadState.url), 3000);
-        
-      
-        
     },[videoDownloadState]);
 
     const onCopyClick = () => {

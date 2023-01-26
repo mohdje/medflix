@@ -22,51 +22,17 @@ namespace MoviesApiSample
         static async Task Main(string[] args)
         {
             Console.WriteLine("Test started");
-            var movies = new Movies(Tokens.API_TOKEN);
-            var series = new Series(Tokens.API_TOKEN);
+            var movies = new MoviesSample(Tokens.API_TOKEN);
+            var series = new SeriesSample(Tokens.API_TOKEN);
+            var torrent = new TorrentSample();
 
-            await movies.Test();
-            //await series.Test();
-
+            //await movies.Test();
+           // await series.Test();
+            await torrent.Test();
             Console.ReadKey();
         }
 
-        static async Task SearchVfTorrents(string frenchTitleMovie, int year)
-        {
-            Console.WriteLine($"Search vf torrents for {frenchTitleMovie}, {year}");
-            var vfTorrentSearcher = await MoviesAPIFactory.Instance.CreateTorrentSearchManagerAsync();
-
-            var vfTorrents = await vfTorrentSearcher.SearchVfTorrentsAsync(frenchTitleMovie, year);
-
-            if(vfTorrents == null || !vfTorrents.Any())
-                Console.WriteLine("No torrent found");
-            else
-            {
-                foreach (var vfTorrent in vfTorrents)
-                {
-                    Console.WriteLine($"Quanlity: {vfTorrent.Quality}, Url: {vfTorrent.DownloadUrl}");
-                }
-            }
-        }
-
-        static async Task SearchVoTorrents(string originalTitle, int year)
-        {
-            Console.WriteLine($"Search vo torrents for {originalTitle}, {year}");
-            var voTorrentSearcher = await MoviesAPIFactory.Instance.CreateTorrentSearchManagerAsync();
-
-            var voTorrents = await voTorrentSearcher.SearchVoTorrentsAsync(originalTitle, year);
-
-            if (voTorrents == null || !voTorrents.Any())
-                Console.WriteLine("No torrent found");
-            else
-            {
-                foreach (var vfTorrent in voTorrents)
-                {
-                    Console.WriteLine($"Quanlity: {vfTorrent.Quality}, Url: {vfTorrent.DownloadUrl}");
-                }
-            }
-        }
-
+       
         static async Task GetSubtitles(string imdbCode, SubtitlesLanguage language)
         {
             Console.WriteLine($"Search {language} subtitles for {imdbCode}");
@@ -96,5 +62,9 @@ namespace MoviesApiSample
 
             }
         }
+
+      
     }
 }
+
+

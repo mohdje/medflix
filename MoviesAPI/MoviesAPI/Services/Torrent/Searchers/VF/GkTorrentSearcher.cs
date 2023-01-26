@@ -10,11 +10,11 @@ using MoviesAPI.Services.Torrent.Dtos;
 
 namespace MoviesAPI.Services.Torrent
 {
-    internal class GkTorrentSearcher : ITorrentSearcher
+    internal class GkTorrentSearcher : ITorrentMovieSearcher
     {
         private const string baseUrl = "https://www.gktorrents.cc";
 
-        public async Task<IEnumerable<MovieTorrent>> GetTorrentLinksAsync(string frenchMovieName, int year)
+        public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string frenchMovieName, int year)
         {
             var searchUrl = $"{baseUrl}/recherche/{frenchMovieName}";
 
@@ -25,7 +25,7 @@ namespace MoviesAPI.Services.Torrent
             if (searchResultList == null)
                 return null;
 
-            var result = new List<MovieTorrent>();
+            var result = new List<MediaTorrent>();
 
             var getTorrentTasks = new List<Task>();
 
@@ -53,7 +53,7 @@ namespace MoviesAPI.Services.Torrent
                             {
                                 foreach (var torrentLink in torrentLinks)
                                 {
-                                    result.Add(new MovieTorrent()
+                                    result.Add(new MediaTorrent()
                                     {
                                         Quality = linkNode.InnerText.GetMovieQuality(),
                                         DownloadUrl = torrentLink

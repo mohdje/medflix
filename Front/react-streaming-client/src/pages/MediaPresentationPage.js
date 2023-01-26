@@ -62,9 +62,9 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
     useEffect(() => {
         if (mediaDetails.imdbId) getAvailableSubtitles(mediaDetails.imdbId);
         if (mediaDetails.id && mediaDetails.title && mediaDetails.year) {
-            versionsSources.current = [];
+            clearVersionSources();
             searchVfSources(mediaDetails.id, mediaDetails.title, mediaDetails.year);
-            searchVoSources(mediaDetails.title, mediaDetails.year);
+            searchVoSources(mediaDetails.title, mediaDetails.year, mediaDetails.imdbId ,1, 1);
         }
 
         const topPage = document.getElementsByClassName('back-btn')[0];
@@ -75,16 +75,6 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
     useEffect(() => {
         if (showMediaPlayer && mediaDetails) AppServices.watchedMediaApiService.saveWacthedMedia(mediaDetails);
     }, [showMediaPlayer]);
-
-    useEffect(() => {
-        if (versionsSources.current?.length > 0) {
-            setSelectedVersionSources(versionsSources.current[0].sources);
-        }
-        else{
-            setSelectedVersionSources([]);
-            setSelectedVersionSourceLink('');
-        }
-    }, [versionsSources.current.length]);
 
     useEffect(()=>{
         if(!selectedVersionSourceLink && selectedVersionSources.length > 0)
@@ -119,26 +109,43 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
         }
     }
 
+    const setVersionSources = (versionLabel, sources, setFirst) => {
+        if (sources && sources.length > 0) {
+            const newVersionSources = {
+                versionLabel: versionLabel,
+                sources: sources
+            };
+            if(setFirst) versionsSources.current.unshift(newVersionSources);
+            else versionsSources.current.push(newVersionSources);
+            setSelectedVersionSources(versionsSources.current[0].sources);
+        }
+    }
+
+    const clearVersionSources = () => {
+        versionsSources.current = [];
+        setSelectedVersionSources([]);
+        setSelectedVersionSourceLink('');
+    }
+
     const changeSelectedSource = (index) => {
         const newTab = [];
         for (let i = 0; i < selectedVersionSources.length; i++) {
             newTab.push(selectedVersionSources[i]);
             newTab[i].selected = index == i;
         }
-        setSelectedVersionSourceLink(selectedVersionSources.length > 0 ? AppServices.torrentApiService.buildStreamUrl(selectedVersionSources[index].downloadUrl) : '');
+        setSelectedVersionSourceLink(
+            selectedVersionSources.length > 0 ? AppServices.torrentApiService.buildStreamUrl(selectedVersionSources[index].downloadUrl, '', selectedVersionSources[index].seasonNumber, selectedVersionSources[index].episodeNumber) 
+            : '');
         setSelectedVersionSources(newTab);
     }
 
-    const searchVfSources = (mediaId, mediaTitle, mediaYear) => {
+    const searchVfSources = (mediaId, mediaTitle, mediaYear, seasonNumber, episodeNumber) => {
         setVfSourcesSearching(true);
         AppServices.torrentApiService.searchVFSources(mediaId, mediaTitle, mediaYear,
             (sources) => {
                 setVfSourcesSearching(false);
                 if (sources && sources.length > 0) {
-                    versionsSources.current.push({
-                        versionLabel: "VF",
-                        sources: sources
-                    });
+                    setVersionSources("VF", sources.map(source => ({...source, seasonNumber: seasonNumber, episodeNumber: episodeNumber})));
                 }
 
             }, () => {
@@ -147,16 +154,13 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
         );
     }
 
-    const searchVoSources = (mediaTitle, mediaYear) => {
+    const searchVoSources = (title, year, imdbId, seasonNumber, episodeNumber) => {
         setVoSourcesSearching(true);
-        AppServices.torrentApiService.searchVOSources(mediaTitle, mediaYear,
+        AppServices.torrentApiService.searchVOSources(title, year, imdbId, seasonNumber, episodeNumber,
             (sources) => {
                 setVoSourcesSearching(false);
                 if (sources && sources.length > 0) {
-                    versionsSources.current.unshift({
-                        versionLabel: "VO",
-                        sources: sources
-                    });
+                    setVersionSources("VO", sources.map(source => ({...source, seasonNumber: seasonNumber, episodeNumber: episodeNumber})), true);
                 }
             }, () => {
                 setVoSourcesSearching(false);
@@ -241,7 +245,10 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                                     <RemoveBookmarkButton onClick={() => unbookmarkMedia()} visible={!addBookmarkButtonVisible} />
                                 </div>
                                 <div className="play-options">
-                                    <EpisodeSelector serieId={mediaDetails.id} seasonsCount={mediaDetails.seasonsCount}/>
+                                    <EpisodeSelector 
+                                        serieId={mediaDetails.id} 
+                                        seasonsCount={mediaDetails.seasonsCount} 
+                                        onEpisodeSelected={(seasonNumber, episodeNumber) => {clearVersionSources();searchVoSources(mediaDetails.title, mediaDetails.year, mediaDetails.imdbId, seasonNumber, episodeNumber)}}/>
                                     <AvailableSubtitles loading={loadingSubtitles} availableSubtitlesSources={mediaSubtitlesSources} />
                                     <AvailableVersions
                                         loading={voSourcesSearching || vfSourcesSearching}
@@ -349,7 +356,7 @@ function QualitySelector({ versionSources, onQualityChanged }) {
 
 }
 
-function EpisodeSelector({serieId, seasonsCount}){
+function EpisodeSelector({serieId, seasonsCount, onEpisodeSelected}){
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedSeasonNumber, setSelectedSeasonNumber] = useState(1)
     const [selectedEpisodeNumber, setSelectedEpisodeNumber] = useState(1)
@@ -370,9 +377,10 @@ function EpisodeSelector({serieId, seasonsCount}){
         margin: '12px auto',
     }
 
-    const onEpisodeSelected = (seasonNumber, episodeNumber) => {
+    const handleEpisodeSelected = (seasonNumber, episodeNumber) => {
         setSelectedSeasonNumber(seasonNumber);
         setSelectedEpisodeNumber(episodeNumber);
+        onEpisodeSelected(seasonNumber, episodeNumber);
         setModalVisible(false);
     }
 
@@ -381,7 +389,7 @@ function EpisodeSelector({serieId, seasonsCount}){
                 visible={modalVisible} 
                 serieId={serieId} 
                 numberOfSeasons={seasonsCount} 
-                onEpisodeSelected={(seasonNumber, episodeNumber)=> onEpisodeSelected(seasonNumber, episodeNumber)}
+                onEpisodeSelected={(seasonNumber, episodeNumber)=> handleEpisodeSelected(seasonNumber, episodeNumber)}
                 onCloseClick={()=> setModalVisible(false)}/>
             <BaseButton 
                 color="red" 

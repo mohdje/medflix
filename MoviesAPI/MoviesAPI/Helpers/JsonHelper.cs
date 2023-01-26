@@ -24,8 +24,7 @@ namespace MoviesAPI.Helpers
             }
             catch (System.Exception ex)
             {
-
-                return default(T);
+                return null;
             }
             
         }

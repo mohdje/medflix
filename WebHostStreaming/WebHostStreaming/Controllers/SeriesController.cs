@@ -3,13 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MoviesAPI.Services;
 using WebHostStreaming.Providers;
 using System.IO;
 using WebHostStreaming.Models;
-using WebHostStreaming.Helpers;
 using System.Net;
-using MoviesAPI.Services.Torrent.Dtos;
 using MoviesAPI.Services.Content.Dtos;
 using MoviesAPI.Services.Tmdb.Dtos;
 
@@ -40,9 +37,9 @@ namespace WebHostStreaming.Controllers
         [HttpGet("mediasoftoday")]
         public async Task<IEnumerable<LiteContentDto>> GetSeriesOfToday()
         {
-            var movies = await searchersProvider.SeriesSearcher.GetSeriesOfTodayAsync();
+            var series = await searchersProvider.SeriesSearcher.GetSeriesOfTodayAsync();
 
-            return movies.Where(m => !string.IsNullOrEmpty(m.LogoImageUrl)).Take(5);
+            return series.Where(m => !string.IsNullOrEmpty(m.LogoImageUrl)).Take(5);
         }
 
         [HttpGet("netflix")]
@@ -78,19 +75,19 @@ namespace WebHostStreaming.Controllers
         [HttpGet("recommandations")]
         public async Task<IEnumerable<LiteContentDto>> GetRecommandations([FromQuery]string id)
         {
-            var movieId = string.Empty;
+            var serieId = string.Empty;
             if (string.IsNullOrEmpty(id))
             {
-                var movies = await watchedMediaProvider.GetWatchedSeriesAsync();
-                if (movies == null || !movies.Any())
+                var series = await watchedMediaProvider.GetWatchedSeriesAsync();
+                if (series == null || !series.Any())
                     return null;
                 else
-                    movieId = movies.Last().Id;
+                    serieId = series.Last().Id;
             }
             else
-                movieId = id;
+                serieId = id;
 
-            return await searchersProvider.SeriesSearcher.GetRecommandationsAsync(movieId);
+            return await searchersProvider.SeriesSearcher.GetRecommandationsAsync(serieId);
         }
 
         [HttpGet("genre/{genreId}")]
@@ -112,7 +109,7 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("details/{id}")]
-        public async Task<ContentDto> GetMovieDetails(string id)
+        public async Task<ContentDto> GetSerieDetails(string id)
         {
             return await searchersProvider.SeriesSearcher.GetSerieDetailsAsync(id);
         }
@@ -120,19 +117,19 @@ namespace WebHostStreaming.Controllers
         [HttpGet("watchedmedia")]
         public async Task<IEnumerable<WatchedMediaDto>> GetWatchedSeries()
         {
-            var movies = await watchedMediaProvider.GetWatchedSeriesAsync();
-            return movies?.Reverse();
+            var series = await watchedMediaProvider.GetWatchedSeriesAsync();
+            return series?.Reverse();
         }
 
         [HttpGet("watchedmedia/{id}")]
         public async Task<WatchedMediaDto> GetWatchedSerie(int id)
         {
-            var movies = await watchedMediaProvider.GetWatchedSeriesAsync();
-            return movies?.SingleOrDefault(m => m.Id == id.ToString());
+            var series = await watchedMediaProvider.GetWatchedSeriesAsync();
+            return series?.SingleOrDefault(m => m.Id == id.ToString());
         }
 
         [HttpPut("watchedmedia")]
-        public async Task<IActionResult> SaveWatchedMovie([FromBody] WatchedMediaDto watchedSerie)
+        public async Task<IActionResult> SaveWatchedSerie([FromBody] WatchedMediaDto watchedSerie)
         {
             try
             {
@@ -149,14 +146,14 @@ namespace WebHostStreaming.Controllers
         [HttpGet("bookmarks")]
         public async Task<IEnumerable<LiteContentDto>> GetBookmarkedSeries()
         {
-            var movies = await bookmarkedMediaProvider.GetBookmarkedSeriesAsync();
-            return movies?.Reverse();
+            var series = await bookmarkedMediaProvider.GetBookmarkedSeriesAsync();
+            return series?.Reverse();
         }
 
 
 
         [HttpPut("bookmarks")]
-        public async Task<IActionResult> BookmarkMovie([FromBody] LiteContentDto serieToBookmark)
+        public async Task<IActionResult> BookmarkSerie([FromBody] LiteContentDto serieToBookmark)
         {
             try
             {
@@ -172,7 +169,7 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpDelete("bookmarks")]
-        public async Task<IActionResult> DeleteBookmarkMovie([FromBody] LiteContentDto serieBookmarkToDelete)
+        public async Task<IActionResult> DeleteBookmarkserie([FromBody] LiteContentDto serieBookmarkToDelete)
         {
             try
             {

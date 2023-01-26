@@ -24,12 +24,12 @@ function ModalEpisodeSelector({visible, serieId, numberOfSeasons, onEpisodeSelec
 
     const content = () => {
         return (
-            <div class="modal-episode-selector-container">
-                <div class="season-selector-container">
+            <div className="modal-episode-selector-container">
+                <div className="season-selector-container">
                     <DropDown values={seasonNumberList}  width="120px" textAlignement={"center"} onValueChanged={(selectedIndex) => setSelectedSeasonNumber(selectedIndex + 1)}/>
                 </div>
-                <div ref={episodeListRef} class="episode-list-container">
-                    <div class="loading-container">
+                <div ref={episodeListRef} className="episode-list-container">
+                    <div className="loading-container">
                         <CircularProgressBar color={"white"} size={"50px"} visible={isLoading}/>
                         <Paragraph text={"No episodes found"} visible={noEpisodeMessageVisible}/>
                     </div>
@@ -96,7 +96,7 @@ function Episode({episode, onClick}){
         return timeFormat;
     }
 
-    return <div class="episode-container" onClick={()=> onClick()}>
+    return <div className="episode-container" onClick={()=> onClick()}>
                 <img src={episode.imagePath}/>
                 <div>
                     <TitleAndContent title={episode.episodeNumber + '.' + episode.name} content={ToTimeFormat(episode.runTime)} justify="left" />

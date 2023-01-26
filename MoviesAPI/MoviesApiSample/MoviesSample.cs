@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace MoviesApiSample
 {
-    internal class Movies
+    internal class MoviesSample
     {
         IMovieSearcher movieSearcher;
-        public Movies(string apiKey)
+        public MoviesSample(string apiKey)
         {
             movieSearcher = MoviesAPIFactory.Instance.CreateMovieSearcher(apiKey);
         }

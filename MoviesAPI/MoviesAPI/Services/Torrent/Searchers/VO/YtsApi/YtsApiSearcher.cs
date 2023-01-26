@@ -11,7 +11,7 @@ using MoviesAPI.Services.Torrent.Dtos;
 
 namespace MoviesAPI.Services.Torrent
 {
-    public class YtsApiSearcher : ITorrentSearcher
+    public class YtsApiSearcher : ITorrentMovieSearcher
     {
         IYtsApiUrlProvider ytsApiUrlProvider;
 
@@ -22,7 +22,7 @@ namespace MoviesAPI.Services.Torrent
             this.ytsApiUrlProvider = ytsApiUrlProvider;
         }
 
-        public async Task<IEnumerable<MovieTorrent>> GetTorrentLinksAsync(string movieName, int year)
+        public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string movieName, int year)
         {
             var parameters = new NameValueCollection();
             parameters.Add("query_term", movieName);
@@ -33,7 +33,7 @@ namespace MoviesAPI.Services.Torrent
 
             var movie = requestResult?.Data?.Movies?.FirstOrDefault(m => m.Title.Replace("\'", String.Empty).Equals(movieName.Replace("\'", String.Empty), StringComparison.OrdinalIgnoreCase) && m.Year == year);
               
-            return movie != null ? movie.Torrents.Select(t => new MovieTorrent() { DownloadUrl = t.Url, Quality = t.Quality }) : new MovieTorrent[0];
+            return movie != null ? movie.Torrents.Select(t => new MediaTorrent() { DownloadUrl = t.Url, Quality = t.Quality }) : new MediaTorrent[0];
         }
 
         public string GetPingUrl()

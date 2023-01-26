@@ -48,15 +48,16 @@ namespace MoviesAPI.Services
         #region Torrent
         public async Task<TorrentSearchManager> CreateTorrentSearchManagerAsync()
         {
-            var availableVfTorrentSearchers = await GetAvailableServicesAsync(GetVfTorrentSearchers());
-            var availableVoTorrentSearchers = await GetAvailableServicesAsync(GetVoTorrentSearchers());
+            var availableVfTorrentMovieSearchers = await GetAvailableServicesAsync(GetVfTorrentMovieSearchers());
+            var availableVoTorrentMovieSearchers = await GetAvailableServicesAsync(GetVoTorrentMovieSearchers());
+            var availableVoTorrentSerieSearchers = await GetAvailableServicesAsync(GetVoTorrentSerieSearchers());
 
-            return new TorrentSearchManager(availableVfTorrentSearchers, availableVoTorrentSearchers);
+            return new TorrentSearchManager(availableVfTorrentMovieSearchers, availableVoTorrentMovieSearchers, null, availableVoTorrentSerieSearchers);
         }
 
-        private IEnumerable<ITorrentSearcher> GetVfTorrentSearchers()
+        private IEnumerable<ITorrentMovieSearcher> GetVfTorrentMovieSearchers()
         {
-            return new List<ITorrentSearcher>()
+            return new List<ITorrentMovieSearcher>()
             {
                 new YggTorrentSearcher(),
                 new GkTorrentSearcher(),
@@ -64,13 +65,21 @@ namespace MoviesAPI.Services
             };
         }
 
-        private IEnumerable<ITorrentSearcher> GetVoTorrentSearchers()
+        private IEnumerable<ITorrentMovieSearcher> GetVoTorrentMovieSearchers()
         {
-            return new List<ITorrentSearcher>()
+            return new List<ITorrentMovieSearcher>()
             {
                 new YtsHtmlV2Searcher(new YtsHtmlRsUrlProvider()),
                 new YtsHtmlSearcher(new YtsHtmlOneUrlProvider()),
                 new YtsApiSearcher(new YtsApiUrlMxProvider()),
+            };
+        }
+
+        private IEnumerable<ITorrentSerieSearcher> GetVoTorrentSerieSearchers()
+        {
+            return new List<ITorrentSerieSearcher>()
+            {
+                new OneomSearcher()
             };
         }
 

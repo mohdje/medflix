@@ -11,7 +11,7 @@ using MoviesAPI.Services.Torrent.Dtos;
 namespace MoviesAPI.Services.Torrent
 {
 
-    public class YtsHtmlSearcher : ITorrentSearcher
+    public class YtsHtmlSearcher : ITorrentMovieSearcher
     {
         IYtsHtmlUrlProvider htmlUrlProvider;
 
@@ -20,12 +20,12 @@ namespace MoviesAPI.Services.Torrent
             htmlUrlProvider = ytsHtmlUrlProvider;
         }
 
-        public async Task<IEnumerable<MovieTorrent>> GetTorrentLinksAsync(string movieName, int year)
+        public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string movieName, int year)
         {
             var pageIndex = 0;
             bool keepSearch = true;
 
-            var moviesSearchResult = new List<MovieTorrent>();
+            var moviesSearchResult = new List<MediaTorrent>();
 
             while (keepSearch)
             {
@@ -44,15 +44,15 @@ namespace MoviesAPI.Services.Torrent
             return moviesSearchResult;
         }
 
-        private async Task<IEnumerable<MovieTorrent>> GetMovieTorrentsAsync(HtmlNode documentNode, string title, int year)
+        private async Task<IEnumerable<MediaTorrent>> GetMovieTorrentsAsync(HtmlNode documentNode, string title, int year)
         {
             var movies = documentNode.SelectNodes("//div[contains(@class, 'browse-movie-wrap')]");
 
             if (movies == null)
-                return new MovieTorrent[0];
+                return new MediaTorrent[0];
 
-            var movieDtos = new List<MovieTorrent>();
-            var tasks = new List<Task<IEnumerable<MovieTorrent>>>();
+            var movieDtos = new List<MediaTorrent>();
+            var tasks = new List<Task<IEnumerable<MediaTorrent>>>();
             foreach (var movie in movies)
             {
                 tasks.Add(GetMovieTorrentsAsync(movie.InnerHtml, title, year));
@@ -63,7 +63,7 @@ namespace MoviesAPI.Services.Torrent
             return movieDtos;
         }
 
-        private async Task<IEnumerable<MovieTorrent>> GetMovieTorrentsAsync(string movieHtml, string title, int year)
+        private async Task<IEnumerable<MediaTorrent>> GetMovieTorrentsAsync(string movieHtml, string title, int year)
         {
             var doc = new HtmlDocument();
             doc.LoadHtml(movieHtml);
@@ -77,13 +77,13 @@ namespace MoviesAPI.Services.Torrent
                 return await GetMovieTorrentsAsync(movieDetailsLink);
             }
             else
-                return new MovieTorrent[0];
+                return new MediaTorrent[0];
         }
 
-        private async Task<IEnumerable<MovieTorrent>> GetMovieTorrentsAsync(string movieDetailsLink)
+        private async Task<IEnumerable<MediaTorrent>> GetMovieTorrentsAsync(string movieDetailsLink)
         {
             if (string.IsNullOrEmpty(movieDetailsLink))
-                return new MovieTorrent[0];
+                return new MediaTorrent[0];
 
             var doc = await HttpRequester.GetHtmlDocumentAsync(movieDetailsLink);
 
@@ -92,7 +92,7 @@ namespace MoviesAPI.Services.Torrent
             movieTorrentsHtml.LoadHtml(movieTorrents.InnerHtml);
 
             return movieTorrentsHtml.DocumentNode.SelectNodes("//a[contains(@title, 'torrent') or contains(@title, 'Torrent')]")
-                                                        ?.Select(n => new MovieTorrent()
+                                                        ?.Select(n => new MediaTorrent()
                                                         {
                                                             DownloadUrl = htmlUrlProvider.GetTorrentUrl(n.Attributes["href"].Value),
                                                             Quality = n.InnerText
