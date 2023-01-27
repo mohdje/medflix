@@ -16,7 +16,7 @@ using MoviesAPI.Services.Subtitles.Searchers;
 
 namespace MoviesAPI.Services.Subtitles
 {
-    public class OpenSubtitlesSearcher : ISubtitlesSearcher
+    public class OpenSubtitlesSearcher : ISubtitlesMovieSearcher, ISubtitlesSerieSearcher
     {
         private const string baseUrl = "https://www.opensubtitles.org";
         private const string subtitlesDownloadBaseUrl = "https://dl.opensubtitles.org/en/download/sub/";
@@ -27,13 +27,13 @@ namespace MoviesAPI.Services.Subtitles
         {
             this.subtitlesProvider = subtitlesProvider;
         }
-        public async Task<IEnumerable<string>> GetAvailableSubtitlesUrlsAsync(string imdbCode, SubtitlesLanguage subtitlesLanguage)
+        public async Task<IEnumerable<string>> GetAvailableMovieSubtitlesUrlsAsync(string imdbCode, SubtitlesLanguage subtitlesLanguage)
         {
             var openSubtitleMovieId = await GetOpenSubtitleMovieId(imdbCode);
             if (string.IsNullOrEmpty(openSubtitleMovieId))
                 return new string[0];
 
-            var doc = await HttpRequester.GetHtmlDocumentAsync(baseUrl + "/en/search/idmovie-" + openSubtitleMovieId + "/sublanguageid-" + GetLanguageCode(subtitlesLanguage));
+            var doc = await HttpRequester.GetHtmlDocumentAsync(BuildSubtitlesListPageUrl(openSubtitleMovieId, subtitlesLanguage));
             if (doc == null)
                 return new string[0];
 
@@ -56,6 +56,55 @@ namespace MoviesAPI.Services.Subtitles
                 var singleResult = doc.DocumentNode.SelectSingleNode("//a[@id='bt-dwl-bt']")?.Attributes["href"]?.Value;
                 if (!string.IsNullOrEmpty(singleResult))
                     return new string[] { baseUrl + singleResult };
+            }
+
+            return new string[0];
+        }
+
+        public async Task<IEnumerable<string>> GetAvailableSerieSubtitlesUrlsAsync(int seasonNumber, int episodeNumber, string imdbCode, SubtitlesLanguage subtitlesLanguage)
+        {
+            var openSubtitleMovieId = await GetOpenSubtitleMovieId(imdbCode);
+            if (string.IsNullOrEmpty(openSubtitleMovieId))
+                return new string[0];
+
+            var doc = await HttpRequester.GetHtmlDocumentAsync(BuildSubtitlesListPageUrl(openSubtitleMovieId, subtitlesLanguage));
+            if (doc == null)
+                return new string[0];
+
+            var htmlTableResults = doc.DocumentNode.SelectSingleNode("//table[@id='search_results']");
+            if (htmlTableResults != null)
+            {
+                var searchResultsHtml = new HtmlDocument();
+                searchResultsHtml.LoadHtml(htmlTableResults.InnerHtml);
+
+                var rows = searchResultsHtml.DocumentNode.SelectNodes("//tr");
+
+                var seasonNodeFound = false;
+                foreach (var row in rows)
+                {
+                    var rowHtml = new HtmlDocument();
+                    rowHtml.LoadHtml(row.InnerHtml);
+
+                    if (!seasonNodeFound)
+                    {
+                        var seasonNode = rowHtml.DocumentNode.SelectSingleNode($"//span[@id='season-{seasonNumber}']");
+                        if (seasonNode != null)
+                        {
+                            seasonNodeFound = true;
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        var episodeNode = rowHtml.DocumentNode.SelectSingleNode($"//span[@itemprop='episodeNumber']");
+                        if(episodeNode != null && episodeNode.InnerText == episodeNumber.ToString())
+                        {
+                            var downloadNode = rowHtml.DocumentNode.SelectSingleNode($"//a[starts-with(@href,'/download/')]");
+                            if(downloadNode != null)
+                                return new string[] { baseUrl + downloadNode.Attributes["href"].Value };
+                        }
+                    }
+                }
             }
 
             return new string[0];
@@ -101,6 +150,11 @@ namespace MoviesAPI.Services.Subtitles
                 default:
                     return null;
             }
+        }
+
+        private string BuildSubtitlesListPageUrl(string openSubtitleMovieId, SubtitlesLanguage subtitlesLanguage)
+        {
+            return $"{baseUrl}/en/search/idmovie-{openSubtitleMovieId}/sublanguageid-{GetLanguageCode(subtitlesLanguage)}";
         }
 
         public bool Match(string subtitlesSourceUrl)

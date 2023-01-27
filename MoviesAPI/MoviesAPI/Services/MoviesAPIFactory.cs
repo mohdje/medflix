@@ -92,19 +92,31 @@ namespace MoviesAPI.Services
         }
         public async Task<SubtitlesSearchManager> CreateSubstitlesSearchManagerAsync()
         {
-            var availableSearchers = await GetAvailableServicesAsync(GetSubtitlesSearchers());
+            var availableMovieSubtitlesSearchers = await GetAvailableServicesAsync(GetMovieSubtitlesSearchers());
+            var availableSerieSubtitlesSearchers = await GetAvailableServicesAsync(GetSerieSubtitlesSearchers());
 
-            return new SubtitlesSearchManager(availableSearchers);
+            return new SubtitlesSearchManager(availableMovieSubtitlesSearchers, availableSerieSubtitlesSearchers);
         }
 
-        private IEnumerable<ISubtitlesSearcher> GetSubtitlesSearchers()
+        private IEnumerable<ISubtitlesMovieSearcher> GetMovieSubtitlesSearchers()
         {
             if(string.IsNullOrEmpty(this.subtitlesFolder))
                 throw new Exception("You have to call SetSubtitlesFolder method first");
 
-            return new List<ISubtitlesSearcher>()
+            return new List<ISubtitlesMovieSearcher>()
             {
                 new YtsSubsSearcher(new SubtitlesFileProvider(subtitlesFolder)),
+                new OpenSubtitlesSearcher(new SubtitlesFileProvider(subtitlesFolder))
+            };
+        }
+
+        private IEnumerable<ISubtitlesSerieSearcher> GetSerieSubtitlesSearchers()
+        {
+            if (string.IsNullOrEmpty(this.subtitlesFolder))
+                throw new Exception("You have to call SetSubtitlesFolder method first");
+
+            return new List<ISubtitlesSerieSearcher>()
+            {
                 new OpenSubtitlesSearcher(new SubtitlesFileProvider(subtitlesFolder))
             };
         }

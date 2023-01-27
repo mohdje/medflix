@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MoviesAPI.Services.Subtitles
 {
-    internal class YtsSubsSearcher : ISubtitlesSearcher
+    internal class YtsSubsSearcher : ISubtitlesMovieSearcher
     {
         private const string baseUrl = "https://yts-subs.com";
 
@@ -19,7 +19,7 @@ namespace MoviesAPI.Services.Subtitles
         {
             this.subtitlesProvider = subtitlesProvider;
         }
-        public async Task<IEnumerable<string>> GetAvailableSubtitlesUrlsAsync(string imdbCode, SubtitlesLanguage subtitlesLanguage)
+        public async Task<IEnumerable<string>> GetAvailableMovieSubtitlesUrlsAsync(string imdbCode, SubtitlesLanguage subtitlesLanguage)
         {
             var searchUrl = baseUrl + "/movie-imdb/" + imdbCode;
             var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);

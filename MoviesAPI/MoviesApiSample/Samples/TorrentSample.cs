@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MoviesApiSample
+namespace MoviesApiSample.Samples
 {
     internal class TorrentSample
     {

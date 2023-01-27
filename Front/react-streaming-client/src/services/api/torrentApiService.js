@@ -65,8 +65,6 @@ class TorrentApiService extends BaseApiService {
 
     getDownloadState(streamUrl, onSuccess, onFail) {
         const streamUrlParams = new URLSearchParams(streamUrl.replace(this.buildTorrentUrl('stream/'+ AppMode.getActiveMode().urlKey)+'?',''));
-        console.log("streamUrlParams", streamUrlParams)
-        console.log("streamUrl", streamUrl)
 
         var parameters = [
             {

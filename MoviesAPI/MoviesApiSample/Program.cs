@@ -13,6 +13,7 @@ using MoviesAPI.Services;
 using System.Threading.Tasks;
 using MoviesAPI.Helpers;
 using MoviesAPI.Services.Content.Dtos;
+using MoviesApiSample.Samples;
 
 namespace MoviesApiSample
 {
@@ -25,43 +26,18 @@ namespace MoviesApiSample
             var movies = new MoviesSample(Tokens.API_TOKEN);
             var series = new SeriesSample(Tokens.API_TOKEN);
             var torrent = new TorrentSample();
+            var subtitles = new SubtitlesSample();
 
             //await movies.Test();
-           // await series.Test();
-            await torrent.Test();
+             await series.Test();
+            //await torrent.Test();
+            //await subtitles.GetSerieSubtitles(3, 5, "tt0773262", SubtitlesLanguage.English);
+
             Console.ReadKey();
         }
 
        
-        static async Task GetSubtitles(string imdbCode, SubtitlesLanguage language)
-        {
-            Console.WriteLine($"Search {language} subtitles for {imdbCode}");
-
-            MoviesAPIFactory.Instance.SetSubtitlesFolder(AppContext.BaseDirectory);
-
-            var subtitlesSearcher = await MoviesAPIFactory.Instance.CreateSubstitlesSearchManagerAsync();
-
-            var availableSubtitlesUrls = await subtitlesSearcher.GetAvailableSubtitlesUrlsAsync(imdbCode, language);
-
-            if (availableSubtitlesUrls == null || !availableSubtitlesUrls.Any())
-                Console.WriteLine("No subtitles found");
-            else
-            {
-                Console.WriteLine($"subtitles found:{language} - {string.Join(',', availableSubtitlesUrls)}");
-
-                var subtitles = await subtitlesSearcher.GetSubtitlesAsync(availableSubtitlesUrls.Last());
-                var counter = 0;
-                foreach (var sub in subtitles)
-                {
-                    Console.WriteLine($"{sub.StartTime} - {sub.EndTime} : {sub.Text}");
-                    counter++;
-
-                    if (counter == 10)
-                        break;
-                }
-
-            }
-        }
+      
 
       
     }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MoviesAPI.Helpers;
 
 namespace MoviesAPI.Services.Content
 {
@@ -18,7 +19,11 @@ namespace MoviesAPI.Services.Content
 
         public async Task<ContentDto> GetSerieDetailsAsync(string serieId)
         {
-            return await GetContentDetailsAsync(serieId);
+            var details = await GetContentDetailsAsync(serieId);
+            if (string.IsNullOrEmpty(details.ImdbId))
+                details.ImdbId = await GetImdbId(serieId);
+
+            return details;
         }
 
         public async Task<IEnumerable<LiteContentDto>> GetSeriesByGenreAsync(int genreId, int page)
@@ -102,6 +107,12 @@ namespace MoviesAPI.Services.Content
             var genreIdsToRemove = new int[] { 10762, 10763, 10764, 10766, 10768, 37 };
 
             return genres != null ? genres.Where(g => !genreIdsToRemove.Contains(g.Id)) : new Genre[0];
+        }
+
+        private async Task<string> GetImdbId(string tmdbContentId)
+        {
+            var result = await HttpRequester.GetAsync<TmdbExternalIdDto>(tmdbUrlBuilder.BuildSerieGetExternalIds(tmdbContentId));
+            return result?.ImdbId;
         }
     }
 }

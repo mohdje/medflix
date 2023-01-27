@@ -20,11 +20,32 @@ namespace WebHostStreaming.Controllers
             this.searchersProvider = searchersProvider;
         }
 
-        [HttpGet("available/{imdbCode}")]
+        [HttpGet("movies")]
         public async Task<IEnumerable<SubtitlesSourcesDto>> GetAvailableSubtitles(string imdbCode)
         {
-            var frenchSubtitlesSourcesDto = await searchersProvider.SubtitlesSearchManager.GetAvailableSubtitlesUrlsAsync(imdbCode, SubtitlesLanguage.French);
-            var englishSubtitlesSourcesDto = await searchersProvider.SubtitlesSearchManager.GetAvailableSubtitlesUrlsAsync(imdbCode, SubtitlesLanguage.English);
+            var frenchSubtitlesSourcesDto = await searchersProvider.SubtitlesSearchManager.GetAvailableMovieSubtitlesUrlsAsync(imdbCode, SubtitlesLanguage.French);
+            var englishSubtitlesSourcesDto = await searchersProvider.SubtitlesSearchManager.GetAvailableMovieSubtitlesUrlsAsync(imdbCode, SubtitlesLanguage.English);
+
+            return BuildSubtitlesSourcesDto(frenchSubtitlesSourcesDto, englishSubtitlesSourcesDto);
+        }
+
+        [HttpGet("series")]
+        public async Task<IEnumerable<SubtitlesSourcesDto>> GetAvailableSubtitles(int seasonNumber, int episodeNumber, string imdbCode)
+        {
+            var frenchSubtitlesSourcesDto = await searchersProvider.SubtitlesSearchManager.GetAvailableSerieSubtitlesUrlsAsync(seasonNumber, episodeNumber, imdbCode, SubtitlesLanguage.French);
+            var englishSubtitlesSourcesDto = await searchersProvider.SubtitlesSearchManager.GetAvailableSerieSubtitlesUrlsAsync(seasonNumber, episodeNumber, imdbCode, SubtitlesLanguage.English);
+
+            return BuildSubtitlesSourcesDto(frenchSubtitlesSourcesDto, englishSubtitlesSourcesDto);
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<SubtitlesDto>> GetSubtitles([FromQuery(Name = "sourceUrl")] string sourceUrl)
+        {
+            return await searchersProvider.SubtitlesSearchManager.GetSubtitlesAsync(sourceUrl);
+        }
+
+        private List<SubtitlesSourcesDto> BuildSubtitlesSourcesDto(IEnumerable<string> frenchSubtitlesSourcesDto, IEnumerable<string> englishSubtitlesSourcesDto)
+        {
 
             var subtitles = new List<SubtitlesSourcesDto>();
 
@@ -45,10 +66,5 @@ namespace WebHostStreaming.Controllers
             return subtitles;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<SubtitlesDto>> GetSubtitles([FromQuery(Name = "sourceUrl")] string sourceUrl)
-        {
-            return await searchersProvider.SubtitlesSearchManager.GetSubtitlesAsync(sourceUrl);
-        }
     }
 }

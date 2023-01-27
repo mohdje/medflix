@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MoviesApiSample
+namespace MoviesApiSample.Samples
 {
     internal class MoviesSample
     {
@@ -25,13 +25,13 @@ namespace MoviesApiSample
             //await GetPopularMovies();
             //await GetPopularMoviesByGenre(16);
             //await GetMoviesByGenre(10751);
-            //await GetMovieDetails("436270");
+            await GetMovieDetails("436270");
             //await GetPopularNetflixMovies();
             //await GetPopularDisneyPlusMovies();
             //await GetPopularAmazonPrimeMovies();
 
-            await GetFrenchTitle("661374");
-            await GetGenres();
+            //await GetFrenchTitle("661374");
+            //await GetGenres();
         }
         private async Task GetMoviesOfToday()
         {
@@ -106,6 +106,7 @@ namespace MoviesApiSample
             Console.WriteLine($"Cast: {movie.Cast}");
             Console.WriteLine($"Duration: {movie.Duration}");
             Console.WriteLine($"Trailer: {movie.YoutubeTrailerUrl}");
+            Console.WriteLine($"ImdbId: {movie.ImdbId}");
 
         }
 

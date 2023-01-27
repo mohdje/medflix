@@ -60,7 +60,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
     }, [mediaId]);
 
     useEffect(() => {
-        if (mediaDetails.imdbId) getAvailableSubtitles(mediaDetails.imdbId);
+        if (mediaDetails.imdbId) getAvailableSubtitles(mediaDetails.imdbId, 1, 1);
         if (mediaDetails.id && mediaDetails.title && mediaDetails.year) {
             clearVersionSources();
             searchVfSources(mediaDetails.id, mediaDetails.title, mediaDetails.year);
@@ -168,9 +168,9 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
         );
     }
 
-    const getAvailableSubtitles = (imdbCode) => {
+    const getAvailableSubtitles = (imdbCode, seasonNumber, episodeNumber) => {
         setLoadingSubtitles(true);
-        AppServices.subtitlesApiService.getAvailableSubtitles(imdbCode,
+        AppServices.subtitlesApiService.getAvailableSubtitles(imdbCode, seasonNumber, episodeNumber,
             (availableSubtitles) => {
                 setMediaSubtitlesSources(availableSubtitles);
                 setTimeout(() => setLoadingSubtitles(false), 1000);
@@ -209,7 +209,11 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
             onCloseClick();
     }
 
-    
+    const onEpisodeSelected = (seasonNumber, episodeNumber) => {
+        clearVersionSources();
+        searchVoSources(mediaDetails.title, mediaDetails.year, mediaDetails.imdbId, seasonNumber, episodeNumber);
+        getAvailableSubtitles(mediaDetails.imdbId, seasonNumber, episodeNumber);
+    }
 
     return (
         <div style={{ height: '100%' }}>          
@@ -248,7 +252,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                                     <EpisodeSelector 
                                         serieId={mediaDetails.id} 
                                         seasonsCount={mediaDetails.seasonsCount} 
-                                        onEpisodeSelected={(seasonNumber, episodeNumber) => {clearVersionSources();searchVoSources(mediaDetails.title, mediaDetails.year, mediaDetails.imdbId, seasonNumber, episodeNumber)}}/>
+                                        onEpisodeSelected={(seasonNumber, episodeNumber) => onEpisodeSelected(seasonNumber, episodeNumber)}/>
                                     <AvailableSubtitles loading={loadingSubtitles} availableSubtitlesSources={mediaSubtitlesSources} />
                                     <AvailableVersions
                                         loading={voSourcesSearching || vfSourcesSearching}

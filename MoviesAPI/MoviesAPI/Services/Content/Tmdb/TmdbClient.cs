@@ -105,7 +105,6 @@ namespace MoviesAPI.Services.Tmdb
             var tmdbSearchResult = await HttpRequester.GetAsync<TmdbSearchResult>(tmdbUrlBuilder.BuildContentDetailsUrl(tmdbContentId));
             var logoImgUrl = await GetLogoImageUrlAsync(tmdbContentId);
             var tmdbCredits = await GetCredits(tmdbContentId);
-            var imdbId = await GetImdbId(tmdbContentId);
            
             return new ContentDto()
             {
@@ -122,7 +121,7 @@ namespace MoviesAPI.Services.Tmdb
                 YoutubeTrailerUrl = GetYoutubeTrailerUrlVideo(tmdbSearchResult.Videos.Results),
                 Cast = tmdbCredits?.Cast?.Take(4).Select(c => c.Name).Aggregate((a, b) => $"{a}, {b}"),
                 Director = tmdbCredits?.DirectorName,
-                ImdbId = imdbId,
+                ImdbId = tmdbSearchResult.ImdbId,
                 SeasonsCount = tmdbSearchResult.SeasonsCount
             };
         }
@@ -179,12 +178,6 @@ namespace MoviesAPI.Services.Tmdb
         private async Task<TmdbCredits> GetCredits(string tmdbContentId)
         {
             return await HttpRequester.GetAsync<TmdbCredits>(tmdbUrlBuilder.BuildGetCreditsUrl(tmdbContentId));
-        }
-
-        private async Task<string> GetImdbId(string tmdbContentId)
-        {
-            var result = await HttpRequester.GetAsync<TmdbExternalIdDto>(tmdbUrlBuilder.BuildSerieGetExternalIds(tmdbContentId));
-            return result?.ImdbId;
         }
 
         private string GetYoutubeTrailerUrlVideo(TmdbVideo[] tmdbVideos)
