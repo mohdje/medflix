@@ -16,3 +16,10 @@ Front/react-streaming-client/build/
 Front/electron-application/out/
 Front/electron-application/node_modules/
 Front/electron-application/view/
+Front/react-streaming-client/node_modules/
+Front/react-streaming-client/build/
+Front/electron-app/out/
+Front/electron-app/node_modules/
+Front/electron-app/view/
+MoviesAPI/MoviesApiSample/Tokens.cs
+WebHostStreaming/WebHostStreaming/Helpers/Tokens.cs
