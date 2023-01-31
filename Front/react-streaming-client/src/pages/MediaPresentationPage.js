@@ -63,7 +63,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
         if (mediaDetails.imdbId) getAvailableSubtitles(mediaDetails.imdbId, 1, 1);
         if (mediaDetails.id && mediaDetails.title && mediaDetails.year) {
             clearVersionSources();
-            searchVfSources(mediaDetails.id, mediaDetails.title, mediaDetails.year);
+            searchVfSources(mediaDetails.id, mediaDetails.title, mediaDetails.year, 1, 1);
             searchVoSources(mediaDetails.title, mediaDetails.year, mediaDetails.imdbId ,1, 1);
         }
 
@@ -86,6 +86,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
         setDataLoaded(false);
         setMediaDetails({});
         setMediaProgression({});
+        setRecommandedMedias([]);
         if (mediaId) {
             AppServices.searchMediaService.getMediaDetails(mediaId,
                 (details) => {
@@ -141,7 +142,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
 
     const searchVfSources = (mediaId, mediaTitle, mediaYear, seasonNumber, episodeNumber) => {
         setVfSourcesSearching(true);
-        AppServices.torrentApiService.searchVFSources(mediaId, mediaTitle, mediaYear,
+        AppServices.torrentApiService.searchVFSources(mediaId, mediaTitle, mediaYear, seasonNumber, episodeNumber,
             (sources) => {
                 setVfSourcesSearching(false);
                 if (sources && sources.length > 0) {
@@ -212,6 +213,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
     const onEpisodeSelected = (seasonNumber, episodeNumber) => {
         clearVersionSources();
         searchVoSources(mediaDetails.title, mediaDetails.year, mediaDetails.imdbId, seasonNumber, episodeNumber);
+        searchVfSources(mediaDetails.id, mediaDetails.title, mediaDetails.year, seasonNumber, episodeNumber);
         getAvailableSubtitles(mediaDetails.imdbId, seasonNumber, episodeNumber);
     }
 
@@ -320,6 +322,11 @@ function AvailableVersions({ availableVersionsSources, loading, onVersionSelecte
         setSelectedIndex(index);
         onVersionSelected(availableVersionsSources[index]);
     };
+
+    useEffect(() => {
+        if(loading)
+            setSelectedIndex(0);
+    },[loading]);
 
     if (loading)
         content = <CircularProgressBar color={'white'} size={'15px'} visible={true} />;

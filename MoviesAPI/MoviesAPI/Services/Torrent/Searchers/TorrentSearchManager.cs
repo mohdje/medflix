@@ -32,6 +32,12 @@ namespace MoviesAPI.Services.Torrent
             return torrentLinks.DistinctBy(t => t.DownloadUrl);
         }
 
+        public async Task<IEnumerable<MediaTorrent>> SearchVfTorrentsSerieAsync(string frenchSerieName, int seasonNumber, int episodeNumber)
+        {
+            var torrentLinks = await SearchTorrentsSerie(vfTorrentSerieSearchers, frenchSerieName, null, seasonNumber, episodeNumber);
+            return torrentLinks.DistinctBy(t => t.DownloadUrl);
+        }
+
         public async Task<IEnumerable<MediaTorrent>> SearchVoTorrentsMovieAsync(string originalMovieName, int year)
         {
             var torrentLinks = await SearchTorrentsMovie(voTorrentMovieSearchers, originalMovieName, year);

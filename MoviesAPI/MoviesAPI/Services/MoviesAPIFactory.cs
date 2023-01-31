@@ -48,11 +48,13 @@ namespace MoviesAPI.Services
         #region Torrent
         public async Task<TorrentSearchManager> CreateTorrentSearchManagerAsync()
         {
-            var availableVfTorrentMovieSearchers = await GetAvailableServicesAsync(GetVfTorrentMovieSearchers());
             var availableVoTorrentMovieSearchers = await GetAvailableServicesAsync(GetVoTorrentMovieSearchers());
             var availableVoTorrentSerieSearchers = await GetAvailableServicesAsync(GetVoTorrentSerieSearchers());
+            var availableVfTorrentMovieSearchers = await GetAvailableServicesAsync(GetVfTorrentMovieSearchers());
+            var availableVfTorrentSerieSearchers = await GetAvailableServicesAsync(GetVfTorrentSerieSearchers());
 
-            return new TorrentSearchManager(availableVfTorrentMovieSearchers, availableVoTorrentMovieSearchers, null, availableVoTorrentSerieSearchers);
+
+            return new TorrentSearchManager(availableVfTorrentMovieSearchers, availableVoTorrentMovieSearchers, availableVfTorrentSerieSearchers, availableVoTorrentSerieSearchers);
         }
 
         private IEnumerable<ITorrentMovieSearcher> GetVfTorrentMovieSearchers()
@@ -80,6 +82,14 @@ namespace MoviesAPI.Services
             return new List<ITorrentSerieSearcher>()
             {
                 new OneomSearcher()
+            };
+        }
+
+        private IEnumerable<ITorrentSerieSearcher> GetVfTorrentSerieSearchers()
+        {
+            return new List<ITorrentSerieSearcher>()
+            {
+                new YggTorrentSearcher()
             };
         }
 

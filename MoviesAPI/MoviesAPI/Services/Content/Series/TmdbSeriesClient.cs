@@ -80,6 +80,9 @@ namespace MoviesAPI.Services.Content
         {
             var seasonEpisodes = await GetEpisodesBySeason(serieId, seasonNumber);
 
+            if (seasonEpisodes == null)
+                return new EpisodeDto[0];
+
             var episodeDtos = new List<EpisodeDto>();
             foreach (var episode in seasonEpisodes.Episodes)
             {

@@ -18,19 +18,23 @@
     text-align: left;
     display: flex;
     flex-direction: column;
-    background: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 6%, rgba(0,0,0,0.7343312324929971) 19%, rgba(0,0,0,0) 51%, rgba(0,0,0,0.6923144257703081) 72%, rgba(0,0,0,1) 99%, rgba(0,0,0,1) 100%);
+    background: linear-gradient(8deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 42%, rgba(0,0,0,0.7763480392156863) 62%, rgba(255,255,255,0) 100%);
 }
+
+@media (max-width: 1200px) { 
+    .media-presentation-page-container .presentation .info-container{
+        background: linear-gradient(8deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 58%, rgba(0,0,0,0.7763480392156863) 72%, rgba(255,255,255,0) 100%);    }
+   
+ }
 
 .media-presentation-page-container .presentation .info-container .info{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
-    padding: 0 0 3% 3%;
+    padding: 0 0 20px 10px;
     width: 35%;
     flex-grow: 1;
-    background: linear-gradient(27deg, rgba(0,0,0,1) 23%, rgba(0,0,0,0.5662640056022409) 49%, rgba(253,187,45,0) 73%);
-
 }
 
 .media-presentation-page-container .presentation .info-container .info .title{
@@ -66,8 +70,6 @@
 .media-presentation-page-container .presentation .info-container .extra{
     flex-grow: 4;
     padding: 3px 3%;
-    background: rgba(0, 0, 0, 0.9);
-    box-shadow:rgb(0 0 0 / 90%) 0px -12px 12px 20px;
 }
 
 .media-presentation-page-container .presentation .horizontal{

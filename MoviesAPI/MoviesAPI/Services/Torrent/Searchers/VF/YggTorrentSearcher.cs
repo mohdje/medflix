@@ -8,12 +8,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MoviesAPI.Extensions;
 
 namespace MoviesAPI.Services.Torrent
 {
-    internal class YggTorrentSearcher : ITorrentMovieSearcher
+    internal class YggTorrentSearcher : ITorrentMovieSearcher, ITorrentSerieSearcher
     {
-        private const string baseUrl = "https://www2.yggtorrent.one";
+        private const string baseUrl = "https://ww1.yggtorrent.fm";
 
         public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string frenchMovieName, int year)
         {
@@ -70,7 +71,61 @@ namespace MoviesAPI.Services.Torrent
             return result;
         }
 
-      
+        public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string frenchSerieName, string imdbId, int seasonNumber, int episodeNumber)
+        {
+            frenchSerieName = frenchSerieName.RemoveSpecialCharacters(toLower: true);
+
+            var seasonId = $"S{(seasonNumber < 10 ? "0" : "")}{seasonNumber}";
+            var episodeId = $"E{(episodeNumber < 10 ? "0" : "")}{episodeNumber}";
+
+            var searchUrl = $"{baseUrl}/search_torrent/series-francaise/{frenchSerieName} saison {seasonNumber} {seasonId}{episodeId}";
+
+            var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
+
+            var searchResultList = doc.DocumentNode.SelectNodes("//div[@class='table-responsive']//tr");
+
+            var result = new List<MediaTorrent>();
+
+            if (searchResultList == null)
+                return result;
+
+            var getTorrentTasks = new List<Task>();
+
+            foreach (var node in searchResultList)
+            {
+                doc = new HtmlDocument();
+                doc.LoadHtml(node.InnerHtml);
+                var linkNode = doc.DocumentNode.SelectSingleNode("//a");
+                var nodeTitle = linkNode?.Attributes["title"]?.Value;
+
+                if (nodeTitle != null && 
+                    (nodeTitle.CustomStartsWith($"{frenchSerieName} Saison {seasonNumber}")
+                    || nodeTitle.CustomStartsWith($"{frenchSerieName} {seasonId}{episodeId}")))
+                {
+                    getTorrentTasks.Add(Task.Run(async () =>
+                    {
+                        var downloadUrl = await GetTorrentLinkAsync($"{baseUrl}/{linkNode.Attributes["href"].Value}");
+
+                        if (!string.IsNullOrEmpty(downloadUrl))
+                        {
+                            result.Add(new MediaTorrent()
+                            {
+                                Quality = linkNode.InnerText.GetMovieQuality(),
+                                DownloadUrl = downloadUrl
+                            });
+                        }
+
+                    }));
+
+                }
+            }
+
+            await Task.WhenAll(getTorrentTasks);
+
+            return result;
+        }
+
+
         public string GetPingUrl()
         {
             return baseUrl;

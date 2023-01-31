@@ -198,16 +198,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("episodes/{serieId}/{seasonNumber}")]
         public async Task<IEnumerable<EpisodeDto>> GetEpisodes(string serieId, int seasonNumber)
         {
-            try
-            {
-                return await searchersProvider.SeriesSearcher.GetEpisodes(serieId, seasonNumber);
-            }
-            catch (Exception)
-            {
-
-                return new EpisodeDto[0];
-            }
-            
+            return await searchersProvider.SeriesSearcher.GetEpisodes(serieId, seasonNumber);
         }
     }
 }

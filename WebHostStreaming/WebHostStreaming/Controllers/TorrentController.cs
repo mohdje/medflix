@@ -29,11 +29,19 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("movies/vf")]
-        public async Task<IEnumerable<MediaTorrent>> SearchVFMovieTorrents([FromQuery(Name = "movieId")] string movieId, [FromQuery(Name = "originalTitle")] string originalTitle, [FromQuery(Name = "year")] int year)
+        public async Task<IEnumerable<MediaTorrent>> SearchVFMovieTorrents(string mediaId, string title, int year)
         {
-            var frenchTitle = await searchersProvider.MovieSearcher.GetMovieFrenchTitleAsync(movieId);
+            var frenchTitle = await searchersProvider.MovieSearcher.GetMovieFrenchTitleAsync(mediaId);
 
-            return await searchersProvider.TorrentSearchManager.SearchVfTorrentsMovieAsync(string.IsNullOrEmpty(frenchTitle) ? originalTitle : frenchTitle, year);
+            return await searchersProvider.TorrentSearchManager.SearchVfTorrentsMovieAsync(string.IsNullOrEmpty(frenchTitle) ? title : frenchTitle, year);
+        }
+
+        [HttpGet("series/vf")]
+        public async Task<IEnumerable<MediaTorrent>> SearchVFSerieTorrents(string mediaId, string title, int season, int episode)
+        {
+            var frenchTitle = await searchersProvider.SeriesSearcher.GetSerieFrenchTitleAsync(mediaId);
+
+            return await searchersProvider.TorrentSearchManager.SearchVfTorrentsSerieAsync(string.IsNullOrEmpty(frenchTitle) ? title : frenchTitle, season, episode);
         }
 
         [HttpGet("movies/vo")]
@@ -44,12 +52,6 @@ namespace WebHostStreaming.Controllers
 
         [HttpGet("series/vo")]
         public async Task<IEnumerable<MediaTorrent>> SearchVOSerieTorrents(string title, string imdbid, int season, int episode)
-        {
-            return await searchersProvider.TorrentSearchManager.SearchVoTorrentsSerieAsync(title, imdbid, season, episode); ;
-        }
-
-        [HttpGet("series/vf")]
-        public async Task<IEnumerable<MediaTorrent>> SearchVFSerieTorrents(string title, string imdbid, int season, int episode)
         {
             return await searchersProvider.TorrentSearchManager.SearchVoTorrentsSerieAsync(title, imdbid, season, episode); ;
         }
@@ -66,7 +68,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("stream/series")]
         public async Task<IActionResult> GetStream(string url, int seasonNumber, int episodeNumber)
         {
-            var streamDto = await GetStreamDtoAsync(url, torrentFilePath => SelectFileBySeasonAndEpisode(torrentFilePath, seasonNumber, episodeNumber));
+            var streamDto = await GetStreamDtoAsync(url, torrentFilePath => SelectFileByFormat(torrentFilePath, GetAcceptedFormat()));
             return streamDto != null ? File(streamDto.Stream, streamDto.ContentType, true) : NoContent();
         }
 

@@ -19,7 +19,7 @@ namespace MoviesAPI.Extensions
 
         public static string GetMovieQuality(this string movieLinkTitle)
         {
-            var qualities = new string[] { "720p", "1080p", "DVDRIP", "WEBRIP" };
+            var qualities = new string[] { "720p", "1080p", "DVDRIP", "WEBRIP", "HDTV" };
 
             foreach (var quality in qualities)
             {
@@ -27,14 +27,14 @@ namespace MoviesAPI.Extensions
                     return quality;
             }
 
-            return string.Empty;
+            return "Unknown";
         }
 
-        public static string RemoveSpecialCharacters(this string text)
+        public static string RemoveSpecialCharacters(this string text, bool removeSpaces = false, bool toLower = false)
         {
             if (!string.IsNullOrEmpty(text))
             {
-                return text.Replace(":", "")
+                var result = text.Replace(":", "")
                             .Replace("-", "")
                             .Replace("'", "")
                             .Replace("é", "e")
@@ -44,9 +44,22 @@ namespace MoviesAPI.Extensions
                             .Replace("î", "i")
                             .Replace("ï", "i")
                             .Replace("ù", "u");
+
+                if (removeSpaces)
+                    result = result.Replace(" ", "");
+
+                if (toLower)
+                    result = result.ToLower();
+
+                return result;
             }
 
             return string.Empty;
+        }
+
+        public static bool CustomStartsWith(this string text, string value)
+        {
+            return text.RemoveSpecialCharacters(removeSpaces: true, toLower: true).StartsWith(value.RemoveSpecialCharacters(removeSpaces: true, toLower: true));
         }
 
         public static string HtmlUnescape(this string text)
