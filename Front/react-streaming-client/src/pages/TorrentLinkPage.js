@@ -16,9 +16,11 @@ function TorrentLinkPage() {
     const [torrentLink, setTorrentLink] = useState('');
     const torrentLinkRef = useRef('');
     const [openingTorrentLink, setOpeningTorrentLink] = useState(false);
+    const [openingHistory, setOpeningHistory] = useState(false);
     const [torrentHistory, setTorrentHistory] = useState([]);
     const [torrentFiles, setTorrentFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState('');
+    const [loadingMessage, setLoadingMessage] = useState('');
 
     const [showMoviePlayer, setShowMoviePlayer] = useState(false);
 
@@ -40,11 +42,15 @@ function TorrentLinkPage() {
     }, [torrentLink, selectedFile]);
 
     const getTorrentHistory = () => {
+        setOpeningHistory(true);
+        setLoadingMessage('Loading history');
         AppServices.torrentApiService.getTorrentHistory(
             (files) => {
+                setOpeningHistory(false);
                 setTorrentHistory(files);
             },
             () => {
+                setOpeningHistory(false);
                 setTorrentHistory([]);
             });
     };
@@ -59,6 +65,7 @@ function TorrentLinkPage() {
     const openTorrent = () => {
         setTorrentFiles([]);
         setOpeningTorrentLink(true);
+        setLoadingMessage('Opening torrent');
         
         AppServices.torrentApiService.getTorrentFiles(torrentLink,
             (response) => {
@@ -92,7 +99,7 @@ function TorrentLinkPage() {
 
             <div style={{ margin: "10px 0" }}>
                 <OpenButton visible={!torrentFilesAreLoadingOrLoaded()} onClick={() => openTorrent()} />
-                {Boolean(openingTorrentLink) ? <CircularProgressBar visible size="30px" color="white" /> : null}
+                {Boolean(openingTorrentLink) || Boolean(openingHistory) ? <CircularProgressBar visible size="30px" color="white" text={loadingMessage}/> : null}
             </div>
             <TorrentHistory visible={!torrentFilesAreLoadingOrLoaded()} files={torrentHistory} onClick={(torrentLink) => {changeTorrentLink(torrentLink)}}/>
             <TorrentFilesList visible={torrentFilesAreLoadingOrLoaded()} torrentLink={torrentLink} files={torrentFiles} onPlayFileClick={(file) => onPlayFileClick(file)} />
@@ -148,7 +155,7 @@ function FilesList({ torrentLink, files, onFileClick, onPlayFileClick, contentTy
         borderRadius: '15px',
         padding: '5px 0',
         maxHeight: '300px',
-        overflowY: 'scroll'
+        overflowY: 'auto'
     };
 
     const textStyle = {

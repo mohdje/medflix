@@ -8,7 +8,7 @@ function OpenButton({ onClick, visible }) {
     const content = <div>Open</div>;
 
     return (
-        <BaseButton content={content} color={"red"} onClick={() => onClick()} />
+        <BaseButton content={content} centered color={"red"} onClick={() => onClick()} />
     );
 }
 
