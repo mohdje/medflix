@@ -91,6 +91,7 @@ function App() {
       },
       {
         id: routerIds.mediaPresentationPage,
+        containerStyle: { height: '100%'},
         render: (<MediaPresentationPage
           mediaId={mediaId}
           onCloseClick={() => onMediaFullPresentationClose()} />)

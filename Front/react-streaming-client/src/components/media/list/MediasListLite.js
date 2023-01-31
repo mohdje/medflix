@@ -9,7 +9,7 @@ import ArrowBackIosRounded from '@material-ui/icons/ArrowBackIosRounded';
 import fadeTransition from "../../../services/customStyles.js";
 import { useEffect, useRef, useState } from 'react';
 
-function MediasListLite({ medias, onMediaClick }) {
+function MediasListLite({ medias, alignLeft, onMediaClick }) {
   const listRef = useRef(null);
   const [hideBackArrow, setHideBackArrow] = useState(true);
   const [hideForwardArrow, setHideForwardArrow] = useState(false);
@@ -95,7 +95,7 @@ function MediasListLite({ medias, onMediaClick }) {
       <div style={fadeTransition(!hideForwardArrow)} className="floating-navigation-btn right" onClick={() => navToRight()}>
         <ArrowForwardIosRounded style={{ fontSize: 40, color: 'white' }} />
       </div>
-      <div ref={listRef} className={"medias-list"+ (hideBackArrow && hideForwardArrow ? ' center' : '')}>
+      <div ref={listRef} className={"medias-list"+ (hideBackArrow && hideForwardArrow && !alignLeft ? ' center' : '')}>
         {medias.map((media, index) => (<MediaLitePresentation key={index} media={media} hoverEffect={true} onMediaClick={(mediaId)=>onMediaClick(mediaId)}/>))}
       </div>
     </div>

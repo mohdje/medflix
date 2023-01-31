@@ -2,13 +2,13 @@ import "../../../style/medias-list.css";
 import MediasListLite from "./MediasListLite";
 import fadeTransition from "../../../services/customStyles.js";
 
-function MediasListLiteWithTitle({ listTitle, medias, visible, onMediaClick}) {
+function MediasListLiteWithTitle({ listTitle, medias, alignLeft, visible, onMediaClick}) {
     return (
         <div style={fadeTransition(medias && medias.length > 0  && visible, 1)} className="medias-list-genre-container">
             <div className="medias-list-header">
                 <div className="medias-list-genre">{listTitle}</div>
             </div>
-            <MediasListLite medias={medias} onMediaClick={(mediaId)=>onMediaClick(mediaId)}/>
+            <MediasListLite medias={medias} alignLeft={alignLeft} onMediaClick={(mediaId)=>onMediaClick(mediaId)}/>
         </div>
     );
 }

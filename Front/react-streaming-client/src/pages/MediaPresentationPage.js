@@ -273,13 +273,13 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
 
                             </div>
                         </div>
-
                         <div className="extra">
                             <TitleAndContent title="Director" content={mediaDetails.director} justify="left" />
                             <TitleAndContent title="Cast" content={mediaDetails.cast} justify="left" />
                             <Paragraph text={mediaDetails.synopsis}></Paragraph>
                             <MediasListLiteWithTitle 
                                 medias={recommandedMedias} 
+                                alignLeft
                                 listTitle="You may also like" 
                                 visible={recommandedMedias && recommandedMedias.length > 0} 
                                 onMediaClick={(mediaId) =>  {onRecommandedMediaClick(mediaId)}}/>
