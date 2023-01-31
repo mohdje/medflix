@@ -9,7 +9,12 @@ import "../../../style/media-pictures-presentation.css";
 
 function MediasOfToday({ medias, onClick }) {
     const [mediaIndexVisible, setMediaIndexVisible] = useState(0);
-    const [carouselPlay, setCarouselPlay] = useState(true);
+    const [carouselPlay, setCarouselPlay] = useState(false);
+
+    useEffect(() =>{
+        if(medias && medias.length > 0)
+            setCarouselPlay(true);
+    }, [medias]);
 
     useEffect(() => {
         var changeMedia;
