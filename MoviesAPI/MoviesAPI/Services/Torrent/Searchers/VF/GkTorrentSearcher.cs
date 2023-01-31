@@ -16,9 +16,12 @@ namespace MoviesAPI.Services.Torrent
 
         public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string frenchMovieName, int year)
         {
-            var searchUrl = $"{baseUrl}/recherche/{frenchMovieName}";
+            var searchUrl = $"{baseUrl}/recherche/{frenchMovieName.RemoveSpecialCharacters(toLower: true)}";
 
             var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
+
+            if (doc == null)
+                return null;
 
             var searchResultList = doc.DocumentNode.SelectNodes("//table[@class='table table-hover']//td");
 

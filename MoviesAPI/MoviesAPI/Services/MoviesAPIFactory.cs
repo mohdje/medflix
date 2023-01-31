@@ -29,9 +29,11 @@ namespace MoviesAPI.Services
 
         private string subtitlesFolder;
 
+        private Dictionary<string, bool> serviceAvailibilityCache;
+
         private MoviesAPIFactory()
         {
-
+            serviceAvailibilityCache = new Dictionary<string, bool>();
         }
 
        
@@ -153,15 +155,22 @@ namespace MoviesAPI.Services
 
         private async Task<bool> IsAvailable(ISearcherService searcherService)
         {
+            var url = searcherService.GetPingUrl();
+
+            if (serviceAvailibilityCache.ContainsKey(url))
+                return serviceAvailibilityCache[url];
+
             try
             {
                 var result = await HttpRequester.GetAsync(new Uri(searcherService.GetPingUrl()));
-                return !string.IsNullOrEmpty(result);
+                serviceAvailibilityCache.Add(url, !string.IsNullOrEmpty(result));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                serviceAvailibilityCache.Add(url, false);
             }
+
+            return serviceAvailibilityCache[url];
 
         }
     }

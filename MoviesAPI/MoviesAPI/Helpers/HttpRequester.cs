@@ -23,6 +23,7 @@ namespace MoviesAPI.Helpers
             {
                 client = new HttpClient();
                 client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+                client.Timeout = TimeSpan.FromSeconds(5);
             }
         }
         #region Get

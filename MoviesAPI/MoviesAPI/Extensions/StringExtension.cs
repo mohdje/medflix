@@ -36,6 +36,7 @@ namespace MoviesAPI.Extensions
             {
                 var result = text.Replace(":", "")
                             .Replace("-", "")
+                            .Replace("/", "")
                             .Replace("'", "")
                             .Replace("é", "e")
                             .Replace("è", "e")
