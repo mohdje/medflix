@@ -68,7 +68,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("stream/series")]
         public async Task<IActionResult> GetStream(string url, int seasonNumber, int episodeNumber)
         {
-            var streamDto = await GetStreamDtoAsync(url, torrentFilePath => SelectFileByFormat(torrentFilePath, GetAcceptedFormat()));
+            var streamDto = await GetStreamDtoAsync(url, torrentFilePath => SelectFileBySeasonAndEpisode(torrentFilePath, seasonNumber, episodeNumber));
             return streamDto != null ? File(streamDto.Stream, streamDto.ContentType, true) : NoContent();
         }
 
