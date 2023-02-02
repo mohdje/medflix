@@ -118,14 +118,21 @@ namespace WebHostStreaming.Controllers
         public async Task<IEnumerable<WatchedMediaDto>> GetWatchedSeries()
         {
             var series = await watchedMediaProvider.GetWatchedSeriesAsync();
-            return series?.Reverse();
+            return series?.Reverse().DistinctBy(serie => serie.Id);
         }
 
         [HttpGet("watchedmedia/{id}")]
-        public async Task<WatchedMediaDto> GetWatchedSerie(int id)
+        public async Task<WatchedMediaDto> GetWatchedSerie(int id, int seasonNumber, int episodeNumber)
         {
             var series = await watchedMediaProvider.GetWatchedSeriesAsync();
-            return series?.SingleOrDefault(m => m.Id == id.ToString());
+            return series?.SingleOrDefault(m => m.Id == id.ToString() && m.SeasonNumber == seasonNumber && m.EpisodeNumber == episodeNumber);
+        }
+
+        [HttpGet("watchedmedia/{id}/{seasonNumber}")]
+        public async Task<IEnumerable<WatchedMediaDto>> GetWatchedEpisodesBySeason(int id, int seasonNumber)
+        {
+            var series = await watchedMediaProvider.GetWatchedSeriesAsync();
+            return series?.Where(m => m.Id == id.ToString() && m.SeasonNumber == seasonNumber);
         }
 
         [HttpPut("watchedmedia")]

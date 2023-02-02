@@ -1,10 +1,12 @@
 import ModalWindow from "./ModalWindow";
 import TitleAndContent from "../common/TitleAndContent";
 import CircularProgressBar from "../common/CircularProgressBar";
+import ProgressionBar from "../common/ProgressionBar";
 import SecondaryInfo from "../common/text/SecondaryInfo";
 import Paragraph from "../common/text/Paragraph";
 import DropDown from "../common/DropDown";
 import AppServices from "../../services/AppServices";
+import fadeTransition from "../../services/customStyles.js";
 
 import { useEffect, useState, useRef } from "react";
 
@@ -33,20 +35,20 @@ function ModalEpisodeSelector({visible, serieId, numberOfSeasons, onEpisodeSelec
                         <CircularProgressBar color={"white"} size={"50px"} visible={isLoading}/>
                         <Paragraph text={"No episodes found"} visible={noEpisodeMessageVisible}/>
                     </div>
-                   
-                    {episodes.map(episode => 
-                        <Episode 
-                            key={episode.episodeNumber} 
-                            episode={episode}
-                            onClick={()=>onEpisodeSelected(selectedSeasonNumber, episode.episodeNumber)}/>)}
+                   <div style={fadeTransition(episodes && episodes.length > 0)}>
+                        {episodes.map(episode => 
+                                <Episode 
+                                    key={episode.episodeNumber} 
+                                    episode={episode}
+                                    onClick={()=>onEpisodeSelected(selectedSeasonNumber, episode.episodeNumber)}/>)}
+                   </div>
+                    
                 </div>
             </div>
         );
     };
 
     useEffect(()=>{
-        
-
         if(serieId){
             setEpisodes([]);
             setIsLoading(true);
@@ -57,20 +59,34 @@ function ModalEpisodeSelector({visible, serieId, numberOfSeasons, onEpisodeSelec
                         episodeListRef.current.scrollTop = 0;
 
                     setIsLoading(false);
-                    if(episodes && episodes.length > 0)
-                        setEpisodes(episodes);
+                    if(episodes && episodes.length > 0){
+                        loadEpisodesProgress(episodes, selectedSeasonNumber);
+                    }
                     else 
                         setNoEpisodeMessageVisible(true)
                 },
                 ()=>{
                     setIsLoading(false);
                     setNoEpisodeMessageVisible(true)
-                })
+                }) 
         }
-       
-        
     },[serieId, selectedSeasonNumber]);
 
+    const loadEpisodesProgress = (episodesOfSeason, seasonNumber) => {
+        AppServices.watchedMediaApiService.getWatchedEpisodes(serieId, seasonNumber,  
+            (watchedEpisodes) => {
+                const newTab = [...episodesOfSeason]
+                if(watchedEpisodes && watchedEpisodes.length > 0){
+                    watchedEpisodes.forEach(watchedEpisode => {
+                        const episode = newTab.find(ep => ep.episodeNumber === watchedEpisode.episodeNumber);
+                        if(episode)
+                            episode.progression = watchedEpisode.currentTime/watchedEpisode.totalDuration; 
+                    }); 
+                }
+                setEpisodes(newTab);
+            });
+    }
+        
     return (
         <ModalWindow visible={visible} content={content()} onCloseClick={() => onCloseClick()} />
     );
@@ -97,7 +113,11 @@ function Episode({episode, onClick}){
     }
 
     return <div className="episode-container" onClick={()=> onClick()}>
-                <img src={episode.imagePath}/>
+                <div style={{margin: 'auto'}}>
+                    <img src={episode.imagePath}/>
+                    {episode.progression ? <ProgressionBar value={episode.progression * 100} width="98%"/> : null }
+                </div>
+                
                 <div>
                     <TitleAndContent title={episode.episodeNumber + '.' + episode.name} content={ToTimeFormat(episode.runTime)} justify="left" />
                     <SecondaryInfo text={episode.overview.substring(0, 300)}/>

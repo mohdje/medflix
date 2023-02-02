@@ -30,7 +30,7 @@ namespace WebHostStreaming.Providers
 
         public async Task SaveWatchedSerieAsync(WatchedMediaDto serieToSave)
         {
-            await SaveDataAsync(WatchedSeriesFile, serieToSave, (m1, m2) => m1.Id == m2.Id, true);
+            await SaveDataAsync(WatchedSeriesFile, serieToSave, (m1, m2) => m1.Id == m2.Id && m1.SeasonNumber == m2.SeasonNumber && m1.EpisodeNumber == m2.EpisodeNumber, true);
         }
 
         public async Task<IEnumerable<WatchedMediaDto>> GetWatchedSeriesAsync()

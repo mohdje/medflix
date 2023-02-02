@@ -80,6 +80,12 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
         }
     }, [subtitles, visible]);
 
+    useEffect(() => {
+        if (goToTime > 0) {
+            setResumeMessageVisible(true);
+        }
+    }, [goToTime]);
+
 
     const content = (
         <div className="video-player-window-container">
@@ -87,12 +93,12 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
                 visible={goToTime > 0 && resumeMessageVisible} 
                 resumeTime={goToTime} 
                 onNoClick={() => setResumeMessageVisible(false)} 
-                onYesClick={() => {setVideoTime(goToTime * 60);setResumeMessageVisible(false)}} />
+                onYesClick={() => {setVideoTime(goToTime);setResumeMessageVisible(false)}} />
             <VideoPlayerContainer 
                 visible={visible}
                 videoQualitiesOptions={videoQualitiesOptions} 
                 subtitlesOptions={subtitlesOptions} 
-                onWatchedTimeUpdate={(time) => onWatchedTimeUpdate(time)}
+                onWatchedTimeUpdate={(currentTime, duration) => onWatchedTimeUpdate(currentTime, duration)}
                 videoTime={videoTime}/>
         </div>
     )
@@ -126,7 +132,7 @@ function ResumeMessage({ visible, resumeTime, onYesClick, onNoClick }) {
     if (visible) {
         return (
             <div style={containerStyle}>
-                <Paragraph text={"Do you want to resume the video to " + ToTimeFormat(resumeTime) + " ?"} />
+                <Paragraph text={"Do you want to resume the video to " + ToTimeFormat(resumeTime/60) + " ?"} />
                 <BaseButton color="red" content="Yes" onClick={() => onYesClick()} />
                 <BaseButton color="grey" content="No" onClick={() => onNoClick()} />
             </div>
@@ -143,7 +149,7 @@ function VideoPlayerContainer({ visible, videoQualitiesOptions, subtitlesOptions
             <VideoPlayer
                 videoQualitiesOptions={videoQualitiesOptions}
                 videoSubtitlesOptions={subtitlesOptions}
-                onWatchedTimeUpdate={(time) => onWatchedTimeUpdate(time)} 
+                onWatchedTimeUpdate={(currentTime, duration) => onWatchedTimeUpdate(currentTime, duration)} 
                 videoTime={videoTime}/>
         </div>;
     }

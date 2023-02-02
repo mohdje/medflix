@@ -53,6 +53,11 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
     const [recommandedMedias, setRecommandedMedias] = useState([]);
     const navHistory = useRef([]);
 
+    const selectedEpisode = useRef({ 
+        seasonNumber: 1,
+        episodeNumber: 1
+    })
+
 
     useEffect(() => {
         if(mediaId)
@@ -60,21 +65,16 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
     }, [mediaId]);
 
     useEffect(() => {
-        if (mediaDetails.imdbId) getAvailableSubtitles(mediaDetails.imdbId, 1, 1);
+        if (mediaDetails.imdbId) getAvailableSubtitles(mediaDetails.imdbId, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber);
         if (mediaDetails.id && mediaDetails.title && mediaDetails.year) {
             clearVersionSources();
-            searchVfSources(mediaDetails.id, mediaDetails.title, mediaDetails.year, 1, 1);
-            searchVoSources(mediaDetails.title, mediaDetails.year, mediaDetails.imdbId ,1, 1);
+            searchVfSources(mediaDetails.id, mediaDetails.title, mediaDetails.year, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber);
+            searchVoSources(mediaDetails.title, mediaDetails.year, mediaDetails.imdbId ,selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber);
         }
 
         const topPage = document.getElementsByClassName('back-btn')[0];
         topPage.scrollIntoView();
     }, [mediaDetails]);
-
-
-    useEffect(() => {
-        if (showMediaPlayer && mediaDetails) AppServices.watchedMediaApiService.saveWacthedMedia(mediaDetails);
-    }, [showMediaPlayer]);
 
     useEffect(()=>{
         if(!selectedVersionSourceLink && selectedVersionSources.length > 0)
@@ -85,7 +85,6 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
     const loadPage = (mediaId) => {
         setDataLoaded(false);
         setMediaDetails({});
-        setMediaProgression({});
         setRecommandedMedias([]);
         if (mediaId) {
             AppServices.searchMediaService.getMediaDetails(mediaId,
@@ -99,10 +98,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                         });
                     }
                 });
-                AppServices.watchedMediaApiService.getWatchedMedia(mediaId, (watchedMedia) => {
-                if(watchedMedia?.progression)
-                    setMediaProgression(watchedMedia.progression);
-            });
+            getMediaProgression(mediaId, 1, 1);               
             AppServices.searchMediaService.getRecommandedMedias(mediaId, (recommandedMedias) => {
                 if(recommandedMedias && recommandedMedias.length > 0)
                     setRecommandedMedias(recommandedMedias);
@@ -169,6 +165,25 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
         );
     }
 
+    const getMediaProgression = (mediaId, seasonNumber, episodeNumber) => {
+        setMediaProgression({});
+        AppServices.watchedMediaApiService.getWatchedMedia(
+            mediaId,
+            seasonNumber,
+            episodeNumber,
+            (watchedMedia) => {
+                if(watchedMedia?.currentTime && watchedMedia?.totalDuration){
+                    setMediaProgression({
+                        progression: watchedMedia.currentTime/watchedMedia.totalDuration,
+                        remainingTime: watchedMedia.totalDuration - watchedMedia.currentTime,
+                        currentTime: watchedMedia.currentTime
+                    });
+                }
+            }
+        )
+    }
+    
+
     const getAvailableSubtitles = (imdbCode, seasonNumber, episodeNumber) => {
         setLoadingSubtitles(true);
         AppServices.subtitlesApiService.getAvailableSubtitles(imdbCode, seasonNumber, episodeNumber,
@@ -190,10 +205,8 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
         });
     }
 
-    const onWatchedTimeUpdate = (time) => {
-       const totalTime = mediaDetails.duration * 60;
-       mediaDetails.progression = time/totalTime;
-       AppServices.watchedMediaApiService.saveWacthedMedia(mediaDetails)
+    const onWatchedTimeUpdate = (currentTime, duration) => {
+       AppServices.watchedMediaApiService.saveWacthedMedia(mediaDetails, currentTime, duration, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber);
     }
 
     const onRecommandedMediaClick = (mediaId) => {
@@ -212,9 +225,14 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
 
     const onEpisodeSelected = (seasonNumber, episodeNumber) => {
         clearVersionSources();
+        selectedEpisode.current = {
+            seasonNumber: seasonNumber,
+            episodeNumber: episodeNumber
+        };
         searchVoSources(mediaDetails.title, mediaDetails.year, mediaDetails.imdbId, seasonNumber, episodeNumber);
         searchVfSources(mediaDetails.id, mediaDetails.title, mediaDetails.year, seasonNumber, episodeNumber);
         getAvailableSubtitles(mediaDetails.imdbId, seasonNumber, episodeNumber);
+        getMediaProgression(mediaDetails.id, seasonNumber, episodeNumber);  
     }
 
     return (
@@ -224,8 +242,8 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                 sources={selectedVersionSources} 
                 subtitles={mediaSubtitlesSources} 
                 onCloseClick={() => setShowMediaPlayer(false)}
-                onWatchedTimeUpdate={(time) => onWatchedTimeUpdate(time)} 
-                goToTime={mediaProgression * mediaDetails.duration}/> 
+                onWatchedTimeUpdate={(currentTime, duration) => onWatchedTimeUpdate(currentTime, duration)} 
+                goToTime={mediaProgression?.currentTime}/> 
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />
             <ModalMediaTrailer visible={showMediaTrailer} youtubeTrailerUrl={mediaDetails.youtubeTrailerUrl} onCloseClick={() => setShowMediaTrailer(false)}/>
 
@@ -244,7 +262,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                             <div className="info-content">
                                 <Rating rating={mediaDetails.rating} size="50px" />
                                 <SecondaryInfo center text={mediaDetails.year  + " | " + (mediaDetails.duration ? ToTimeFormat(mediaDetails.duration) + " | " : '') +  mediaDetails.genre} />
-                                <MediaProgression mediaProgression={mediaProgression} mediaDuration={mediaDetails.duration}/>
+                                <MediaProgression mediaProgression={mediaProgression?.progression} remainingTime={mediaProgression?.remainingTime}/>
                                 <div className="horizontal">
                                     <TrailerButton visible={mediaDetails?.youtubeTrailerUrl} onClick={() => setShowMediaTrailer(true)} />
                                     <AddBookmarkButton onClick={() => bookmarkMedia()} visible={addBookmarkButtonVisible} />
@@ -293,12 +311,12 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
 export default MediaFullPresentation;
 
 
-function MediaProgression({mediaProgression, mediaDuration}){
+function MediaProgression({mediaProgression, remainingTime}){
     if(mediaProgression > 0){
         return (
             <div>
                 <ProgressionBar width="100%" value={mediaProgression * 100}/>
-                <SecondaryInfo  text={ToTimeFormat(mediaDuration - (mediaDuration * mediaProgression)) + ' remaining'} />
+                <SecondaryInfo  text={ToTimeFormat(remainingTime / 60) + ' remaining'} />
             </div>
         )
     }

@@ -16,7 +16,8 @@ function MediaIntermediatePresentation({ media, onClick }) {
             <div className="media-intermediate-presentation-content">
                 <div className="media-intermediate-presentation-info">
                     <SecondaryInfo text={truncateText(media.synopsis)} />
-                    {media.progression > 0 ? <ProgressionBar value={media.progression * 100} width="100%"/> : null}
+                    {media.seasonNumber && media.episodeNumber ? <SecondaryInfo text={"Season " + media.seasonNumber + " - Episode " + media.episodeNumber}/>: null}
+                    {media.totalDuration && media.currentTime ? <ProgressionBar value={(media.currentTime/media.totalDuration) * 100} width="100%"/> : null}
                 </div>
             </div>
         </div>);

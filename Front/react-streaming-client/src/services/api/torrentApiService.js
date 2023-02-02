@@ -9,7 +9,7 @@ class TorrentApiService extends BaseApiService {
     buildStreamUrl(url, fileName, seasonNumber, episodeNumber){
         if(fileName)
             return this.buildTorrentUrl('stream/file?url=' + url + '&fileName=' + fileName);
-        else if(seasonNumber && episodeNumber)
+        else if(AppMode.getActiveMode().urlKey === "series")
             return this.buildTorrentUrl('stream/series?url=' + url + '&seasonNumber=' + seasonNumber + '&episodeNumber=' + episodeNumber);
         else
             return this.buildTorrentUrl('stream/movies?url=' + url);
