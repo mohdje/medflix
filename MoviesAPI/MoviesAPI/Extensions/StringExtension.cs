@@ -17,7 +17,7 @@ namespace MoviesAPI.Extensions
             return true;
         }
 
-        public static string GetMovieQuality(this string movieLinkTitle)
+        public static string GetVideoQuality(this string movieLinkTitle)
         {
             var qualities = new string[] { "720p", "1080p", "DVDRIP", "WEBRIP", "HDTV" };
 

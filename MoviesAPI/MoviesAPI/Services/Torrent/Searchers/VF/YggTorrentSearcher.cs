@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MoviesAPI.Extensions;
 
 namespace MoviesAPI.Services.Torrent
 {
@@ -57,7 +56,7 @@ namespace MoviesAPI.Services.Torrent
                         {
                             result.Add(new MediaTorrent()
                             {
-                                Quality = linkNode.InnerText.GetMovieQuality(),
+                                Quality = linkNode.InnerText.GetVideoQuality(),
                                 DownloadUrl = downloadUrl
                             });
                         }
@@ -110,7 +109,7 @@ namespace MoviesAPI.Services.Torrent
                         {
                             result.Add(new MediaTorrent()
                             {
-                                Quality = linkNode.InnerText.GetMovieQuality(),
+                                Quality = linkNode.InnerText.GetVideoQuality(),
                                 DownloadUrl = downloadUrl
                             });
                         }

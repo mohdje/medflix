@@ -10,7 +10,7 @@ using MoviesAPI.Services.Torrent.Dtos;
 
 namespace MoviesAPI.Services.Torrent
 {
-    internal class GkTorrentSearcher : ITorrentMovieSearcher
+    internal class GkTorrentSearcher : ITorrentMovieSearcher, ITorrentSerieSearcher
     {
         private const string baseUrl = "https://www.gktorrents.cc";
 
@@ -21,12 +21,12 @@ namespace MoviesAPI.Services.Torrent
             var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
 
             if (doc == null)
-                return null;
+                return new MediaTorrent[0];
 
             var searchResultList = doc.DocumentNode.SelectNodes("//table[@class='table table-hover']//td");
 
             if (searchResultList == null)
-                return null;
+                return new MediaTorrent[0];
 
             var result = new List<MediaTorrent>();
 
@@ -42,12 +42,11 @@ namespace MoviesAPI.Services.Torrent
                     var linkNode = doc.DocumentNode.SelectSingleNode("/a");
                     if (linkNode != null
                         && linkNode.InnerText.RemoveSpecialCharacters().Contains(frenchMovieName.RemoveSpecialCharacters(), StringComparison.OrdinalIgnoreCase)
-                        && linkNode.InnerText.Contains("FRENCH")
+                        && (linkNode.InnerText.Contains("FRENCH") || linkNode.InnerText.Contains("TRUEFRENCH"))
                         && linkNode.InnerText.EndsWith(year.ToString())
                         && !linkNode.InnerText.Contains("MD")
                         && (linkNode.InnerText.Contains("720p") || linkNode.InnerText.Contains("1080p") || linkNode.InnerText.Contains("DVDRIP") || linkNode.InnerText.Contains("WEBRIP"))
                         )
-
 
                         getTorrentTasks.Add(Task.Run(async () =>
                         {
@@ -58,11 +57,70 @@ namespace MoviesAPI.Services.Torrent
                                 {
                                     result.Add(new MediaTorrent()
                                     {
-                                        Quality = linkNode.InnerText.GetMovieQuality(),
+                                        Quality = linkNode.InnerText.GetVideoQuality(),
                                         DownloadUrl = torrentLink
                                     });
                                 }
                                
+                            }
+                        }));
+                }
+            }
+
+            await Task.WhenAll(getTorrentTasks.ToArray());
+
+            return result;
+        }
+
+
+        public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string frenchSerieName, string imdbId, int seasonNumber, int episodeNumber)
+        {
+            var searchUrl = $"{baseUrl}/recherche/{frenchSerieName.RemoveSpecialCharacters(toLower: true)}";
+
+            var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
+
+            if (doc == null)
+                return new MediaTorrent[0];
+
+            var searchResultList = doc.DocumentNode.SelectNodes("//table[@class='table table-hover']//td[@class='liste-accueil-nom']");
+
+            if (searchResultList == null)
+                return new MediaTorrent[0];
+
+            var result = new List<MediaTorrent>();
+
+            var getTorrentTasks = new List<Task>();
+
+            var seasonId = $"S{(seasonNumber < 10 ? "0" : "")}{seasonNumber}";
+            var episodeId = $"E{(episodeNumber < 10 ? "0" : "")}{episodeNumber}";
+
+            foreach (var node in searchResultList)
+            {
+                doc = new HtmlDocument();
+                doc.LoadHtml(node.InnerHtml);
+                var mediaInfo = doc.DocumentNode.SelectSingleNode("/i");
+                if (mediaInfo != null && mediaInfo.Attributes["class"].Value == "Animes" || mediaInfo.Attributes["class"].Value == "Séries")
+                {
+                    var linkNode = doc.DocumentNode.SelectSingleNode("/a");
+                    if (linkNode != null
+                        && (linkNode.InnerText.CustomStartsWith($"{frenchSerieName} Saison {seasonNumber}")
+                            || linkNode.InnerText.CustomStartsWith($"{frenchSerieName} {seasonId}{episodeId}"))
+                        && linkNode.InnerText.Contains("FRENCH"))
+
+                        getTorrentTasks.Add(Task.Run(async () =>
+                        {
+                            var torrentLinks = await GetTorrentLinkAsync(baseUrl + linkNode.Attributes["href"].Value);
+                            if (torrentLinks.Any())
+                            {
+                                foreach (var torrentLink in torrentLinks)
+                                {
+                                    result.Add(new MediaTorrent()
+                                    {
+                                        Quality = linkNode.InnerText.GetVideoQuality(),
+                                        DownloadUrl = torrentLink
+                                    });
+                                }
+
                             }
                         }));
                 }
@@ -96,5 +154,6 @@ namespace MoviesAPI.Services.Torrent
         {
             return baseUrl;
         }
+
     }
 }

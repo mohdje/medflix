@@ -91,7 +91,9 @@ namespace MoviesAPI.Services
         {
             return new List<ITorrentSerieSearcher>()
             {
-                new YggTorrentSearcher()
+                new YggTorrentSearcher(),
+                new GkTorrentSearcher(),
+                new ZeTorrentsSearcher()
             };
         }
 
