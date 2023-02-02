@@ -99,7 +99,7 @@ export function VideoOptions({ options, icon, onOptionChanged }) {
                 onMouseEnter={() => {setShowSubMenu(true)}}>
                 {menuOptions.map(option => getOptionDisplay(option))}
             </div>
-            <div className={"video-options-menu suboptions " + (showSubMenu ? '' : 'hidden')}
+            <div className={"video-options-menu suboptions " + (showSubMenu && menuSubOptions && menuSubOptions.length > 0 ? '' : 'hidden')}
                 onMouseLeave={() => {setShowSubMenu(false)}}>
                 {menuSubOptions.map(subOption => getSubOptionDisplay(subOption))}
             </div>

@@ -284,7 +284,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                                             <PlayButton onClick={() => setShowMediaPlayer(true)} />
                                             <PlayWithVLCButton 
                                                 videoUrl={selectedVersionSourceLink}
-                                                onClick={() => {if(mediaDetails) AppServices.watchedMediaApiService.saveWacthedMedia(mediaDetails)}} />
+                                                onClick={() => {if(mediaDetails) AppServices.watchedMediaApiService.saveWacthedMedia(mediaDetails, 0, 0, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber)}} />
                                         </div>
                                     </div>
                                 </div>
