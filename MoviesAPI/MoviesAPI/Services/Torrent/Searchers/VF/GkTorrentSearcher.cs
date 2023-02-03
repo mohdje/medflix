@@ -16,66 +16,37 @@ namespace MoviesAPI.Services.Torrent
 
         public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string frenchMovieName, int year)
         {
-            var searchUrl = $"{baseUrl}/recherche/{frenchMovieName.RemoveSpecialCharacters(toLower: true)}";
-
-            var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
-
-            if (doc == null)
-                return new MediaTorrent[0];
-
-            var searchResultList = doc.DocumentNode.SelectNodes("//table[@class='table table-hover']//td");
-
-            if (searchResultList == null)
-                return new MediaTorrent[0];
-
-            var result = new List<MediaTorrent>();
-
-            var getTorrentTasks = new List<Task>();
-
-            foreach (var node in searchResultList)
-            {
-                doc = new HtmlDocument();
-                doc.LoadHtml(node.InnerHtml);
-                var mediaInfo = doc.DocumentNode.SelectSingleNode("/i");
-                if (mediaInfo != null && mediaInfo.Attributes["class"].Value == "Films")
-                {
-                    var linkNode = doc.DocumentNode.SelectSingleNode("/a");
-                    if (linkNode != null
-                        && linkNode.InnerText.RemoveSpecialCharacters().Contains(frenchMovieName.RemoveSpecialCharacters(), StringComparison.OrdinalIgnoreCase)
-                        && (linkNode.InnerText.Contains("FRENCH") || linkNode.InnerText.Contains("TRUEFRENCH"))
-                        && linkNode.InnerText.EndsWith(year.ToString())
-                        && !linkNode.InnerText.Contains("MD")
-                        && (linkNode.InnerText.Contains("720p") || linkNode.InnerText.Contains("1080p") || linkNode.InnerText.Contains("DVDRIP") || linkNode.InnerText.Contains("WEBRIP"))
-                        )
-
-                        getTorrentTasks.Add(Task.Run(async () =>
-                        {
-                            var torrentLinks = await GetTorrentLinkAsync(baseUrl + linkNode.Attributes["href"].Value);
-                            if (torrentLinks.Any())
-                            {
-                                foreach (var torrentLink in torrentLinks)
-                                {
-                                    result.Add(new MediaTorrent()
-                                    {
-                                        Quality = linkNode.InnerText.GetVideoQuality(),
-                                        DownloadUrl = torrentLink
-                                    });
-                                }
-                               
-                            }
-                        }));
-                }
-            }
-
-            await Task.WhenAll(getTorrentTasks.ToArray());
-
-            return result;
+            return await SearchTorrentLinks(frenchMovieName, 
+                (mediaType) => mediaType == "Films",
+                (mediaTitle) =>
+                    {
+                        return mediaTitle.CustomStartsWith(frenchMovieName)
+                                && (mediaTitle.Contains("FRENCH") || mediaTitle.Contains("TRUEFRENCH"))
+                                && mediaTitle.EndsWith(year.ToString())
+                                && !mediaTitle.Contains("MD")
+                                && (mediaTitle.Contains("720p") || mediaTitle.Contains("1080p") || mediaTitle.Contains("DVDRIP") || mediaTitle.Contains("WEBRIP"));
+                    }
+                );
         }
-
 
         public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string frenchSerieName, string imdbId, int seasonNumber, int episodeNumber)
         {
-            var searchUrl = $"{baseUrl}/recherche/{frenchSerieName.RemoveSpecialCharacters(toLower: true)}";
+            var seasonId = $"S{(seasonNumber < 10 ? "0" : "")}{seasonNumber}";
+            var episodeId = $"E{(episodeNumber < 10 ? "0" : "")}{episodeNumber}";
+
+            return await SearchTorrentLinks(frenchSerieName,
+               (mediaType) => mediaType == "Animes" || mediaType == "Séries",
+               (mediaTitle) =>
+                    {
+                        return (mediaTitle.CustomStartsWith($"{frenchSerieName} Saison {seasonNumber}") || mediaTitle.CustomStartsWith($"{frenchSerieName} {seasonId}{episodeId}"))
+                             && mediaTitle.Contains("FRENCH");
+                    }
+               );
+        }
+
+        private async Task<IEnumerable<MediaTorrent>> SearchTorrentLinks(string mediaName, Func<string, bool> mediaTypeCondition, Func<string, bool> mediaTitleCondition)
+        {
+            var searchUrl = $"{baseUrl}/recherche/{mediaName.RemoveSpecialCharacters(toLower: true)}";
 
             var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
 
@@ -91,22 +62,15 @@ namespace MoviesAPI.Services.Torrent
 
             var getTorrentTasks = new List<Task>();
 
-            var seasonId = $"S{(seasonNumber < 10 ? "0" : "")}{seasonNumber}";
-            var episodeId = $"E{(episodeNumber < 10 ? "0" : "")}{episodeNumber}";
-
             foreach (var node in searchResultList)
             {
                 doc = new HtmlDocument();
                 doc.LoadHtml(node.InnerHtml);
                 var mediaInfo = doc.DocumentNode.SelectSingleNode("/i");
-                if (mediaInfo != null && mediaInfo.Attributes["class"].Value == "Animes" || mediaInfo.Attributes["class"].Value == "Séries")
+                if (mediaInfo != null && mediaTypeCondition(mediaInfo.Attributes["class"].Value))
                 {
                     var linkNode = doc.DocumentNode.SelectSingleNode("/a");
-                    if (linkNode != null
-                        && (linkNode.InnerText.CustomStartsWith($"{frenchSerieName} Saison {seasonNumber}")
-                            || linkNode.InnerText.CustomStartsWith($"{frenchSerieName} {seasonId}{episodeId}"))
-                        && linkNode.InnerText.Contains("FRENCH"))
-
+                    if (linkNode != null && mediaTitleCondition(linkNode.InnerText))
                         getTorrentTasks.Add(Task.Run(async () =>
                         {
                             var torrentLinks = await GetTorrentLinkAsync(baseUrl + linkNode.Attributes["href"].Value);
@@ -120,7 +84,6 @@ namespace MoviesAPI.Services.Torrent
                                         DownloadUrl = torrentLink
                                     });
                                 }
-
                             }
                         }));
                 }
