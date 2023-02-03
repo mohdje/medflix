@@ -59,8 +59,6 @@ namespace WebHostStreaming.Controllers
         [HttpGet("stream/movies")]
         public async Task<IActionResult> GetStream(string url)
         {
-            url = Helpers.TestData.ParadiseCanyonTorrentUrl;
-          
             var streamDto = await GetStreamDtoAsync(url, torrentFilePath => SelectFileByFormat(torrentFilePath, GetAcceptedFormat()));
             return streamDto != null ? File(streamDto.Stream, streamDto.ContentType, true) : NoContent();
         }
