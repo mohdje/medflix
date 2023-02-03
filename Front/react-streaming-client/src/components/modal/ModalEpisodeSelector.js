@@ -84,6 +84,9 @@ function ModalEpisodeSelector({visible, serieId, numberOfSeasons, onEpisodeSelec
                     }); 
                 }
                 setEpisodes(newTab);
+            }, 
+            () => {
+                setEpisodes(episodesOfSeason);
             });
     }
         
@@ -113,7 +116,7 @@ function Episode({episode, onClick}){
     }
 
     return <div className="episode-container" onClick={()=> onClick()}>
-                <div style={{margin: 'auto'}}>
+                <div style={{margin: 'auto 0'}}>
                     <img src={episode.imagePath}/>
                     {episode.progression ? <ProgressionBar value={episode.progression * 100} width="98%"/> : null }
                 </div>

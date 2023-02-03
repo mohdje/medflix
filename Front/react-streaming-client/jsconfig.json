@@ -3,7 +3,7 @@
       "baseUrl": ".",
       "paths": {
         "@components/*": ["./src/components/*"],
-        "@js/*": ["./src/js/*"]
+        "@js/*": ["src/services/*"]
       }
     },
     "exclude": ["node_modules", "build"]

@@ -7,12 +7,13 @@ const createWindow = () => {
         minWidth: screenSize.width * 0.7,
         minHeight: screenSize.height * 0.7,
         autoHideMenuBar: true,
+        icon: path.join(__dirname, 'view/favicon.ico'),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             enableRemoteModule: true,
             nodeIntegration: false,
         },
-         //icon: path.join(__dirname, 'view/medflix.ico')
+         
     })
  
     win.maximize();
