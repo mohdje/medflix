@@ -54,7 +54,7 @@ namespace WebHostStreaming.Torrent
             }
         }
 
-        public async Task<StreamDto> GetStreamAsync(Func<string, bool> filePathSelectionPredicate, int offset)
+        public async Task<StreamDto> GetStreamAsync(ITorrentFileSelector torrentFileSelector, int offset)
         {
             if (cancellationTokenSource != null)
                 cancellationTokenSource.Cancel();
@@ -64,13 +64,13 @@ namespace WebHostStreaming.Torrent
             if (torrentManagerWrapper == null)
                 return null;
 
-            await torrentManagerWrapper.StartDownloadFileAsync(f => filePathSelectionPredicate(f?.FullPath));
+            await torrentManagerWrapper.StartDownloadFileAsync(torrentFileSelector);
 
             if (torrentManagerWrapper.DownloadingFile == null)
                 return null;
 
             var stream = await torrentManagerWrapper.GetStreamAsync(torrentManagerWrapper.DownloadingFile, offset, cancellationTokenSource.Token);
-            return new StreamDto(stream, Path.GetExtension(torrentManagerWrapper.DownloadingFile.FullPath));
+            return new StreamDto(stream, torrentManagerWrapper.DownloadingFile.FullPath);
         }
 
         private DownloadingState GetStatus()

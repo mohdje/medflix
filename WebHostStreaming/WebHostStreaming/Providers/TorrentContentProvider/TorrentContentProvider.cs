@@ -30,7 +30,7 @@ namespace WebHostStreaming.Providers
 
             return torrentVideoStream.Status;
         }
-        public async Task<StreamDto> GetStreamAsync(string torrentUri, int offset, Func<string, bool> torrentFileSelector)
+        public async Task<StreamDto> GetStreamAsync(string torrentUri, int offset, ITorrentFileSelector torrentFileSelector)
         {
             var torrentVideoStream = await GetOrCreateTorrentVideoStreamAsync(torrentUri);
 

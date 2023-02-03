@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using WebHostStreaming.Helpers;
 using WebHostStreaming.Models;
 using WebHostStreaming.Providers;
+using WebHostStreaming.Torrent;
 
 namespace WebHostStreaming.Controllers
 {
@@ -59,21 +60,22 @@ namespace WebHostStreaming.Controllers
         [HttpGet("stream/movies")]
         public async Task<IActionResult> GetStream(string url)
         {
-            var streamDto = await GetStreamDtoAsync(url, torrentFilePath => SelectFileByFormat(torrentFilePath, GetAcceptedFormat()));
+            var streamDto = await GetStreamDtoAsync(url, RequestFromVLC() ? new VideoTorrentFileSelector() : new Mp4TorrentFileSelector());
             return streamDto != null ? File(streamDto.Stream, streamDto.ContentType, true) : NoContent();
         }
+
 
         [HttpGet("stream/series")]
         public async Task<IActionResult> GetStream(string url, int seasonNumber, int episodeNumber)
         {
-            var streamDto = await GetStreamDtoAsync(url, torrentFilePath => SelectFileBySeasonAndEpisode(torrentFilePath, seasonNumber, episodeNumber));
+            var streamDto = await GetStreamDtoAsync(url, RequestFromVLC() ? new SerieEpisodeTorrentFileSelector(seasonNumber, episodeNumber) : new SerieEpisodeMp4TorrentFileSelector(seasonNumber, episodeNumber));
             return streamDto != null ? File(streamDto.Stream, streamDto.ContentType, true) : NoContent();
         }
 
         [HttpGet("stream/file")]
         public async Task<IActionResult> GetStream(string url, string fileName)
         {
-            var streamDto = await GetStreamDtoAsync(url, torrentFilePath => SelectFileByName(torrentFilePath, fileName));
+            var streamDto = await GetStreamDtoAsync(url, new ByNameTorrentFileSelector(fileName));
             return streamDto != null ? File(streamDto.Stream, streamDto.ContentType, true) : NoContent();
         }
 
@@ -117,7 +119,7 @@ namespace WebHostStreaming.Controllers
             return torrentFiles?.OrderByDescending(f => f.LastOpenedDateTime);
         }
 
-        private async Task<StreamDto> GetStreamDtoAsync(string url, Func<string,bool> fileSelector)
+        private async Task<StreamDto> GetStreamDtoAsync(string url, ITorrentFileSelector torrentFileSelector)
         {
             if (string.IsNullOrEmpty(url))
                 return null;
@@ -131,7 +133,7 @@ namespace WebHostStreaming.Controllers
             try
             {
                 
-                return await torrentVideoStreamProvider.GetStreamAsync(url, offset, fileSelector);
+                return await torrentVideoStreamProvider.GetStreamAsync(url, offset, torrentFileSelector);
             }
             catch (Exception ex)
             {
@@ -139,33 +141,10 @@ namespace WebHostStreaming.Controllers
             }
         }
 
-        private string GetAcceptedFormat()
+        private bool RequestFromVLC()
         {
             var userAgent = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "User-Agent").Value.FirstOrDefault();
-            return userAgent != null && userAgent.StartsWith("VLC") ? "*" : ".mp4";
-        }
-
-        private bool SelectFileByName(string filePath, string fileNameToSelect)
-        {
-            return Path.GetFileName(filePath) == fileNameToSelect;
-        }
-
-        private bool SelectFileBySeasonAndEpisode(string filePath, int seasonNumber, int episodeNumber)
-        {
-            var fileName = Path.GetFileName(filePath);
-
-            var season = seasonNumber < 10 ? "0" + seasonNumber.ToString() : seasonNumber.ToString();
-            var episode = episodeNumber < 10 ? "0" + episodeNumber.ToString() : episodeNumber.ToString();
-
-            return fileName.Contains($"S{season}E{episode}");
-        }
-
-        private bool SelectFileByFormat(string filePath, string accepetedVideoExtension)
-        {
-            if (accepetedVideoExtension == "*")
-                return filePath.EndsWith(".mp4") || filePath.EndsWith(".avi") || filePath.EndsWith(".mkv");
-            else
-                return filePath.EndsWith(accepetedVideoExtension);
+            return userAgent != null && userAgent.StartsWith("VLC");
         }
     }
 }

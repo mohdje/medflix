@@ -39,16 +39,16 @@ namespace WebHostStreaming.Torrent
                 torrentDownloadStatusWatcher = new TorrentDownloadStatusWatcher(torrentManager);            
         } 
 
-        public async Task StartDownloadFileAsync(Func<ITorrentFileInfo, bool> downloadFilePredicate)
+        public async Task StartDownloadFileAsync(ITorrentFileSelector torrentFileSelector)
         {
             var currentDownloadingFilePath = DownloadingFile?.FullPath;
-            DownloadingFile = torrentManager.Files.FirstOrDefault(f => downloadFilePredicate(f));
+            DownloadingFile = torrentFileSelector.SelectTorrentFileInfo(torrentManager.Files);
 
             if(DownloadingFile != null)
             {             
                 if(currentDownloadingFilePath != DownloadingFile.FullPath)
                 {
-                    foreach (var file in torrentManager.Files.Where(f => !downloadFilePredicate(f)))
+                    foreach (var file in torrentManager.Files.Where(f => DownloadingFile.FullPath != f.FullPath))
                         await torrentManager.SetFilePriorityAsync(file, Priority.DoNotDownload);
 
                     await torrentManager.SetFilePriorityAsync(DownloadingFile, Priority.Highest);
