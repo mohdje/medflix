@@ -15,6 +15,7 @@ If you want to use the full version of Medflix to watch movies, donwload a relea
 ## How it looks
 ![Movies genre page](/Screenshots/movies_of_genre.PNG)
 ![Movies search](/Screenshots/movie_search.PNG)
-![Movie presentation](/Screenshots/spiderman_presentation.PNG)
+![Movie presentation](/Screenshots/media_presentation.PNG)
+![Movie presentation](/Screenshots/serie_presentation.PNG)
 ![Movie player](/Screenshots/video_player.PNG)
 
