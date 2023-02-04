@@ -81,7 +81,7 @@ function ResearchPage({ loadFromCache, onMediaClick }) {
 
     return (
         <div className="search-view-container">    
-            <TextInput placeHolder="Type here to start search..." onTextChanged={(text) => { setSearchValue(text) }} />
+            <TextInput placeHolder="Type here to start search..." large onTextChanged={(text) => { setSearchValue(text) }} />
             <CircularProgressBar color={'white'} size={'40px'} visible={searchInProgress} />
             <div className="medias-search-result">
                 <MediasListLite medias={medias} onMediaClick={(mediaId) => onMediaClick(mediaId)} />
