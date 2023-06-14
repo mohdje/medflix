@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+	<div class="container">
+		<img src="./logo.png"></img>
+		<div>
+			<h4 id="info">Extracting package in application folder, please wait...</h4>
+		</div>
+		<script>
+			window.addEventListener('DOMContentLoaded', () => {
+				const info = document.getElementById('info')
+				window.electronAPI.onDecompressStateChanged((_event, value) => {
+					info.innerText = value;
+				});
+			})
+		</script>
+
+</body>
+
+</html>
