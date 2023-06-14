@@ -21,13 +21,15 @@ if not "%params:web=%"=="%params%" (
 if not "%params:win=%"=="%params%" (  
     npm run build --prefix ".\Front\react-streaming-client"
 
-    if exist "Front\electron-app\view\" (
-        rmdir "Front\electron-app\view\" /s /q
+    if exist "Front\desktop-electron-app\views\app" (
+        rmdir "Front\desktop-electron-app\views\app" /s /q
     )
     
-    xcopy "Front\react-streaming-client\build\" "Front\electron-app\view\" /E
+    xcopy "Front\react-streaming-client\build\" "Front\desktop-electron-app\views\app" /E
 
-    npm run make --prefix ".\Front\electron-app"
+    npm run make --prefix ".\Front\desktop-electron-app"
+
+    npm run make --prefix ".\Front\extract-update-package-electron-app"
 
     if exist ".\WebHostStreaming\WebHostStreaming\bin\Release Background\net6.0" (
         rmdir ".\WebHostStreaming\WebHostStreaming\bin\Release Background\net6.0" /s /q
@@ -37,7 +39,8 @@ if not "%params:win=%"=="%params%" (
 
     "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" ".\WebHostStreaming\WebHostStreaming.sln" /p:Configuration="Release Background" /p:Platform="Any CPU"
 
-    xcopy ".\Front\electron-app\out\Medflix-win32-x64\" ".\WebHostStreaming\WebHostStreaming\bin\Release Background\net6.0\windows-app\" /E
+    xcopy ".\Front\desktop-electron-app\out\Medflix-win32-x64\" ".\WebHostStreaming\WebHostStreaming\bin\Release Background\net6.0\windows-app\" /E
+    xcopy ".\Front\extract-update-package-electron-app\out\Extract Medflix Package-win32-x64\" ".\WebHostStreaming\WebHostStreaming\bin\Release Background\net6.0\extract-update\" /E
 
     echo Windows application is ready
 )
