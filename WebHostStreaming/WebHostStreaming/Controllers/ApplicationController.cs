@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,20 +17,22 @@ namespace WebHostStreaming.Controllers
     public class ApplicationController : ControllerBase
     {
         IHostApplicationLifetime applicationLifetime;
+        IAppUpdater updateChecker;
 
         private const string WINDOWS_VLC_PATH = @"C:\Program Files\VideoLAN\VLC\vlc.exe";
         private const string MACOS_VLC_PATH = @"/Applications/VLC.app/Contents/MacOS/VLC";
 
-        public ApplicationController(IHostApplicationLifetime applicationLifetime)
+        public ApplicationController(IHostApplicationLifetime applicationLifetime, IAppUpdater updateChecker)
         {
             this.applicationLifetime = applicationLifetime;
+            this.updateChecker = updateChecker;
         }
 
 
         [HttpGet("stop")]
         public IActionResult StopApp()
         {
-            if (PlatformConfiguration.PlatformIsWeb)
+            if (AppConfiguration.IsWebVersion)
                 return BadRequest();
 
             try
@@ -49,12 +52,12 @@ namespace WebHostStreaming.Controllers
             var parameters = Encoding.UTF8.GetString(Convert.FromBase64String(data));
             try
             {
-                if (PlatformConfiguration.PlatformIsWindows)
+                if (AppConfiguration.IsWindowsVersion)
                 {
                     if (!System.IO.File.Exists(WINDOWS_VLC_PATH)) return NotFound();
                     System.Diagnostics.Process.Start(WINDOWS_VLC_PATH, parameters);
                 }
-                else if (PlatformConfiguration.PlatformIsMacos)
+                else if (AppConfiguration.IsMacosVersion)
                 {
                     if (!System.IO.File.Exists(MACOS_VLC_PATH)) return NotFound();
                     System.Diagnostics.Process.Start(MACOS_VLC_PATH, parameters.Replace(" ", "%20"));
@@ -73,8 +76,75 @@ namespace WebHostStreaming.Controllers
         {
             return Ok(new
             {
-                isDesktopApplication = !PlatformConfiguration.PlatformIsWeb
-            }); ;
+                isDesktopApplication = !AppConfiguration.IsWebVersion
+            }); 
+        }
+
+        [HttpGet("checkUpdate")]
+        public async Task<IActionResult> CheckUpdateAsync()
+        {
+            if (AppConfiguration.IsWebVersion)
+                return BadRequest();
+
+            try
+            {
+                var updateAvailable = await updateChecker.IsNewReleaseAvailableAsync();
+                return Ok(new
+                {
+                    updateAvailable = updateAvailable
+                });
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("downloadNewVersion")]
+        public async Task<IActionResult> DownloadNewVersionAsync()
+        {
+            try
+            {
+                var downloadWithSuccess = await updateChecker.DownloadNewReleaseAsync(AppFiles.NewReleasePackage);
+
+                return downloadWithSuccess ? Ok() : StatusCode(500);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("startUpdate")]
+        public IActionResult StartUpdate()
+        {
+            if (!AppConfiguration.IsWebVersion && Directory.Exists(AppFolders.ExtractUpdateProgramFolder))
+            {
+                //rename folder so it can be replaced during package extraction
+                Directory.Move(AppFolders.ExtractUpdateProgramFolder, AppFolders.ExtractUpdateProgramTempFolder);
+
+                var arguments = new List<string>();
+                arguments.Add(AppFiles.NewReleasePackage);
+                arguments.Add(AppFolders.CurrentFolder);
+
+                if (AppConfiguration.IsWindowsVersion)
+                {
+                    arguments.Add(AppFiles.WindowsDesktopApp);
+                    System.Diagnostics.Process.Start(AppFiles.WindowsExtractUpdateProgram, arguments);
+                }
+                else if (AppConfiguration.IsMacosVersion)
+                {
+                    arguments.Append(AppFiles.MacosDesktopApp);
+                    System.Diagnostics.Process.Start(AppFiles.MacosExtractUpdateProgram, arguments);
+                }
+
+                applicationLifetime.StopApplication();
+                return Ok();
+            }
+            else
+            {
+                return StatusCode(500);
+            }
         }
 
     }

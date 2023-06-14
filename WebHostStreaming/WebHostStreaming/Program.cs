@@ -29,11 +29,8 @@ namespace WebHostStreaming
 
         private static void SetupBeforeRun()
         {
-            System.Console.WriteLine("---- Setup torrents folder ----");
-            AppFolders.SetupTorrentsFolder();
-
-            System.Console.WriteLine("---- Setup subtitles folder ----");
-            AppFolders.SetupSubtitlesFolder();
+            System.Console.WriteLine("---- Setup folders ----");
+            AppFolders.SetupFolders();
         }
     }
 }

@@ -13,8 +13,16 @@ namespace WebHostStreaming.Helpers
         public static string SubtitlesFolder => Path.Combine(CurrentFolder, "subtitles");
         public static string TorrentsFolder => Path.Combine(CurrentFolder, "torrents");
         public static string ViewFolder => Path.Combine(CurrentFolder, "view");
+        public static string ExtractUpdateProgramFolder => Path.Combine(CurrentFolder, "extract-update");
+        public static string ExtractUpdateProgramTempFolder => $"{ExtractUpdateProgramFolder}-temp";
 
-        public static void SetupTorrentsFolder()
+        public static void SetupFolders()
+        {
+            SetupTorrentsFolder();
+            SetupSubtitlesFolder();
+            DeleteUpdateTempItems();
+        }
+        private static void SetupTorrentsFolder()
         {
             if (!Directory.Exists(TorrentsFolder))
                 Directory.CreateDirectory(TorrentsFolder);
@@ -41,11 +49,19 @@ namespace WebHostStreaming.Helpers
             }
         }
 
-        public static void SetupSubtitlesFolder()
+        private static void SetupSubtitlesFolder()
         {
             if (!Directory.Exists(SubtitlesFolder))
                 Directory.CreateDirectory(SubtitlesFolder);
+        }
 
+        private static void DeleteUpdateTempItems()
+        {
+            if (Directory.Exists(ExtractUpdateProgramTempFolder))
+                Directory.Delete(ExtractUpdateProgramTempFolder, true);
+
+            if (File.Exists(AppFiles.NewReleasePackage))
+                File.Delete(AppFiles.NewReleasePackage);
         }
     }
 }

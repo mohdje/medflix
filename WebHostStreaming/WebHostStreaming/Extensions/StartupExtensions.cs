@@ -17,11 +17,12 @@ namespace WebHostStreaming.StartupExtensions
             services.AddSingleton<ITorrentHistoryProvider, TorrentHistoryProvider>();
             services.AddSingleton<IBookmarkedMediaProvider, BookmarkedMediaProvider>();
             services.AddSingleton<IWatchedMediaProvider, WatchedMediaProvider>();
+            services.AddSingleton<IAppUpdater, DesktopAppUpdater>();
         }
 
         public static void SetupUI(this IApplicationBuilder applicationBuilder, IHostApplicationLifetime appLifetime)
         {
-            if (PlatformConfiguration.PlatformIsWeb)
+            if (AppConfiguration.IsWebVersion)
             {
                 if (!Directory.Exists(AppFolders.ViewFolder))
                     throw new DirectoryNotFoundException(AppFolders.ViewFolder);
@@ -34,7 +35,7 @@ namespace WebHostStreaming.StartupExtensions
 
                 System.Console.WriteLine("Web application accessible here : http://localhost:5000/home/index.html");
             }
-            else if (PlatformConfiguration.PlatformIsWindows)
+            else if (AppConfiguration.IsWindowsVersion)
             {
                 if (!File.Exists(AppFiles.WindowsDesktopAppView))
                     throw new FileNotFoundException(AppFiles.WindowsDesktopAppView);
@@ -44,7 +45,7 @@ namespace WebHostStreaming.StartupExtensions
                     System.Diagnostics.Process.Start(AppFiles.WindowsDesktopAppView);
                 });
             }
-            else if (PlatformConfiguration.PlatformIsMacos)
+            else if (AppConfiguration.IsMacosVersion)
             {
                 if (!File.Exists(AppFiles.MacosDesktopAppView))
                     throw new FileNotFoundException(AppFiles.MacosDesktopAppView);
