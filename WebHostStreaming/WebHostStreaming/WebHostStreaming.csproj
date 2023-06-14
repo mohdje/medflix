@@ -12,17 +12,21 @@
 		<OutputType>WinExe</OutputType>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <Content Include="medflix.ico" />
+	</ItemGroup>
+
 
 	<ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.34" />
-    <PackageReference Include="Mono.Nat" Version="3.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="ReusableTasks" Version="2.0.0" />
+    <PackageReference Include="Mono.Nat" Version="3.0.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="ReusableTasks" Version="2.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="MonoTorrent">
-      <HintPath>..\..\..\MonoTorrent\src\MonoTorrent\bin\Release\netstandard2.0\MonoTorrent.dll</HintPath>
+      <HintPath>..\..\..\MonoTorrent\src\MonoTorrent\bin\Release\net6.0\MonoTorrent.dll</HintPath>
     </Reference>
     <Reference Include="MoviesAPI">
       <HintPath>..\..\MoviesAPI\MoviesAPI\bin\Release\net6.0\MoviesAPI.dll</HintPath>
