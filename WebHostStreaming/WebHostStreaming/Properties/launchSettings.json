@@ -19,11 +19,11 @@
     },
     "WebHostStreaming": {
       "commandName": "Project",
-      "launchUrl": "https://localhost:5001/index.html",
+      "launchUrl": "http://localhost:5000/index.html",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+      "applicationUrl": "http://0.0.0.0:5000"
     }
   }
 }
