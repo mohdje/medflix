@@ -56,11 +56,11 @@ function HomePage({ onMediaClick, onReady, onFail }) {
                 addMedias(todayTrendingTitle, medias);
                 setDataLoaded(true);
                 onReady();
+            }, ()=>{
+                onFail();
             });
             AppServices.searchMediaService.getPopularMedias((medias)=>{
                 addMedias("Popular " + AppMode.getActiveMode().label.toLocaleLowerCase(), medias, true);
-            }, ()=>{
-                onFail();
             });
             AppServices.searchMediaService.getRecommandedMedias(null, (medias)=>{
                 addMedias("Recommanded for you", medias, true);
