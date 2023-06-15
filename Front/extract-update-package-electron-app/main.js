@@ -2,6 +2,7 @@ const { app, BrowserWindow, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const DecompressZip = require('decompress-zip');
+const { exec } = require('child_process');
 
 const createWindow = () => {
 	const window = new BrowserWindow({
@@ -33,7 +34,7 @@ const decompressZipFolder = (window, zipFilePath, destinationFolderPath, onSucce
 		const unzipper = new DecompressZip(zipFilePath);
 
 		unzipper.on('error', function (err) {
-			window.webContents.send('decompress-state-changed', 'An error occured while extracting package. Operation aborted.');
+			window.webContents.send('decompress-state-changed', 'An error occured while extracting package. Operation aborted.:' + err);
 			setTimeout(() => {
 				app.quit();
 			}, 3000);
@@ -70,11 +71,16 @@ app.whenReady().then(() => {
 
 	const zipFilePath = process.argv[1];
 	const destinationFolderPath = process.argv[2];
-	const medflixApplicationPath = process.argv[3];
-
+	
 	setTimeout(() => 
-		decompressZipFolder(window, zipFilePath, destinationFolderPath, ()=>{
-			shell.openExternal(medflixApplicationPath);
+		decompressZipFolder(window, zipFilePath, destinationFolderPath, () => {
+			if (process.platform === 'darwin') {
+				exec('open -a Medflix');
+			}
+			else{
+				const medflixApplicationPath = process.argv[3];
+				shell.openExternal(medflixApplicationPath);
+			}
 	}), 2000);
 })
 
