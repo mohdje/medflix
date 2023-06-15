@@ -1,7 +1,7 @@
 const { app, BrowserWindow, screen, net, ipcMain } = require('electron');
 const path = require('path');
 const { checkUpdate, downloadUpdate } = require('./update.js');
-const { backendUrl } = require('./consts.js');
+const { backendUrl, icon } = require('./consts.js');
 
 const createAppWindow = () => {
 	let screenSize = screen.getPrimaryDisplay().size;
@@ -9,7 +9,7 @@ const createAppWindow = () => {
 		minWidth: screenSize.width * 0.7,
 		minHeight: screenSize.height * 0.7,
 		autoHideMenuBar: true,
-		icon: path.join(__dirname, 'views/app/favicon.ico'),
+		icon: path.join(__dirname, icon),
 		webPreferences: {
 			preload: path.join(__dirname, 'preload.js'),
 			enableRemoteModule: true,
