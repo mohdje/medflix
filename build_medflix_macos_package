@@ -1,0 +1,28 @@
+#!/bin/bash  
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+cd "$parent_path"
+
+#update MedflixFiles folder in package folder
+rm -r '../medflix-package/MedflixFiles'  
+cp -av '../resources/macos' '../medflix-package/MedflixFiles'
+
+#build desktop electron app
+cd './Front/desktop-electron-app'
+npm run make
+
+cd '../..'
+
+#update UI app in MedflixFiles
+rm -r '../medflix-package/MedflixFiles/Medflix.app'
+cp -av './Front/desktop-electron-app/out/Medflix-darwin-x64/Medflix.app' '../medflix-package/MedflixFiles/Medflix.app'
+
+#build extract-update-package-electron-app 
+cd './Front/extract-update-package-electron-app'
+npm run make
+
+cd '../..'
+
+#update extract-update app in MedflixFiles
+rm -r '../medflix-package/MedflixFiles/extract-update'
+mkdir '../medflix-package/MedflixFiles/extract-update'
+cp -av './Front/extract-update-package-electron-app/out/Extract Medflix Package-darwin-x64/Extract Medflix Package.app' '../medflix-package/MedflixFiles/extract-update/Extract Medflix Package.app'
