@@ -1,9 +1,11 @@
+const { icon } = require('./consts');
+
 module.exports = {
   packagerConfig: {
     name: "Extract Medflix Package",
     productName: "Extract Medflix Package",
     executableName: "extract_package",
-    icon: "view/favicon"
+    icon: icon
   },
   rebuildConfig: {},
   makers: [

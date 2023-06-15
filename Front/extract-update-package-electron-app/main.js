@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const DecompressZip = require('decompress-zip');
 const { exec } = require('child_process');
+const { icon } = require('./consts');
 
 const createWindow = () => {
 	const window = new BrowserWindow({
@@ -10,7 +11,7 @@ const createWindow = () => {
 		height: 300,
 		frame: false,
 		resizable: false,
-		icon: path.join(__dirname, 'view/favicon.ico'),
+		icon: path.join(__dirname, icon),
 		webPreferences: {
 			preload: path.join(__dirname, 'preload.js'),
 			enableRemoteModule: true,
@@ -34,7 +35,7 @@ const decompressZipFolder = (window, zipFilePath, destinationFolderPath, onSucce
 		const unzipper = new DecompressZip(zipFilePath);
 
 		unzipper.on('error', function (err) {
-			window.webContents.send('decompress-state-changed', 'An error occured while extracting package. Operation aborted.:' + err);
+			window.webContents.send('decompress-state-changed', 'An error occured while extracting package. Operation aborted.');
 			setTimeout(() => {
 				app.quit();
 			}, 3000);
