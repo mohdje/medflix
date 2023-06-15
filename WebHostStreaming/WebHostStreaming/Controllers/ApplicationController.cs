@@ -134,7 +134,6 @@ namespace WebHostStreaming.Controllers
                 }
                 else if (AppConfiguration.IsMacosVersion)
                 {
-                    arguments.Append(AppFiles.MacosDesktopApp);
                     System.Diagnostics.Process.Start(AppFiles.MacosExtractUpdateProgram, arguments);
                 }
 
