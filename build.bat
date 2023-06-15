@@ -25,7 +25,7 @@ if not "%params:win=%"=="%params%" (
         rmdir "Front\desktop-electron-app\views\app" /s /q
     )
     
-    xcopy "Front\react-streaming-client\build\" "Front\desktop-electron-app\views\app" /E
+    xcopy "Front\react-streaming-client\build\" "Front\desktop-electron-app\views\app\" /E
 
     npm run make --prefix ".\Front\desktop-electron-app"
 
