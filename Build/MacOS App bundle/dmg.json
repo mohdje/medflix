@@ -1,0 +1,15 @@
+{
+  "title": "Medflix",
+  "icon": "Medflix.icns",
+  "background": "dmg_background.png",
+  "window": {
+    "size": {
+      "height": 290,
+      "width": 450
+    }
+  },
+  "contents": [
+    { "x": 350, "y": 145, "type": "link", "path": "/Applications" },
+    { "x": 100, "y": 145, "type": "file", "path": "Medflix.app" }
+  ]
+}
