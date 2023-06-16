@@ -125,15 +125,16 @@ namespace WebHostStreaming.Controllers
 
                 var arguments = new List<string>();
                 arguments.Add(AppFiles.NewReleasePackage);
-                arguments.Add(AppFolders.CurrentFolder);
 
                 if (AppConfiguration.IsWindowsVersion)
                 {
+                    arguments.Add(AppFolders.CurrentFolder);
                     arguments.Add(AppFiles.WindowsDesktopApp);
                     System.Diagnostics.Process.Start(AppFiles.WindowsExtractUpdateProgram, arguments);
                 }
                 else if (AppConfiguration.IsMacosVersion)
                 {
+                    arguments.Add("/Applications");
                     System.Diagnostics.Process.Start(AppFiles.MacosExtractUpdateProgram, arguments);
                 }
 
