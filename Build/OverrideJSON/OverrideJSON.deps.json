@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "OverrideJSON/1.0.0": {
+        "runtime": {
+          "OverrideJSON.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "OverrideJSON/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
