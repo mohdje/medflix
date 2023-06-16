@@ -20,3 +20,8 @@ Front/extract-update-package-electron-app/out/
 Front/extract-update-package-electron-app/node_modules/
 MoviesAPI/MoviesApiSample/Tokens.cs
 WebHostStreaming/WebHostStreaming/Helpers/Tokens.cs
+.DS_Store
+Front/.DS_Store
+Front/desktop-electron-app/.DS_Store
+Front/extract-update-package-electron-app/.DS_Store
+
