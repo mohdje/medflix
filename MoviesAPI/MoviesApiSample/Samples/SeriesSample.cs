@@ -25,10 +25,12 @@ namespace MoviesApiSample.Samples
             //await GetPopularSeries();
             //await GetPopularSeriesByGenre(16);
             //await GetSeriesByGenre(10767);
-            await GetSerieDetails("119051");
+            //await GetSerieDetails("119051");
             //await GetPopularNetflixSeries();
             //await GetPopularDisneyPlusSeries();
             //await GetPopularAmazonPrimeSeries();
+
+            await GetRecommandedSeries();
 
            // await GetFrenchTitle("119051");
            // await GetGenres();
@@ -42,6 +44,15 @@ namespace MoviesApiSample.Samples
         private async Task GetPopularSeries()
         {
             ShowSeriesList(await seriesSearcher.GetPopularSeriesAsync(), "Popular Series");
+        }
+
+        private async Task GetRecommandedSeries()
+        {
+            var genres = new string[] { "80", "35" };
+            var minDate = "2018-01-01";
+            var maxDate = "2022-12-31";
+            var exludedMovies = new string[] { "72879", "4614" };
+            ShowSeriesList(await seriesSearcher.GetRecommandationsAsync(genres, minDate, maxDate, exludedMovies), "Recommanded series");
         }
 
         private async Task GetPopularNetflixSeries()

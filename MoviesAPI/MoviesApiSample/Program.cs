@@ -23,10 +23,10 @@ namespace MoviesApiSample
         static async Task Main(string[] args)
         {
             Console.WriteLine("Test started");
-            var movies = new MoviesSample(Tokens.API_TOKEN);
+            //var movies = new MoviesSample(Tokens.API_TOKEN);
             var series = new SeriesSample(Tokens.API_TOKEN);
-            var torrent = new TorrentSample();
-            var subtitles = new SubtitlesSample();
+            //var torrent = new TorrentSample();
+            //var subtitles = new SubtitlesSample();
 
             //await movies.Test();
              await series.Test();

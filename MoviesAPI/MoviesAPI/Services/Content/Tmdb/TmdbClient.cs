@@ -60,11 +60,24 @@ namespace MoviesAPI.Services.Tmdb
             return ToLiteContentDtos(results);
         }
 
-        protected async Task<IEnumerable<LiteContentDto>> GetRecommandedContentAsync(string tmdbContentId)
+        protected async Task<IEnumerable<LiteContentDto>> GetRecommandedContentAsync(string[] genreIds, string minDate, string maxDate, string[] excludedTmdbContentIds)
         {
-            var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildRecommandationsUrl(tmdbContentId));
+            var recommandations = new List<LiteContentDto>();
+            var recommandationsCount = 15;
+            var page = 0;
 
-            return ToLiteContentDtos(results);
+            while (recommandations.Count < recommandationsCount)
+            {
+                page++;
+                var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildRecommandationsUrl(genreIds, minDate, maxDate, page));
+
+                if (results == null || !results.Results.Any())
+                    break;
+                else
+                    recommandations.AddRange(ToLiteContentDtos(results).Where(content => !excludedTmdbContentIds.Contains(content.Id)));
+            }
+
+            return recommandations.Take(recommandationsCount);
         }
 
         protected async Task<IEnumerable<LiteContentDto>> GetSimilarContentAsync(string tmdbContentId)

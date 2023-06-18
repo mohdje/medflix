@@ -14,7 +14,7 @@ namespace MoviesAPI.Services.Content
         Task<IEnumerable<LiteContentDto>> SearchSeriesAsync(string seriesName);
         Task<IEnumerable<LiteContentDto>> GetSeriesOfTodayAsync();
         Task<IEnumerable<LiteContentDto>> GetPopularSeriesAsync();
-        Task<IEnumerable<LiteContentDto>> GetRecommandationsAsync(string seriesId);
+        Task<IEnumerable<LiteContentDto>> GetRecommandationsAsync(string[] genreIds, string minDate, string maxDate, string[] excludedTmdbContentIds);
         Task<IEnumerable<LiteContentDto>> GetSimilarSeriesAsync(string seriesId);
         Task<ContentDto> GetSerieDetailsAsync(string seriesId);
         Task<IEnumerable<LiteContentDto>> GetSeriesByGenreAsync(int genreId, int page);

@@ -45,9 +45,11 @@ namespace MoviesAPI.Services.Tmdb
             return $"{BaseUrl}/{ContentMode}/{tmdbMovieId}/translations?api_key={apiKey}";
         }
 
-        public string BuildRecommandationsUrl(string tmdbMovieId)
+        public string BuildRecommandationsUrl(string[] genreIds, string minDate, string maxDate, int page)
         {
-            return $"{BaseUrl}/{ContentMode}/{tmdbMovieId}/recommendations?api_key={apiKey}&page=1";
+            var genres = string.Join("%7C", genreIds);
+
+            return $"{BaseUrl}/discover/{ContentMode}?api_key={apiKey}&include_adult=false&include_video=false&language=en-US&page=1&release_date.gte={minDate}&release_date.lte={maxDate}&sort_by=popularity.desc&vote_average.gte=6&vote_count.gte=15&with_genres={genres}&page={page}";
         }
 
         public string BuildSimilarContentUrl(string tmdbMovieId)

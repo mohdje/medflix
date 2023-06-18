@@ -56,9 +56,9 @@ namespace MoviesAPI.Services.Content
             return await GetPopularNetflixContentAsync();
         }
 
-        public async Task<IEnumerable<LiteContentDto>> GetRecommandationsAsync(string movieId)
+        public async Task<IEnumerable<LiteContentDto>> GetRecommandationsAsync(string[] genreIds, string minDate, string maxDate, string[] excludedTmdbContentIds)
         {
-            return await GetRecommandedContentAsync(movieId);
+            return await GetRecommandedContentAsync(genreIds, minDate, maxDate, excludedTmdbContentIds);
         }
 
         public async Task<IEnumerable<LiteContentDto>> GetSimilarMoviesAsync(string movieId)
