@@ -3,7 +3,7 @@ using MoviesAPI.Services.Content.Dtos;
 
 namespace WebHostStreaming.Models
 {
-    public class WatchedMediaDto 
+    public class WatchedMediaDto
     {
         public string Id { get; set; }
         public string CoverImageUrl { get; set; }
@@ -15,5 +15,6 @@ namespace WebHostStreaming.Models
         public float CurrentTime { get; set; }
         public int SeasonNumber { get; set; }
         public int EpisodeNumber { get; set; }
+        public Genre[] Genres { get; set; }
     }
 }

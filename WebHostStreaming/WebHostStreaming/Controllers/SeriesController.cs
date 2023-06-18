@@ -19,14 +19,17 @@ namespace WebHostStreaming.Controllers
         ISearchersProvider searchersProvider;
         IWatchedMediaProvider watchedMediaProvider;
         IBookmarkedMediaProvider bookmarkedMediaProvider;
+        IRecommandationsProvider recommandationsProvider;
         public SeriesController(
             ISearchersProvider searchersProvider,
             IWatchedMediaProvider watchedMediaProvider,
-            IBookmarkedMediaProvider bookmarkedMediaProvider)
+            IBookmarkedMediaProvider bookmarkedMediaProvider,
+             IRecommandationsProvider recommandationsProvider)
         {
             this.searchersProvider = searchersProvider;
             this.watchedMediaProvider = watchedMediaProvider;
             this.bookmarkedMediaProvider = bookmarkedMediaProvider;
+            this.recommandationsProvider = recommandationsProvider;
         }
         [HttpGet("genres")]
         public async Task<IEnumerable<Genre>> GetSeriesGenres()
@@ -69,25 +72,13 @@ namespace WebHostStreaming.Controllers
         [HttpGet("similar/{id}")]
         public async Task<IEnumerable<LiteContentDto>> GetSimilarSeries(string id)
         {
-            return await searchersProvider.SeriesSearcher.GetRecommandationsAsync(id);
+            return await searchersProvider.SeriesSearcher.GetSimilarSeriesAsync(id);
         }
 
         [HttpGet("recommandations")]
-        public async Task<IEnumerable<LiteContentDto>> GetRecommandations([FromQuery]string id)
+        public async Task<IEnumerable<LiteContentDto>> GetRecommandations()
         {
-            var serieId = string.Empty;
-            if (string.IsNullOrEmpty(id))
-            {
-                var series = await watchedMediaProvider.GetWatchedSeriesAsync();
-                if (series == null || !series.Any())
-                    return null;
-                else
-                    serieId = series.Last().Id;
-            }
-            else
-                serieId = id;
-
-            return await searchersProvider.SeriesSearcher.GetRecommandationsAsync(serieId);
+            return await recommandationsProvider.GetSeriesRecommandationsAsync();
         }
 
         [HttpGet("genre/{genreId}")]

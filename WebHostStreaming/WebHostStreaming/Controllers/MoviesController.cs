@@ -22,14 +22,17 @@ namespace WebHostStreaming.Controllers
         ISearchersProvider searchersProvider;
         IWatchedMediaProvider watchedMediaProvider;
         IBookmarkedMediaProvider bookmarkedMediaProvider;
+        IRecommandationsProvider recommandationsProvider;
         public MoviesController(
             ISearchersProvider searchersProvider,
             IWatchedMediaProvider watchedMediaProvider,
-            IBookmarkedMediaProvider bookmarkedMediaProvider)
+            IBookmarkedMediaProvider bookmarkedMediaProvider,
+            IRecommandationsProvider recommandationsProvider)
         {
             this.searchersProvider = searchersProvider;
             this.watchedMediaProvider = watchedMediaProvider;
             this.bookmarkedMediaProvider = bookmarkedMediaProvider;
+            this.recommandationsProvider = recommandationsProvider;
         }
         [HttpGet("genres")]
         public async Task<IEnumerable<Genre>> GetMoviesGenres()
@@ -72,25 +75,13 @@ namespace WebHostStreaming.Controllers
         [HttpGet("similar/{id}")]
         public async Task<IEnumerable<LiteContentDto>> GetSimilarMovies(string id)
         {
-            return await searchersProvider.MovieSearcher.GetRecommandationsAsync(id);
+            return await searchersProvider.MovieSearcher.GetSimilarMoviesAsync(id);
         }
 
         [HttpGet("recommandations")]
-        public async Task<IEnumerable<LiteContentDto>> GetRecommandations([FromQuery] string id)
+        public async Task<IEnumerable<LiteContentDto>> GetRecommandations()
         {
-            var movieId = string.Empty;
-            if (string.IsNullOrEmpty(id))
-            {
-                var movies = await watchedMediaProvider.GetWatchedMoviesAsync();
-                if (movies == null || !movies.Any())
-                    return null;
-                else
-                    movieId = movies.Last().Id;
-            }
-            else
-                movieId = id;
-
-            return await searchersProvider.MovieSearcher.GetRecommandationsAsync(movieId);
+            return await recommandationsProvider.GetMoviesRecommandationsAsync();
         }
 
         [HttpGet("genre/{genreId}")]
