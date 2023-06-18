@@ -40,9 +40,9 @@ namespace MoviesAPI.Services.Tmdb
             return $"{BaseUrl}/search/{ContentMode}?api_key={apiKey}&language=en-US&query={title}&page=1&include_adult=false";
         }
 
-        public string BuildTranslationUrl(string tmdbMovieId)
+        public string BuildTranslationUrl(string tmdbContentId)
         {
-            return $"{BaseUrl}/{ContentMode}/{tmdbMovieId}/translations?api_key={apiKey}";
+            return $"{BaseUrl}/{ContentMode}/{tmdbContentId}/translations?api_key={apiKey}";
         }
 
         public string BuildRecommandationsUrl(string[] genreIds, string minDate, string maxDate, int page)
@@ -52,9 +52,10 @@ namespace MoviesAPI.Services.Tmdb
             return $"{BaseUrl}/discover/{ContentMode}?api_key={apiKey}&include_adult=false&include_video=false&language=en-US&page=1&release_date.gte={minDate}&release_date.lte={maxDate}&sort_by=popularity.desc&vote_average.gte=6&vote_count.gte=15&with_genres={genres}&page={page}";
         }
 
-        public string BuildSimilarContentUrl(string tmdbMovieId)
+        public string BuildSimilarContentUrl(string tmdbContentId)
         {
-            return $"{BaseUrl}/{ContentMode}/{tmdbMovieId}/similar?api_key={apiKey}&page=1";
+            //use recommandantions because similar endpoint does not retrieve relevant content
+            return $"{BaseUrl}/{ContentMode}/{tmdbContentId}/recommendations?api_key={apiKey}&page=1";
         }
 
         public string BuildTrendingOfTodayUrl()
@@ -90,16 +91,16 @@ namespace MoviesAPI.Services.Tmdb
             return string.IsNullOrEmpty(imageName) ? null : $"{BaseImageUrl}/w500/{imageName.Replace("/", "")}";
         }
 
-        public string BuildContentDetailsUrl(string tmdbMovieId, string language = null)
+        public string BuildContentDetailsUrl(string tmdbContentId, string language = null)
         {
             var languageParam = string.IsNullOrEmpty(language) ? "en-US" : language;
 
-            return $"{BaseUrl}/{ContentMode}/{tmdbMovieId}?api_key={apiKey}&language={languageParam}&append_to_response=videos";
+            return $"{BaseUrl}/{ContentMode}/{tmdbContentId}?api_key={apiKey}&language={languageParam}&append_to_response=videos";
         }
 
-        public string BuildContentImagesUrl(string tmdbMovieId)
+        public string BuildContentImagesUrl(string tmdbContentId)
         {
-            return $"{BaseUrl}/{ContentMode}/{tmdbMovieId}/images?api_key={apiKey}";
+            return $"{BaseUrl}/{ContentMode}/{tmdbContentId}/images?api_key={apiKey}";
         }
 
         public string BuilGenresListUrl()

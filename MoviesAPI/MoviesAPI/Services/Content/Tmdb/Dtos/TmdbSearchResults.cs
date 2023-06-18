@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using MoviesAPI.Extensions;
+using MoviesAPI.Services.Content.Dtos;
 
 namespace MoviesAPI.Services.Tmdb.Dtos
 {

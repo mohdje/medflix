@@ -129,7 +129,7 @@ namespace MoviesAPI.Services.Tmdb
                 Rating = Math.Round(tmdbSearchResult.VoteAverage, 1),
                 Id = tmdbSearchResult.Id,
                 Synopsis = tmdbSearchResult.Overview,
-                Genre = tmdbSearchResult.Genres.Select(g => g.Name).Aggregate((a, b) => $"{a}, {b}"),
+                Genres = tmdbSearchResult.Genres,
                 Duration = tmdbSearchResult.Runtime.GetValueOrDefault(0),
                 YoutubeTrailerUrl = GetYoutubeTrailerUrlVideo(tmdbSearchResult.Videos.Results),
                 Cast = tmdbCredits?.Cast?.Take(4).Select(c => c.Name).Aggregate((a, b) => $"{a}, {b}"),

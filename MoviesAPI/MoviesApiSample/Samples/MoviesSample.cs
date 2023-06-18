@@ -110,7 +110,7 @@ namespace MoviesApiSample.Samples
             var movie = await movieSearcher.GetMovieDetailsAsync(movieId);
 
             Console.WriteLine($"{movie.Id}. {movie.Title}  ({movie.Year}), {movie.Rating}, background:{movie.BackgroundImageUrl}, cover:{movie.CoverImageUrl}, synopsis: {movie.Synopsis}");
-            Console.WriteLine($"Genre: {movie.Genre}");
+            Console.WriteLine($"Genre: {movie.Genres.Select(genre => genre.Name).Aggregate((a,b) => $"{a}, {b}")}");
             Console.WriteLine($"Director: {movie.Director}");
             Console.WriteLine($"Cast: {movie.Cast}");
             Console.WriteLine($"Duration: {movie.Duration}");

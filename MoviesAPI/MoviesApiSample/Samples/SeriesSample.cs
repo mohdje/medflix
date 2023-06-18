@@ -25,12 +25,12 @@ namespace MoviesApiSample.Samples
             //await GetPopularSeries();
             //await GetPopularSeriesByGenre(16);
             //await GetSeriesByGenre(10767);
-            //await GetSerieDetails("119051");
+            await GetSerieDetails("119051");
             //await GetPopularNetflixSeries();
             //await GetPopularDisneyPlusSeries();
             //await GetPopularAmazonPrimeSeries();
 
-            await GetRecommandedSeries();
+           // await GetRecommandedSeries();
 
            // await GetFrenchTitle("119051");
            // await GetGenres();
@@ -113,7 +113,7 @@ namespace MoviesApiSample.Samples
             var serie = await seriesSearcher.GetSerieDetailsAsync(serieId);
 
             Console.WriteLine($"{serie.Id}. {serie.Title}  ({serie.Year}), {serie.Rating}, background:{serie.BackgroundImageUrl}, cover:{serie.CoverImageUrl}, synopsis: {serie.Synopsis}");
-            Console.WriteLine($"Genre: {serie.Genre}");
+            Console.WriteLine($"Genre: {serie.Genres.Select(genre => genre.Name).Aggregate((a, b) => $"{a}, {b}")}");
             Console.WriteLine($"Director: {serie.Director}");
             Console.WriteLine($"Cast: {serie.Cast}");
             Console.WriteLine($"Trailer: {serie.YoutubeTrailerUrl}");
