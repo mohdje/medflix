@@ -62,7 +62,7 @@ function HomePage({ onMediaClick, onReady, onFail }) {
             AppServices.searchMediaService.getPopularMedias((medias)=>{
                 addMedias("Popular " + AppMode.getActiveMode().label.toLocaleLowerCase(), medias, true);
             });
-            AppServices.searchMediaService.getRecommandedMedias(null, (medias)=>{
+            AppServices.searchMediaService.getRecommandedMedias((medias)=>{
                 addMedias("Recommanded for you", medias, true);
             });
             AppServices.searchMediaService.getPopularNetflixMedias((medias)=>{
