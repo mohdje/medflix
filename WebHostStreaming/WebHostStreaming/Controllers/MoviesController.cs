@@ -66,6 +66,13 @@ namespace WebHostStreaming.Controllers
             return await searchersProvider.MovieSearcher.GetPopularAmazonPrimeMoviesAsync();
         }
 
+
+        [HttpGet("appletv")]
+        public async Task<IEnumerable<LiteContentDto>> GetPopularAppleTvMovies()
+        {
+            return await searchersProvider.MovieSearcher.GetPopularAppleTvMoviesAsync();
+        }
+
         [HttpGet("popular")]
         public async Task<IEnumerable<LiteContentDto>> GetPopularMovies()
         {

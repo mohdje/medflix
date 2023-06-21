@@ -63,6 +63,12 @@ namespace WebHostStreaming.Controllers
             return await searchersProvider.SeriesSearcher.GetPopularAmazonPrimeSeriesAsync();
         }
 
+        [HttpGet("appletv")]
+        public async Task<IEnumerable<LiteContentDto>> GetPopularAppleTvSeries()
+        {
+            return await searchersProvider.SeriesSearcher.GetPopularAppleTvSeriesAsync();
+        }
+
         [HttpGet("popular")]
         public async Task<IEnumerable<LiteContentDto>> GetPopularSeries()
         {
