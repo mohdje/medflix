@@ -22,6 +22,7 @@ namespace MoviesAPI.Services.Content
         Task<IEnumerable<LiteContentDto>> GetPopularNetflixMoviesAsync();
         Task<IEnumerable<LiteContentDto>> GetPopularDisneyPlusMoviesAsync();
         Task<IEnumerable<LiteContentDto>> GetPopularAmazonPrimeMoviesAsync();
+        Task<IEnumerable<LiteContentDto>> GetPopularAppleTvMoviesAsync();
         Task<IEnumerable<Genre>> GetMovieGenresAsync();
     }
 }

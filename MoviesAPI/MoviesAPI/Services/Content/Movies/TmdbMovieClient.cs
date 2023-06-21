@@ -55,6 +55,10 @@ namespace MoviesAPI.Services.Content
         {
             return await GetPopularNetflixContentAsync();
         }
+        public async Task<IEnumerable<LiteContentDto>> GetPopularAppleTvMoviesAsync()
+        {
+            return await GetPopularAppleTvContentAsync();
+        }
 
         public async Task<IEnumerable<LiteContentDto>> GetRecommandationsAsync(string[] genreIds, string minDate, string maxDate, string[] excludedTmdbContentIds)
         {
@@ -84,5 +88,7 @@ namespace MoviesAPI.Services.Content
 
             return genres != null ? genres.Where(g => !genreIdsToRemove.Contains(g.Id)) : new Genre[0];
         }
+
+      
     }
 }

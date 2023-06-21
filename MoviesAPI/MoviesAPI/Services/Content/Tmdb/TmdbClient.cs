@@ -172,6 +172,7 @@ namespace MoviesAPI.Services.Tmdb
         protected async Task<IEnumerable<LiteContentDto>> GetPopularDisneyPlusContentAsync()
         {
             var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildPopularContentByPlatformUrl(337));
+            results.Results = results.Results.OrderByDescending(r => r.VoteCount).ToArray();
 
             return ToLiteContentDtos(results);
         }
@@ -179,6 +180,15 @@ namespace MoviesAPI.Services.Tmdb
         protected async Task<IEnumerable<LiteContentDto>> GetPopularAmazonPrimeContentAsync()
         {
             var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildPopularContentByPlatformUrl(9));
+            results.Results = results.Results.OrderByDescending(r => r.VoteCount).ToArray();
+
+            return ToLiteContentDtos(results);
+        }
+
+        protected async Task<IEnumerable<LiteContentDto>> GetPopularAppleTvContentAsync()
+        {
+            var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildPopularContentByPlatformUrl(2));
+            results.Results = results.Results.OrderByDescending(r => r.VoteCount).ToArray();
 
             return ToLiteContentDtos(results);
         }

@@ -61,6 +61,11 @@ namespace MoviesAPI.Services.Content
             return await GetPopularNetflixContentAsync();
         }
 
+        public async Task<IEnumerable<LiteContentDto>> GetPopularAppleTvSeriesAsync()
+        {
+            return await GetPopularAppleTvContentAsync();
+        }
+
         public async Task<IEnumerable<LiteContentDto>> GetRecommandationsAsync(string[] genreIds, string minDate, string maxDate, string[] excludedTmdbContentIds)
         {
             return await GetRecommandedContentAsync(genreIds, minDate, maxDate, excludedTmdbContentIds);
@@ -117,5 +122,6 @@ namespace MoviesAPI.Services.Content
             var result = await HttpRequester.GetAsync<TmdbExternalIdDto>(tmdbUrlBuilder.BuildSerieGetExternalIds(tmdbContentId));
             return result?.ImdbId;
         }
+
     }
 }
