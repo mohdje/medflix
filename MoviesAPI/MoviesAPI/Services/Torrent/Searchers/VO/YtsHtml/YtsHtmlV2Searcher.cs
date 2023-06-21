@@ -90,8 +90,12 @@ namespace MoviesAPI.Services.Torrent
             if(doc == null)
                 return new MediaTorrent[0];
 
-            return doc.DocumentNode.SelectNodes("//a[contains(@class, 'download-torrent')]")
-                                                        ?.Select(n => new MediaTorrent()
+            var downloadTorrentNodes = doc.DocumentNode.SelectNodes("//a[contains(@class, 'download-torrent')]");
+
+            if(downloadTorrentNodes == null)
+                return new MediaTorrent[0];
+            else
+                return downloadTorrentNodes.Select(n => new MediaTorrent()
                                                         {
                                                             DownloadUrl = htmlUrlProvider.GetTorrentUrl(n.Attributes["href"].Value),
                                                             Quality = n.InnerText
