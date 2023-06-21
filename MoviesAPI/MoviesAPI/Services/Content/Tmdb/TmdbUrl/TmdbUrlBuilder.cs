@@ -127,9 +127,10 @@ namespace MoviesAPI.Services.Tmdb
 
         public string BuildPopularContentByPlatformUrl(int platformId)
         {
-            var date = DateTime.Now.ToString("yyyy-MM-dd");
+            var today = DateTime.Now.ToString("yyyy-MM-dd");
+            var pastDate = DateTime.Now.AddMonths(-3).ToString("yyyy-MM-dd");
 
-            return $"{BaseUrl}/discover/{ContentMode}?api_key={apiKey}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&release_date.lte={date}&with_watch_providers={platformId}&watch_region=US";
+            return $"{BaseUrl}/discover/{ContentMode}?api_key={apiKey}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&release_date.gte={pastDate}&release_date.lte={today}&with_watch_providers={platformId}&watch_region=US";
         }
 
         public string BuildEpisodesBySeasonUrl(string tmdbContentId, int seasonNumber)
