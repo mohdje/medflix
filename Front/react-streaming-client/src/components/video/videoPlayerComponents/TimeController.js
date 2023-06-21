@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 function TimeController({ videoDuration, videoCurrentTime, onTimeChanged }) {
     const [videoCurrentTimeLabel, setVideoCurrentTimeLabel] = useState('00:00');
-    const [videoTotalTimeLabel, setVideoTotalTimeLabel] = useState('00:00');
+    const [videoRemainingTimeLabel, setVideoRemainingTimeLabel] = useState('00:00');
     const [currentPourcentageTimeVideo, setcurrentPourcentageTimeVideo] = useState(0);
     const [tooltip, setTooltip] = useState(null);
     const [totalTime, setTotalTime] = useState(0);
@@ -35,6 +35,8 @@ function TimeController({ videoDuration, videoCurrentTime, onTimeChanged }) {
 
     const updateTimeVideo = (time) => {
         setVideoCurrentTimeLabel(getTimeLabel(time));
+        setVideoRemainingTimeLabel(getTimeLabel(videoDuration - time));
+        
         if(totalTime && totalTime > 0)
             setcurrentPourcentageTimeVideo((time) * 100 / totalTime);
         else
@@ -58,7 +60,7 @@ function TimeController({ videoDuration, videoCurrentTime, onTimeChanged }) {
     useEffect(() => {
         if (videoDuration){
             setTotalTime(videoDuration);
-            setVideoTotalTimeLabel(getTimeLabel(videoDuration));
+            setVideoRemainingTimeLabel(getTimeLabel(videoDuration));
         }
         else
             setTotalTime(0);
@@ -74,7 +76,7 @@ function TimeController({ videoDuration, videoCurrentTime, onTimeChanged }) {
                 tooltip={tooltip}
                 progressColor={'#ed0f0f'}
                 cursorColor={'#b59e9e'} />
-            <div className="video-time-label">{videoTotalTimeLabel}</div>
+            <div className="video-time-label">{videoRemainingTimeLabel}</div>
         </div>
     );
 }
