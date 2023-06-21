@@ -50,7 +50,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
     const [showMediaTrailer, setShowMediaTrailer] = useState(false);
     const [addBookmarkButtonVisible, setAddBookmarkButtonVisible] = useState(true);
 
-    const [recommandedMedias, setRecommandedMedias] = useState([]);
+    const [similarMedias, setSimilarMedias] = useState([]);
     const navHistory = useRef([]);
 
     const selectedEpisode = useRef({ 
@@ -85,7 +85,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
     const loadPage = (mediaId) => {
         setDataLoaded(false);
         setMediaDetails({});
-        setRecommandedMedias([]);
+        setSimilarMedias([]);
         if (mediaId) {
             AppServices.searchMediaService.getMediaDetails(mediaId,
                 (details) => {
@@ -99,9 +99,9 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                     }
                 });
             getMediaProgression(mediaId, 1, 1);               
-            AppServices.searchMediaService.getRecommandedMedias(mediaId, (recommandedMedias) => {
+            AppServices.searchMediaService.getSimilarMedias(mediaId, (recommandedMedias) => {
                 if(recommandedMedias && recommandedMedias.length > 0)
-                    setRecommandedMedias(recommandedMedias);
+                    setSimilarMedias(recommandedMedias);
             });
         }
     }
@@ -261,7 +261,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                             </div>
                             <div className="info-content">
                                 <Rating rating={mediaDetails.rating} size="50px" />
-                                <SecondaryInfo center text={mediaDetails.year  + " | " + (mediaDetails.duration ? ToTimeFormat(mediaDetails.duration) + " | " : '') +  mediaDetails.genre} />
+                                <SecondaryInfo center text={mediaDetails.year  + " | " + (mediaDetails.duration ? ToTimeFormat(mediaDetails.duration) + " | " : '') +  mediaDetails.genres?.map(genre => genre.name).join(', ')} />
                                 <MediaProgression mediaProgression={mediaProgression?.progression} remainingTime={mediaProgression?.remainingTime}/>
                                 <div className="horizontal">
                                     <TrailerButton visible={mediaDetails?.youtubeTrailerUrl} onClick={() => setShowMediaTrailer(true)} />
@@ -296,10 +296,10 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                             <TitleAndContent title="Cast" content={mediaDetails.cast} justify="left" />
                             <Paragraph text={mediaDetails.synopsis}></Paragraph>
                             <MediasListLiteWithTitle 
-                                medias={recommandedMedias} 
+                                medias={similarMedias} 
                                 alignLeft
                                 listTitle="You may also like" 
-                                visible={recommandedMedias && recommandedMedias.length > 0} 
+                                visible={similarMedias && similarMedias.length > 0} 
                                 onMediaClick={(mediaId) =>  {onRecommandedMediaClick(mediaId)}}/>
                         </div>
                     </div>

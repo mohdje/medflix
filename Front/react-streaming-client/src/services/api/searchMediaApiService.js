@@ -62,15 +62,14 @@ class SearchMediaApiService extends BaseApiService {
         this.getRequest(url, [], true, onSuccess, onFail);
     }
 
-    getRecommandedMedias(mediaId, onSuccess, onFail) {
+    getRecommandedMedias(onSuccess, onFail) {
         var url = this.buildSearchUrl('recommandations');
-        var parameters = [
-            {
-                name: 'id',
-                value: mediaId ? mediaId : ''
-            }
-        ];
-        this.getRequest(url, parameters, true, onSuccess, onFail);
+        this.getRequest(url, [], true, onSuccess, onFail);
+    }
+
+    getSimilarMedias(mediaId, onSuccess, onFail) {
+        var url = this.buildSearchUrl('similar/'+ mediaId);
+        this.getRequest(url, [], true, onSuccess, onFail);
     }
 
     getEpisodes(serieId, seasonNumber, onSuccess, onFail){
