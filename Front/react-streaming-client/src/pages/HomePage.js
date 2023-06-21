@@ -74,6 +74,9 @@ function HomePage({ onMediaClick, onReady, onFail }) {
             AppServices.searchMediaService.getPopularAmazonPrimeMedias((medias)=>{
                 addMedias("Popular on Amazon Prime", medias);
             });
+            AppServices.searchMediaService.getPopularAppleTvMedias((medias)=>{
+                addMedias("Popular on AppleTv", medias);
+            });
         }
     }
 

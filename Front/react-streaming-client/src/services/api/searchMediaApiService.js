@@ -57,6 +57,11 @@ class SearchMediaApiService extends BaseApiService {
         this.getRequest(url, [], true, onSuccess, onFail);
     }
 
+    getPopularAppleTvMedias(onSuccess, onFail) {
+        var url = this.buildSearchUrl('appletv');
+        this.getRequest(url, [], true, onSuccess, onFail);
+    }
+
     getPopularMedias(onSuccess, onFail) {
         var url = this.buildSearchUrl('popular');
         this.getRequest(url, [], true, onSuccess, onFail);
