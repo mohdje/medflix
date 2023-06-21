@@ -52,16 +52,16 @@ namespace WebHostStreaming.Providers
                 return null;
             else
             {
-                var watchedMoviesIds = watchedMedias.Select(movie => movie.Id);
+                var watchedMediasIds = watchedMedias.Select(media => media.Id).Distinct();
                 var minDate = GetMinDate(watchedMedias);
                 var maxDate = GetMaxDate(watchedMedias);
 
-                var allGenresIds = watchedMedias.SelectMany(movie => movie.Genres.Select(genre => genre.Id));
+                var allGenresIds = watchedMedias.TakeLast(3).Reverse().SelectMany(movie => movie.Genres.Select(genre => genre.Id));
                 var genresCount = allGenresIds.Distinct().Select(genreId => new { Id = genreId, Count = allGenresIds.Count(gId => genreId == gId) });
 
                 var selectedGenresIds = genresCount.OrderByDescending(g => g.Count).Select(g => g.Id.ToString()).Take(3);
 
-                return new RecommandationsRequest(selectedGenresIds.ToArray(), minDate, maxDate, watchedMoviesIds.ToArray());
+                return new RecommandationsRequest(selectedGenresIds.ToArray(), minDate, maxDate, watchedMediasIds.ToArray());
             }
         }
 
