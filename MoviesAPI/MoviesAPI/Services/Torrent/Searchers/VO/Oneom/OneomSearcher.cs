@@ -12,6 +12,8 @@ namespace MoviesAPI.Services.Torrent
     internal class OneomSearcher : ITorrentSerieSearcher
     {
         private List<KeyValuePair<string, string>> httpRequestHeaders;
+
+        private const string baseUrl = "https://oneom.one";
         public OneomSearcher()
         {
             httpRequestHeaders = new List<KeyValuePair<string, string>>();
@@ -19,7 +21,7 @@ namespace MoviesAPI.Services.Torrent
         }
         public string GetPingUrl()
         {
-            return "https://oneom.is";
+            return baseUrl;
         }
 
 
@@ -70,12 +72,12 @@ namespace MoviesAPI.Services.Torrent
 
         private string BuildSearchSerieUrl(string serieName)
         {
-            return $"https://oneom.is/search/serial?title={serieName.RemoveSpecialCharacters()}&limit=500";
+            return $"{baseUrl}/search/serial?title={serieName.RemoveSpecialCharacters()}&limit=500";
         }
 
         private string BuildSearchTorrentUrl(string oneomId)
         {
-            return $"https://oneom.is/serial/{oneomId}";
+            return $"{baseUrl}/serial/{oneomId}";
         }
 
         private string GetQuality(string torrentTitle)
