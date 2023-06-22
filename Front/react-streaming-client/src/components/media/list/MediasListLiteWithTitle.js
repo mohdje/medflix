@@ -6,7 +6,7 @@ function MediasListLiteWithTitle({ listTitle, medias, alignLeft, visible, onMedi
     return (
         <div style={fadeTransition(medias && medias.length > 0  && visible, 1)} className="medias-list-genre-container">
             <div className="medias-list-header">
-                <div className="medias-list-genre">{listTitle}</div>
+                <div className="medias-list-categorie">{listTitle}</div>
             </div>
             <MediasListLite medias={medias} alignLeft={alignLeft} onMediaClick={(mediaId)=>onMediaClick(mediaId)}/>
         </div>
