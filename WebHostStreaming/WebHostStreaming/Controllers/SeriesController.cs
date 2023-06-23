@@ -31,10 +31,17 @@ namespace WebHostStreaming.Controllers
             this.bookmarkedMediaProvider = bookmarkedMediaProvider;
             this.recommandationsProvider = recommandationsProvider;
         }
+
         [HttpGet("genres")]
         public async Task<IEnumerable<Genre>> GetSeriesGenres()
         {
             return await searchersProvider.SeriesSearcher.GetSerieGenresAsync();
+        }
+
+        [HttpGet("platforms")]
+        public async Task<IEnumerable<Platform>> GetSeriesPlatforms()
+        {
+            return await searchersProvider.SeriesSearcher.GetSeriePlatformsAsync();
         }
 
         [HttpGet("mediasoftoday")]
@@ -97,6 +104,12 @@ namespace WebHostStreaming.Controllers
         public async Task<IEnumerable<LiteContentDto>> GetSeriesByGenre(int genreId, int page)
         {
             return await searchersProvider.SeriesSearcher.GetSeriesByGenreAsync(genreId, page);
+        }
+
+        [HttpGet("platform/{platformId}/{page}")]
+        public async Task<IEnumerable<LiteContentDto>> GetSeriesByPlatform(int platformId, int page)
+        {
+            return await searchersProvider.SeriesSearcher.GetSeriesByPlatformAsync(platformId, page);
         }
 
         [HttpGet("search")]
