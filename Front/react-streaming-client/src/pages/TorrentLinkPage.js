@@ -69,13 +69,13 @@ function TorrentLinkPage() {
         
         AppServices.torrentApiService.getTorrentFiles(torrentLink,
             (response) => {
-                if(torrentLinkRef.current === response.link){
+                if(decodeURIComponent(torrentLinkRef.current) === decodeURIComponent(response.link)){
                     setOpeningTorrentLink(false);
                     setTorrentFiles(response.files);
                 }
             },
             (response) => {
-                if(torrentLinkRef.current === response?.link){
+                if(decodeURIComponent(torrentLinkRef.current) === decodeURIComponent(response.link)){
                     setOpeningTorrentLink(false);
                     setTorrentFiles([]);
                 }
