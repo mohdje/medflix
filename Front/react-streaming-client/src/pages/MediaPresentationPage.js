@@ -97,6 +97,11 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                             setAddBookmarkButtonVisible(!isMediaBookmarked);
                         });
                     }
+                    else{
+                        setDataLoaded(true);
+                        const topPage = document.getElementsByClassName('no-media-details-message')[0];
+                        topPage.scrollIntoView();
+                    }
                 });
             getMediaProgression(mediaId, 1, 1);               
             AppServices.searchMediaService.getSimilarMedias(mediaId, (recommandedMedias) => {
@@ -234,7 +239,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
         getAvailableSubtitles(mediaDetails.imdbId, seasonNumber, episodeNumber);
         getMediaProgression(mediaDetails.id, seasonNumber, episodeNumber);  
     }
-
+ 
     return (
         <div style={{ height: '100%' }}>          
             <VideoPlayerWindow 
@@ -246,8 +251,11 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                 goToTime={mediaProgression?.currentTime}/> 
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />
             <ModalMediaTrailer visible={showMediaTrailer} youtubeTrailerUrl={mediaDetails.youtubeTrailerUrl} onCloseClick={() => setShowMediaTrailer(false)}/>
-
-            <div style={fadeTransition(dataLoaded)} className="media-presentation-page-container">
+            <div style={{display: dataLoaded && !mediaDetails.title ? 'flex' : 'none'}} className="no-media-details-message">
+                <Paragraph text={"No info found for this media"}/>
+                <BaseButton color="red" content={"Back"} onClick={() => onBackClick()}/>
+            </div>
+            <div style={fadeTransition(dataLoaded && mediaDetails.title)} className="media-presentation-page-container">
                 <div className="back-btn" onClick={() => onBackClick()}>
                     <ArrowBackIcon className="back-arrow" />
                 </div>
