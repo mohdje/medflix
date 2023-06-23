@@ -378,7 +378,6 @@ function QualitySelector({ versionSources, onQualityChanged }) {
 
     const content = <DropDown
         values={qualities}
-        width="120px"
         onValueChanged={(index) => onQualityChanged(index)} />
 
     return <TitleAndContent title="Qualities" content={content} justify="left"/>
