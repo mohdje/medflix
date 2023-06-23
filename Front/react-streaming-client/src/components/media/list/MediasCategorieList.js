@@ -7,33 +7,9 @@ import CircularProgressBar from "../../common/CircularProgressBar";
 
 import MediaLitePresentation from "../presentation/MediaLitePresentation";
 
-import { useEffect, useState } from 'react';
+import CacheService from "../../../services/cacheService";
 
-const cache = {
-    update(categorieId, medias, pageIndex, elemId) {
-        this.categorieId = categorieId;
-        this.medias = medias;
-        this.pageIndex = pageIndex;
-        this.mediaElementId = elemId;
-    },
-    get(categorieId) {
-        return this.categorieId === categorieId ?
-            {
-                medias: this.medias,
-                pageIndex: this.pageIndex,
-                mediaElementId: this.mediaElementId
-            }
-            : null;
-    },
-    clear() {
-        this.categorieId = '';
-        this.medias = null;
-    },
-    categorieId: '',
-    medias: null,
-    pageIndex: 0,
-    mediaElementId: ''
-}
+import { useEffect, useState } from 'react';
 
 function MediasCategorieList({ categorie, searchOperation, loadFromCache, onMediaClick }) {
 
@@ -41,7 +17,7 @@ function MediasCategorieList({ categorie, searchOperation, loadFromCache, onMedi
     const [pageIndex, setPageIndex] = useState(0);
     const [searchInProgress, setSearchInProgress] = useState(false);
     const [plusButtonVisible, setPlusButtonVisible] = useState(false);
-
+    
     const addIconStyle = {
         width: '60px',
         height: '60px',
@@ -64,12 +40,15 @@ function MediasCategorieList({ categorie, searchOperation, loadFromCache, onMedi
             () => setSearchInProgress(false));
     }
 
+    const getCacheId = (categorieId) => "categorie" + categorieId;
 
     useEffect(() => {
-        const cacheMedias = cache.get(categorie.id);
-        if (loadFromCache && cacheMedias) 
-            setPageIndex(cacheMedias.pageIndex);
+        if (loadFromCache) {
+            const cacheMedias = CacheService.getCache(getCacheId(categorie.id));
+            setPageIndex(cacheMedias.data.pageIndex);
+        }
         else {           
+            CacheService.setCache(getCacheId(categorie.id), null);
             setMedias([]);
             setPageIndex(1); 
             if(pageIndex === 1) performSearch(); 
@@ -77,9 +56,9 @@ function MediasCategorieList({ categorie, searchOperation, loadFromCache, onMedi
     }, [categorie.id]);
 
     useEffect(() => {
-        if (pageIndex > 0) {       
-            const cacheMedias = cache.get(categorie.id);
-            if (cacheMedias) setMedias(cacheMedias.medias);
+        if (pageIndex > 0) {  
+            const cacheMedias = CacheService.getCache(getCacheId(categorie.id));
+            if (cacheMedias && cacheMedias.data) setMedias(cacheMedias.data.medias);
             else performSearch();
         }
     }, [pageIndex]);
@@ -87,10 +66,11 @@ function MediasCategorieList({ categorie, searchOperation, loadFromCache, onMedi
     useEffect(() => {
         if (medias && medias.length > 0) {
             if (loadFromCache) {
-                const cacheMedias = cache.get(categorie.id);
-                if (cacheMedias) {
-                    scrollToMedia(cacheMedias.mediaElementId);
-                    cache.clear();
+                const cacheMedias = CacheService.getCache(getCacheId(categorie.id));
+                if (cacheMedias && cacheMedias.data) {
+                    setPlusButtonVisible(true);
+                    scrollToMedia(cacheMedias.data.mediaElementId);
+                    CacheService.setCache(getCacheId(categorie.id), null);
                 }
             }
             else if(pageIndex === 1)  scrollToMedia("medialite0");
@@ -106,9 +86,14 @@ function MediasCategorieList({ categorie, searchOperation, loadFromCache, onMedi
             });
         }
     }
-
+ 
     const handleMediaClick = (mediaId, elementId) => {
-        cache.update(categorie.id, medias, pageIndex, elementId);
+        const data = {
+            medias: medias,
+            pageIndex: pageIndex,
+            mediaElementId: elementId
+        }
+        CacheService.setCache(getCacheId(categorie.id), data);
         onMediaClick(mediaId);
     }
 
