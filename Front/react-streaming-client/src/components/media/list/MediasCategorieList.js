@@ -40,6 +40,7 @@ function MediasCategorieList({ categorie, searchOperation, loadFromCache, onMedi
     const [medias, setMedias] = useState([]);
     const [pageIndex, setPageIndex] = useState(0);
     const [searchInProgress, setSearchInProgress] = useState(false);
+    const [plusButtonVisible, setPlusButtonVisible] = useState(false);
 
     const addIconStyle = {
         width: '60px',
@@ -50,10 +51,12 @@ function MediasCategorieList({ categorie, searchOperation, loadFromCache, onMedi
 
     const performSearch = () => {
         setSearchInProgress(true);
+        setPlusButtonVisible(false); 
         searchOperation(categorie.id, pageIndex,
             (mediasOfCategories) => {
                 setSearchInProgress(false);
                 if (mediasOfCategories && mediasOfCategories.length > 0) {
+                    setPlusButtonVisible(true);
                     if (pageIndex === 1) setMedias(mediasOfCategories);
                     else setMedias(medias.concat(mediasOfCategories));
                 }
@@ -67,6 +70,7 @@ function MediasCategorieList({ categorie, searchOperation, loadFromCache, onMedi
         if (loadFromCache && cacheMedias) 
             setPageIndex(cacheMedias.pageIndex);
         else {           
+            setMedias([]);
             setPageIndex(1); 
             if(pageIndex === 1) performSearch(); 
         }
@@ -122,8 +126,8 @@ function MediasCategorieList({ categorie, searchOperation, loadFromCache, onMedi
                     </div>))}
                     <div className="medias-list-more">
                         <div className="round-btn grey"
-                            style={{ visibility: !searchInProgress ? 'visible' : 'hidden' }}
-                            onClick={() => { if (!searchInProgress) setPageIndex(pageIndex + 1) }}>
+                            style={{ visibility: plusButtonVisible ? 'visible' : 'hidden' }}
+                            onClick={() => { if (plusButtonVisible) {setPageIndex(pageIndex + 1);} }}>
                             <AddIcon style={addIconStyle} />
                         </div>
                     </div>

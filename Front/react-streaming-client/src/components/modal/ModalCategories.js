@@ -1,4 +1,4 @@
-import "../../style/list-genres-view.css";
+import "../../style/list-categories-view.css";
 import ModalWindow from "./ModalWindow";
 import CircularProgressBar from "../common/CircularProgressBar";
 import AppServices from "../../services/AppServices";
@@ -6,11 +6,12 @@ import AppMode from "../../services/appMode";
 
 import { useEffect, useState } from 'react';
 
-function ModalListGenre({ visible, onCloseClick, onGenreClick }) {
+function ModalCategories({ visible, onCloseClick, onGenreClick, onPlatformClick }) {
     const [loading, setLoading] = useState(true);
     const [listGenres, setListGenres] = useState([]);
+    const [listPlatforms, setListPlatforms] = useState([]);
 
-    const loadGenres = () => {
+    const loadCategories = () => {
         setListGenres([]);
         AppServices.searchMediaService.getMediaGenres(
             (genres) => {
@@ -18,28 +19,46 @@ function ModalListGenre({ visible, onCloseClick, onGenreClick }) {
                 setListGenres(genres);
               }
             }
-          );
+        );
+
+        AppServices.searchMediaService.getMediaPlatforms(
+            (platforms) => {
+                if (platforms && platforms.length > 0) {
+                    setListPlatforms(platforms);
+                }
+            }
+        );
     }
     useEffect(() => {
-        loadGenres();
+        loadCategories();
         AppMode.onAppModeChanged(()=>{
-            loadGenres();
+            loadCategories();
         });
     }, []);
 
     useEffect(() => {
-        setLoading(!listGenres || listGenres.length === 0);
-    }, [listGenres]);
+        setLoading(!listGenres || listGenres.length === 0 || !listPlatforms || listPlatforms.length === 0);
+    }, [listGenres, listPlatforms]);
 
     const listGenresView = () => {
         return (
-            <div className="list-genres-view-container">
+            <div className="list-categories-view-container">
                 <CircularProgressBar color={'white'} size={'60px'} position={'center'} visible={loading} />
-                <div className="list-genres">
+                <h3 class="categorie-title">Genres</h3>
+                <div className="list-categories">
                     {listGenres.map(genre =>
                         <div key={genre.id}
                             className="genre"
                             onClick={() => onGenreClick(genre)}>
+                            {genre.name}
+                        </div>)}
+                </div>
+                <h3 class="categorie-title">Platforms</h3>
+                <div className="list-categories">
+                    {listPlatforms.map(genre =>
+                        <div key={genre.id}
+                            className="genre"
+                            onClick={() => onPlatformClick(genre)}>
                             {genre.name}
                         </div>)}
                 </div>
@@ -52,4 +71,4 @@ function ModalListGenre({ visible, onCloseClick, onGenreClick }) {
     )
 }
 
-export default ModalListGenre;
+export default ModalCategories;

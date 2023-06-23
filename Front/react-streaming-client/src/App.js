@@ -1,9 +1,10 @@
 import './App.css';
 import NavBar from "./components/navbar/NavBar";
 import SplashScreen from "./components/SplashScreen";
-import ModalListGenre from "./components/modal/ModalListGenre.js";
+import ModalCategories from "./components/modal/ModalCategories.js";
 
 import MediaListGenrePage from "./pages/MediaListGenrePage";
+import MediaListPlatformPage from "./pages/MediaListPlatformPage";
 import MediaPresentationPage from "./pages/MediaPresentationPage";
 import HomePage from "./pages/HomePage";
 import WatchedMediasPage from "./pages/WatchedMediasPage";
@@ -22,6 +23,9 @@ function App() {
   const [selectedGenre, setSelectedGenre] = useState(null);
   const [loadFullListGenrefromCache, setLoadFullListGenrefromCache] = useState(false);
 
+  const [selectedPlatform, setSelectedPlatform] = useState(null);
+  const [loadFullListPlatformfromCache, setLoadFullListPlatformfromCache] = useState(false);
+
   const [loadResearchfromCache, setLoadResearchfromCache] = useState(false);
 
   const [centerToLastClickedBookmark, setCenterToLastClickedBookmark] = useState(false);
@@ -30,7 +34,7 @@ function App() {
   const [splashscreenVisible, setSplashscreenVisible] = useState(true);
   const [homePageFailed, setHomePageFailed] = useState(false);
 
-  const [modalListGenresVisible, setModalListGenresVisible] = useState(false);
+  const [modalListCategoriesVisible, setModalListCategoriesVisible] = useState(false);
 
   const [mediaId, setMediaId] = useState('');
 
@@ -45,6 +49,12 @@ function App() {
     showComponent(routerIds.mediasListGenrePage);
   }
 
+  const showMediasFullListofPlatform = (platform) => {
+    setSelectedPlatform(platform);
+    setLoadFullListPlatformfromCache(false);
+    showComponent(routerIds.mediasListPlatformPage);
+  }
+
   const showMediaFullPresentation = (mediaId) => {
     setMediaId(mediaId);
     showComponent(routerIds.mediaPresentationPage);
@@ -56,6 +66,7 @@ function App() {
 
   const onMediaFullPresentationClose = () => {
     setLoadFullListGenrefromCache(true);
+    setLoadFullListPlatformfromCache(true);
     setCenterToLastClickedBookmark(true);
     setCenterToLastClickedWatchedMedia(true);
     setLoadResearchfromCache(true);
@@ -65,6 +76,7 @@ function App() {
   const routerIds = {
     homePage: 'homePage',
     mediasListGenrePage: 'mediasOfGenre',
+    mediasListPlatformPage: 'mediasOfPlatform',
     mediaPresentationPage: 'mediaPresentationPage',
     watchedMediasListPage: 'watchedMediasListPage',
     bookmarkedMediasListPage: 'bookmarkedMediasListPage',
@@ -87,7 +99,15 @@ function App() {
           genre={selectedGenre}
           loadFromCache={loadFullListGenrefromCache}
           onMediaClick={(mediaId) => showMediaFullPresentation(mediaId)} />),
-        containerStyle: { height: '100%'}
+          containerStyle: { height: '100%'}
+      },
+      {
+        id: routerIds.mediasListPlatformPage,
+        render: (<MediaListPlatformPage
+          platform={selectedPlatform}
+          loadFromCache={loadFullListPlatformfromCache}
+          onMediaClick={(mediaId) => showMediaFullPresentation(mediaId)} />),
+          containerStyle: { height: '100%'}
       },
       {
         id: routerIds.mediaPresentationPage,
@@ -124,15 +144,16 @@ function App() {
   return (
     <div className="App">
       <SplashScreen visible={splashscreenVisible} showErrorMessage={homePageFailed}/>
-      <ModalListGenre
-        visible={modalListGenresVisible}
-        onGenreClick={(genre) => { setModalListGenresVisible(false); showMediasFullListofGenre(genre) }}
-        onCloseClick={() => setModalListGenresVisible(false)}
+      <ModalCategories
+        visible={modalListCategoriesVisible}
+        onGenreClick={(genre) => { setModalListCategoriesVisible(false); showMediasFullListofGenre(genre) }}
+        onPlatformClick={(platform) => { setModalListCategoriesVisible(false); showMediasFullListofPlatform(platform) }}
+        onCloseClick={() => setModalListCategoriesVisible(false)}
       />
       <NavBar
         onSearchClick={() => { setLoadResearchfromCache(false); setRouterActiveComponentId(routerIds.researchPage) }}
         onHomeClick={() => setRouterActiveComponentId(routerIds.homePage)}
-        onGenreMenuClick={() => setModalListGenresVisible(true)}
+        onGenreMenuClick={() => setModalListCategoriesVisible(true)}
         onWatchedMediasClick={() => { setCenterToLastClickedWatchedMedia(false); setRouterActiveComponentId(routerIds.watchedMediasListPage) }}
         onBookmarkedMediasClick={() => { setCenterToLastClickedBookmark(false); setRouterActiveComponentId(routerIds.bookmarkedMediasListPage) }}
         onTorrentLinkClick={()=>{ setRouterActiveComponentId(routerIds.torrentLinkPage) }}

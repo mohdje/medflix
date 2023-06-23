@@ -11,6 +11,11 @@ class SearchMediaApiService extends BaseApiService {
       this.getRequest(url, [], true, onSuccess, onFail);
     }
 
+    getMediaPlatforms(onSuccess, onFail) {
+        var url = this.buildSearchUrl('platforms');
+        this.getRequest(url, [], true, onSuccess, onFail);
+    }
+
     getPopularMediasByGenre(genreId, onSuccess, onFail) {
       var url = this.buildSearchUrl('genre/' + genreId);
       this.getRequest(url, [], true, onSuccess, onFail);
@@ -23,6 +28,11 @@ class SearchMediaApiService extends BaseApiService {
 
     getMediasByGenre(genreId, page, onSuccess, onFail) {
         var url = this.buildSearchUrl('genre/' + genreId + '/' + page);
+        this.getRequest(url, [], true, onSuccess, onFail);
+    }
+
+    getMediasByPlatform(platformId, page, onSuccess, onFail) {
+        var url = this.buildSearchUrl('platform/' + platformId + '/' + page);
         this.getRequest(url, [], true, onSuccess, onFail);
     }
 
