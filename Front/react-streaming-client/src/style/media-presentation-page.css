@@ -106,3 +106,11 @@
     border-radius: 50%;
 }
 
+.no-media-details-message {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
