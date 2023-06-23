@@ -18,11 +18,14 @@ namespace MoviesAPI.Services.Content
         Task<IEnumerable<LiteContentDto>> GetSimilarMoviesAsync(string movieId);
         Task<ContentDto> GetMovieDetailsAsync(string movieId);
         Task<IEnumerable<LiteContentDto>> GetMoviesByGenreAsync(int genreId, int page);
+        Task<IEnumerable<LiteContentDto>> GetMoviesByPlatformAsync(int platformId, int page);
         Task<IEnumerable<LiteContentDto>> GetPopularMoviesByGenreAsync(int genreId);
         Task<IEnumerable<LiteContentDto>> GetPopularNetflixMoviesAsync();
         Task<IEnumerable<LiteContentDto>> GetPopularDisneyPlusMoviesAsync();
         Task<IEnumerable<LiteContentDto>> GetPopularAmazonPrimeMoviesAsync();
         Task<IEnumerable<LiteContentDto>> GetPopularAppleTvMoviesAsync();
         Task<IEnumerable<Genre>> GetMovieGenresAsync();
+        Task<IEnumerable<Platform>> GetMoviePlatformsAsync();
+
     }
 }

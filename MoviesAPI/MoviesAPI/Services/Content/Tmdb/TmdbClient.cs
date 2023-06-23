@@ -146,6 +146,13 @@ namespace MoviesAPI.Services.Tmdb
             return ToLiteContentDtos(results);
         }
 
+        protected async Task<IEnumerable<LiteContentDto>> GetContentByPlatformAsync(int platformId, int page)
+        {
+            var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildContentByPlatformUrl(platformId, page));
+
+            return ToLiteContentDtos(results);
+        }
+
 
         protected async Task<IEnumerable<LiteContentDto>> GetPopularContentByGenreAsync(int genreId)
         {
@@ -156,9 +163,16 @@ namespace MoviesAPI.Services.Tmdb
 
         protected async Task<IEnumerable<Genre>> GetGenresAsync()
         {
-            var result = await HttpRequester.GetAsync<TmdbGenres>(tmdbUrlBuilder.BuilGenresListUrl());
+            var result = await HttpRequester.GetAsync<TmdbGenres>(tmdbUrlBuilder.BuildGenresListUrl());
 
             return result?.Genres;
+        }
+
+        protected async Task<IEnumerable<Platform>> GetPlatformsAsync()
+        {
+            var result = await HttpRequester.GetAsync<TmdbProviders>(tmdbUrlBuilder.BuildPlatformsListUrl());
+
+            return result?.Providers?.Select(provider => new Platform { Id = provider.Id, Name = provider.Name });
         }
 
         protected async Task<IEnumerable<LiteContentDto>> GetPopularNetflixContentAsync()

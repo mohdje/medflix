@@ -89,6 +89,18 @@ namespace MoviesAPI.Services.Content
             return genres != null ? genres.Where(g => !genreIdsToRemove.Contains(g.Id)) : new Genre[0];
         }
 
-      
+        public async Task<IEnumerable<LiteContentDto>> GetMoviesByPlatformAsync(int platformId, int page)
+        {
+            return await GetContentByPlatformAsync(platformId, page);
+        }
+
+        public async Task<IEnumerable<Platform>> GetMoviePlatformsAsync()
+        {
+            var platforms = await GetPlatformsAsync();
+
+            var platformsIdsToKeep = new int[] { 2, 8, 9, 337 };//keep netflix, amazon, disney plus, appletv
+
+            return platforms.Where(platform => platformsIdsToKeep.Contains(platform.Id));
+        }
     }
 }

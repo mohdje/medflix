@@ -103,9 +103,14 @@ namespace MoviesAPI.Services.Tmdb
             return $"{BaseUrl}/{ContentMode}/{tmdbContentId}/images?api_key={apiKey}";
         }
 
-        public string BuilGenresListUrl()
+        public string BuildGenresListUrl()
         {
             return $"{BaseUrl}/genre/{ContentMode}/list?api_key={apiKey}";
+        }
+
+        public string BuildPlatformsListUrl()
+        {
+            return $"{BaseUrl}/watch/providers/{ContentMode}?api_key={apiKey}";
         }
 
         public string BuildPopularContentByGenreUrl(int genreId)
@@ -131,6 +136,13 @@ namespace MoviesAPI.Services.Tmdb
             var pastDate = DateTime.Now.AddMonths(-3).ToString("yyyy-MM-dd");
 
             return $"{BaseUrl}/discover/{ContentMode}?api_key={apiKey}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&release_date.gte={pastDate}&release_date.lte={today}&with_watch_providers={platformId}&watch_region=US";
+        }
+
+        public string BuildContentByPlatformUrl(int platformId, int page)
+        {
+            var today = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
+
+            return $"{BaseUrl}/discover/{ContentMode}?api_key={apiKey}&sort_by=release_date.desc&include_adult=false&release_date.lte={today}&page={page}&vote_count.gte=15&with_watch_providers={platformId}&watch_region=US";
         }
 
         public string BuildEpisodesBySeasonUrl(string tmdbContentId, int seasonNumber)

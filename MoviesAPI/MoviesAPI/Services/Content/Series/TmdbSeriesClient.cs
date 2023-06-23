@@ -123,5 +123,18 @@ namespace MoviesAPI.Services.Content
             return result?.ImdbId;
         }
 
+        public async Task<IEnumerable<LiteContentDto>> GetSeriesByPlatformAsync(int platformId, int page)
+        {
+            return await GetContentByPlatformAsync(platformId, page);
+        }
+
+        public async Task<IEnumerable<Platform>> GetSeriePlatformsAsync()
+        {
+            var platforms = await GetPlatformsAsync();
+
+            var platformsIdsToKeep = new int[] { 2, 8, 9, 337 };//keep netflix, amazon, disney plus, appletv
+
+            return platforms.Where(platform => platformsIdsToKeep.Contains(platform.Id));
+        }
     }
 }

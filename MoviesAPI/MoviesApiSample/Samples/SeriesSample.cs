@@ -25,17 +25,20 @@ namespace MoviesApiSample.Samples
             //await GetPopularSeries();
             //await GetPopularSeriesByGenre(16);
             //await GetSeriesByGenre(10767);
-            await GetSerieDetails("119051");
+            // await GetSerieDetails("119051");
             //await GetPopularNetflixSeries();
             //await GetPopularDisneyPlusSeries();
             //await GetPopularAmazonPrimeSeries();
 
-           // await GetRecommandedSeries();
+            // await GetRecommandedSeries();
 
-           // await GetFrenchTitle("119051");
-           // await GetGenres();
+            // await GetFrenchTitle("119051");
+            // await GetGenres();
 
             //GetSerieEpisodesBySeason("1405", 2);
+
+            //await GetPlatforms();
+            await GetSeriesByPlatform(37);
         }
         private async Task GetSeriesOfToday()
         {
@@ -80,6 +83,12 @@ namespace MoviesApiSample.Samples
             ShowSeriesList(await seriesSearcher.GetSeriesByGenreAsync(genreId, 1), $"Series by genre : {genreId}");
         }
 
+        private async Task GetSeriesByPlatform(int platformId)
+        {
+            ShowSeriesList(await seriesSearcher.GetSeriesByPlatformAsync(platformId, 1), $"Series by platform : {platformId}");
+        }
+
+
         private async Task SearchSeries(string movieName)
         {
             ShowSeriesList(await seriesSearcher.SearchSeriesAsync(movieName), $"Search serie: {movieName}");
@@ -94,6 +103,18 @@ namespace MoviesApiSample.Samples
             foreach (var genre in genres)
             {
                 Console.WriteLine(genre.Name);
+            }
+        }
+
+        private async Task GetPlatforms()
+        {
+            Console.WriteLine("Platforms");
+
+            var platforms = await seriesSearcher.GetSeriePlatformsAsync();
+
+            foreach (var platform in platforms)
+            {
+                Console.WriteLine($"{platform.Id}:{platform.Name}");
             }
         }
 

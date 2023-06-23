@@ -29,9 +29,11 @@ namespace MoviesApiSample.Samples
             //await GetPopularNetflixMovies();
             //await GetPopularDisneyPlusMovies();
             //await GetPopularAmazonPrimeMovies();
-            await GetRecommandedMovies();
+            //await GetRecommandedMovies();
             //await GetFrenchTitle("661374");
             //await GetGenres();
+           // await GetPlatforms();
+            await GetMoviesByPlatform(2);
         }
         private async Task GetMoviesOfToday()
         {
@@ -77,6 +79,11 @@ namespace MoviesApiSample.Samples
             ShowMoviesList(await movieSearcher.GetMoviesByGenreAsync(genreId, 1), $"Movies by genre : {genreId}");
         }
 
+        private async Task GetMoviesByPlatform(int platformId)
+        {
+            ShowMoviesList(await movieSearcher.GetMoviesByPlatformAsync(platformId, 1), $"Movies by platform : {platformId}");
+        }
+
         private async Task SearchMovies(string movieName)
         {
             ShowMoviesList(await movieSearcher.SearchMoviesAsync(movieName), $"Search movie: {movieName}");
@@ -91,6 +98,18 @@ namespace MoviesApiSample.Samples
             foreach (var genre in genres)
             {
                 Console.WriteLine(genre.Name);
+            }
+        }
+
+        private async Task GetPlatforms()
+        {
+            Console.WriteLine("Platforms");
+
+            var platforms = await movieSearcher.GetMoviePlatformsAsync();
+
+            foreach (var platform in platforms)
+            {
+                Console.WriteLine($"{platform.Id}:{platform.Name}");
             }
         }
 

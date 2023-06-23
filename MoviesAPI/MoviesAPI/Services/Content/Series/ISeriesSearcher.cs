@@ -18,6 +18,7 @@ namespace MoviesAPI.Services.Content
         Task<IEnumerable<LiteContentDto>> GetSimilarSeriesAsync(string seriesId);
         Task<ContentDto> GetSerieDetailsAsync(string seriesId);
         Task<IEnumerable<LiteContentDto>> GetSeriesByGenreAsync(int genreId, int page);
+        Task<IEnumerable<LiteContentDto>> GetSeriesByPlatformAsync(int platformId, int page);
         Task<IEnumerable<LiteContentDto>> GetPopularSeriesByGenreAsync(int genreId);
         Task<IEnumerable<LiteContentDto>> GetPopularNetflixSeriesAsync();
         Task<IEnumerable<LiteContentDto>> GetPopularDisneyPlusSeriesAsync();
@@ -25,6 +26,7 @@ namespace MoviesAPI.Services.Content
 
         Task<IEnumerable<LiteContentDto>> GetPopularAppleTvSeriesAsync();
         Task<IEnumerable<Genre>> GetSerieGenresAsync();
+        Task<IEnumerable<Platform>> GetSeriePlatformsAsync();
         Task<IEnumerable<EpisodeDto>> GetEpisodes(string serieId, int seasonNumber);
     }
 }
