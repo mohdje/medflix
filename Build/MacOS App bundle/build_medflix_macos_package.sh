@@ -19,6 +19,7 @@ cp -av './PkgInfo' './Medflix.app/Contents'
 cp -av './Medflix.icns' './Medflix.app/Contents/Resources'
 
 #copy backend app in app bundle MacOS folder
+chmod 755 './macos/Medflix'
 cp -av './macos/.' './Medflix.app/Contents/MacOS'
 
 #build desktop electron app
@@ -42,4 +43,5 @@ cp -av './Front/extract-update-package-electron-app/out/Extract Medflix Package-
 
 #create dmg
 cd './Build/MacOS App bundle'
+rm -r './Medflix.dmg' 
 appdmg ./dmg.json ./Medflix.dmg
