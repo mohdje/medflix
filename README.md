@@ -10,7 +10,7 @@ There are three parts in this project :
 I did not deploy the backend on a server in order to not expose myself to legal problems. I only made accessible the frontend as a demo version so you can see how it looks. You can use the full app on your local machine to watch movies (see below 'how to use it') but if you decide to put the whole app on the web you will expose yourself to troubles and moreover I disagree with that.
 
 ## How to use it
-If you want to use the full version of Medflix to watch movies and series, donwload a release from the Releases section. There is a web application (to access it throw web browser and share it to other devices of the same network), a Windows application and a MacOS application.
+If you want to use the full version of Medflix to watch movies and series, donwload a release from the Releases section. There is a web application to access it throw web browser and share it to other devices of the same network (a docker image is also available on docker hub, read Releases section), a Windows application and a MacOS application.
 
 ## How it looks
 ![Movies genre page](/Screenshots/movies_of_genre.PNG)
