@@ -13,7 +13,7 @@ namespace MoviesAPI.Services.Torrent
 {
     internal class ZeTorrentsSearcher : ITorrentMovieSearcher, ITorrentSerieSearcher
     {
-        private const string baseUrl = "https://www.zetorrents.ch";
+        private const string baseUrl = "https://www.zetorrents.pw";
 
         public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string frenchMovieName, int year)
         {

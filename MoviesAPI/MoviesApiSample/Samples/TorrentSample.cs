@@ -19,15 +19,25 @@ namespace MoviesApiSample.Samples
 
         public async Task Test()
         {
-           //await SearchVfMovieTorrents("Very Bad Trip", 2009);
+            //await SearchVfMovieTorrents("Very Bad Trip", 2009);
+            await SearchVfSerieTorrents("Mercredi", 1, 3);
            //await SearchVoMovieTorrents("Hang Over", 2009);
-           await SearchVoSerieTorrents("Wednesday", "tt13443470", 1, 1);
+           // await SearchVoSerieTorrents("Wednesday", "tt13443470", 1, 1);
         }
         private async Task SearchVfMovieTorrents(string frenchTitleMovie, int year)
         {
             Console.WriteLine($"Search vf torrents for {frenchTitleMovie}, {year}");
 
             var vfTorrents = await torrentSearchManager.SearchVfTorrentsMovieAsync(frenchTitleMovie, year);
+
+            PrintResult(vfTorrents);
+        }
+
+        private async Task SearchVfSerieTorrents(string frenchTitleSerie, int seasonNumber, int episodeNumber)
+        {
+            Console.WriteLine($"Search vf torrents for {frenchTitleSerie}, season {seasonNumber}, episode {episodeNumber}");
+
+            var vfTorrents = await torrentSearchManager.SearchVfTorrentsSerieAsync(frenchTitleSerie, seasonNumber, episodeNumber);
 
             PrintResult(vfTorrents);
         }

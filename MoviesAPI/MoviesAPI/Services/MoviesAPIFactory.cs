@@ -55,7 +55,6 @@ namespace MoviesAPI.Services
             var availableVfTorrentMovieSearchers = await GetAvailableServicesAsync(GetVfTorrentMovieSearchers());
             var availableVfTorrentSerieSearchers = await GetAvailableServicesAsync(GetVfTorrentSerieSearchers());
 
-
             return new TorrentSearchManager(availableVfTorrentMovieSearchers, availableVoTorrentMovieSearchers, availableVfTorrentSerieSearchers, availableVoTorrentSerieSearchers);
         }
 
@@ -75,7 +74,7 @@ namespace MoviesAPI.Services
             {
                 new YtsHtmlV2Searcher(new YtsHtmlRsUrlProvider()),
                 new YtsHtmlSearcher(new YtsHtmlOneUrlProvider()),
-                new YtsApiSearcher(new YtsApiUrlMxProvider()),
+                //new YtsApiSearcher(new YtsApiUrlMxProvider()),
             };
         }
 
