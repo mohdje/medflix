@@ -19,7 +19,7 @@ namespace MoviesAPI.Extensions
 
         public static string GetVideoQuality(this string movieLinkTitle)
         {
-            var qualities = new string[] { "720p", "1080p", "DVDRIP", "WEBRIP", "HDTV" };
+            var qualities = new string[] { "480p","720p", "1080p", "2160p", "DVDRIP", "WEBRIP", "HDTV" };
 
             foreach (var quality in qualities)
             {
@@ -61,6 +61,11 @@ namespace MoviesAPI.Extensions
         public static bool CustomStartsWith(this string text, string value)
         {
             return text.RemoveSpecialCharacters(removeSpaces: true, toLower: true).StartsWith(value.RemoveSpecialCharacters(removeSpaces: true, toLower: true));
+        }
+
+        public static bool CustomCompare(this string text, string value)
+        {
+            return text.RemoveSpecialCharacters(removeSpaces: true, toLower: true) == value.RemoveSpecialCharacters(removeSpaces: true, toLower: true);
         }
 
         public static string HtmlUnescape(this string text)

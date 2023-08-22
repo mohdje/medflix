@@ -82,7 +82,8 @@ namespace MoviesAPI.Services
         {
             return new List<ITorrentSerieSearcher>()
             {
-                new OneomSearcher()
+                new OneomSearcher(),
+                new YtsTvSearcher()
             };
         }
 
