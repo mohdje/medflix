@@ -7,12 +7,14 @@ class TorrentApiService extends BaseApiService {
     }
 
     buildStreamUrl(url, fileName, seasonNumber, episodeNumber){
+        const base64Url = window.btoa(url);
+
         if(fileName)
-            return this.buildTorrentUrl('stream/file?url=' + url + '&fileName=' + fileName);
+            return this.buildTorrentUrl('stream/file?base64Url=' + base64Url + '&fileName=' + fileName);
         else if(AppMode.getActiveMode().urlKey === "series")
-            return this.buildTorrentUrl('stream/series?url=' + url + '&seasonNumber=' + seasonNumber + '&episodeNumber=' + episodeNumber);
+            return this.buildTorrentUrl('stream/series?base64Url=' + base64Url + '&seasonNumber=' + seasonNumber + '&episodeNumber=' + episodeNumber);
         else
-            return this.buildTorrentUrl('stream/movies?url=' + url);
+            return this.buildTorrentUrl('stream/movies?base64Url=' + base64Url);
     }
 
     searchVFSources(mediaId, title, year, seasonNumber, episodeNumber, onSuccess, onFail) {
@@ -72,12 +74,12 @@ class TorrentApiService extends BaseApiService {
     }
 
     getDownloadState(streamUrl, onSuccess, onFail) {
-        const streamUrlParams = new URLSearchParams(streamUrl.replace(this.buildTorrentUrl('stream/'+ AppMode.getActiveMode().urlKey)+'?',''));
+        const url = new URL(streamUrl);
 
         var parameters = [
             {
-                name: 'torrentUrl',
-                value: streamUrlParams.get('url')
+                name: 'base64TorrentUrl',
+                value: url.searchParams.get('base64Url')
             }
         ];
 
@@ -85,10 +87,12 @@ class TorrentApiService extends BaseApiService {
     }
 
     getTorrentFiles(torrentUrl, onSuccess, onFail){
+        const base64Url = window.btoa(torrentUrl);
+
         var parameters = [
             {
-                name: 'torrentUrl',
-                value: torrentUrl
+                name: 'base64torrentUrl',
+                value: base64Url
             }
         ];
 

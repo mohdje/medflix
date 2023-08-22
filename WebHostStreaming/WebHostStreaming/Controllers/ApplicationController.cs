@@ -47,20 +47,20 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("startvlc")]
-        public IActionResult StartVLC([FromQuery] string data)
+        public IActionResult StartVLC([FromQuery] string streamUrl)
         {
-            var parameters = Encoding.UTF8.GetString(Convert.FromBase64String(data));
+           
             try
             {
                 if (AppConfiguration.IsWindowsVersion)
                 {
                     if (!System.IO.File.Exists(WINDOWS_VLC_PATH)) return NotFound();
-                    System.Diagnostics.Process.Start(WINDOWS_VLC_PATH, parameters);
+                    System.Diagnostics.Process.Start(WINDOWS_VLC_PATH, streamUrl);
                 }
                 else if (AppConfiguration.IsMacosVersion)
                 {
                     if (!System.IO.File.Exists(MACOS_VLC_PATH)) return NotFound();
-                    System.Diagnostics.Process.Start(MACOS_VLC_PATH, parameters.Replace(" ", "%20"));
+                    System.Diagnostics.Process.Start(MACOS_VLC_PATH, streamUrl.Replace(" ", "%20"));
                 }
 
                 return Ok();

@@ -17,10 +17,11 @@ class AppInfoApiService extends BaseApiService {
     }
 
     playWithVlc(streamUrl, onSuccess, onFail){
+
         var parameters = [
             {
-                name: 'data',
-                value: btoa(streamUrl)
+                name: 'streamUrl',
+                value: encodeURIComponent(streamUrl)
             }
         ];
 

@@ -25,5 +25,10 @@ namespace WebHostStreaming.Extensions
                 return sb.ToString();
             }
         }
+
+        public static string DecodeBase64(this string base64string)
+        {
+            return Encoding.UTF8.GetString(Convert.FromBase64String(base64string));
+        }
     }
 }

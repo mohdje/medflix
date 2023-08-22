@@ -4,8 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using WebHostStreaming.Helpers;
+using WebHostStreaming.Extensions;
 using WebHostStreaming.Models;
 using WebHostStreaming.Providers;
 using WebHostStreaming.Torrent;
@@ -58,32 +59,32 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("stream/movies")]
-        public async Task<IActionResult> GetStream(string url)
+        public async Task<IActionResult> GetStream(string base64Url)
         {
-            var streamDto = await GetStreamDtoAsync(url, RequestFromVLC() ? new VideoTorrentFileSelector() : new Mp4TorrentFileSelector());
+            var streamDto = await GetStreamDtoAsync(base64Url.DecodeBase64(), RequestFromVLC() ? new VideoTorrentFileSelector() : new Mp4TorrentFileSelector());
             return streamDto != null ? File(streamDto.Stream, streamDto.ContentType, true) : NoContent();
         }
 
 
         [HttpGet("stream/series")]
-        public async Task<IActionResult> GetStream(string url, int seasonNumber, int episodeNumber)
+        public async Task<IActionResult> GetStream(string base64Url, int seasonNumber, int episodeNumber)
         {
-            var streamDto = await GetStreamDtoAsync(url, RequestFromVLC() ? new SerieEpisodeTorrentFileSelector(seasonNumber, episodeNumber) : new SerieEpisodeMp4TorrentFileSelector(seasonNumber, episodeNumber));
+            var streamDto = await GetStreamDtoAsync(base64Url.DecodeBase64(), RequestFromVLC() ? new SerieEpisodeTorrentFileSelector(seasonNumber, episodeNumber) : new SerieEpisodeMp4TorrentFileSelector(seasonNumber, episodeNumber));
             return streamDto != null ? File(streamDto.Stream, streamDto.ContentType, true) : NoContent();
         }
 
         [HttpGet("stream/file")]
-        public async Task<IActionResult> GetStream(string url, string fileName)
+        public async Task<IActionResult> GetStream(string base64Url, string fileName)
         {
-            var streamDto = await GetStreamDtoAsync(url, new ByNameTorrentFileSelector(fileName));
+            var streamDto = await GetStreamDtoAsync(base64Url.DecodeBase64(), new ByNameTorrentFileSelector(fileName));
             return streamDto != null ? File(streamDto.Stream, streamDto.ContentType, true) : NoContent();
         }
 
 
         [HttpGet("streamdownloadstate")]
-        public IActionResult GetStreamDownloadState([FromQuery(Name = "torrentUrl")] string torrentUrl)
+        public IActionResult GetStreamDownloadState(string base64TorrentUrl)
         {
-            var state = torrentVideoStreamProvider.GetStreamDownloadingState(torrentUrl);
+            var state = torrentVideoStreamProvider.GetStreamDownloadingState(base64TorrentUrl.DecodeBase64());
 
             if (state == null)
                 return BadRequest();
@@ -92,19 +93,20 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("files")]
-        public async Task<TorrentInfoDto> GetTorrentFiles([FromQuery(Name = "torrentUrl")] string torrentUrl)
+        public async Task<TorrentInfoDto> GetTorrentFiles(string base64TorrentUrl)
         {
-            var files = await torrentVideoStreamProvider.GetTorrentFilesAsync(torrentUrl);
+            var url = base64TorrentUrl.DecodeBase64();
+            var files = await torrentVideoStreamProvider.GetTorrentFilesAsync(url);
 
             var torrentInfoDto = new TorrentInfoDto()
             {
                 LastOpenedDateTime = DateTime.Now,
-                Link = torrentUrl
+                Link = url
             };
 
             if (files != null)
             {
-                await torrentHistoryProvider.SaveTorrentFileHistoryAsync(new TorrentInfoDto() { LastOpenedDateTime = DateTime.Now, Link = torrentUrl });
+                await torrentHistoryProvider.SaveTorrentFileHistoryAsync(new TorrentInfoDto() { LastOpenedDateTime = DateTime.Now, Link = url });
 
                 torrentInfoDto.Files = files.ToArray();
             }
