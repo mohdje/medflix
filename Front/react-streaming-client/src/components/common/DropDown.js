@@ -89,7 +89,7 @@ function DropDown({values, width, onValueChanged, textAlignement}){
 
     return (
         <div ref={dropdownRef} style={containerStyle}>
-            <BaseButton color="red" content={buttonContent} onClick={() => setShowList(!showList)}/>
+            <BaseButton color="red" content={buttonContent} width={width} onClick={() => setShowList(!showList)}/>
             <div style={listStyle}>
                 {dropDownValues.map((v,i) => <div 
                     key={v} 

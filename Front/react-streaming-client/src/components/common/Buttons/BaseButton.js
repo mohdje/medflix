@@ -1,7 +1,7 @@
 import "../../../style/button.css";
 import { useState } from 'react';
 
-function BaseButton({ color, content, centered, rounded, onClick }) {
+function BaseButton({ color, content, centered, rounded, width, onClick }) {
 
     const [showRippleEffect, setShowRippleEffect] = useState(false);
 
@@ -21,8 +21,18 @@ function BaseButton({ color, content, centered, rounded, onClick }) {
         return className;
     }
 
+    const computeStyle = () => {
+        if(width){
+            return {
+                width: width
+            }
+        }
+        else
+            return null;
+    }
+
     return (
-        <div className={computeClass()} onClick={() => handleClick()}>
+        <div className={computeClass()} style={computeStyle()} onClick={() => handleClick()}>
             <div className={"ripple-effect " + (showRippleEffect ? 'visible' : '')}></div>
             {content}
         </div>
