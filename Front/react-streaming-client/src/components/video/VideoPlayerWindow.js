@@ -6,6 +6,7 @@ import VideoPlayer from "./VideoPlayer";
 import Paragraph from "../common/text/Paragraph";
 import BaseButton from "../common/buttons/BaseButton";
 import ModalWindow from "../modal/ModalWindow";
+import { ToTimeFormat } from "../../helpers/timeFormatHelper";
 
 import { useEffect, useState } from 'react';
 
@@ -89,39 +90,23 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
 
     const content = (
         <div className="video-player-window-container">
-            <ResumeMessage 
-                visible={goToTime > 0 && resumeMessageVisible} 
-                resumeTime={goToTime} 
-                onNoClick={() => setResumeMessageVisible(false)} 
-                onYesClick={() => {setVideoTime(goToTime);setResumeMessageVisible(false)}} />
-            <VideoPlayerContainer 
+            <ResumeMessage
+                visible={goToTime > 0 && resumeMessageVisible}
+                resumeTime={goToTime}
+                onNoClick={() => setResumeMessageVisible(false)}
+                onYesClick={() => { setVideoTime(goToTime); setResumeMessageVisible(false) }} />
+            <VideoPlayerContainer
                 visible={visible}
-                videoQualitiesOptions={videoQualitiesOptions} 
-                subtitlesOptions={subtitlesOptions} 
+                videoQualitiesOptions={videoQualitiesOptions}
+                subtitlesOptions={subtitlesOptions}
                 onWatchedTimeUpdate={(currentTime, duration) => onWatchedTimeUpdate(currentTime, duration)}
-                videoTime={videoTime}/>
+                videoTime={videoTime} />
         </div>
     )
     return (
         <ModalWindow visible={visible} content={content} onCloseClick={() => onCloseClick()} />
     );
 }
-
-export function ToTimeFormat(totalMinutes) {
-    const totalHours = totalMinutes / 60;
-
-    const hours = Math.trunc(totalHours);
-    const minutes = Math.trunc((totalHours - hours) * 60);
-
-    let timeFormat = '';
-    if (hours > 0)
-        timeFormat += hours + ' h ';
-
-    timeFormat += minutes + ' min';
-
-    return timeFormat;
-}
-
 
 function ResumeMessage({ visible, resumeTime, onYesClick, onNoClick }) {
     const containerStyle = {
@@ -132,7 +117,7 @@ function ResumeMessage({ visible, resumeTime, onYesClick, onNoClick }) {
     if (visible) {
         return (
             <div style={containerStyle}>
-                <Paragraph text={"Do you want to resume the video to " + ToTimeFormat(resumeTime/60) + " ?"} />
+                <Paragraph text={"Do you want to resume the video to " + ToTimeFormat(resumeTime / 60) + " ?"} />
                 <BaseButton color="red" content="Yes" onClick={() => onYesClick()} />
                 <BaseButton color="grey" content="No" onClick={() => onNoClick()} />
             </div>
@@ -149,8 +134,8 @@ function VideoPlayerContainer({ visible, videoQualitiesOptions, subtitlesOptions
             <VideoPlayer
                 videoQualitiesOptions={videoQualitiesOptions}
                 videoSubtitlesOptions={subtitlesOptions}
-                onWatchedTimeUpdate={(currentTime, duration) => onWatchedTimeUpdate(currentTime, duration)} 
-                videoTime={videoTime}/>
+                onWatchedTimeUpdate={(currentTime, duration) => onWatchedTimeUpdate(currentTime, duration)}
+                videoTime={videoTime} />
         </div>;
     }
     else
