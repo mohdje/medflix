@@ -64,6 +64,9 @@ namespace MoviesAPI.Services.Torrent
 
             var seasonsNodes = doc.DocumentNode.SelectNodes("//div[@class='tvseason']");
 
+            if (seasonsNodes == null || !seasonsNodes.Any())
+                return new MediaTorrent[0];
+
             foreach (var seasonNode in seasonsNodes)
             {
                 var text = seasonNode.InnerText;
