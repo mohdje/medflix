@@ -19,7 +19,7 @@ namespace MoviesAPI.Services.Torrent
 
         public string GetServiceUrl()
         {
-            return "https://yts.one";
+            return "https://yts.do";
         }
 
         public string GetTorrentUrl(string torrentLink)

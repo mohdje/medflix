@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace MoviesAPI.Services.Torrent
 {
@@ -48,7 +49,7 @@ namespace MoviesAPI.Services.Torrent
 
         private async Task<IEnumerable<MediaTorrent>> SearchTorrentLinks(string mediaName, Func<string, bool> mediaTitleCondition)
         {
-            var searchUrl = $"{baseUrl}/recherche/{mediaName.RemoveSpecialCharacters(toLower: true)}";
+            var searchUrl = $"{baseUrl}/recherche/{mediaName}";
 
             var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
 
@@ -69,7 +70,7 @@ namespace MoviesAPI.Services.Torrent
                 doc.LoadHtml(node.InnerHtml);
                 var linkNode = doc.DocumentNode.SelectSingleNode("/a");
 
-                if (linkNode != null && mediaTitleCondition(linkNode.InnerText))
+                if (linkNode != null && mediaTitleCondition(HttpUtility.HtmlDecode(linkNode.InnerText)))
                 {
                     getTorrentTasks.Add(Task.Run(async () =>
                     {

@@ -2,16 +2,16 @@ import BaseApiService from "./baseApiService";
 import AppMode from "../appMode";
 
 class TorrentApiService extends BaseApiService {
-    buildTorrentUrl(url){
+    buildTorrentUrl(url) {
         return this.buildUrl('torrent/' + (url ? url : ''));
     }
 
-    buildStreamUrl(url, fileName, seasonNumber, episodeNumber){
+    buildStreamUrl(url, fileName, seasonNumber, episodeNumber) {
         const base64Url = window.btoa(url);
 
-        if(fileName)
+        if (fileName)
             return this.buildTorrentUrl('stream/file?base64Url=' + base64Url + '&fileName=' + fileName);
-        else if(AppMode.getActiveMode().urlKey === "series")
+        else if (AppMode.getActiveMode().urlKey === "series")
             return this.buildTorrentUrl('stream/series?base64Url=' + base64Url + '&seasonNumber=' + seasonNumber + '&episodeNumber=' + episodeNumber);
         else
             return this.buildTorrentUrl('stream/movies?base64Url=' + base64Url);
@@ -19,7 +19,7 @@ class TorrentApiService extends BaseApiService {
 
     searchVFSources(mediaId, title, year, seasonNumber, episodeNumber, onSuccess, onFail) {
         var url = this.buildTorrentUrl(AppMode.getActiveMode().urlKey + '/vf');
-      
+
         var parameters = [
             {
                 name: 'mediaId',
@@ -27,7 +27,7 @@ class TorrentApiService extends BaseApiService {
             },
             {
                 name: 'title',
-                value: title
+                value: encodeURIComponent(title)
             },
             {
                 name: 'year',
@@ -50,7 +50,7 @@ class TorrentApiService extends BaseApiService {
         var parameters = [
             {
                 name: 'title',
-                value: title
+                value: encodeURIComponent(title)
             },
             {
                 name: 'year',
@@ -86,7 +86,7 @@ class TorrentApiService extends BaseApiService {
         this.getRequest(this.buildTorrentUrl('streamdownloadstate'), parameters, true, onSuccess, onFail);
     }
 
-    getTorrentFiles(torrentUrl, onSuccess, onFail){
+    getTorrentFiles(torrentUrl, onSuccess, onFail) {
         const base64Url = window.btoa(torrentUrl);
 
         var parameters = [
@@ -105,4 +105,3 @@ class TorrentApiService extends BaseApiService {
 }
 
 export default TorrentApiService;
-  
