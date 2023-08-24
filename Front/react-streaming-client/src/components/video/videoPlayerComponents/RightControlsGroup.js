@@ -9,7 +9,7 @@ import RestoreIcon from '@material-ui/icons/Restore';
 import { VideoOptions, VideoOptionsButton } from './Options';
 
 import { useState, useRef, useEffect } from 'react';
-import { useOnClickOutside } from '../../../services/customHooks';
+import { useOnClickOutside } from '../../../helpers/customHooks';
 
 function RightControlsGroup({
     subtitlesOptions,
@@ -19,7 +19,7 @@ function RightControlsGroup({
     onAdjustSubtitleTimeChange,
     onVideoQualityChange,
     isFullScreen,
-    onFullScreenStateChanged}) {
+    onFullScreenStateChanged }) {
 
     const [videoInFullscreen, setVideoInFullscreen] = useState(false);
 
@@ -27,9 +27,9 @@ function RightControlsGroup({
         onFullScreenStateChanged(fullscreen);
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         setVideoInFullscreen(isFullScreen);
-    },[isFullScreen]);
+    }, [isFullScreen]);
 
     return (
         <div className="controls-group">

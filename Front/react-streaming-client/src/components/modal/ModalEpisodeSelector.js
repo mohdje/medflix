@@ -6,7 +6,7 @@ import SecondaryInfo from "../common/text/SecondaryInfo";
 import Paragraph from "../common/text/Paragraph";
 import DropDown from "../common/DropDown";
 import AppServices from "../../services/AppServices";
-import fadeTransition from "../../services/customStyles.js";
+import fadeTransition from "../../helpers/customStyles.js";
 import { ToTimeFormat } from "../../helpers/timeFormatHelper";
 
 import { useEffect, useState, useRef } from "react";

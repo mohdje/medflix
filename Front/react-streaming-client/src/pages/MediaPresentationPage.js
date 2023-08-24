@@ -26,7 +26,7 @@ import MediasListLiteWithTitle from "../components/media/list/MediasListLiteWith
 
 import AppServices from "../services/AppServices";
 import { ToTimeFormat } from "../helpers/timeFormatHelper";
-import fadeTransition from "../services/customStyles.js";
+import fadeTransition from "../helpers/customStyles.js";
 
 import { useEffect, useState, useRef } from 'react';
 

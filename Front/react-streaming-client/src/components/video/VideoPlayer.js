@@ -1,6 +1,6 @@
 import "../../style/video-player.css";
 
-import fadeTransition from "../../services/customStyles";
+import fadeTransition from "../../helpers/customStyles";
 
 import CircularProgressBar from "../common/CircularProgressBar";
 
@@ -23,8 +23,8 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, onWatchedTi
     const [errorMessage, setErrorMessage] = useState();
 
     const checkDownloadStateRef = useRef(false);
-    const [videoDownloadState, setVideoDownloadState] =  useState('Loading');
-    
+    const [videoDownloadState, setVideoDownloadState] = useState('Loading');
+
     const [videoSource, setVideoSource] = useState('');
     const [videoIsLoading, setVideoIsLoading] = useState(false);
     const [videoIsPlaying, setVideoIsPlaying] = useState(false);
@@ -37,41 +37,41 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, onWatchedTi
     const lastTimeMouseMovedRef = useRef(0);
 
     const checkMovieDownloadState = (url) => {
-        if (checkDownloadStateRef.current && videoRef.current) {      
-            AppServices.torrentApiService.getDownloadState(url, (response) => { 
-                if(decodeURIComponent(url) === decodeURIComponent(videoRef.current?.src)){
-                    if(response.error) {
+        if (checkDownloadStateRef.current && videoRef.current) {
+            AppServices.torrentApiService.getDownloadState(url, (response) => {
+                if (decodeURIComponent(url) === decodeURIComponent(videoRef.current?.src)) {
+                    if (response.error) {
                         checkDownloadStateRef.current = false;
                         setErrorMessage(response.message);
-                    }                
-                    else{
-                        setVideoDownloadState(response.message ? response.message : 'Loading'); 
+                    }
+                    else {
+                        setVideoDownloadState(response.message ? response.message : 'Loading');
                         setTimeout(() => {
                             checkMovieDownloadState(url);
                         }, 3000);
-                    }                
+                    }
                 }
             })
         }
     };
 
-    const changeVideoSource = (url) => {       
+    const changeVideoSource = (url) => {
         var currentTime = videoRef.current.currentTime;
         setVideoSource(url);
 
         videoRef.current.autoplay = !videoRef.current.paused;
         videoRef.current.load();
-       
+
         videoRef.current.currentTime = currentTime;
         setCurrentTime(currentTime);
-      
+
         setVideoIsLoading(true);
         checkDownloadStateRef.current = true;
         setErrorMessage('');
         checkMovieDownloadState(url);
     }
 
-    const changeVideoTime = (newTime) =>{
+    const changeVideoTime = (newTime) => {
         videoRef.current.currentTime = newTime;
     }
 
@@ -81,7 +81,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, onWatchedTi
         lastTimeMouseMovedRef.current = Date.now();
         const waitingTime = 3000;
         setTimeout(() => {
-            if (videoPlayerContainerRef?.current && Date.now() > lastTimeMouseMovedRef.current + waitingTime){
+            if (videoPlayerContainerRef?.current && Date.now() > lastTimeMouseMovedRef.current + waitingTime) {
                 setShowVideoControls(false);
                 videoPlayerContainerRef.current.style.cursor = 'none';
             }
@@ -89,7 +89,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, onWatchedTi
     };
 
     const onFullScreenStateChanged = (fullScreen) => {
-        if(fullScreen){
+        if (fullScreen) {
             if (!videoPlayerContainerRef.current) return;
 
             if (videoPlayerContainerRef.current.requestFullscreen) videoPlayerContainerRef.current.requestFullscreen();
@@ -98,21 +98,21 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, onWatchedTi
             else if (videoPlayerContainerRef.current.msRequestFullscreen) videoPlayerContainerRef.current.msRequestFullscreen();
         }
         else
-            document.exitFullscreen();     
+            document.exitFullscreen();
     }
 
-    const playVideo =()=>{
-        if(videoRef?.current)
+    const playVideo = () => {
+        if (videoRef?.current)
             videoRef.current.play();
     }
 
-    const pauseVideo = ()=>{
-        if(videoRef?.current)
+    const pauseVideo = () => {
+        if (videoRef?.current)
             videoRef.current.pause();
     }
 
     const changeVideoVolume = (newVolume) => {
-        if(videoRef?.current)
+        if (videoRef?.current)
             videoRef.current.volume = newVolume;
     }
 
@@ -125,9 +125,9 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, onWatchedTi
     }, [videoPlayerContainerRef]);
 
     useEffect(() => {
-        if(!Boolean(videoRef?.current))
+        if (!Boolean(videoRef?.current))
             return;
-            
+
         const videoErrorHandler = (e) => {
             if (videoRef?.current?.attributes.src.value) {
                 setErrorMessage(errorMessage ? errorMessage : "An error occured");
@@ -136,35 +136,35 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, onWatchedTi
         }
         videoRef.current.addEventListener('error', videoErrorHandler, true);
 
-        const onVideoReady = () => {        
+        const onVideoReady = () => {
             checkDownloadStateRef.current = false;
             setVideoDownloadState('');
             setVideoIsLoading(false);
         };
         videoRef.current.addEventListener('canplay', onVideoReady, true);
 
-        const onVideoPlaying = () => {        
+        const onVideoPlaying = () => {
             onVideoReady();
             setVideoIsPlaying(true);
         };
         videoRef.current.addEventListener('playing', onVideoPlaying, true);
 
-        const onVideoPaused = () => {        
+        const onVideoPaused = () => {
             setVideoIsPlaying(false);
         };
         videoRef.current.addEventListener('pause', onVideoPaused, true);
 
-        const onVideoWaiting = () => {     
+        const onVideoWaiting = () => {
             setVideoIsLoading(true);
         };
         videoRef.current.addEventListener('waiting', onVideoWaiting, true);
 
-        const onTimeUpdated = (e) =>{
-            if (videoRef.current?.currentTime){
+        const onTimeUpdated = (e) => {
+            if (videoRef.current?.currentTime) {
                 setCurrentTime(videoRef.current?.currentTime);
 
                 let currentTime = Math.round(videoRef.current?.currentTime);
-                if(currentTime - watchedTimeUpdateTriggeredRef.current > 10){
+                if (currentTime - watchedTimeUpdateTriggeredRef.current > 10) {
                     watchedTimeUpdateTriggeredRef.current = currentTime;
                     onWatchedTimeUpdate(videoRef.current.currentTime, videoRef.current.duration);
                 }
@@ -184,38 +184,38 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, onWatchedTi
         }
     }, [videoRef]);
 
-    useEffect(()=>{
+    useEffect(() => {
         const onFullScreenChange = (e) => {
             setIsFullScreen(document.fullscreenElement);
         };
 
-        const onKeyboardPress = (e) =>{
+        const onKeyboardPress = (e) => {
 
-            if(!videoRef?.current) return;
+            if (!videoRef?.current) return;
 
             displayControls();
 
-            if(e.keyCode === 32){
-                if(videoRef.current.paused) playVideo();
+            if (e.keyCode === 32) {
+                if (videoRef.current.paused) playVideo();
                 else pauseVideo();
             }
-            else if(e.keyCode === 37)
+            else if (e.keyCode === 37)
                 changeVideoTime(videoRef.current?.currentTime - 10);
-            else if(e.keyCode === 39)
+            else if (e.keyCode === 39)
                 changeVideoTime(videoRef.current?.currentTime + 10);
         }
-        if (videoPlayerContainerRef.current){
+        if (videoPlayerContainerRef.current) {
             videoPlayerContainerRef.current.addEventListener('fullscreenchange', onFullScreenChange);
             document.addEventListener('keyup', onKeyboardPress, false);
         }
 
         return () => {
-            if (videoPlayerContainerRef.current){
+            if (videoPlayerContainerRef.current) {
                 document.removeEventListener('keyup', onKeyboardPress);
                 videoPlayerContainerRef.current.removeEventListener('fullscreenchange', onFullScreenChange);
-            } 
+            }
         }
-    },[]);
+    }, []);
 
     useEffect(() => {
         if (videoQualitiesOptions) {
@@ -225,9 +225,9 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, onWatchedTi
     }, [videoQualitiesOptions]);
 
     useEffect(() => {
-        if(videoTime > 0 && videoRef?.current)
+        if (videoTime > 0 && videoRef?.current)
             videoRef.current.currentTime = videoTime;
-    },[videoTime]);
+    }, [videoTime]);
 
     return (
         <div ref={videoPlayerContainerRef} className="video-player-content" >
@@ -241,7 +241,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, onWatchedTi
                     size={subtitlesSize}
                     subtitlesAdjustTime={subtitlesAdjustTime} />
                 <div className="video-player-controls-container" style={fadeTransition(showVideoControls)}>
-                    <TimeController 
+                    <TimeController
                         videoDuration={videoRef.current?.duration}
                         videoCurrentTime={currentTime}
                         onTimeChanged={(newTime) => changeVideoTime(newTime)} />
@@ -249,7 +249,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, onWatchedTi
                         videoIsPlaying={videoIsPlaying}
                         onPlayClick={() => playVideo()}
                         onPauseClick={() => pauseVideo()}
-                        onVolumeChanged={(newVolume)=> changeVideoVolume(newVolume)}
+                        onVolumeChanged={(newVolume) => changeVideoVolume(newVolume)}
                         onPlayBackwardClick={() => changeVideoTime(currentTime - 10)}
                         onPlayForwardClick={() => changeVideoTime(currentTime + 10)}
                         videoSubtitlesOptions={videoSubtitlesOptions}

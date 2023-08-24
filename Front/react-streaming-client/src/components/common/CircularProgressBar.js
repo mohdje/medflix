@@ -1,6 +1,6 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { useEffect, useState } from 'react';
-import fadeTransition from "../../services/customStyles.js";
+import fadeTransition from "../../helpers/customStyles.js";
 
 function CircularProgressBar({ position, color, size, visible, text }) {
 
@@ -25,9 +25,9 @@ function CircularProgressBar({ position, color, size, visible, text }) {
         }
     }, [position]);
 
-    useEffect(()=>{
+    useEffect(() => {
         setDisplayedText(text);
-    },[text]);
+    }, [text]);
 
     return (
         <div style={fadeTransition(visible)}>

@@ -6,7 +6,7 @@ import MediaLitePresentation from "../presentation/MediaLitePresentation";
 import ArrowForwardIosRounded from '@material-ui/icons/ArrowForwardIosRounded';
 import ArrowBackIosRounded from '@material-ui/icons/ArrowBackIosRounded';
 
-import fadeTransition from "../../../services/customStyles.js";
+import fadeTransition from "../../../helpers/customStyles.js";
 import { useEffect, useRef, useState } from 'react';
 
 function MediasListLite({ medias, alignLeft, onMediaClick }) {
@@ -28,7 +28,7 @@ function MediasListLite({ medias, alignLeft, onMediaClick }) {
     else showHideNavArrows();
   }, [medias]);
 
-  useEffect(()=>{ showHideNavArrows(); }, [hideBackArrow, hideForwardArrow]);
+  useEffect(() => { showHideNavArrows(); }, [hideBackArrow, hideForwardArrow]);
 
   const isElementVisible = (elem, boundings) => {
     const elemBoundings = elem.getBoundingClientRect();
@@ -95,8 +95,8 @@ function MediasListLite({ medias, alignLeft, onMediaClick }) {
       <div style={fadeTransition(!hideForwardArrow)} className="floating-navigation-btn right" onClick={() => navToRight()}>
         <ArrowForwardIosRounded style={{ fontSize: 40, color: 'white' }} />
       </div>
-      <div ref={listRef} className={"medias-list"+ (hideBackArrow && hideForwardArrow && !alignLeft ? ' center' : '')}>
-        {medias.map((media, index) => (<MediaLitePresentation key={index} media={media} hoverEffect={true} onMediaClick={(mediaId)=>onMediaClick(mediaId)}/>))}
+      <div ref={listRef} className={"medias-list" + (hideBackArrow && hideForwardArrow && !alignLeft ? ' center' : '')}>
+        {medias.map((media, index) => (<MediaLitePresentation key={index} media={media} hoverEffect={true} onMediaClick={(mediaId) => onMediaClick(mediaId)} />))}
       </div>
     </div>
   );

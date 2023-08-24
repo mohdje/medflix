@@ -1,21 +1,21 @@
 import BaseButton from './buttons/BaseButton';
-import ArrowDropDownOutlinedIcon  from '@material-ui/icons/ArrowDropDownOutlined';
-import { useOnClickOutside } from '../../services/customHooks';
+import ArrowDropDownOutlinedIcon from '@material-ui/icons/ArrowDropDownOutlined';
+import { useOnClickOutside } from '../../helpers/customHooks';
 import { useEffect, useState, useRef } from 'react';
 
-function DropDown({values, width, onValueChanged, textAlignement}){
+function DropDown({ values, width, onValueChanged, textAlignement }) {
 
     const [showList, setShowList] = useState(false);
     const [selectedValue, setSelectedValue] = useState('');
     const [dropDownValues, setDropDownValues] = useState([]);
     const dropdownRef = useRef(null);
 
-    useEffect(()=>{
-        if(shouldUpdateDropDownValues(values)){
+    useEffect(() => {
+        if (shouldUpdateDropDownValues(values)) {
             setDropDownValues(values);
             setSelectedValue(values[0]);
         }
-    },[values])
+    }, [values])
 
     useOnClickOutside(dropdownRef, () => setShowList(false));
 
@@ -25,14 +25,14 @@ function DropDown({values, width, onValueChanged, textAlignement}){
 
         let nbDifferentValues = 0;
         dropDownValues.forEach((v, i) => {
-            if(values[i] !== v) 
+            if (values[i] !== v)
                 nbDifferentValues += 1;
         });
 
         return nbDifferentValues > 0;
     }
 
-    const containerStyle = {    
+    const containerStyle = {
         position: 'relative'
     }
 
@@ -52,7 +52,7 @@ function DropDown({values, width, onValueChanged, textAlignement}){
         width: width,
         overflowY: 'scroll',
         zIndex: '5',
-        textAlign: textAlignement ? textAlignement : 'left' 
+        textAlign: textAlignement ? textAlignement : 'left'
     }
 
     const buttonContentStyle = {
@@ -63,21 +63,21 @@ function DropDown({values, width, onValueChanged, textAlignement}){
     }
 
     const buttonContent = (
-    <div style={buttonContentStyle}>
-        <div>{selectedValue}</div>
-        <ArrowDropDownOutlinedIcon />
-    </div>)
+        <div style={buttonContentStyle}>
+            <div>{selectedValue}</div>
+            <ArrowDropDownOutlinedIcon />
+        </div>)
 
     const listElementStyle = {
         padding: '5px',
         cursor: 'pointer'
     }
 
-    const onElementMouseHover = (element) =>{
+    const onElementMouseHover = (element) => {
         element.style.backgroundColor = '#959595';
     }
 
-    const onElementMouseOut = (element) =>{
+    const onElementMouseOut = (element) => {
         element.style.backgroundColor = '';
     }
 
@@ -89,15 +89,15 @@ function DropDown({values, width, onValueChanged, textAlignement}){
 
     return (
         <div ref={dropdownRef} style={containerStyle}>
-            <BaseButton color="red" content={buttonContent} width={width} onClick={() => setShowList(!showList)}/>
+            <BaseButton color="red" content={buttonContent} width={width} onClick={() => setShowList(!showList)} />
             <div style={listStyle}>
-                {dropDownValues.map((v,i) => <div 
-                    key={v} 
+                {dropDownValues.map((v, i) => <div
+                    key={v}
                     style={listElementStyle}
-                    onMouseOver={(e)=> onElementMouseHover(e.target)}
-                    onMouseOut={(e)=> onElementMouseOut(e.target)} 
-                    onClick={()=> OnElementClick(i)}>
-                        {v}
+                    onMouseOver={(e) => onElementMouseHover(e.target)}
+                    onMouseOut={(e) => onElementMouseOut(e.target)}
+                    onClick={() => OnElementClick(i)}>
+                    {v}
                 </div>)}
             </div>
         </div>

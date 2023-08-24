@@ -4,7 +4,7 @@ import MediasOfToday from "../components/media/list/MediasOfTodayList";
 import MediasListLiteWithTitle from "../components/media/list/MediasListLiteWithTitle";
 import CircularProgressBar from "../components/common/CircularProgressBar";
 
-import fadeTransition from "../services/customStyles.js";
+import fadeTransition from "../helpers/customStyles.js";
 import AppServices from "../services/AppServices";
 import CacheService from "../services/cacheService";
 import AppMode from "../services/appMode";
@@ -25,13 +25,13 @@ function HomePage({ onMediaClick, onReady, onFail }) {
 
     const todayTrendingTitle = "todayTrending"
 
-    const addMedias = (listTitle, medias, insertAtBeginning)=> {
-        if(medias && medias.length > 0){ 
+    const addMedias = (listTitle, medias, insertAtBeginning) => {
+        if (medias && medias.length > 0) {
             let data = {
                 title: listTitle,
                 medias: medias
             }
-            if(insertAtBeginning)mediaListref.current.unshift(data);
+            if (insertAtBeginning) mediaListref.current.unshift(data);
             else mediaListref.current.push(data);
             CacheService.setCache(cacheIdRef.current, mediaListref.current);
             const newArray = [...mediaListref.current];
@@ -45,55 +45,55 @@ function HomePage({ onMediaClick, onReady, onFail }) {
         let cache = CacheService.getCache(cacheIdRef.current);
         mediaListref.current = [];
 
-        if(cache){
+        if (cache) {
             mediaListref.current = cache.data;
             setMediaLists(mediaListref.current);
             setDataLoaded(true);
         }
-        else{
+        else {
             AppServices.searchMediaService.getMediasOfToday(
-            (medias) => {
-                addMedias(todayTrendingTitle, medias);
-                setDataLoaded(true);
-                onReady();
-            }, ()=>{
-                onFail();
-            });
-            AppServices.searchMediaService.getPopularMedias((medias)=>{
+                (medias) => {
+                    addMedias(todayTrendingTitle, medias);
+                    setDataLoaded(true);
+                    onReady();
+                }, () => {
+                    onFail();
+                });
+            AppServices.searchMediaService.getPopularMedias((medias) => {
                 addMedias("Popular " + AppMode.getActiveMode().label.toLocaleLowerCase(), medias, true);
             });
-            AppServices.searchMediaService.getRecommandedMedias((medias)=>{
+            AppServices.searchMediaService.getRecommandedMedias((medias) => {
                 addMedias("Recommanded for you", medias, true);
             });
-            AppServices.searchMediaService.getPopularNetflixMedias((medias)=>{
+            AppServices.searchMediaService.getPopularNetflixMedias((medias) => {
                 addMedias("Popular on Netflix", medias);
             });
-            AppServices.searchMediaService.getPopularDisneyPlusMedias((medias)=>{
+            AppServices.searchMediaService.getPopularDisneyPlusMedias((medias) => {
                 addMedias("Popular on Disney Plus", medias);
             });
-            AppServices.searchMediaService.getPopularAmazonPrimeMedias((medias)=>{
+            AppServices.searchMediaService.getPopularAmazonPrimeMedias((medias) => {
                 addMedias("Popular on Amazon Prime", medias);
             });
-            AppServices.searchMediaService.getPopularAppleTvMedias((medias)=>{
+            AppServices.searchMediaService.getPopularAppleTvMedias((medias) => {
                 addMedias("Popular on AppleTv", medias);
             });
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         loadContent();
-        AppMode.onAppModeChanged(()=>{
+        AppMode.onAppModeChanged(() => {
             loadContent();
         });
-    },[]);
+    }, []);
 
     return (
-        <div style={{height: '100%'}}>
-            <CircularProgressBar position={"center"} visible={!dataLoaded} color={"white"} size={"60px"}/>
+        <div style={{ height: '100%' }}>
+            <CircularProgressBar position={"center"} visible={!dataLoaded} color={"white"} size={"60px"} />
             <div className="home-page-container" style={fadeTransition(dataLoaded)}>
-                <MediasOfToday medias={mediaLists.find(list => list.title === todayTrendingTitle)?.medias} onClick={(mediaId) => onMediaClick(mediaId)}/>
-                <div className="blur-divider"></div>    
-                 {mediaLists.filter(list => list.title !== todayTrendingTitle).map((mediasList) =>
+                <MediasOfToday medias={mediaLists.find(list => list.title === todayTrendingTitle)?.medias} onClick={(mediaId) => onMediaClick(mediaId)} />
+                <div className="blur-divider"></div>
+                {mediaLists.filter(list => list.title !== todayTrendingTitle).map((mediasList) =>
                 (
                     <MediasListLiteWithTitle
                         key={mediasList.title}
@@ -101,7 +101,7 @@ function HomePage({ onMediaClick, onReady, onFail }) {
                         listTitle={mediasList.title}
                         medias={mediasList.medias}
                         onMediaClick={(mediaId) => onMediaClick(mediaId)} />
-                ))}    
+                ))}
             </div>
         </div>
     )
