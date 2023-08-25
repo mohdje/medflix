@@ -1,9 +1,9 @@
 const { app, BrowserWindow, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const DecompressZip = require('decompress-zip');
 const { exec } = require('child_process');
 const { icon } = require('./consts');
+const { notifier } = require('./notifier');
 
 const createWindow = () => {
 	const window = new BrowserWindow({
@@ -24,64 +24,47 @@ const createWindow = () => {
 	return window;
 }
 
-const decompressZipFolder = (window, zipFilePath, destinationFolderPath, onSuccess) => {
-	
+const decompressZipFolder = (notifier, zipFilePath, destinationFolderPath, onSuccess) => {
+
 	if (!fs.existsSync(zipFilePath)) {
-		window.webContents.send('decompress-state-changed', 'Package to extract not found. Operation aborted.');
-		setTimeout(() => {
-			app.quit();
-		}, 3000);
+		notifier.notifyMissingPackage();
 	} else {
-		const unzipper = new DecompressZip(zipFilePath);
+		if (process.platform === 'darwin') {
+			const unzipOperation = exec('unzip -o -d "' + destinationFolderPath + '" "' + zipFilePath + '"', (error, stdout, stderr) => {
+				if (error || stderr) {
+					notifier.notifyError();
+				}
+			});
 
-		unzipper.on('error', function (err) {
-			window.webContents.send('decompress-state-changed', 'An error occured while extracting package. Operation aborted.');
-			setTimeout(() => {
-				app.quit();
-			}, 3000);
-		});
-
-		unzipper.on('progress', function (fileIndex, fileCount) {
-			const percentage = ((fileIndex + 1) / fileCount) * 100;
-			window.webContents.send('decompress-state-changed', `Extracting package in application folder, please wait... (${percentage.toFixed(1)} %)`);
-		});
-
-		// Notify when everything is extracted
-		unzipper.on('extract', function (log) {
-			window.webContents.send('decompress-state-changed', 'Extracting package successfully done. The application will be launched.');
-			setTimeout(() => {
-				onSuccess();
-				app.quit();
-			}, 3000);
-		});
-
-		// Start extraction of the content
-		unzipper.extract({
-			path: destinationFolderPath
-			// You can filter the files that you want to unpack using the filter option
-			//filter: function (file) {
-			//console.log(file);
-			//return file.type !== "SymbolicLink";
-			//}
-		});
+			unzipOperation.on('exit', function (code) {
+				if (code === 0) {
+					notifier.notifySuccess(onSuccess);
+				}
+				else {
+					notifier.notifyError();
+				}
+			});
+		}
 	}
 }
 
 app.whenReady().then(() => {
 	const window = createWindow();
 
+	notifier.init(app, window);
+
 	const zipFilePath = process.argv[1];
 	const destinationFolderPath = process.argv[2];
-	
-	setTimeout(() => 
-		decompressZipFolder(window, zipFilePath, destinationFolderPath, () => {
+
+	setTimeout(() =>
+		decompressZipFolder(notifier, zipFilePath, destinationFolderPath, () => {
 			if (process.platform === 'darwin') {
 				exec('open -a Medflix');
 			}
-			else{
+			else {
 				const medflixApplicationPath = process.argv[3];
 				shell.openExternal(medflixApplicationPath);
 			}
-	}), 2000);
+		}), 2000);
 })
 
