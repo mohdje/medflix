@@ -39,7 +39,7 @@ cd '../..'
 
 #update extract-update app in MedflixFiles
 mkdir './Medflix.app/Contents/MacOS/extract-update'
-cp -av './Front/extract-update-package-electron-app/out/Extract Medflix Package-darwin-x64/Extract Medflix Package.app' './Build/MacOS App bundle/Medflix.app/Contents/MacOS/extract-update'
+cp -av './Front/extract-update-package-electron-app/out/Extract Medflix Package-darwin-x64' './Build/MacOS App bundle/Medflix.app/Contents/MacOS/extract-update'
 
 #create dmg
 cd './Build/MacOS App bundle'
