@@ -1,9 +1,9 @@
 const { app, BrowserWindow, shell } = require('electron');
 const path = require('path');
-const fs = require('fs');
 const { exec } = require('child_process');
 const { icon } = require('./consts');
 const { notifier } = require('./notifier');
+const { unzipper } = require('./unzipper');
 
 const createWindow = () => {
 	const window = new BrowserWindow({
@@ -24,30 +24,6 @@ const createWindow = () => {
 	return window;
 }
 
-const decompressZipFolder = (notifier, zipFilePath, destinationFolderPath, onSuccess) => {
-
-	if (!fs.existsSync(zipFilePath)) {
-		notifier.notifyMissingPackage();
-	} else {
-		if (process.platform === 'darwin') {
-			const unzipOperation = exec('unzip -o -d "' + destinationFolderPath + '" "' + zipFilePath + '"', (error, stdout, stderr) => {
-				if (error || stderr) {
-					notifier.notifyError();
-				}
-			});
-
-			unzipOperation.on('exit', function (code) {
-				if (code === 0) {
-					notifier.notifySuccess(onSuccess);
-				}
-				else {
-					notifier.notifyError();
-				}
-			});
-		}
-	}
-}
-
 app.whenReady().then(() => {
 	const window = createWindow();
 
@@ -57,7 +33,7 @@ app.whenReady().then(() => {
 	const destinationFolderPath = process.argv[2];
 
 	setTimeout(() =>
-		decompressZipFolder(notifier, zipFilePath, destinationFolderPath, () => {
+		unzipper.unzip(zipFilePath, destinationFolderPath, notifier, () => {
 			if (process.platform === 'darwin') {
 				exec('open -a Medflix');
 			}
