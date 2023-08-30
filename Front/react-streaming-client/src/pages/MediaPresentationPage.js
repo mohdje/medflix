@@ -378,9 +378,14 @@ function QualitySelector({ versionSources, onQualityChanged }) {
     if (!versionSources || versionSources.length === 0)
         return null;
 
-    const qualities = [];
-    versionSources.forEach(source => {
+    versionSources.sort((source1, source2) => {
+        const [quality1, quality2] = [source1.quality.toLowerCase().trim(), source2.quality.toLowerCase().trim()]
+        return quality1 === quality2 ? 0 : (quality1 < quality2 ? -1 : 1);
+    });
 
+    const qualities = [];
+
+    versionSources.forEach(source => {
         const nbSameQualities = qualities.filter(q => q.startsWith(source.quality)).length;
         qualities.push(source.quality + (nbSameQualities > 0 ? " (" + nbSameQualities + ")" : ""));
     });

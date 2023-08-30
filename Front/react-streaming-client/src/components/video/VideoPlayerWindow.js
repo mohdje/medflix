@@ -19,6 +19,12 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
     const buildVideoQualitiesOptions = (sources) => {
         var options = [];
         if (!sources) return;
+
+        sources.sort((source1, source2) => {
+            const [quality1, quality2] = [source1.quality.toLowerCase().trim(), source2.quality.toLowerCase().trim()]
+            return quality1 === quality2 ? 0 : (quality1 < quality2 ? -1 : 1);
+        });
+
         sources.forEach(source => {
             var qualities = options.filter(o => o.label.startsWith(source.quality));
 
@@ -34,6 +40,7 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
 
         if (options.filter(o => o.selected).length === 0)
             options[0].selected = true;
+
 
         setVideoQualitiesOptions(options);
     }
