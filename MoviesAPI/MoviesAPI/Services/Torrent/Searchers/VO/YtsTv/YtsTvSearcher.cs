@@ -85,12 +85,12 @@ namespace MoviesAPI.Services.Torrent
                         var lastEpisodeNumberStr = episodeNodes[0].InnerText.Split(" ").Last();
                         int.TryParse(lastEpisodeNumberStr, out int lastEpisodeNumber);
 
-                        return lastEpisodeNumber >= episodeNumber ? await GetEpisodeTorrentLinks(episodeNodes[0].Attributes["href"]?.Value) : new MediaTorrent[0];
+                        return lastEpisodeNumber >= episodeNumber ? await GetEpisodeTorrentLinks(episodeNodes[0].Attributes["href"]?.Value, seasonNumber, episodeNumber) : new MediaTorrent[0];
                     }
                     else
                     {
-                        var episodeNode = episodeNodes.SingleOrDefault(node => node.InnerText.Contains($"Episode {episodeNumber}"));
-                        return episodeNode != null ? await GetEpisodeTorrentLinks(episodeNode.Attributes["href"]?.Value) : new MediaTorrent[0];
+                        var episodeNode = episodeNodes.SingleOrDefault(node => node.InnerText.Replace("\\n", "").Trim() == $"Episode {episodeNumber}");
+                        return episodeNode != null ? await GetEpisodeTorrentLinks(episodeNode.Attributes["href"]?.Value, seasonNumber, episodeNumber) : new MediaTorrent[0];
                     }
                 }
             }
@@ -98,7 +98,7 @@ namespace MoviesAPI.Services.Torrent
             return null;
         }
 
-        private async Task<IEnumerable<MediaTorrent>> GetEpisodeTorrentLinks(string episodeUrl)
+        private async Task<IEnumerable<MediaTorrent>> GetEpisodeTorrentLinks(string episodeUrl, int seasonNumber, int episodeNumber)
         {
             var doc = await HttpRequester.GetHtmlDocumentAsync(episodeUrl);
 
@@ -109,12 +109,31 @@ namespace MoviesAPI.Services.Torrent
 
             if (linkNodes == null || !linkNodes.Any())
                 return new MediaTorrent[0];
-            else
-                return linkNodes.Select(node => new MediaTorrent
+
+            var torrentLinks = new List<MediaTorrent>();
+            foreach (var node in linkNodes)
+            {
+                doc = new HtmlDocument();
+                doc.LoadHtml(node.InnerHtml);
+
+                var episodeNameNode = doc.DocumentNode.SelectSingleNode("//span[@class='serv_tit']");
+
+                //is matching SXXEXX pattern
+                var matchSerieEpisodePattern = episodeNameNode?.InnerText.Length == 6 && episodeNameNode?.InnerText[0] == 'S' && episodeNameNode?.InnerText[3] == 'E';
+
+                if (!matchSerieEpisodePattern
+                     || episodeNameNode?.InnerText == $"S{seasonNumber.ToString("00")}E{episodeNumber.ToString("00")}")
                 {
-                    DownloadUrl = node.Attributes["href"]?.Value,
-                    Quality = node.Attributes["href"]?.Value.GetVideoQuality()
-                });
+                    torrentLinks.Add(new MediaTorrent
+                    {
+                        DownloadUrl = node.Attributes["href"]?.Value,
+                        Quality = node.Attributes["href"]?.Value.GetVideoQuality()
+                    });
+                }
+
+            }
+
+            return torrentLinks;
         }
     }
 }

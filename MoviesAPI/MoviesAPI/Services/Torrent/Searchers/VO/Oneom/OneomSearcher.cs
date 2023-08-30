@@ -40,7 +40,7 @@ namespace MoviesAPI.Services.Torrent
                                 .Select(torrent => new MediaTorrent()
                                 {
                                     DownloadUrl = torrent.Value,
-                                    Quality = GetQuality(torrent.Title)
+                                    Quality = torrent.Title.GetVideoQuality()
                                 });
             }
             else
@@ -79,19 +79,5 @@ namespace MoviesAPI.Services.Torrent
         {
             return $"{baseUrl}/serial/{oneomId}";
         }
-
-        private string GetQuality(string torrentTitle)
-        {
-            var qualities = new[] {"HDTV", "480p", "720p", "1080p" };
-
-            foreach (var quality in qualities)
-            {
-                if (torrentTitle.Contains(quality, StringComparison.OrdinalIgnoreCase))
-                    return quality;
-            }
-
-            return "Unknown";
-        }
-
     }
 }
