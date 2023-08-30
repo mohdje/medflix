@@ -15,9 +15,9 @@ function ModalCategories({ visible, onCloseClick, onGenreClick, onPlatformClick 
         setListGenres([]);
         AppServices.searchMediaService.getMediaGenres(
             (genres) => {
-              if (genres && genres.length > 0) {
-                setListGenres(genres);
-              }
+                if (genres && genres.length > 0) {
+                    setListGenres(genres);
+                }
             }
         );
 
@@ -31,7 +31,7 @@ function ModalCategories({ visible, onCloseClick, onGenreClick, onPlatformClick 
     }
     useEffect(() => {
         loadCategories();
-        AppMode.onAppModeChanged(()=>{
+        AppMode.onAppModeChanged(() => {
             loadCategories();
         });
     }, []);
@@ -44,7 +44,7 @@ function ModalCategories({ visible, onCloseClick, onGenreClick, onPlatformClick 
         return (
             <div className="list-categories-view-container">
                 <CircularProgressBar color={'white'} size={'60px'} position={'center'} visible={loading} />
-                <h3 class="categorie-title">Genres</h3>
+                <h3 className="categorie-title">Genres</h3>
                 <div className="list-categories">
                     {listGenres.map(genre =>
                         <div key={genre.id}
@@ -62,7 +62,7 @@ function ModalCategories({ visible, onCloseClick, onGenreClick, onPlatformClick 
                             {genre.name}
                         </div>)}
                 </div>
-            </div>
+            </div >
         )
     }
 
