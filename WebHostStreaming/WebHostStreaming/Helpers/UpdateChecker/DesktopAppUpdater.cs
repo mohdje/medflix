@@ -58,10 +58,10 @@ namespace WebHostStreaming.Helpers
                 throw new NullReferenceException("NewRelease is null. Call IsNewVersionAvailable() first to check if a new version is available");
 
             string releaseUrl = string.Empty;
-            if (AppConfiguration.IsWindowsVersion)
-                releaseUrl = NewRelease.Assets.SingleOrDefault(asset => asset.Name.Contains("Windows"))?.Url;
-            else if(AppConfiguration.IsMacosVersion)
-                releaseUrl = NewRelease.Assets.SingleOrDefault(asset => asset.Name.Contains("MacOs"))?.Url;
+            //if (AppConfiguration.IsWindowsVersion)
+            //    releaseUrl = NewRelease.Assets.SingleOrDefault(asset => asset.Name.Contains("Windows"))?.Url;
+            //else if(AppConfiguration.IsMacosVersion)
+            //    releaseUrl = NewRelease.Assets.SingleOrDefault(asset => asset.Name.Contains("MacOs"))?.Url;
 
             if (!string.IsNullOrWhiteSpace(releaseUrl))
             {

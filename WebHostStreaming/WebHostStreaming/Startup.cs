@@ -21,13 +21,7 @@ namespace WebHostStreaming
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
-
         const string ALLOW_SPECIFIC_ORIGIN = "AllowSpecificOrigin";
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -45,19 +39,14 @@ namespace WebHostStreaming
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            AppConfiguration.ReadPlatformConfiguration(Configuration);
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.SetupUI(appLifetime);
-            }
 
+            app.SetupUI();
             //app.UseHttpsRedirection();
 
             app.UseRouting();

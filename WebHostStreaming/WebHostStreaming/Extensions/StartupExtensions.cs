@@ -21,42 +21,18 @@ namespace WebHostStreaming.StartupExtensions
             services.AddSingleton<IAppUpdater, DesktopAppUpdater>();
         }
 
-        public static void SetupUI(this IApplicationBuilder applicationBuilder, IHostApplicationLifetime appLifetime)
+        public static void SetupUI(this IApplicationBuilder applicationBuilder)
         {
-            if (AppConfiguration.IsWebVersion)
+            if (!Directory.Exists(AppFolders.ViewFolder))
+                throw new DirectoryNotFoundException(AppFolders.ViewFolder);
+
+            applicationBuilder.UseStaticFiles(new StaticFileOptions
             {
-                if (!Directory.Exists(AppFolders.ViewFolder))
-                    throw new DirectoryNotFoundException(AppFolders.ViewFolder);
+                FileProvider = new PhysicalFileProvider(AppFolders.ViewFolder),
+                RequestPath = "/home"
+            });
 
-                applicationBuilder.UseStaticFiles(new StaticFileOptions
-                {
-                    FileProvider = new PhysicalFileProvider(AppFolders.ViewFolder),
-                    RequestPath = "/home"
-                });
-
-                System.Console.WriteLine("Web application accessible here : http://localhost:5000/home/index.html");
-            }
-            else if (AppConfiguration.IsWindowsVersion)
-            {
-                if (!File.Exists(AppFiles.WindowsDesktopAppView))
-                    throw new FileNotFoundException(AppFiles.WindowsDesktopAppView);
-
-                appLifetime.ApplicationStarted.Register(() =>
-                {
-                    System.Diagnostics.Process.Start(AppFiles.WindowsDesktopAppView);
-                });
-            }
-            else if (AppConfiguration.IsMacosVersion)
-            {
-                if (!File.Exists(AppFiles.MacosDesktopAppView))
-                    throw new FileNotFoundException(AppFiles.MacosDesktopAppView);
-
-                appLifetime.ApplicationStarted.Register(() =>
-                {
-                    System.Diagnostics.Process.Start(AppFiles.MacosDesktopAppView);
-                });
-            }
-           
+            System.Console.WriteLine("Web application accessible here : http://localhost:5000/home/index.html");
         }
     }
 }

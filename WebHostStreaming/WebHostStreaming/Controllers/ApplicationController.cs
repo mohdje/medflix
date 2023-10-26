@@ -19,56 +19,10 @@ namespace WebHostStreaming.Controllers
         IHostApplicationLifetime applicationLifetime;
         IAppUpdater updateChecker;
 
-        private const string WINDOWS_VLC_PATH = @"C:\Program Files\VideoLAN\VLC\vlc.exe";
-        private const string MACOS_VLC_PATH = @"/Applications/VLC.app/Contents/MacOS/VLC";
-
         public ApplicationController(IHostApplicationLifetime applicationLifetime, IAppUpdater updateChecker)
         {
             this.applicationLifetime = applicationLifetime;
             this.updateChecker = updateChecker;
-        }
-
-
-        [HttpGet("stop")]
-        public IActionResult StopApp()
-        {
-            if (AppConfiguration.IsWebVersion)
-                return BadRequest();
-
-            try
-            {
-                applicationLifetime.StopApplication();
-                return Ok();
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
-        }
-
-        [HttpGet("startvlc")]
-        public IActionResult StartVLC([FromQuery] string streamUrl)
-        {
-           
-            try
-            {
-                if (AppConfiguration.IsWindowsVersion)
-                {
-                    if (!System.IO.File.Exists(WINDOWS_VLC_PATH)) return NotFound();
-                    System.Diagnostics.Process.Start(WINDOWS_VLC_PATH, streamUrl);
-                }
-                else if (AppConfiguration.IsMacosVersion)
-                {
-                    if (!System.IO.File.Exists(MACOS_VLC_PATH)) return NotFound();
-                    System.Diagnostics.Process.Start(MACOS_VLC_PATH, streamUrl.Replace(" ", "%20"));
-                }
-
-                return Ok();
-            }
-            catch (Exception)
-            {
-                return this.StatusCode(500);
-            }
         }
 
         [HttpGet("platform")]
@@ -76,14 +30,14 @@ namespace WebHostStreaming.Controllers
         {
             return Ok(new
             {
-                isDesktopApplication = !AppConfiguration.IsWebVersion
+                isDesktopApplication = AppConfiguration.IsDesktopApplication
             }); 
         }
 
         [HttpGet("checkUpdate")]
         public async Task<IActionResult> CheckUpdateAsync()
         {
-            if (AppConfiguration.IsWebVersion)
+            if (!AppConfiguration.IsDesktopApplication)
                 return BadRequest();
 
             try
@@ -118,7 +72,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("startUpdate")]
         public IActionResult StartUpdate()
         {
-            if (!AppConfiguration.IsWebVersion && Directory.Exists(AppFolders.ExtractUpdateProgramFolder))
+            if (AppConfiguration.IsDesktopApplication && Directory.Exists(AppFolders.ExtractUpdateProgramFolder))
             {
                 //rename folder so it can be replaced during package extraction
                 Directory.Move(AppFolders.ExtractUpdateProgramFolder, AppFolders.ExtractUpdateProgramTempFolder);
@@ -126,17 +80,17 @@ namespace WebHostStreaming.Controllers
                 var arguments = new List<string>();
                 arguments.Add(AppFiles.NewReleasePackage);
 
-                if (AppConfiguration.IsWindowsVersion)
-                {
-                    arguments.Add(AppFolders.CurrentFolder);
-                    arguments.Add(AppFiles.WindowsDesktopApp);
-                    System.Diagnostics.Process.Start(AppFiles.WindowsExtractUpdateProgram, arguments);
-                }
-                else if (AppConfiguration.IsMacosVersion)
-                {
-                    arguments.Add("/Applications");
-                    System.Diagnostics.Process.Start(AppFiles.MacosExtractUpdateProgram, arguments);
-                }
+                //if (AppConfiguration.IsWindowsVersion)
+                //{
+                //    arguments.Add(AppFolders.CurrentFolder);
+                //    arguments.Add(AppFiles.WindowsDesktopApp);
+                //    System.Diagnostics.Process.Start(AppFiles.WindowsExtractUpdateProgram, arguments);
+                //}
+                //else if (AppConfiguration.IsMacosVersion)
+                //{
+                //    arguments.Add("/Applications");
+                //    System.Diagnostics.Process.Start(AppFiles.MacosExtractUpdateProgram, arguments);
+                //}
 
                 applicationLifetime.StopApplication();
                 return Ok();
