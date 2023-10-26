@@ -53,7 +53,7 @@ function ModalCategories({ visible, onCloseClick, onGenreClick, onPlatformClick 
                             {genre.name}
                         </div>)}
                 </div>
-                <h3 class="categorie-title">Platforms</h3>
+                <h3 className="categorie-title">Platforms</h3>
                 <div className="list-categories">
                     {listPlatforms.map(genre =>
                         <div key={genre.id}
