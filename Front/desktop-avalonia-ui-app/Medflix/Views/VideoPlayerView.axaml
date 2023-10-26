@@ -1,0 +1,248 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Medflix.ViewModels"
+             xmlns:vlcsharp="clr-namespace:LibVLCSharp.Avalonia.Unofficial;assembly=LibVLCSharp.Avalonia.Unofficial"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Medflix.Views.VideoPlayerView"
+			  Focusable="True"
+			 Background="Black">
+	<Panel>
+		<vlcsharp:VideoView
+			x:Name="VlcVideoView"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch">
+			<Panel>
+				
+				<!-- Loading info -->
+				<Panel ZIndex="1">
+					<StackPanel
+						Orientation="Vertical"
+						IsVisible="True"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center">
+						<TextBlock 
+							x:Name="StatusMessage" 
+							Classes="stateMessage"
+							IsVisible="False" />
+						<Image x:Name="LoadingSpinner" IsVisible="False" Source="/Assets/loading_spinner.png" />
+					</StackPanel>
+				</Panel>
+				
+				<!-- Options -->
+				<Panel ZIndex="3">
+					<StackPanel
+						x:Name="SubtitlesOptionsContainer"
+						IsVisible="False"
+						HorizontalAlignment="Right"
+						VerticalAlignment="Bottom">
+						<Border
+							Classes="videoOptionContainer"
+							Margin="0 0 80 60">
+							<StackPanel
+								Orientation="Vertical"
+								VerticalAlignment="Stretch"
+								HorizontalAlignment="Stretch">
+								<Grid x:Name="SubtitlesGrid" RowDefinitions="Auto,100" Background="#1e1e1e">
+								</Grid>
+
+								<TextBlock
+									x:Name="NoSubtitlesOption"
+									Classes="videoOption"
+									HorizontalAlignment="Center"
+									Margin="0 8 0 15"
+									Text="No subtitles"/>
+								
+								<TextBlock Foreground="White" Margin="0 5 0 0" HorizontalAlignment="Center" Text="Font size"/>
+								<NumericUpDown x:Name="SubtitlesFontSize" Value="40" Width="140" HorizontalAlignment="Center" Increment="0.5" Maximum="52" Minimum="22"/>
+								
+								<TextBlock Foreground="White" Margin="0 5 0 0" HorizontalAlignment="Center" Text="Display offset (sec.)"/>
+								<NumericUpDown x:Name="SubtitlesOffset" Value="0" Width="140" HorizontalAlignment="Center" Increment="0.05" Margin="0 0 0 7"/>
+							</StackPanel>
+						</Border>
+					</StackPanel>
+					
+					<StackPanel
+						x:Name="SourcesListContainer"
+						IsVisible="False"
+						HorizontalAlignment="Right"
+						VerticalAlignment="Bottom">
+						<Border
+							Classes="videoOptionContainer"
+							MinWidth="100"
+							MaxHeight="200"
+							Margin="0 0 50 60">
+							<ScrollViewer>
+								<StackPanel
+									x:Name="SourcesList"
+									Orientation="Vertical"
+									VerticalAlignment="Stretch"
+									HorizontalAlignment="Stretch"></StackPanel>
+							</ScrollViewer>
+						</Border>
+					</StackPanel>
+				</Panel>
+				
+				<!--Subtitles-->
+				<Panel ZIndex="1">
+					<StackPanel
+						VerticalAlignment="Bottom"
+						HorizontalAlignment="Center"
+						Margin="0 0 0 60">
+						<StackPanel.Background>
+							<SolidColorBrush Color="Black" Opacity="0.7"/>
+						</StackPanel.Background>
+						<TextBlock 
+							x:Name="SubtitlesText" 
+							Padding="15 7 15 7" 
+							Foreground="White" 
+							FontSize="30" 
+							MaxWidth="800"
+							IsVisible="False"
+							FontFamily="Arial"
+							TextWrapping="Wrap"/>
+					</StackPanel>
+				</Panel>
+				
+				<!--Video Player Controls -->
+				<Panel
+					x:Name="VideoPlayerControls"
+					Opacity="0"
+					ZIndex="2"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch">
+					<Panel.Background>
+						<ImageBrush Stretch="Fill" Source="/Assets/shadow_background.png"/>
+					</Panel.Background>
+					<StackPanel
+						Orientation="Horizontal"
+						VerticalAlignment="Top"
+						HorizontalAlignment="Right">
+						<Button x:Name="CloseButton" Margin="0 10 20 0">
+							<Image
+								Width="40"
+								Source="/Assets/close.png"
+								/>
+						</Button>
+					</StackPanel>
+					<StackPanel
+						Orientation="Vertical"
+						VerticalAlignment="Bottom"
+						HorizontalAlignment="Stretch">
+						<Panel
+							HorizontalAlignment="Stretch">
+							<StackPanel
+								HorizontalAlignment="Left">
+								<TextBlock
+									x:Name="CurrentTime"
+									Foreground="White"
+									Margin="15,0,0,0"
+									></TextBlock>
+							</StackPanel>
+							<StackPanel
+								HorizontalAlignment="Right">
+								<TextBlock
+									x:Name="RemainingTime"
+									Foreground="White"
+									Margin="0,0,15,0"></TextBlock>
+							</StackPanel>
+						</Panel>
+						<Slider x:Name="ProgressBar" Foreground="Red" Margin="10,0,10,0"></Slider>
+						<Panel
+							HorizontalAlignment="Stretch"
+							Height="80"
+							Margin="20,0,20,0">
+							<StackPanel
+								Orientation="Horizontal"
+								VerticalAlignment="Center"
+								HorizontalAlignment="Left">
+								<Button
+								 x:Name="PlayButton"
+								 IsVisible="False">
+									<Image
+										Width="20"
+										Source="/Assets/play.png"/>
+								</Button>
+								<Button
+									 x:Name="PauseButton"
+									 IsVisible="False">
+									<Image
+										Width="20"
+										Source="/Assets/pause.png"/>
+								</Button>
+								<Button
+									 x:Name="BackwardButton"
+									 Margin="20, 0, 0, 0"
+									 IsVisible="False">
+									<Image
+										Width="30"
+										Source="/Assets/backward_10.png"/>
+								</Button>
+								<Button
+									 x:Name="ForwardButton"
+									 Margin="0, 0, 20, 0"
+									 IsVisible="False">
+									<Image
+										Width="30"
+										Source="/Assets/forward_10.png"/>
+								</Button>
+								<Button
+									 x:Name="SoundLoudButton"
+									 IsVisible="False">
+									<Image
+										Width="30"
+										Source="/Assets/sound_loud.png"/>
+								</Button>
+								<Button
+									 x:Name="SoundOffButton"
+									 IsVisible="False">
+									<Image
+										Width="30"
+										Source="/Assets/sound_off.png"/>
+								</Button>
+								<Slider x:Name="VolumeBar"
+										Orientation="Horizontal"
+										Width="100"
+										Value="100"
+										Foreground="White"
+										Margin="5,0,0,0"></Slider>
+							</StackPanel>
+							<StackPanel
+								Orientation="Horizontal"
+								VerticalAlignment="Center"
+								HorizontalAlignment="Right">
+								<Button
+								 x:Name="SubtitlesButton">
+									<Image
+										Width="30"
+										Source="/Assets/subtitles.png" />
+								</Button>
+								<Button
+								 x:Name="SettingsButton"
+								 Margin="10,0,10,0">
+									<Image
+										Width="30"
+										Source="/Assets/settings.png"/>
+								</Button>
+								<Button x:Name="EnterFullScreenButton">
+									<Image
+										Width="30"
+										Source="/Assets/full-screen.png"/>
+								</Button>
+								<Button  x:Name="ExitFullScreenButton" IsVisible="False">
+									<Image
+										Width="30"
+										Source="/Assets/full-screen-exit.png"/>
+								</Button>
+							</StackPanel>
+						</Panel>
+					</StackPanel>
+				</Panel>
+
+			</Panel>
+		</vlcsharp:VideoView>
+	</Panel>
+
+
+</UserControl>
