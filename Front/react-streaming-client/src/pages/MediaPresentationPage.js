@@ -118,7 +118,10 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                 versionLabel: versionLabel,
                 sources: sources
             };
-            if (setFirst) versionsSources.current.unshift(newVersionSources);
+            if (setFirst) {
+                setSelectedVersionSourceLink('');
+                versionsSources.current.unshift(newVersionSources)
+            }
             else versionsSources.current.push(newVersionSources);
             setSelectedVersionSources(versionsSources.current[0].sources);
         }
@@ -249,7 +252,8 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                 subtitles={mediaSubtitlesSources}
                 onCloseClick={() => setShowMediaPlayer(false)}
                 onWatchedTimeUpdate={(currentTime, duration) => onWatchedTimeUpdate(currentTime, duration)}
-                goToTime={mediaProgression?.currentTime} />
+                goToTime={mediaProgression?.currentTime}
+                mediaDetails={mediaDetails} />
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />
             <ModalMediaTrailer visible={showMediaTrailer} youtubeTrailerUrl={mediaDetails.youtubeTrailerUrl} onCloseClick={() => setShowMediaTrailer(false)} />
             <div style={{ display: dataLoaded && !mediaDetails.title ? 'flex' : 'none' }} className="no-media-details-message">

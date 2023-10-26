@@ -2,19 +2,65 @@
 import "../../style/video-player-window.css";
 import "../../style/button.css";
 import AppServices from "../../services/AppServices";
+import AppMode from "../../services/appMode";
 import VideoPlayer from "./VideoPlayer";
 import Paragraph from "../common/text/Paragraph";
 import BaseButton from "../common/buttons/BaseButton";
 import ModalWindow from "../modal/ModalWindow";
+import ModalLoadingMessage from "../modal/ModalLoadingMessage";
 import { ToTimeFormat } from "../../helpers/timeFormatHelper";
 
 import { useEffect, useState } from 'react';
 
-export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, onWatchedTimeUpdate, goToTime }) {
+export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, onWatchedTimeUpdate, goToTime, mediaDetails }) {
     const [subtitlesOptions, setSubtitlesOptions] = useState([]);
     const [videoQualitiesOptions, setVideoQualitiesOptions] = useState([]);
     const [resumeMessageVisible, setResumeMessageVisible] = useState(true);
     const [videoTime, setVideoTime] = useState(0);
+    const [isDesktopApp, setIsDesktopApp] = useState(false);
+    const [showLoadingModal, setShowLoadingModal] = useState(false);
+
+
+    useEffect(() => {
+        if (visible) {
+            AppServices.appInfoApiService.isDesktopApplication((isDesktopApp) => {
+                setIsDesktopApp(isDesktopApp);
+                if (true) {
+                    onCloseClick();//trigger close click to notify parent that window is not shown
+                    setShowLoadingModal(true);
+                    setTimeout(() => {
+                        setShowLoadingModal(false);
+                    }, 7000);
+
+                    const options = {
+                        sources: sources.map(source => {
+                            return {
+                                quality: source.quality,
+                                selected: source.selected,
+                                url: AppServices.torrentApiService.buildStreamUrl(source.downloadUrl, source.fileName, source.seasonNumber, source.episodeNumber)
+                            }
+                        }),
+                        subtitles: subtitles,
+                        resumeToTime: goToTime,
+                        watchedMedia: {
+                            title: mediaDetails.title,
+                            id: mediaDetails.id,
+                            coverImageUrl: mediaDetails.coverImageUrl,
+                            rating: mediaDetails.rating,
+                            synopsis: mediaDetails.synopsis,
+                            year: mediaDetails.year,
+                            episodeNumber: sources[0].episodeNumber,
+                            seasonNumber: sources[0].seasonNumber
+                        },
+                        mediaType: AppMode.getActiveMode().urlKey
+                    }
+
+                    var optionsJSON = JSON.stringify(options);
+                    window.location.href = "http://openvideoplayer?options=" + encodeURIComponent(optionsJSON);
+                }
+            });
+        }
+    }, [visible]);
 
     const buildVideoQualitiesOptions = (sources) => {
         var options = [];
@@ -40,7 +86,6 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
 
         if (options.filter(o => o.selected).length === 0)
             options[0].selected = true;
-
 
         setVideoQualitiesOptions(options);
     }
@@ -111,7 +156,9 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
         </div>
     )
     return (
-        <ModalWindow visible={visible} content={content} onCloseClick={() => onCloseClick()} />
+        isDesktopApp ?
+            <div><ModalLoadingMessage visible={showLoadingModal} /></div>
+            : <ModalWindow visible={visible} content={content} onCloseClick={() => onCloseClick()} />
     );
 }
 
