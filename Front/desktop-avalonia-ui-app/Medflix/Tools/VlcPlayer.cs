@@ -3,6 +3,7 @@ using LibVLCSharp.Shared;
 using LibVLCSharp.Avalonia.Unofficial;
 using Medflix.Models.EventArgs;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Medflix.Tools
 {
@@ -20,6 +21,17 @@ namespace Medflix.Tools
         public event EventHandler<VideoPlayerEventArgs> OnBuffering;
         public event EventHandler<VideoPlayerEventArgs> OnPlaying;
 
+
+        public static void InitLibVLC()
+        {
+            if (_libVLC == null)
+            {
+                Task.Run(() =>
+                {
+                    _libVLC = new LibVLC();
+                });
+            }
+        }
         public VlcPlayer()
         {
 
@@ -36,8 +48,12 @@ namespace Medflix.Tools
                 //	Core.Initialize();
                 //}
 
-                if(_libVLC == null)
-                    _libVLC = new LibVLC();
+                lock (_libVLC)
+                {
+                    if (_libVLC == null)
+                        throw new Exception("Call InitLibVLC first");
+                }
+              
 
                 //_libVLC.Log += VlcLogger_Event;
 

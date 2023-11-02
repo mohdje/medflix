@@ -5,6 +5,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using Medflix.Models;
 using Medflix.Services;
+using Medflix.Tools;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Threading.Tasks;
@@ -29,6 +30,8 @@ public partial class MainWindow : Window
 
         medflixApiService = new MedflixApiService();
         appUpdateService = new AppUpdateService();
+
+        VlcPlayer.InitLibVLC();
 
      //   webhost = WebHostStreaming.AppStart.CreateHost(new string[0], true);
 
