@@ -27,11 +27,12 @@ public partial class MainWindow : Window
         InitializeComponent();
 
         this.MainAppView.OpenVideoPlayerRequest += (s, e) => AddVideoPlayerView(e.VideoPlayerOptions);
+        this.MainAppView.MainAppViewLoaded += (s, e) => this.SplashScreen.IsVisible = false;
 
         medflixApiService = new MedflixApiService();
         appUpdateService = new AppUpdateService();
 
-        VlcPlayer.InitLibVLC();
+        //VlcPlayer.InitLibVLC();
 
      //   webhost = WebHostStreaming.AppStart.CreateHost(new string[0], true);
 
@@ -72,14 +73,13 @@ public partial class MainWindow : Window
     }
     protected override async void OnLoaded(RoutedEventArgs e)
     {
-         //webhost.Start();
+        //webhost.Start();
 
-       // Task.Delay(5000).Wait();
+        await Task.Delay(5000);
 
-        //  this.WebView.IsVisible = true;
-        //this.SplashScreen.IsVisible = false;
+        this.MainAppView.LoadView(this);
 
-        await CheckUpdateAsync();
+       // await CheckUpdateAsync();
     }
 
     protected override void OnKeyDown(KeyEventArgs e)

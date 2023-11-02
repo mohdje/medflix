@@ -9,10 +9,14 @@
         Icon="/Assets/avalonia-logo.ico"
 		WindowState="Maximized"
         Title="Medflix">
-	<Panel x:Name="MainVindowContainer">
-		<views:WebView x:Name="WebView" IsVisible="False"/>
-		<Panel x:Name="SplashScreen" Background="Black">
+	<Panel x:Name="MainVindowContainer" Background="Black">
+
+		<views:MainAppView x:Name="MainAppView"/>
+		
+
+		<Panel  ZIndex="2" x:Name="SplashScreen" Background="Black" IsVisible="True">
 			<Image Width="300" Source="/Assets/logo.png"/>
 		</Panel>
+		
 	</Panel>
 </Window>
