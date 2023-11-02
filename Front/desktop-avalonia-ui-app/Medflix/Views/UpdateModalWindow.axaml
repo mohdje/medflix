@@ -1,0 +1,59 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Medflix.Views.UpdateModalWindow"
+		Width="700"
+		Height="200"
+		Topmost="True"
+		WindowStartupLocation="CenterScreen"
+		CanResize="False"
+		ExtendClientAreaToDecorationsHint="True"
+		ExtendClientAreaTitleBarHeightHint="-1"
+		ExtendClientAreaChromeHints="NoChrome"
+		Background="Transparent"
+        Title="UpdateModalWindow">
+	<Panel Background="Transparent">
+		<Border
+			CornerRadius="7"
+			BoxShadow="0 2 8 0 Black"
+			Margin="5 5 5 5">
+			<Border.Background>
+				<LinearGradientBrush>
+					<GradientStop Color="Black" Offset="0"/>
+					<GradientStop Color="#333535" Offset="1"/>
+				</LinearGradientBrush>
+			</Border.Background>
+			<StackPanel 
+				Orientation="Vertical" 
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Center"
+				>
+				<TextBlock
+					x:Name="UpdateMessage"
+					Foreground="White"
+					FontSize="22"
+					HorizontalAlignment="Center"
+					Padding="15 20 15 20"
+					TextWrapping="Wrap"
+					Text="A new version of Medflix is available, do you want to install it ?"/>
+				<StackPanel
+					Orientation="Horizontal"
+					HorizontalAlignment="Center">
+					<Button x:Name="YesBtn" Classes="modalBtn red">
+						<Border>
+							<TextBlock>Yes</TextBlock>
+						</Border>
+					</Button>
+					<Button x:Name="NoBtn" Classes="modalBtn gray">
+						<Border>
+							<TextBlock>No</TextBlock>
+						</Border>
+					</Button>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+	</Panel>
+	
+</Window>

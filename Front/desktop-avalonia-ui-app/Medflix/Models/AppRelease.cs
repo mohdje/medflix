@@ -1,6 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿
+using System.Text.Json.Serialization;
 
-namespace WebHostStreaming.Models
+namespace Medflix.Models
 {
     public class AppRelease
     {
@@ -13,7 +14,7 @@ namespace WebHostStreaming.Models
     {
         public string Name { get; set; }
 
-        [JsonProperty("browser_download_url")]
+        [JsonPropertyName("browser_download_url")]
         public string Url { get; set; }
     }
 }

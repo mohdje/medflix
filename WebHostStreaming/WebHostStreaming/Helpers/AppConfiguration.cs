@@ -5,18 +5,11 @@ namespace WebHostStreaming.Helpers
 {
     public static class AppConfiguration
     {
-        const string VERSION_NAME = "VersionName";
-
-        private static string versionName;
-
         public static bool IsDesktopApplication { get; private set; }
-        public static string VersionName => versionName;
 
-
-        public static void Init(IConfiguration configuration, bool isDesktopApplication)
+        public static void Init(bool isDesktopApplication)
         {
             IsDesktopApplication = isDesktopApplication;
-            versionName = configuration.GetValue<string>(VERSION_NAME);
         }
     }
 }

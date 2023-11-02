@@ -28,7 +28,7 @@ namespace WebHostStreaming
                                 .AddJsonFile("appsettings.json", false)
                                 .Build();
 
-            AppConfiguration.Init(configuration, isDeskopApplication);
+            AppConfiguration.Init(isDeskopApplication);
 
             return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>

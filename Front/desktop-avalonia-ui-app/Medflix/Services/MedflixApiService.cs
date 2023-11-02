@@ -11,18 +11,9 @@ using WebHostStreaming.Models;
 
 namespace Medflix.Services
 {
-    public class MedflixApiService
+    public class MedflixApiService : HttpClientService
     {
-        static HttpClient HttpClient;
-        const string userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.115 Safari/537.36";
         const string HostUrl = "http://localhost:5000";
-        public MedflixApiService()
-        {
-            HttpClient = new HttpClient();
-            HttpClient.DefaultRequestHeaders.Add("User-Agent", userAgent);
-            HttpClient.Timeout = TimeSpan.FromSeconds(10);
-        }
-
         public async Task<Subtitle[]> GetSubtitlesAsync(string subtitlesSourceUrl)
         {
             var url = $"{HostUrl}/subtitles?sourceUrl={subtitlesSourceUrl}";
@@ -39,19 +30,7 @@ namespace Medflix.Services
         {
             var url = $"{HostUrl}/{mediaType}/watchedmedia";
 
-            await HttpClient.PutAsJsonAsync(url, watchedMedia);
-        }
-
-        private async Task<T> GetAsync<T>(string uri)
-        {
-            try
-            {
-                return await HttpClient.GetFromJsonAsync<T>(uri);
-            }
-            catch (Exception)
-            {
-                return default(T);
-            }
+            await PutAsync(url, watchedMedia);
         }
     }
 }

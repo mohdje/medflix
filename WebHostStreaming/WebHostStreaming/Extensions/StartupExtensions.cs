@@ -18,7 +18,6 @@ namespace WebHostStreaming.StartupExtensions
             services.AddSingleton<IBookmarkedMediaProvider, BookmarkedMediaProvider>();
             services.AddSingleton<IWatchedMediaProvider, WatchedMediaProvider>();
             services.AddSingleton<IRecommandationsProvider, RecommandationsProvider>();
-            services.AddSingleton<IAppUpdater, DesktopAppUpdater>();
         }
 
         public static void SetupUI(this IApplicationBuilder applicationBuilder)

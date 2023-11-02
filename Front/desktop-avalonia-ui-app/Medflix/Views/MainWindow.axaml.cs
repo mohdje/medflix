@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Threading;
 using Medflix.Models;
 using Medflix.Services;
@@ -13,17 +14,23 @@ namespace Medflix.Views;
 public partial class MainWindow : Window
 {
     private WindowState previousWindowState;
+
     private VideoPlayerView videoPlayerView;
+
     private IHost webhost;
     private MedflixApiService medflixApiService;
+    private AppUpdateService appUpdateService;
+
     public MainWindow()
     {
         InitializeComponent();
 
-        this.WebView.OpenVideoPlayerRequest += (s, e) => AddVideoPlayerView(e.VideoPlayerOptions);
+        this.MainAppView.OpenVideoPlayerRequest += (s, e) => AddVideoPlayerView(e.VideoPlayerOptions);
 
         medflixApiService = new MedflixApiService();
-        webhost = WebHostStreaming.AppStart.CreateHost(new string[0], true);
+        appUpdateService = new AppUpdateService();
+
+     //   webhost = WebHostStreaming.AppStart.CreateHost(new string[0], true);
 
         //TestVideoView();
     }
@@ -60,18 +67,16 @@ public partial class MainWindow : Window
 
         AddVideoPlayerView(options);
     }
-    protected override void OnLoaded(RoutedEventArgs e)
+    protected override async void OnLoaded(RoutedEventArgs e)
     {
-        webhost.Start();
+         //webhost.Start();
 
-        Task.Delay(2000).ContinueWith(t =>
-        {
-            Dispatcher.UIThread.Invoke(() =>
-            {
-                this.WebView.IsVisible = true;
-                this.SplashScreen.IsVisible = false;
-            });
-        });
+       // Task.Delay(5000).Wait();
+
+        //  this.WebView.IsVisible = true;
+        //this.SplashScreen.IsVisible = false;
+
+        await CheckUpdateAsync();
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
@@ -90,6 +95,41 @@ public partial class MainWindow : Window
         this.videoPlayerView.OnCloseRequest += OnVideoPlayerViewCloseRequest;
 
         this.MainVindowContainer.Children.Add(this.videoPlayerView);
+    }
+
+    private async Task CheckUpdateAsync()
+    {
+        var updateAvailabe = await this.appUpdateService.IsNewReleaseAvailableAsync();
+        if (updateAvailabe)
+        {       
+            var modalWindow = new UpdateModalWindow();
+            modalWindow.OnConfirm += async (s, e) =>
+            {
+                try
+                {
+                    modalWindow.NotifyDownloadInProgress();
+                    var success = await this.appUpdateService.DownloadNewReleaseAsync();
+                    if (success)
+                    {
+                        modalWindow.NotifyInstallUpdate();
+                        await Task.Delay(3000);
+
+                        var updateStarted = this.appUpdateService.StartExtractUpdate();
+                        if (updateStarted)
+                            this.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                  
+                }
+                modalWindow.NotifyError();
+                await Task.Delay(3000);
+                modalWindow.Close();
+            };
+            modalWindow.OnDecline += (s, e) => modalWindow.Close();
+            modalWindow.Show();
+        }
     }
 
     private void OnVideoPlayerViewCloseRequest(object? sender, EventArgs e)
