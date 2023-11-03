@@ -75,6 +75,7 @@ namespace Medflix.Tools
 
         public void Dispose()
         {
+            this.MediaPlayer.Stop();
             this.MediaPlayer = null;
         }
 
@@ -206,7 +207,7 @@ namespace Medflix.Tools
 
         private void MediaPlayerStateChanged(object? sender, EventArgs e)
         {
-            if (this.OnStateChanged != null)
+            if (MediaPlayer != null && this.OnStateChanged != null)
                 this.OnStateChanged.Invoke(this, new VideoPlayerEventArgs { State = MediaPlayer.State, Muted = MediaPlayer.Mute });
         }
 
