@@ -278,14 +278,14 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                                 <MediaProgression mediaProgression={mediaProgression?.progression} remainingTime={mediaProgression?.remainingTime} />
                                 <div className="horizontal">
                                     <TrailerButton visible={mediaDetails?.youtubeTrailerUrl} onClick={() => setShowMediaTrailer(true)} />
-                                    <AddBookmarkButton onClick={() => bookmarkMedia()} visible={addBookmarkButtonVisible} />
-                                    <RemoveBookmarkButton onClick={() => unbookmarkMedia()} visible={!addBookmarkButtonVisible} />
-                                </div>
-                                <div className="play-options">
                                     <EpisodeSelector
                                         serieId={mediaDetails.id}
                                         seasonsCount={mediaDetails.seasonsCount}
                                         onEpisodeSelected={(seasonNumber, episodeNumber) => onEpisodeSelected(seasonNumber, episodeNumber)} />
+                                    <AddBookmarkButton onClick={() => bookmarkMedia()} visible={addBookmarkButtonVisible} />
+                                    <RemoveBookmarkButton onClick={() => unbookmarkMedia()} visible={!addBookmarkButtonVisible} />
+                                </div>
+                                <div className="play-options">
                                     <AvailableSubtitles loading={loadingSubtitles} availableSubtitlesSources={mediaSubtitlesSources} />
                                     <AvailableVersions
                                         loading={voSourcesSearching || vfSourcesSearching}
@@ -420,10 +420,6 @@ function EpisodeSelector({ serieId, seasonsCount, onEpisodeSelected }) {
         setModalVisible(true);
     }
 
-    const containerStyle = {
-        margin: '12px auto',
-    }
-
     const handleEpisodeSelected = (seasonNumber, episodeNumber) => {
         setSelectedSeasonNumber(seasonNumber);
         setSelectedEpisodeNumber(episodeNumber);
@@ -431,7 +427,7 @@ function EpisodeSelector({ serieId, seasonsCount, onEpisodeSelected }) {
         setModalVisible(false);
     }
 
-    return <div style={containerStyle}>
+    return <div>
         <ModalEpisodeSelector
             visible={modalVisible}
             serieId={serieId}
