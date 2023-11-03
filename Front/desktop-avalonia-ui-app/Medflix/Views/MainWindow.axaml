@@ -6,17 +6,13 @@
         xmlns:views="clr-namespace:Medflix.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Medflix.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/medflix.ico"
 		WindowState="Maximized"
         Title="Medflix">
-	<Panel x:Name="MainVindowContainer" Background="Black">
-
+	<Panel x:Name="MainWindowContainer" Background="Black">
 		<views:MainAppView x:Name="MainAppView"/>
-		
-
-		<Panel  ZIndex="2" x:Name="SplashScreen" Background="Black" IsVisible="True">
+		<Panel x:Name="SplashScreen" Background="Black" IsVisible="True">
 			<Image Width="300" Source="/Assets/logo.png"/>
 		</Panel>
-		
 	</Panel>
 </Window>

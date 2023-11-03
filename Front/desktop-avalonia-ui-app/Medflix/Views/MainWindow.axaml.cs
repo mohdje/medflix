@@ -32,9 +32,9 @@ public partial class MainWindow : Window
         medflixApiService = new MedflixApiService();
         appUpdateService = new AppUpdateService();
 
-        //VlcPlayer.InitLibVLC();
+        VlcPlayer.InitLibVLC();
 
-     //   webhost = WebHostStreaming.AppStart.CreateHost(new string[0], true);
+        webhost = WebHostStreaming.AppStart.CreateHost(new string[0], true);
 
         //TestVideoView();
     }
@@ -73,13 +73,13 @@ public partial class MainWindow : Window
     }
     protected override async void OnLoaded(RoutedEventArgs e)
     {
-        //webhost.Start();
+        webhost.Start();
 
-        await Task.Delay(5000);
+        await Task.Delay(3000);
 
         this.MainAppView.LoadView(this);
 
-       // await CheckUpdateAsync();
+        await CheckUpdateAsync();
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
@@ -97,7 +97,7 @@ public partial class MainWindow : Window
         this.videoPlayerView.OnToggleFullScreenRequest += OnToggleFullScreenRequest;
         this.videoPlayerView.OnCloseRequest += OnVideoPlayerViewCloseRequest;
 
-        this.MainVindowContainer.Children.Add(this.videoPlayerView);
+        this.MainWindowContainer.Children.Add(this.videoPlayerView);
     }
 
     private async Task CheckUpdateAsync()
@@ -140,8 +140,9 @@ public partial class MainWindow : Window
         if(this.WindowState == WindowState.FullScreen)
             this.WindowState = this.previousWindowState;
 
-        this.MainVindowContainer.Children.Remove(videoPlayerView);
+        this.MainWindowContainer.Children.Remove(videoPlayerView);
         this.videoPlayerView = null;
+        this.MainAppView.NotifyVideoPlayerClosed();
     }
 
     #region Fullscreen Request Handlers
