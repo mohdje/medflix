@@ -25,17 +25,13 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
         if (visible) {
             AppServices.appInfoApiService.isDesktopApplication((isDesktopApp) => {
                 setIsDesktopApp(isDesktopApp);
-                if (true) {
-                    onCloseClick();//trigger close click to notify parent that window is not shown
+                if (isDesktopApp) {
                     setShowLoadingModal(true);
-                    setTimeout(() => {
-                        setShowLoadingModal(false);
-                    }, 7000);
 
                     const options = {
                         sources: sources.map(source => {
                             return {
-                                quality: source.quality,
+                                quality: source.quality.trim(),
                                 selected: source.selected,
                                 url: AppServices.torrentApiService.buildStreamUrl(source.downloadUrl, source.fileName, source.seasonNumber, source.episodeNumber)
                             }
@@ -57,6 +53,11 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
 
                     var optionsJSON = JSON.stringify(options);
                     window.location.href = "http://openvideoplayer?options=" + encodeURIComponent(optionsJSON);
+
+                    window.closeVideoPlayerWindow = () => {
+                        setShowLoadingModal(false);
+                        onCloseClick();//trigger close click to notify parent that window is not shown
+                    }
                 }
             });
         }

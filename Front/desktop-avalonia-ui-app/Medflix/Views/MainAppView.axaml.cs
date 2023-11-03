@@ -4,8 +4,7 @@ using System.Web;
 using System;
 using Medflix.Models;
 using Medflix.Models.EventArgs;
-using Avalonia.Interactivity;
-using Avalonia.Media;
+using Medflix.Tools;
 
 namespace Medflix.Views
 {
@@ -41,7 +40,7 @@ namespace Medflix.Views
 
         public void LoadView(Window windowContainer)
         {
-            this.WebViewControl.Url = new Uri ("http://localhost:5000/home/index.html"); 
+            this.WebViewControl.Url = new Uri (Consts.MainAppViewUrl); 
 
             this.WebViewControl.NavigationCompleted += (s , e) =>
             {
@@ -49,6 +48,11 @@ namespace Medflix.Views
                 this.WebViewControl.Width = windowContainer.Width;
                 this.MainAppViewLoaded?.Invoke(this, null);
             };
+        }
+
+        public void NotifyVideoPlayerClosed()
+        {
+            this.WebViewControl.ExecuteScriptAsync("window.closeVideoPlayerWindow()");
         }
     }
 }
