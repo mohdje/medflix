@@ -292,8 +292,8 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                                         availableVersionsSources={versionsSources.current}
                                         onVersionSelected={(versionSources) => { setSelectedVersionSourceLink(null); setSelectedVersionSources(versionSources.sources) }} />
                                     <div style={fadeTransition(!(voSourcesSearching || vfSourcesSearching) && Boolean(selectedVersionSources) && selectedVersionSources.length > 0)} >
-                                        <QualitySelector versionSources={selectedVersionSources} onQualityChanged={(i) => changeSelectedSource(i)} />
                                         <div className="horizontal">
+                                            <QualitySelector versionSources={selectedVersionSources} onQualityChanged={(i) => changeSelectedSource(i)} />
                                             <PlayButton onClick={() => setShowMediaPlayer(true)} />
                                             <PlayWithVLCButton
                                                 videoUrl={selectedVersionSourceLink}
