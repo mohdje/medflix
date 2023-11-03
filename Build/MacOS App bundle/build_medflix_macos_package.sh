@@ -18,26 +18,17 @@ cp -av './PkgInfo' './Medflix.app/Contents'
 #copy app icon in app bundle Resources folder 
 cp -av './Medflix.icns' './Medflix.app/Contents/Resources'
 
-#copy backend app in app bundle MacOS folder
-chmod 755 './macos/Medflix'
+#copy avalonia app in app bundle MacOS folder
+chmod 755 './macos/Medflix.Desktop'
 cp -av './macos/.' './Medflix.app/Contents/MacOS'
 
-#build desktop electron app
-cd '../../Front/desktop-electron-app'
-npm run make
-
-cd '../..'
-
-#copy desktop electron app in app bundle MacOS folder
-cp -av './Front/desktop-electron-app/out/Medflix-darwin-x64/Medflix.app' './Build/MacOS App bundle/Medflix.app/Contents/MacOS'
-
 #build extract-update-package-electron-app 
-cd './Front/extract-update-package-electron-app'
+cd '../../Front/extract-update-package-electron-app'
 npm run make
 
 cd '../..'
 
-#update extract-update app in MedflixFiles
+#copy extract-update app in avalonia app
 mkdir './Medflix.app/Contents/MacOS/extract-update'
 cp -av './Front/extract-update-package-electron-app/out/Extract Medflix Package-darwin-x64' './Build/MacOS App bundle/Medflix.app/Contents/MacOS/extract-update'
 

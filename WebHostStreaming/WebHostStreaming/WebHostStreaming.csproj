@@ -1,16 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ApplicationIcon>medflix.ico</ApplicationIcon>
     <AssemblyName>MedflixWebHost</AssemblyName>
-    <Configurations>Debug;Release;Release Background</Configurations>
-	<RuntimeIdentifiers>win10-x64;osx.10.12-x64</RuntimeIdentifiers>
+	 <Configurations>Debug;Release</Configurations>
+	  <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
   </PropertyGroup>
-
-	<PropertyGroup Condition=" '$(Configuration)' == 'Release Background' ">
-		<OutputType>WinExe</OutputType>
-	</PropertyGroup>
 
 	<ItemGroup>
 	  <Content Include="medflix.ico" />
