@@ -105,6 +105,7 @@ namespace Medflix.Tools
                         );
 
                     MediaPlayer.Play(media);
+
                     media.Dispose();
                 }
             }
@@ -213,6 +214,7 @@ namespace Medflix.Tools
 
         private void MediaPlayerPlaying(object? sender, EventArgs e)
         {
+            this.MediaPlayer.SetSpu(-1);
             this.OnPlaying?.Invoke(this, null);
         }
 
