@@ -73,7 +73,7 @@ public partial class MainWindow : Window
     }
     protected override async void OnLoaded(RoutedEventArgs e)
     {
-        webhost.Start();
+        await Task.Run(() => webhost.Start());
 
         await Task.Delay(3000);
 
