@@ -13,7 +13,8 @@
 		ExtendClientAreaTitleBarHeightHint="-1"
 		ExtendClientAreaChromeHints="NoChrome"
 		Background="Transparent"
-        Title="UpdateModalWindow">
+		Icon="/Assets/medflix.ico"
+        Title="Medflix Update">
 	<Panel Background="Transparent">
 		<Border
 			CornerRadius="7"
