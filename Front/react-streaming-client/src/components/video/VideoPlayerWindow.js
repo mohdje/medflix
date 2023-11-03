@@ -38,11 +38,12 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
                         }),
                         subtitles: subtitles,
                         resumeToTime: goToTime,
-                        watchedMedia: {
+                        watchedMedia: mediaDetails && {
                             title: mediaDetails.title,
                             id: mediaDetails.id,
                             coverImageUrl: mediaDetails.coverImageUrl,
                             rating: mediaDetails.rating,
+                            totalDuration: mediaDetails.duration * 60,
                             synopsis: mediaDetails.synopsis,
                             year: mediaDetails.year,
                             episodeNumber: sources[0].episodeNumber,

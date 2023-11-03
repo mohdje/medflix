@@ -96,11 +96,9 @@ public partial class VideoPlayerView : UserControl
                 VlcPlayer.TogglePlay();
                 break;
             case Key.Left:
-                this.LoadingSpinner.IsVisible = true;
                 VlcPlayer.MoveBackward();
                 break;
             case Key.Right:
-                this.LoadingSpinner.IsVisible = true;
                 VlcPlayer.MoveForward();
                 break;
             case Key.Up:
@@ -460,14 +458,11 @@ public partial class VideoPlayerView : UserControl
 
     private void OnBackwardButtonClick(object? sender, RoutedEventArgs e)
     {
-        this.LoadingSpinner.IsVisible = true;
-
         VlcPlayer.MoveBackward();
     }
 
     private void OnForwardButtonClick(object? sender, RoutedEventArgs e)
     {
-        this.LoadingSpinner.IsVisible = true;
 
         VlcPlayer.MoveForward();
     }
@@ -500,7 +495,7 @@ public partial class VideoPlayerView : UserControl
 
             UpdateSubtitleText(e.CurrentTime);
 
-            if (DateTime.Now - lastProgressSaveTime >= TimeSpan.FromSeconds(10))
+            if (this.videoPlayerOptions.WatchedMedia != null && (DateTime.Now - lastProgressSaveTime >= TimeSpan.FromSeconds(10)))
             {
                 lastProgressSaveTime = DateTime.Now;
                 this.videoPlayerOptions.WatchedMedia.CurrentTime = e.CurrentTime / 1000;
