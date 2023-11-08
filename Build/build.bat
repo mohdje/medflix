@@ -7,6 +7,7 @@ set WINDOWS_BUILD_PATH="..\Front\desktop-avalonia-ui-app\Medflix.Desktop\bin\rel
 set MACOS_BUILD_PATH="..\Front\desktop-avalonia-ui-app\Medflix.Desktop\bin\release\net7.0\osx-x64\publish"
 set FRONT_END_APP_PATH="..\Front\react-streaming-client"
 set EXTRACT_UPDATE_APP_PATH="..\Front\extract-update-package-electron-app"
+set MACOS_APP_BUNDLE_BUILD_PATH=".\MacOS App bundle\macos"
 
 @REM Build Windows Avlonia App
 if not "%params:windows=%"=="%params%" (
@@ -42,7 +43,13 @@ if not "%params:macos=%"=="%params%" (
     @REM Build Frontend
     npm run build --prefix %FRONT_END_APP_PATH%
 
-    xcopy %FRONT_END_APP_PATH%"\build\"  %MACOS_BUILD_PATH%"\view\" /E
+    xcopy %FRONT_END_APP_PATH%"\build\" %MACOS_BUILD_PATH%"\view\" /E
+
+     if exist %MACOS_APP_BUNDLE_BUILD_PATH% (
+        rmdir %MACOS_APP_BUNDLE_BUILD_PATH% /s /q
+    )
+
+     xcopy %MACOS_BUILD_PATH% %MACOS_APP_BUNDLE_BUILD_PATH% /E
 
     echo Macos backend is ready
 )
