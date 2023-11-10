@@ -49,7 +49,7 @@ if not "%params:macos=%"=="%params%" (
         rmdir %MACOS_APP_BUNDLE_BUILD_PATH% /s /q
     )
 
-     xcopy %MACOS_BUILD_PATH% %MACOS_APP_BUNDLE_BUILD_PATH% /E
+     xcopy %MACOS_BUILD_PATH% %MACOS_APP_BUNDLE_BUILD_PATH%"\" /E
 
     echo Macos backend is ready
 )
