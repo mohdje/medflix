@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using System.Text.Json;
-using System.Web;
 using System;
 using Medflix.Models;
 using Medflix.Models.EventArgs;
@@ -12,47 +11,64 @@ namespace Medflix.Views
     {
         public event EventHandler<OpenVideoPlayerArgs> OpenVideoPlayerRequest;
         public event EventHandler MainAppViewLoaded;
+
+        Window ParentWindow;
         public MainAppView()
         {
             InitializeComponent();
-
-            this.WebViewControl.NavigationStarting += onNavigation;
         }
 
-        private void onNavigation(object? sender, WebViewCore.Events.WebViewUrlLoadingEventArg e)
+        private void WebMessageReceived(object? sender, WebViewCore.Events.WebViewMessageReceivedEventArgs e)
         {
-            var uri = e.Url;
+            if (string.IsNullOrEmpty(e.Message))
+                return;
 
-            if (uri!.Host == "openvideoplayer")
+            this.HideView();
+
+            try
             {
-                e.Cancel = true;
-                var queryParameters = HttpUtility.ParseQueryString(uri.Query);
-                var optionsParameter = queryParameters[0];
-
-                var optionsJSON = HttpUtility.UrlDecode(optionsParameter);
-
-                var options = JsonSerializer.Deserialize<VideoPlayerOptions>(optionsJSON, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                var options = JsonSerializer.Deserialize<VideoPlayerOptions>(e.Message, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
                 if (OpenVideoPlayerRequest != null)
                     OpenVideoPlayerRequest.Invoke(this, new OpenVideoPlayerArgs(options));
+            }
+            catch
+            {
+                NotifyVideoPlayerClosed();
             }
         }
 
         public void LoadView(Window windowContainer)
         {
-            this.WebViewControl.Url = new Uri (Consts.MainAppViewUrl); 
+            this.ParentWindow = windowContainer;
 
-            this.WebViewControl.NavigationCompleted += (s , e) =>
+            this.WebViewControl.NavigationCompleted += (s, e) =>
             {
-                this.WebViewControl.Height = windowContainer.Height;
-                this.WebViewControl.Width = windowContainer.Width;
+                this.ShowView();
                 this.MainAppViewLoaded?.Invoke(this, null);
             };
+
+            this.WebViewControl.WebMessageReceived += WebMessageReceived;
+
+            this.WebViewControl.Url = new Uri (Consts.MainAppViewUrl); 
         }
 
         public void NotifyVideoPlayerClosed()
         {
-            this.WebViewControl.ExecuteScriptAsync("window.closeVideoPlayerWindow()");
+            ShowView();
+            this.WebViewControl.PostWebMessageAsString("close", null);
+        }
+
+        private void ShowView()
+        {
+            this.WebViewControl.Height = this.ParentWindow.Height;
+            this.WebViewControl.Width = this.ParentWindow.Width;
+        }
+
+        private void HideView()
+        {
+            this.WebViewControl.Height = 0;
+            this.WebViewControl.Width = 0;
         }
     }
 }
