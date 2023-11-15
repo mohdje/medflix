@@ -47,7 +47,8 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
                             synopsis: mediaDetails.synopsis,
                             year: mediaDetails.year,
                             episodeNumber: sources[0].episodeNumber,
-                            seasonNumber: sources[0].seasonNumber
+                            seasonNumber: sources[0].seasonNumber,
+                            resumeToTime: mediaDetails.currentTime
                         },
                         mediaType: AppMode.getActiveMode().urlKey
                     }
