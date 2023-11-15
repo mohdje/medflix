@@ -38,7 +38,7 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
                         }),
                         subtitles: subtitles,
                         resumeToTime: goToTime,
-                        watchedMedia: mediaDetails && {
+                        watchedMedia: !!mediaDetails && {
                             title: mediaDetails.title,
                             id: mediaDetails.id,
                             coverImageUrl: mediaDetails.coverImageUrl,
@@ -53,16 +53,32 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
                     }
 
                     var optionsJSON = JSON.stringify(options);
-                    window.location.href = "http://openvideoplayer?options=" + encodeURIComponent(optionsJSON);
 
-                    window.closeVideoPlayerWindow = () => {
-                        setShowLoadingModal(false);
-                        onCloseClick();//trigger close click to notify parent that window is not shown
+                    if (window.chrome) {
+                        window.chrome.webview.postMessage(optionsJSON);
+                        window.chrome.webview.addEventListener("message", onDesktoVideoPlayerClosed);
+                    }
+                    else if (window.webkit) {
+                        window.webkit.messageHandlers.webview.postMessage(optionsJSON);
+                        window.__dispatchMessageCallback = () => onDesktoVideoPlayerClosed();
                     }
                 }
             });
         }
+        return () => {
+            if (window.chrome) {
+                window.chrome.webview.removeEventListener("message", onDesktoVideoPlayerClosed);
+            }
+            else if (window.webkit) {
+                window.__dispatchMessageCallback = null;
+            }
+        }
     }, [visible]);
+
+    const onDesktoVideoPlayerClosed = () => {
+        setShowLoadingModal(false);
+        onCloseClick();//trigger close click to notify parent that video player is closed
+    }
 
     const buildVideoQualitiesOptions = (sources) => {
         var options = [];
