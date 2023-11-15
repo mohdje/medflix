@@ -11,12 +11,12 @@ import { useEffect, useState, useRef } from 'react';
 
 function PlayWithVLCButton({ onClick, videoUrl }) {
     const [showModal, setShowModal] = useState(false);
-    const [isDesktopApp, setIsDesktopApp] = useState(null);
+    const [isWebApp, setIsWebApp] = useState(null);
 
     useEffect(() => {
-        if (isDesktopApp === null) {
+        if (isWebApp === null) {
             AppServices.appInfoApiService.isDesktopApplication((isDesktopApp) => {
-                setIsDesktopApp(isDesktopApp);
+                setIsWebApp(!isDesktopApp);
             });
         }
     }, []);
@@ -31,14 +31,15 @@ function PlayWithVLCButton({ onClick, videoUrl }) {
         if (onClick) onClick();
     }
 
-    if (isDesktopApp) return null;
-    else
+    if (isWebApp)
         return (
             <div>
                 <BaseButton content={content} color={"orange"} onClick={() => handleClick()} />
                 <ModalForVlc visible={showModal} videoUrl={videoUrl} onCloseClick={() => setShowModal(false)} />
             </div>
         );
+    else
+        return null;
 }
 
 export default PlayWithVLCButton;
