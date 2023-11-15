@@ -29,7 +29,7 @@ function TorrentLinkPage() {
 
     useEffect(() => {
         setMovieSources([{
-            quality: 'Movie',
+            quality: 'Video',
             downloadUrl: torrentLink,
             fileName: selectedFile
         }]);
@@ -38,7 +38,7 @@ function TorrentLinkPage() {
             getTorrentHistory();
 
         torrentLinkRef.current = torrentLink;
-            
+
     }, [torrentLink, selectedFile]);
 
     const getTorrentHistory = () => {
@@ -66,16 +66,16 @@ function TorrentLinkPage() {
         setTorrentFiles([]);
         setOpeningTorrentLink(true);
         setLoadingMessage('Opening torrent');
-        
+
         AppServices.torrentApiService.getTorrentFiles(torrentLink,
             (response) => {
-                if(decodeURIComponent(torrentLinkRef.current) === decodeURIComponent(response.link)){
+                if (decodeURIComponent(torrentLinkRef.current) === decodeURIComponent(response.link)) {
                     setOpeningTorrentLink(false);
                     setTorrentFiles(response.files);
                 }
             },
             (response) => {
-                if(decodeURIComponent(torrentLinkRef.current) === decodeURIComponent(response.link)){
+                if (decodeURIComponent(torrentLinkRef.current) === decodeURIComponent(response.link)) {
                     setOpeningTorrentLink(false);
                     setTorrentFiles([]);
                 }
@@ -95,16 +95,16 @@ function TorrentLinkPage() {
     return (
         <div className="torrent-link-page-container">
             <div className="title">Enter a torrent url or magnet and click on Open to see the list of files</div>
-            <TextInput placeHolder="Torrent link or magnet..." large onTextChanged={(text) => changeTorrentLink(text)} value={torrentLink}/>
+            <TextInput placeHolder="Torrent link or magnet..." large onTextChanged={(text) => changeTorrentLink(text)} value={torrentLink} />
 
             <div style={{ margin: "10px 0" }}>
                 <OpenButton visible={!torrentFilesAreLoadingOrLoaded()} onClick={() => openTorrent()} />
-                {Boolean(openingTorrentLink) || Boolean(openingHistory) ? <CircularProgressBar visible size="30px" color="white" text={loadingMessage}/> : null}
+                {Boolean(openingTorrentLink) || Boolean(openingHistory) ? <CircularProgressBar visible size="30px" color="white" text={loadingMessage} /> : null}
             </div>
-            <TorrentHistory visible={!torrentFilesAreLoadingOrLoaded()} files={torrentHistory} onClick={(torrentLink) => {changeTorrentLink(torrentLink)}}/>
+            <TorrentHistory visible={!torrentFilesAreLoadingOrLoaded()} files={torrentHistory} onClick={(torrentLink) => { changeTorrentLink(torrentLink) }} />
             <TorrentFilesList visible={torrentFilesAreLoadingOrLoaded()} torrentLink={torrentLink} files={torrentFiles} onPlayFileClick={(file) => onPlayFileClick(file)} />
 
-            <VideoPlayerWindow visible={showMoviePlayer} sources={movieSources} onCloseClick={() => setShowMoviePlayer(false)} onWatchedTimeUpdate={()=> {}}/>
+            <VideoPlayerWindow visible={showMoviePlayer} sources={movieSources} onCloseClick={() => setShowMoviePlayer(false)} onWatchedTimeUpdate={() => { }} />
         </div>
     )
 }
@@ -112,10 +112,10 @@ function TorrentLinkPage() {
 export default TorrentLinkPage;
 
 function TorrentFilesList({ visible, torrentLink, files, onPlayFileClick }) {
-    if(!visible)
+    if (!visible)
         return null;
 
-    return <FilesList 
+    return <FilesList
         torrentLink={torrentLink}
         files={files}
         onPlayFileClick={(file) => onPlayFileClick(file)}
@@ -124,10 +124,10 @@ function TorrentFilesList({ visible, torrentLink, files, onPlayFileClick }) {
 }
 
 function TorrentHistory({ visible, files, onClick }) {
-    if(!visible)
+    if (!visible)
         return null;
 
-    return <FilesList 
+    return <FilesList
         files={files}
         onFileClick={(torrentLink) => onClick(torrentLink)}
         contentType="torrentFile"
@@ -179,21 +179,21 @@ function FilesList({ torrentLink, files, onFileClick, onPlayFileClick, contentTy
 
 
     const getComponent = (file, index) => {
-        if(contentType === 'fileFromTorrent'){
-            return <FileFromTorrent 
-                        torrentLink={torrentLink}
-                        file={file} 
-                        isSelected={index === selectedFileIndex} 
-                        onClick={()=> setSelectedFileIndex(index)}
-                        onPlayFileClick={() => onPlayFileClick(file)}/>
+        if (contentType === 'fileFromTorrent') {
+            return <FileFromTorrent
+                torrentLink={torrentLink}
+                file={file}
+                isSelected={index === selectedFileIndex}
+                onClick={() => setSelectedFileIndex(index)}
+                onPlayFileClick={() => onPlayFileClick(file)} />
         }
-        else if(contentType === 'torrentFile'){
-            return <TorrentLink file={file} onClick={(torrentLink) => onFileClick(torrentLink)}/>
+        else if (contentType === 'torrentFile') {
+            return <TorrentLink file={file} onClick={(torrentLink) => onFileClick(torrentLink)} />
         }
     };
 
     const onMouseHover = (index, enter) => {
-        if (index !== selectedFileIndex){
+        if (index !== selectedFileIndex) {
             const element = document.getElementById('idfile_' + index);
             element.style.background = enter ? '#362b2b' : '';
         }
@@ -203,18 +203,18 @@ function FilesList({ torrentLink, files, onFileClick, onPlayFileClick, contentTy
         <div style={fileListContainerStyle}>
             <div style={titleStyle}>{listTitle}</div>
             <div style={fileListStyle}>
-            {files.map((file, index) =>
-                <div
-                    id={'idfile_' + index}
-                    key={index}
-                    onMouseEnter={() => { onMouseHover(index, true) }}
-                    onMouseLeave={() => { onMouseHover(index, false) }} style={index === selectedFileIndex ? selectedTextStyle : textStyle}>
-                    {getComponent(file, index)}
-                </div>
-            )}
+                {files.map((file, index) =>
+                    <div
+                        id={'idfile_' + index}
+                        key={index}
+                        onMouseEnter={() => { onMouseHover(index, true) }}
+                        onMouseLeave={() => { onMouseHover(index, false) }} style={index === selectedFileIndex ? selectedTextStyle : textStyle}>
+                        {getComponent(file, index)}
+                    </div>
+                )}
             </div>
         </div>
-      
+
     )
 }
 
@@ -245,34 +245,34 @@ function TorrentLink({ file, onClick }) {
 
     const formateDate = (fullDateTime) => {
         const today = new Date();
-        
+
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
 
         const date = new Date(fullDateTime);
 
         let day = '';
-        if(yesterday.toDateString() === date.toDateString())
+        if (yesterday.toDateString() === date.toDateString())
             day = 'Yesterday';
-        else if(today.toDateString() === date.toDateString())
+        else if (today.toDateString() === date.toDateString())
             day = 'Today';
         else {
-            let options = {year: "numeric", month: "long", day: "numeric"};
+            let options = { year: "numeric", month: "long", day: "numeric" };
             day = date.toLocaleString('en-US', options);
         }
-          
+
         const time = date.toLocaleTimeString(navigator.language, {
             hour: '2-digit',
-            minute:'2-digit',
+            minute: '2-digit',
             hour12: false
-          });
+        });
         return day + ', ' + time;
     }
 
     return (
         <div onClick={() => onClick(file.link)}>
-                <div style={dateStyle}>{formateDate(file.lastOpenedDateTime)}</div>
-                <div style={{textAlign: 'left'}}>{file.link}</div>
+            <div style={dateStyle}>{formateDate(file.lastOpenedDateTime)}</div>
+            <div style={{ textAlign: 'left' }}>{file.link}</div>
         </div>
     );
 }
