@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:Medflix.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="Medflix.Views.MainWindow"
+        x:Class="Medflix.Windows.MainWindow"
         Icon="/Assets/medflix.ico"
 		WindowState="Maximized"
         Title="Medflix">

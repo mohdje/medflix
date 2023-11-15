@@ -2,7 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using System;
 
-namespace Medflix.Views
+namespace Medflix.Windows
 {
     public partial class UpdateModalWindow : Window
     {

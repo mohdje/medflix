@@ -6,11 +6,12 @@ using Avalonia.Threading;
 using Medflix.Models;
 using Medflix.Services;
 using Medflix.Tools;
+using Medflix.Views;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Threading.Tasks;
 
-namespace Medflix.Views;
+namespace Medflix.Windows;
 
 public partial class MainWindow : Window
 {

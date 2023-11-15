@@ -16,7 +16,6 @@ using LibVLCSharp.Shared;
 using Medflix.Models;
 using Medflix.Services;
 using Medflix.Tools;
-using Medflix.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -346,7 +345,7 @@ public partial class VideoPlayerView : UserControl
         this.LoadingSpinner.IsVisible = true;
         this.StatusMessage.IsVisible = false;
 
-        var startTime = !string.IsNullOrEmpty(this.CurrentTime.Text) ? FromFormattedVideoTime(this.CurrentTime.Text) : (this.videoPlayerOptions.ResumeToTime / 1000);
+        var startTime = !string.IsNullOrEmpty(this.CurrentTime.Text) ? FromFormattedVideoTime(this.CurrentTime.Text) : (this.videoPlayerOptions.ResumeToTime);
 
         if (!string.IsNullOrEmpty(url))
         {
