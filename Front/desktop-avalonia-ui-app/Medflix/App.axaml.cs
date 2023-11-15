@@ -2,9 +2,7 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using AvaloniaWebView;
-using Medflix.ViewModels;
-using Medflix.Views;
-using System.Threading.Tasks;
+using Medflix.Windows;
 
 namespace Medflix;
 
