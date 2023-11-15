@@ -1,11 +1,11 @@
 const AppMode = {
-    onAppModeChanged(callback){
+    onAppModeChanged(callback) {
         const eventName = 'appModeChanged';
-        if(!this.modeChangedEvent)
+        if (!this.modeChangedEvent)
             this.modeChangedEvent = new Event(eventName);
-        document.addEventListener(eventName, (e) => { 
-            if(callback)
-                callback() 
+        document.addEventListener(eventName, (e) => {
+            if (callback)
+                callback()
         }, false);
     },
     modeChangedEvent: null,
@@ -21,15 +21,19 @@ const AppMode = {
             isActive: false
         }
     ],
-    getActiveMode(){
+    getActiveMode() {
         return this.modes.find(mode => mode.isActive);
     },
-    switchActiveMode(){
+    switchActiveMode() {
         this.modes.forEach(mode => {
             mode.isActive = !mode.isActive;
         });
-        if(this.modeChangedEvent)
+        if (this.modeChangedEvent)
             document.dispatchEvent(this.modeChangedEvent);
+    },
+    isSeriesMode() {
+        console.log("this.modes.filter(mode => mode.isActive)", this.modes.filter(mode => mode.isActive))
+        return this.modes.filter(mode => mode.isActive)[0].urlKey === "series"
     }
 }
 

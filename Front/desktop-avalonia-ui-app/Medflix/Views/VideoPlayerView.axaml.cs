@@ -499,6 +499,9 @@ public partial class VideoPlayerView : UserControl
             {
                 lastProgressSaveTime = DateTime.Now;
                 this.videoPlayerOptions.WatchedMedia.CurrentTime = e.CurrentTime / 1000;
+                if (this.videoPlayerOptions.WatchedMedia.TotalDuration == 0)
+                    this.videoPlayerOptions.WatchedMedia.TotalDuration = this.VlcPlayer.GetTotalDuration();
+
                 await this.medflixApiService.SaveProgressionAsync(this.videoPlayerOptions.MediaType, this.videoPlayerOptions.WatchedMedia);
             }
         });
@@ -529,7 +532,7 @@ public partial class VideoPlayerView : UserControl
 
             this.SoundLoudButton.IsVisible = videoOpened && !e.Muted;
             this.SoundOffButton.IsVisible = videoOpened && e.Muted;
-            this.VolumeBar.IsVisible = videoOpened && this.SoundLoudButton.IsVisible;
+            this.VolumeBar.IsVisible = this.SoundLoudButton.IsVisible;
 
             this.BackwardButton.IsVisible = videoOpened;
             this.ForwardButton.IsVisible = videoOpened;

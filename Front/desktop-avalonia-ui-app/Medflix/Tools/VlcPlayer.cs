@@ -173,6 +173,11 @@ namespace Medflix.Tools
             return IsVideoOpened ? this.MediaPlayer.Time : null;
         }
 
+        public long GetTotalDuration()
+        {
+            return IsVideoOpened ? this.MediaPlayer.Media.Duration/1000 : 0;
+        }
+
         #endregion
 
         #region MediaPlayer Events
