@@ -38,7 +38,7 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
                         }),
                         subtitles: subtitles,
                         resumeToTime: goToTime,
-                        watchedMedia: !!mediaDetails && {
+                        watchedMedia: mediaDetails && {
                             title: mediaDetails.title,
                             id: mediaDetails.id,
                             coverImageUrl: mediaDetails.coverImageUrl,
