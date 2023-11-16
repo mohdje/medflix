@@ -1,8 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Media;
-using Avalonia.Threading;
 using Medflix.Models;
 using Medflix.Services;
 using Medflix.Tools;
@@ -29,6 +27,7 @@ public partial class MainWindow : Window
 
         this.MainAppView.OpenVideoPlayerRequest += (s, e) => AddVideoPlayerView(e.VideoPlayerOptions);
         this.MainAppView.MainAppViewLoaded += (s, e) => this.SplashScreen.IsVisible = false;
+      
 
         medflixApiService = new MedflixApiService();
         appUpdateService = new AppUpdateService();
@@ -36,29 +35,29 @@ public partial class MainWindow : Window
         VlcPlayer.InitLibVLC();
 
         webhost = WebHostStreaming.AppStart.CreateHost(new string[0], true);
-
-        //TestVideoView();
     }
 
     protected override void OnClosing(WindowClosingEventArgs e)
     {
         base.OnClosing(e);
-        webhost.StopAsync();
+        webhost?.StopAsync();
     }
     ~MainWindow()
     {
-        webhost.StopAsync();
+        webhost?.StopAsync();
     }
 
     protected override async void OnLoaded(RoutedEventArgs e)
     {
+        base.OnLoaded(e);
+
         await Task.Run(() => webhost.Start());
 
         await Task.Delay(3000);
 
         this.MainAppView.LoadView(this);
 
-        await CheckUpdateAsync();
+       // await CheckUpdateAsync();
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
