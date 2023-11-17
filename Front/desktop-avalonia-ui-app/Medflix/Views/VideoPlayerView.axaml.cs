@@ -19,6 +19,7 @@ using Medflix.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -43,6 +44,8 @@ public partial class VideoPlayerView : UserControl
     private Subtitle[] subtitles;
 
     private string currentDownloadStateBase64Url;
+
+    private bool exitFullScreenOnUserAction;
 
     public VideoPlayerView(VideoPlayerOptions videoPlayerOptions, MedflixApiService medflixApiService)
     {
@@ -79,13 +82,21 @@ public partial class VideoPlayerView : UserControl
         VlcPlayer.Dispose();
     }
 
-    public void OnFullScreenStateChanged(bool isFullScreen)
+    public async Task NotifyWindowStateChanged(bool isFullScreen)
     {
         this.ExitFullScreenButton.IsVisible = isFullScreen;
         this.EnterFullScreenButton.IsVisible = !isFullScreen;
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && isFullScreen)
+        {
+            await Task.Delay(2000);
+            exitFullScreenOnUserAction = true;
+        }
+        else
+            exitFullScreenOnUserAction = false;
     }
 
-    public void OnKeyPressed(KeyEventArgs e)
+    public void NotifyKeyPressed(KeyEventArgs e)
     {
         ShowControls();
 
@@ -118,6 +129,9 @@ public partial class VideoPlayerView : UserControl
             default:
                 break;
         }
+
+         if (exitFullScreenOnUserAction)
+            this.OnExitFullScreenRequest?.Invoke(this, null);
     }
 
     #endregion
@@ -145,8 +159,15 @@ public partial class VideoPlayerView : UserControl
             this.SourcesListContainer.IsVisible = !this.SourcesListContainer.IsVisible;
             this.SubtitlesOptionsContainer.IsVisible = false;
         };
-
-        this.PointerMoved += (s, e) => ShowControls();
+        this.PointerMoved += async (s, e) =>
+        {
+            if (exitFullScreenOnUserAction)
+            {
+                this.OnExitFullScreenRequest?.Invoke(this, null);
+                await Task.Delay(1000);
+            }
+            ShowControls();
+        };
     }
 
     private async Task SetupOptionsAsync(VideoPlayerOptions videoPlayerOptions)

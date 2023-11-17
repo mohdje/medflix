@@ -7,6 +7,7 @@ using Medflix.Tools;
 using Medflix.Views;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace Medflix.Windows;
@@ -21,13 +22,15 @@ public partial class MainWindow : Window
     private MedflixApiService medflixApiService;
     private AppUpdateService appUpdateService;
 
+
+
     public MainWindow()
     {
         InitializeComponent();
 
         this.MainAppView.OpenVideoPlayerRequest += (s, e) => AddVideoPlayerView(e.VideoPlayerOptions);
         this.MainAppView.MainAppViewLoaded += (s, e) => this.SplashScreen.IsVisible = false;
-      
+
 
         medflixApiService = new MedflixApiService();
         appUpdateService = new AppUpdateService();
@@ -57,13 +60,13 @@ public partial class MainWindow : Window
 
         this.MainAppView.LoadView(this);
 
-       // await CheckUpdateAsync();
+        await CheckUpdateAsync();
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);
-        videoPlayerView?.OnKeyPressed(e);
+        videoPlayerView?.NotifyKeyPressed(e);
     }
 
     private void AddVideoPlayerView(VideoPlayerOptions videoPlayerOptions)
@@ -82,7 +85,7 @@ public partial class MainWindow : Window
     {
         var updateAvailabe = await this.appUpdateService.IsNewReleaseAvailableAsync();
         if (updateAvailabe)
-        {       
+        {
             var modalWindow = new UpdateModalWindow();
             modalWindow.OnConfirm += async (s, e) =>
             {
@@ -102,7 +105,7 @@ public partial class MainWindow : Window
                 }
                 catch (Exception ex)
                 {
-                  
+
                 }
                 modalWindow.NotifyError();
                 await Task.Delay(3000);
@@ -115,7 +118,7 @@ public partial class MainWindow : Window
 
     private void OnVideoPlayerViewCloseRequest(object? sender, EventArgs e)
     {
-        if(this.WindowState == WindowState.FullScreen)
+        if (this.WindowState == WindowState.FullScreen)
             this.WindowState = this.previousWindowState;
 
         this.MainWindowContainer.Children.Remove(videoPlayerView);
@@ -124,26 +127,26 @@ public partial class MainWindow : Window
     }
 
     #region Fullscreen Request Handlers
-    private void OnEnterFullScreenRequest(object? sender, System.EventArgs e)
+    private async void OnEnterFullScreenRequest(object? sender, System.EventArgs e)
     {
         if (this.WindowState != WindowState.FullScreen)
         {
             this.previousWindowState = this.WindowState;
             this.WindowState = WindowState.FullScreen;
-            this.videoPlayerView.OnFullScreenStateChanged(true);
+            await this.videoPlayerView.NotifyWindowStateChanged(true);
         }
     }
 
-    private void OnExitFullScreenRequest(object? sender, System.EventArgs e)
+    private async void OnExitFullScreenRequest(object? sender, System.EventArgs e)
     {
         if (this.WindowState == WindowState.FullScreen)
         {
             this.WindowState = this.previousWindowState;
-            this.videoPlayerView.OnFullScreenStateChanged(false);
+            await this.videoPlayerView.NotifyWindowStateChanged(false);
         }
     }
 
-    private void OnToggleFullScreenRequest(object? sender, System.EventArgs e)
+    private async void OnToggleFullScreenRequest(object? sender, System.EventArgs e)
     {
         if (this.WindowState == WindowState.FullScreen)
             this.WindowState = this.previousWindowState;
@@ -153,7 +156,8 @@ public partial class MainWindow : Window
             this.WindowState = WindowState.FullScreen;
         }
 
-        this.videoPlayerView.OnFullScreenStateChanged(this.WindowState == WindowState.FullScreen);
+        await this.videoPlayerView.NotifyWindowStateChanged(this.WindowState == WindowState.FullScreen);
     }
+
     #endregion
 }

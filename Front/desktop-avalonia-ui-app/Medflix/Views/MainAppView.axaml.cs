@@ -23,8 +23,6 @@ namespace Medflix.Views
             if (string.IsNullOrEmpty(e.Message))
                 return;
 
-            this.HideView();
-
             try
             {
                 var options = JsonSerializer.Deserialize<VideoPlayerOptions>(e.Message, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
@@ -63,12 +61,6 @@ namespace Medflix.Views
         {
             this.WebViewControl.Height = this.ParentWindow.Height;
             this.WebViewControl.Width = this.ParentWindow.Width;
-        }
-
-        private void HideView()
-        {
-            this.WebViewControl.Height = 0;
-            this.WebViewControl.Width = 0;
         }
     }
 }

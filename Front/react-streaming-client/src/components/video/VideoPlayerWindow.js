@@ -7,7 +7,6 @@ import VideoPlayer from "./VideoPlayer";
 import Paragraph from "../common/text/Paragraph";
 import BaseButton from "../common/buttons/BaseButton";
 import ModalWindow from "../modal/ModalWindow";
-import ModalLoadingMessage from "../modal/ModalLoadingMessage";
 import { ToTimeFormat } from "../../helpers/timeFormatHelper";
 
 import { useEffect, useState } from 'react';
@@ -36,7 +35,7 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
                                 url: AppServices.torrentApiService.buildStreamUrl(source.downloadUrl, source.fileName, source.seasonNumber, source.episodeNumber)
                             }
                         }),
-                        subtitles: subtitles,
+                        subtitles: subtitles ?? [],
                         resumeToTime: goToTime,
                         watchedMedia: mediaDetails && {
                             title: mediaDetails.title,
@@ -176,7 +175,7 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
     )
     return (
         isDesktopApp ?
-            <div><ModalLoadingMessage visible={showLoadingModal} /></div>
+            <ModalWindow visible={showLoadingModal} />
             : <ModalWindow visible={visible} content={content} onCloseClick={() => onCloseClick()} />
     );
 }
