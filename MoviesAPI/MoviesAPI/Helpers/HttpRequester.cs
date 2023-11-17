@@ -23,7 +23,7 @@ namespace MoviesAPI.Helpers
             {
                 client = new HttpClient();
                 client.DefaultRequestHeaders.Add("User-Agent", userAgent);
-                client.Timeout = TimeSpan.FromSeconds(5);
+                client.Timeout = TimeSpan.FromSeconds(7);
             }
         }
         #region Get
@@ -133,14 +133,22 @@ namespace MoviesAPI.Helpers
         {
             InitHttpClient();
 
-            var response = await client.GetAsync(url);
+            try
+            {
+                var response = await client.GetAsync(url);
 
-            if (response.StatusCode == HttpStatusCode.OK)
-                return await response.Content.ReadAsStringAsync();
-            else if (response.StatusCode == HttpStatusCode.Found)
-                return await PerformGetStringCallAsync(response.Headers.Location);
-            else
+                if (response.StatusCode == HttpStatusCode.OK)
+                    return await response.Content.ReadAsStringAsync();
+                else if (response.StatusCode == HttpStatusCode.Found)
+                    return await PerformGetStringCallAsync(response.Headers.Location);
+                else
+                    return null;
+            }
+            catch (Exception)
+            {
                 return null;
+            }
+           
         }
 
         private static async Task<string> PerformPostCallAsync(Uri url, string payload)

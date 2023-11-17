@@ -33,12 +33,19 @@ namespace MoviesAPI.Services.Torrent
 
                 var doc = await HttpRequester.GetHtmlDocumentAsync(htmlUrlProvider.GetMovieSearchByNameUrl(movieName, pageIndex));
 
-                var movieDtos = await GetMovieTorrentsAsync(doc.DocumentNode, movieName, year);
-
-                if (movieDtos.Any())
-                    moviesSearchResult.AddRange(movieDtos);
-                else
+                if (doc == null)
+                {
                     keepSearch = false;
+                }
+                else
+                {
+                    var movieDtos = await GetMovieTorrentsAsync(doc.DocumentNode, movieName, year);
+
+                    if (movieDtos.Any())
+                        moviesSearchResult.AddRange(movieDtos);
+                    else
+                        keepSearch = false;
+                }
             }
 
             return moviesSearchResult;
@@ -65,13 +72,16 @@ namespace MoviesAPI.Services.Torrent
 
         private async Task<IEnumerable<MediaTorrent>> GetMovieTorrentsAsync(string movieHtml, string title, int year)
         {
+            if (string.IsNullOrEmpty(movieHtml))
+                return new MediaTorrent[0];
+
             var doc = new HtmlDocument();
             doc.LoadHtml(movieHtml);
 
             var movieTitle = doc.DocumentNode.SelectSingleNode("//*[contains(@class, 'title')]")?.InnerText.HtmlUnescape();
             int.TryParse(doc.DocumentNode.SelectSingleNode("//*[contains(@class, 'year')]")?.InnerText, out var movieYear);
 
-            if (movieTitle.RemoveSpecialCharacters().Equals(title.RemoveSpecialCharacters(), StringComparison.OrdinalIgnoreCase) && movieYear == year)
+            if (!string.IsNullOrEmpty(movieTitle) && movieTitle.CustomCompare(title) && movieYear == year)
             {
                 var movieDetailsLink = htmlUrlProvider.GetMovieDetailsUrl(doc.DocumentNode.SelectSingleNode("//a[contains(@class, 'image-container-link')]")?.Attributes["href"].Value);
                 return await GetMovieTorrentsAsync(movieDetailsLink);
