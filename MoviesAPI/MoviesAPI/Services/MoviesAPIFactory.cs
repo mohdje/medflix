@@ -9,12 +9,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MoviesAPI.Services.Content;
+using System.Threading;
+using System.Runtime.CompilerServices;
 
 namespace MoviesAPI.Services
 {
     public class MoviesAPIFactory
     {
         private static MoviesAPIFactory _instance;
+        private static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
         public static MoviesAPIFactory Instance
         {
@@ -165,15 +168,30 @@ namespace MoviesAPI.Services
             try
             {
                 var result = await HttpRequester.GetAsync(new Uri(searcherService.GetPingUrl()));
-                serviceAvailibilityCache.Add(url, !string.IsNullOrEmpty(result));
+                await UpdateServiceAvailibilityCacheAsync(url, !string.IsNullOrEmpty(result));
             }
             catch (Exception ex)
             {
-                serviceAvailibilityCache.Add(url, false);
+                await UpdateServiceAvailibilityCacheAsync(url, false);
             }
 
             return serviceAvailibilityCache[url];
+        }
 
+        private async Task UpdateServiceAvailibilityCacheAsync(string url, bool isAvailable)
+        {
+            await semaphoreSlim.WaitAsync();
+            try
+            {
+                if (serviceAvailibilityCache.ContainsKey(url))
+                    serviceAvailibilityCache[url] = isAvailable;
+                else
+                    serviceAvailibilityCache.Add(url, isAvailable);
+            }
+            finally
+            {
+                semaphoreSlim.Release();
+            }
         }
     }
 }
