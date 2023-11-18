@@ -5,7 +5,7 @@
     <key>CFBundleDisplayName</key>
     <string>Medflix</string>
     <key>CFBundleExecutable</key>
-    <string>Medflix</string>
+    <string>Medflix.Desktop</string>
     <key>CFBundleIconFile</key>
     <string>Medflix.icns</string>
     <key>CFBundleIdentifier</key>
