@@ -65,15 +65,21 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
                 }
             });
         }
+
+    }, [visible]);
+
+    useEffect(() => {
         return () => {
-            if (window.chrome) {
-                window.chrome.webview.removeEventListener("message", onDesktoVideoPlayerClosed);
-            }
-            else if (window.webkit) {
-                window.__dispatchMessageCallback = null;
+            if (isDesktopApp) {
+                if (window.chrome) {
+                    window.chrome.webview.removeEventListener("message", onDesktoVideoPlayerClosed);
+                }
+                else if (window.webkit) {
+                    window.__dispatchMessageCallback = null;
+                }
             }
         }
-    }, [visible]);
+    })
 
     const onDesktoVideoPlayerClosed = () => {
         setShowLoadingModal(false);
