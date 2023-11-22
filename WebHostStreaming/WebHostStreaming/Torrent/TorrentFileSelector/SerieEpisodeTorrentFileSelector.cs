@@ -14,7 +14,7 @@ namespace WebHostStreaming.Torrent
         }
         public virtual ITorrentFileInfo SelectTorrentFileInfo(IList<ITorrentFileInfo> torrentFileInfos)
         {
-            return torrentFileInfos.FirstOrDefault(f => Path.GetFileName(f.FullPath).Contains(episodeId));
+            return torrentFileInfos.FirstOrDefault(f => Path.GetFileName(f.FullPath).Contains(episodeId, System.StringComparison.OrdinalIgnoreCase));
         }
 
         protected string BuildEpisodeId(int seasonNumber, int episodeNumber)
