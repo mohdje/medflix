@@ -379,20 +379,19 @@ function AvailableVersions({ availableVersionsSources, loading, onVersionSelecte
 }
 
 function QualitySelector({ versionSources, onQualityChanged }) {
-    if (!versionSources || versionSources.length === 0)
-        return null;
-
-    versionSources.sort((source1, source2) => {
-        const [quality1, quality2] = [source1.quality.toLowerCase().trim(), source2.quality.toLowerCase().trim()]
-        return quality1 === quality2 ? 0 : (quality1 < quality2 ? -1 : 1);
-    });
-
     const qualities = [];
 
-    versionSources.forEach(source => {
-        const nbSameQualities = qualities.filter(q => q.startsWith(source.quality)).length;
-        qualities.push(source.quality + (nbSameQualities > 0 ? " (" + nbSameQualities + ")" : ""));
-    });
+    if (versionSources && versionSources.length > 0) {
+        versionSources.sort((source1, source2) => {
+            const [quality1, quality2] = [source1.quality.toLowerCase().trim(), source2.quality.toLowerCase().trim()]
+            return quality1 === quality2 ? 0 : (quality1 < quality2 ? -1 : 1);
+        });
+
+        versionSources.forEach(source => {
+            const nbSameQualities = qualities.filter(q => q.startsWith(source.quality)).length;
+            qualities.push(source.quality + (nbSameQualities > 0 ? " (" + nbSameQualities + ")" : ""));
+        });
+    }
 
     const content = <DropDown
         values={qualities}
@@ -400,7 +399,6 @@ function QualitySelector({ versionSources, onQualityChanged }) {
         onValueChanged={(index) => onQualityChanged(index)} />
 
     return <TitleAndContent title="Qualities" content={content} justify="left" />
-
 }
 
 function EpisodeSelector({ serieId, seasonsCount, onEpisodeSelected }) {

@@ -1,22 +1,23 @@
 function TitleAndContent({ title, content, justify }) {
     let justifyContent;
-    if(justify === 'left')
+    if (justify === 'left')
         justifyContent = 'flex-start';
-    else 
+    else
         justifyContent = 'center';
 
     const containerStyle = {
         fontSize: '18px',
         fontWeight: '500',
-        display: 'flex',
+        display: !!content ? 'flex' : 'none',
         alignItems: 'center',
         justifyContent: justifyContent,
-        margin: '10px 0',
+        margin: '5px 0',
+        height: '40px'
     }
 
     const titleStyle = {
         color: 'white',
-        marginRight : '15px'
+        marginRight: '15px'
     }
 
     const contentStyle = {
