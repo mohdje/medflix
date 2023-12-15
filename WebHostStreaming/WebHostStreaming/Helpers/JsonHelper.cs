@@ -10,15 +10,22 @@ namespace WebHostStreaming.Helpers
     {
         public static T DeserializeFromFile<T>(string filePath) where T : class
         {
-            T deserializedObject = null;
-
-            using (StreamReader sw = new StreamReader(filePath))
+            try
             {
-                var jsonSerializer = new Newtonsoft.Json.JsonSerializer();
-                deserializedObject = jsonSerializer.Deserialize(sw, typeof(T)) as T;
-            }
+                T deserializedObject = null;
 
-            return deserializedObject;
+                using (StreamReader sw = new StreamReader(filePath))
+                {
+                    var jsonSerializer = new Newtonsoft.Json.JsonSerializer();
+                    deserializedObject = jsonSerializer.Deserialize(sw, typeof(T)) as T;
+                }
+
+                return deserializedObject;
+            }
+            catch (Exception)
+            {
+                return default(T);
+            }
         }
 
         public static async Task<T> DeserializeFromFileAsync<T>(string filePath) where T : class
