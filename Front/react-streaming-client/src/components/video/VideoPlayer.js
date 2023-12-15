@@ -166,7 +166,7 @@ function VideoPlayer({ videoQualitiesOptions, videoSubtitlesOptions, onWatchedTi
                 let currentTime = Math.round(videoRef.current?.currentTime);
                 if (currentTime - watchedTimeUpdateTriggeredRef.current > 10) {
                     watchedTimeUpdateTriggeredRef.current = currentTime;
-                    onWatchedTimeUpdate(videoRef.current.currentTime, videoRef.current.duration);
+                    onWatchedTimeUpdate(videoRef.current.currentTime, videoRef.current.duration, videoRef.current.src);
                 }
             }
         };

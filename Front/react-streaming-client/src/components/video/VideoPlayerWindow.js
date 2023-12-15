@@ -175,7 +175,7 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
                 visible={visible}
                 videoQualitiesOptions={videoQualitiesOptions}
                 subtitlesOptions={subtitlesOptions}
-                onWatchedTimeUpdate={(currentTime, duration) => onWatchedTimeUpdate(currentTime, duration)}
+                onWatchedTimeUpdate={(currentTime, duration, sourceUrl) => onWatchedTimeUpdate(currentTime, duration, sourceUrl)}
                 videoTime={videoTime} />
         </div>
     )
@@ -212,7 +212,7 @@ function VideoPlayerContainer({ visible, videoQualitiesOptions, subtitlesOptions
             <VideoPlayer
                 videoQualitiesOptions={videoQualitiesOptions}
                 videoSubtitlesOptions={subtitlesOptions}
-                onWatchedTimeUpdate={(currentTime, duration) => onWatchedTimeUpdate(currentTime, duration)}
+                onWatchedTimeUpdate={(currentTime, duration, sourceUrl) => onWatchedTimeUpdate(currentTime, duration, sourceUrl)}
                 videoTime={videoTime} />
         </div>;
     }

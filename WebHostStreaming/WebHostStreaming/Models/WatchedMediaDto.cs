@@ -16,5 +16,6 @@ namespace WebHostStreaming.Models
         public int SeasonNumber { get; set; }
         public int EpisodeNumber { get; set; }
         public Genre[] Genres { get; set; }
+        public string TorrentUrl { get; set; }
     }
 }

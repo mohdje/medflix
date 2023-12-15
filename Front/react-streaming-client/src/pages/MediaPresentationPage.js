@@ -214,8 +214,8 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
         });
     }
 
-    const onWatchedTimeUpdate = (currentTime, duration) => {
-        AppServices.watchedMediaApiService.saveWacthedMedia(mediaDetails, currentTime, duration, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber);
+    const onWatchedTimeUpdate = (currentTime, duration, sourceUrl) => {
+        AppServices.watchedMediaApiService.saveWacthedMedia(mediaDetails, currentTime, duration, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber, sourceUrl);
     }
 
     const onRecommandedMediaClick = (mediaId) => {
@@ -251,7 +251,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                 sources={selectedVersionSources}
                 subtitles={mediaSubtitlesSources}
                 onCloseClick={() => setShowMediaPlayer(false)}
-                onWatchedTimeUpdate={(currentTime, duration) => onWatchedTimeUpdate(currentTime, duration)}
+                onWatchedTimeUpdate={(currentTime, duration, sourceUrl) => onWatchedTimeUpdate(currentTime, duration, sourceUrl)}
                 goToTime={mediaProgression?.currentTime}
                 mediaDetails={mediaDetails} />
             <CircularProgressBar color={'white'} size={'80px'} position={"center"} visible={!dataLoaded} />

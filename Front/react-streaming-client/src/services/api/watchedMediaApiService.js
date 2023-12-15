@@ -2,8 +2,8 @@ import BaseApiService from "./baseApiService";
 import AppMode from "../appMode";
 
 class WatchedMediaApiService extends BaseApiService {
-    buildWatchedMediaUrl(url){
-      return this.buildUrl(AppMode.getActiveMode().urlKey + '/watchedmedia/' + (url ? url : ''));
+    buildWatchedMediaUrl(url) {
+        return this.buildUrl(AppMode.getActiveMode().urlKey + '/watchedmedia/' + (url ? url : ''));
     }
 
     getWatchedMedias(onSuccess, onFail) {
@@ -29,12 +29,15 @@ class WatchedMediaApiService extends BaseApiService {
         this.getRequest(this.buildWatchedMediaUrl(mediaId + '/' + seasonNumber), [], true, onSuccess, onFail);
     }
 
-    saveWacthedMedia(mediaDetails, currentTime, duration, seasonNumber, episodeNumber) {
-        const watchedMedia = {... mediaDetails};
+    saveWacthedMedia(mediaDetails, currentTime, duration, seasonNumber, episodeNumber, sourceUrl) {
+        const watchedMedia = { ...mediaDetails };
         watchedMedia.currentTime = currentTime ? currentTime : 0;
         watchedMedia.totalDuration = duration ? duration : 0;
 
-        if(AppMode.getActiveMode().urlKey === 'series'){
+        const url = new URL(sourceUrl);
+        watchedMedia.torrentUrl = window.atob(url.searchParams.get('base64Url'));
+
+        if (AppMode.getActiveMode().urlKey === 'series') {
             watchedMedia.seasonNumber = seasonNumber;
             watchedMedia.episodeNumber = episodeNumber;
         }
@@ -44,4 +47,3 @@ class WatchedMediaApiService extends BaseApiService {
 }
 
 export default WatchedMediaApiService;
-  
