@@ -53,7 +53,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("stream/movies")]
         public async Task<IActionResult> GetStream(string base64Url)
         {
-            var url = base64Url.DecodeBase64()
+            var url = base64Url.DecodeBase64();
             var streamDto = await GetStreamDtoAsync(url, RequestFromVLC() ? new VideoTorrentFileSelector() : new Mp4TorrentFileSelector());
             return streamDto != null ? File(streamDto.Stream, streamDto.ContentType, true) : NoContent();
         }
