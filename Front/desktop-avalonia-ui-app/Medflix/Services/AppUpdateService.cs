@@ -26,7 +26,6 @@ namespace Medflix.Services
             MedflixHttpHeaders = new MedflixHttpHeaders();
             MedflixHttpHeaders.DefaultHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
             MedflixHttpHeaders.DefaultHeaders.Add("User-Agent", "C# App");
-            MedflixHttpHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Tools.Tokens.GitHubApiKey);
         }
 
         public async Task<bool> IsNewReleaseAvailableAsync()
@@ -34,7 +33,7 @@ namespace Medflix.Services
             MedflixHttpHeaders.Accept = new MediaTypeWithQualityHeaderValue("application/vnd.github+json");
 
             var latestRelease = await GetAsync<AppRelease>(Consts.LatestReleaseUrl, MedflixHttpHeaders);
-            if (latestRelease.Name != Consts.AppVersionName)
+            if (latestRelease != null && latestRelease.Name != Consts.AppVersionName)
             {
                 NewRelease = latestRelease;
                 return true;
