@@ -112,7 +112,8 @@ namespace MoviesAPI.Services.Torrent
                                                         ?.Select(n => new MediaTorrent()
                                                         {
                                                             DownloadUrl = htmlUrlProvider.GetTorrentUrl(n.Attributes["href"].Value),
-                                                            Quality = n.InnerText
+                                                            Quality = n.InnerText,
+                                                            LanguageVersion = "Original"
                                                         });
         }
 

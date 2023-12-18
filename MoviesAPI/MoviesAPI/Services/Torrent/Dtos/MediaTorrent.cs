@@ -9,5 +9,7 @@ namespace MoviesAPI.Services.Torrent.Dtos
         public string DownloadUrl { get; set; }
 
         public string Quality { get; set; }
+
+        public string LanguageVersion { get; set; }
     }
 }

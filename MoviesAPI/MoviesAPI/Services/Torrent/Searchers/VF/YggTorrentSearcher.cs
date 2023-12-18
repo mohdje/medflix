@@ -80,7 +80,8 @@ namespace MoviesAPI.Services.Torrent
                                 result.Add(new MediaTorrent()
                                 {
                                     Quality = node.InnerText.GetVideoQuality(),
-                                    DownloadUrl = torrentLink
+                                    DownloadUrl = torrentLink,
+                                    LanguageVersion = "French"
                                 });
                             }
                         }

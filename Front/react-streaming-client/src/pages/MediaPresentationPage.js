@@ -5,6 +5,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import ModalMediaTrailer from '../components/modal/ModalMediaTrailer';
 import ModalEpisodeSelector from '../components/modal/ModalEpisodeSelector';
+import ModalVersionAndQualitySelector from '../components/modal/ModalVersionAndQualitySelector';
 
 import { VideoPlayerWindow } from '../components/video/VideoPlayerWindow';
 import CircularProgressBar from "../components/common/CircularProgressBar";
@@ -21,14 +22,13 @@ import Paragraph from "../components/common/text/Paragraph";
 import Title from "../components/common/text/Title";
 import TitleAndContent from "../components/common/TitleAndContent";
 import Rating from "../components/common/Rating";
-import DropDown from "../components/common/DropDown";
 import MediasListLiteWithTitle from "../components/media/list/MediasListLiteWithTitle";
 
 import AppServices from "../services/AppServices";
 import { ToTimeFormat } from "../helpers/timeFormatHelper";
 import fadeTransition from "../helpers/customStyles.js";
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, version } from 'react';
 
 
 function MediaFullPresentation({ mediaId, onCloseClick }) {
@@ -37,12 +37,12 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
     const [mediaDetails, setMediaDetails] = useState({});
     const [mediaProgression, setMediaProgression] = useState({});
 
-    const versionsSources = useRef([]);
-    const [voSourcesSearching, setVoSourcesSearching] = useState(false);
-    const [vfSourcesSearching, setVfSourcesSearching] = useState(false);
+    const torrents = useRef([]);
+    const [torrentSearching, setTorrentSearching] = useState(false);
+    const [updateSelectedTorrent, setUpdateSelectedTorrent] = useState(true);
 
     const [selectedVersionSources, setSelectedVersionSources] = useState([]);
-    const [selectedVersionSourceLink, setSelectedVersionSourceLink] = useState('');
+    const [videoSourceUrl, setVideoSourceUrl] = useState('');
 
     const [mediaSubtitlesSources, setMediaSubtitlesSources] = useState([]);
     const [loadingSubtitles, setLoadingSubtitles] = useState(false);
@@ -59,18 +59,16 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
         episodeNumber: 1
     })
 
-
     useEffect(() => {
         if (mediaId)
             loadPage(mediaId);
     }, [mediaId]);
 
     useEffect(() => {
-        if (mediaDetails.imdbId) getAvailableSubtitles(mediaDetails.imdbId, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber);
-        if (mediaDetails.id && mediaDetails.title && mediaDetails.year) {
-            clearVersionSources();
-            searchVfSources(mediaDetails.id, mediaDetails.title, mediaDetails.year, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber);
-            searchVoSources(mediaDetails.title, mediaDetails.year, mediaDetails.imdbId, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber);
+        if (mediaDetails.imdbId) {
+            getAvailableSubtitles(mediaDetails.imdbId, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber);
+            if (mediaDetails.id && mediaDetails.title && mediaDetails.year)
+                searchTorrents(mediaDetails);
         }
 
         const topPage = document.getElementsByClassName('back-btn')[0];
@@ -78,10 +76,31 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
     }, [mediaDetails]);
 
     useEffect(() => {
-        if (!selectedVersionSourceLink && selectedVersionSources.length > 0)
-            changeSelectedSource(0);
+        if (updateSelectedTorrent && mediaProgression && torrents.current?.length > 0) {
+            const torrentToSelect = torrents.current.find(torrent => torrent.downloadUrl === mediaProgression.torrentUrl);
+            if (torrentToSelect) {
+                changeSelectedTorrent(torrentToSelect);
+                setUpdateSelectedTorrent(false);
+            }
+        }
+    }, [mediaProgression, torrents.current]);
 
-    }, [selectedVersionSources]);
+    const searchTorrents = (mediaDetails) => {
+        torrents.current = [];
+        setVideoSourceUrl('');
+        setTorrentSearching(true);
+        AppServices.torrentApiService.searchTorrents(mediaDetails.id, mediaDetails.title, mediaDetails.year, mediaDetails.imdbId, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber,
+            (result) => {
+                setTorrentSearching(false);
+                if (result && result.length > 0) {
+                    torrents.current = result.map(torrent => ({ ...torrent, seasonNumber: selectedEpisode.current.seasonNumber, episodeNumber: selectedEpisode.current.episodeNumber }));
+                    changeSelectedTorrent(torrents.current[0]);
+                }
+            }, () => {
+                setTorrentSearching(false);
+            }
+        );
+    }
 
     const loadPage = (mediaId) => {
         setDataLoaded(false);
@@ -112,66 +131,20 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
         }
     }
 
-    const setVersionSources = (versionLabel, sources, setFirst) => {
-        if (sources && sources.length > 0) {
-            const newVersionSources = {
-                versionLabel: versionLabel,
-                sources: sources
-            };
-            if (setFirst) {
-                setSelectedVersionSourceLink('');
-                versionsSources.current.unshift(newVersionSources)
-            }
-            else versionsSources.current.push(newVersionSources);
-            setSelectedVersionSources(versionsSources.current[0].sources);
+    const changeSelectedTorrent = (selectedTorrent) => {
+        const refreshedTorrentsList = [];
+        for (let i = 0; i < torrents.current.length; i++) {
+            const torrent = torrents.current[i];
+            torrent.selected = torrent.downloadUrl == selectedTorrent.downloadUrl;
+            refreshedTorrentsList.push(torrent);
         }
-    }
+        torrents.current = refreshedTorrentsList;
 
-    const clearVersionSources = () => {
-        versionsSources.current = [];
-        setSelectedVersionSources([]);
-        setSelectedVersionSourceLink('');
-    }
-
-    const changeSelectedSource = (index) => {
-        const newTab = [];
-        for (let i = 0; i < selectedVersionSources.length; i++) {
-            newTab.push(selectedVersionSources[i]);
-            newTab[i].selected = index == i;
-        }
-        setSelectedVersionSourceLink(
-            selectedVersionSources.length > 0 ? AppServices.torrentApiService.buildStreamUrl(selectedVersionSources[index].downloadUrl, '', selectedVersionSources[index].seasonNumber, selectedVersionSources[index].episodeNumber)
+        setVideoSourceUrl(
+            selectedTorrent ? AppServices.torrentApiService.buildStreamUrl(selectedTorrent.downloadUrl, '', selectedTorrent.seasonNumber, selectedTorrent.episodeNumber)
                 : '');
-        setSelectedVersionSources(newTab);
-    }
 
-    const searchVfSources = (mediaId, mediaTitle, mediaYear, seasonNumber, episodeNumber) => {
-        setVfSourcesSearching(true);
-        AppServices.torrentApiService.searchVFSources(mediaId, mediaTitle, mediaYear, seasonNumber, episodeNumber,
-            (sources) => {
-                setVfSourcesSearching(false);
-                if (sources && sources.length > 0) {
-                    setVersionSources("VF", sources.map(source => ({ ...source, seasonNumber: seasonNumber, episodeNumber: episodeNumber })));
-                }
-
-            }, () => {
-                setVfSourcesSearching(false);
-            }
-        );
-    }
-
-    const searchVoSources = (title, year, imdbId, seasonNumber, episodeNumber) => {
-        setVoSourcesSearching(true);
-        AppServices.torrentApiService.searchVOSources(title, year, imdbId, seasonNumber, episodeNumber,
-            (sources) => {
-                setVoSourcesSearching(false);
-                if (sources && sources.length > 0) {
-                    setVersionSources("VO", sources.map(source => ({ ...source, seasonNumber: seasonNumber, episodeNumber: episodeNumber })), true);
-                }
-            }, () => {
-                setVoSourcesSearching(false);
-            }
-        );
+        setSelectedVersionSources(torrents.current.filter(t => t.languageVersion === selectedTorrent.languageVersion));
     }
 
     const getMediaProgression = (mediaId, seasonNumber, episodeNumber) => {
@@ -185,13 +158,13 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                     setMediaProgression({
                         progression: watchedMedia.currentTime / watchedMedia.totalDuration,
                         remainingTime: watchedMedia.totalDuration - watchedMedia.currentTime,
-                        currentTime: watchedMedia.currentTime
+                        currentTime: watchedMedia.currentTime,
+                        torrentUrl: watchedMedia.torrentUrl
                     });
                 }
             }
         )
     }
-
 
     const getAvailableSubtitles = (imdbCode, seasonNumber, episodeNumber) => {
         setLoadingSubtitles(true);
@@ -233,13 +206,11 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
     }
 
     const onEpisodeSelected = (seasonNumber, episodeNumber) => {
-        clearVersionSources();
         selectedEpisode.current = {
             seasonNumber: seasonNumber,
             episodeNumber: episodeNumber
         };
-        searchVoSources(mediaDetails.title, mediaDetails.year, mediaDetails.imdbId, seasonNumber, episodeNumber);
-        searchVfSources(mediaDetails.id, mediaDetails.title, mediaDetails.year, seasonNumber, episodeNumber);
+        searchTorrents(mediaDetails);
         getAvailableSubtitles(mediaDetails.imdbId, seasonNumber, episodeNumber);
         getMediaProgression(mediaDetails.id, seasonNumber, episodeNumber);
     }
@@ -286,22 +257,24 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                                     <RemoveBookmarkButton onClick={() => unbookmarkMedia()} visible={!addBookmarkButtonVisible} />
                                 </div>
                                 <div className="play-options">
-                                    <AvailableSubtitles loading={loadingSubtitles} availableSubtitlesSources={mediaSubtitlesSources} />
-                                    <AvailableVersions
-                                        loading={voSourcesSearching || vfSourcesSearching}
-                                        availableVersionsSources={versionsSources.current}
-                                        onVersionSelected={(versionSources) => { setSelectedVersionSourceLink(null); setSelectedVersionSources(versionSources.sources) }} />
-                                    <div style={fadeTransition(!(voSourcesSearching || vfSourcesSearching) && Boolean(selectedVersionSources) && selectedVersionSources.length > 0)} >
-                                        <div className="horizontal">
-                                            <QualitySelector versionSources={selectedVersionSources} onQualityChanged={(i) => changeSelectedSource(i)} />
-                                            <PlayButton onClick={() => setShowMediaPlayer(true)} />
-                                            <PlayWithVLCButton
-                                                videoUrl={selectedVersionSourceLink}
-                                                onClick={() => { if (mediaDetails) AppServices.watchedMediaApiService.saveWacthedMedia(mediaDetails, 0, 0, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber) }} />
-                                        </div>
+                                    <AvailableItems
+                                        title="Subtitles"
+                                        isLoading={loadingSubtitles}
+                                        itemsList={mediaSubtitlesSources && mediaSubtitlesSources.map(s => s.language)}
+                                        emptyMessage={"No subtitles available"} />
+                                    <AvailableItems
+                                        title="Versions"
+                                        isLoading={torrentSearching}
+                                        itemsList={torrents.current && [...new Set(torrents.current.map(t => t.languageVersion))]}
+                                        emptyMessage={"No subtitles available"} />
+                                    <div style={fadeTransition(!torrentSearching && torrents.current?.length > 0)} className="horizontal">
+                                        <QualitySelector torrents={torrents.current} onQualityChanged={(torrent) => changeSelectedTorrent(torrent)} />
+                                        <PlayButton onClick={() => setShowMediaPlayer(true)} />
+                                        <PlayWithVLCButton
+                                            videoUrl={videoSourceUrl}
+                                            onClick={() => { if (mediaDetails) AppServices.watchedMediaApiService.saveWacthedMedia(mediaDetails, 0, 0, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber) }} />
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                         <div className="extra">
@@ -337,68 +310,45 @@ function MediaProgression({ mediaProgression, remainingTime }) {
         return null;
 }
 
-function AvailableSubtitles({ availableSubtitlesSources, loading }) {
-    const availableSubtitles = availableSubtitlesSources?.length > 0 ? availableSubtitlesSources.map(s => s.language).join(", ") : 'No subtitles available';
-    const content = loading ? <CircularProgressBar color={'white'} size={'15px'} visible={true} /> : availableSubtitles;
+function AvailableItems({ title, itemsList, emptyMessage, isLoading }) {
+    const availableItems = itemsList?.length > 0 ? itemsList.join(", ") : emptyMessage;
+    const content = isLoading ? <CircularProgressBar color={'white'} size={'15px'} visible={true} /> : availableItems;
     return (
-        <TitleAndContent title="Subtitles" content={content} />
+        <TitleAndContent title={title} content={content} />
     )
 }
 
-function AvailableVersions({ availableVersionsSources, loading, onVersionSelected }) {
-    const [selectedIndex, setSelectedIndex] = useState(0);
-    let content;
-
-    const onVersionClick = (index) => {
-        setSelectedIndex(index);
-        onVersionSelected(availableVersionsSources[index]);
-    };
+function QualitySelector({ torrents, onQualityChanged }) {
+    const [modalQualitySelectorVisible, setModalQualitySelectorVisible] = useState(false);
+    const [selectedVersionAndQuality, setSelectedVersionAndQuality] = useState(false);
 
     useEffect(() => {
-        if (loading)
-            setSelectedIndex(0);
-    }, [loading]);
-
-    if (loading)
-        content = <CircularProgressBar color={'white'} size={'15px'} visible={true} />;
-    else {
-        if (availableVersionsSources?.length > 0) {
-            content = availableVersionsSources.map((v, i) => <BaseButton
-                key={i}
-                color={selectedIndex == i ? "red" : "grey"}
-                content={v.versionLabel}
-                onClick={() => onVersionClick(i)} />);
+        if (torrents?.length > 0) {
+            const selectedTorrent = torrents.find(t => t.selected);
+            if (selectedTorrent) {
+                setSelectedVersionAndQuality(selectedTorrent.languageVersion + " | " + selectedTorrent.quality);
+            }
         }
-        else
-            content = 'No version available';
+
+    }, [torrents]);
+
+
+    const onQualityClick = (torrent) => {
+        setModalQualitySelectorVisible(false);
+        const selectedTorrent = torrents.find(t => t.selected);
+        if (selectedTorrent.downloadUrl !== torrent.downloadUrl)
+            onQualityChanged(torrent);
     }
 
-    return (
-        <TitleAndContent title="Versions" content={content} />
-    )
-}
+    const content = <BaseButton color="red" content={selectedVersionAndQuality} onClick={() => setModalQualitySelectorVisible(true)} />
 
-function QualitySelector({ versionSources, onQualityChanged }) {
-    const qualities = [];
-
-    if (versionSources && versionSources.length > 0) {
-        versionSources.sort((source1, source2) => {
-            const [quality1, quality2] = [source1.quality.toLowerCase().trim(), source2.quality.toLowerCase().trim()]
-            return quality1 === quality2 ? 0 : (quality1 < quality2 ? -1 : 1);
-        });
-
-        versionSources.forEach(source => {
-            const nbSameQualities = qualities.filter(q => q.startsWith(source.quality)).length;
-            qualities.push(source.quality + (nbSameQualities > 0 ? " (" + nbSameQualities + ")" : ""));
-        });
-    }
-
-    const content = <DropDown
-        values={qualities}
-        width="130px"
-        onValueChanged={(index) => onQualityChanged(index)} />
-
-    return <TitleAndContent title="Qualities" content={content} justify="left" />
+    return <div>
+        <TitleAndContent title="Qualities" content={content} justify="left" />
+        <ModalVersionAndQualitySelector
+            visible={modalQualitySelectorVisible}
+            torrents={torrents}
+            onQualityClick={(torrent) => onQualityClick(torrent)} />
+    </div>
 }
 
 function EpisodeSelector({ serieId, seasonsCount, onEpisodeSelected }) {

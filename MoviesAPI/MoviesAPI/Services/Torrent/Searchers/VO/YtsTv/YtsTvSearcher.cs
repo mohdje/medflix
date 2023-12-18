@@ -127,7 +127,8 @@ namespace MoviesAPI.Services.Torrent
                     torrentLinks.Add(new MediaTorrent
                     {
                         DownloadUrl = node.Attributes["href"]?.Value,
-                        Quality = node.Attributes["href"]?.Value.GetVideoQuality()
+                        Quality = node.Attributes["href"]?.Value.GetVideoQuality(),
+                        LanguageVersion = "Original"
                     });
                 }
 

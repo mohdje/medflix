@@ -108,8 +108,9 @@ namespace MoviesAPI.Services.Torrent
                 return downloadTorrentNodes.Select(n => new MediaTorrent()
                                                         {
                                                             DownloadUrl = htmlUrlProvider.GetTorrentUrl(n.Attributes["href"].Value),
-                                                            Quality = n.InnerText
-                                                        }).DistinctBy(t => t.DownloadUrl);
+                                                            Quality = n.InnerText,
+                                                            LanguageVersion = "Original"
+                }).DistinctBy(t => t.DownloadUrl);
         }
 
         public string GetPingUrl()

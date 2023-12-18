@@ -33,7 +33,7 @@ namespace MoviesAPI.Services.Torrent
 
             var movie = requestResult?.Data?.Movies?.FirstOrDefault(m => m.Title.Replace("\'", String.Empty).Equals(movieName.Replace("\'", String.Empty), StringComparison.OrdinalIgnoreCase) && m.Year == year);
               
-            return movie != null ? movie.Torrents.Select(t => new MediaTorrent() { DownloadUrl = t.Url, Quality = t.Quality }) : new MediaTorrent[0];
+            return movie != null ? movie.Torrents.Select(t => new MediaTorrent() { DownloadUrl = t.Url, Quality = t.Quality, LanguageVersion = "Original" }) : new MediaTorrent[0];
         }
 
         public string GetPingUrl()

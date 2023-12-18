@@ -2,9 +2,7 @@
 using MoviesAPI.Services.Torrent.Dtos;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WebHostStreaming.Extensions;
 using WebHostStreaming.Models;
@@ -30,38 +28,33 @@ namespace WebHostStreaming.Controllers
             this.torrentHistoryProvider = torrentHistoryProvider;
         }
 
-        [HttpGet("movies/vf")]
-        public async Task<IEnumerable<MediaTorrent>> SearchVFMovieTorrents(string mediaId, string title, int year)
+        [HttpGet("movies")]
+        public async Task<IEnumerable<MediaTorrent>> SearchMovieTorrents(string mediaId, string title, int year)
         {
             var frenchTitle = await searchersProvider.MovieSearcher.GetMovieFrenchTitleAsync(mediaId);
 
-            return await searchersProvider.TorrentSearchManager.SearchVfTorrentsMovieAsync(string.IsNullOrEmpty(frenchTitle) ? title : frenchTitle, year);
+            var vfTorrents = await searchersProvider.TorrentSearchManager.SearchVfTorrentsMovieAsync(string.IsNullOrEmpty(frenchTitle) ? title : frenchTitle, year);
+            var voTorrents = await searchersProvider.TorrentSearchManager.SearchVoTorrentsMovieAsync(title, year);
+
+            return voTorrents.Concat(vfTorrents);
         }
 
-        [HttpGet("series/vf")]
-        public async Task<IEnumerable<MediaTorrent>> SearchVFSerieTorrents(string mediaId, string title, int season, int episode)
+        [HttpGet("series")]
+        public async Task<IEnumerable<MediaTorrent>> SearchSerieTorrents(string mediaId, string imdbid, string title, int season, int episode)
         {
             var frenchTitle = await searchersProvider.SeriesSearcher.GetSerieFrenchTitleAsync(mediaId);
 
-            return await searchersProvider.TorrentSearchManager.SearchVfTorrentsSerieAsync(string.IsNullOrEmpty(frenchTitle) ? title : frenchTitle, season, episode);
-        }
+            var vfTorrents = await searchersProvider.TorrentSearchManager.SearchVfTorrentsSerieAsync(string.IsNullOrEmpty(frenchTitle) ? title : frenchTitle, season, episode);
+            var voTorrents = await searchersProvider.TorrentSearchManager.SearchVoTorrentsSerieAsync(title, imdbid, season, episode);
 
-        [HttpGet("movies/vo")]
-        public async Task<IEnumerable<MediaTorrent>> SearchVOMovieTorrents(string title, int year)
-        {
-            return await searchersProvider.TorrentSearchManager.SearchVoTorrentsMovieAsync(title, year); ;
-        }
-
-        [HttpGet("series/vo")]
-        public async Task<IEnumerable<MediaTorrent>> SearchVOSerieTorrents(string title, string imdbid, int season, int episode)
-        {
-            return await searchersProvider.TorrentSearchManager.SearchVoTorrentsSerieAsync(title, imdbid, season, episode); ;
+            return voTorrents.Concat(vfTorrents);
         }
 
         [HttpGet("stream/movies")]
         public async Task<IActionResult> GetStream(string base64Url)
         {
-            var streamDto = await GetStreamDtoAsync(base64Url.DecodeBase64(), RequestFromVLC() ? new VideoTorrentFileSelector() : new Mp4TorrentFileSelector());
+            var url = base64Url.DecodeBase64()
+            var streamDto = await GetStreamDtoAsync(url, RequestFromVLC() ? new VideoTorrentFileSelector() : new Mp4TorrentFileSelector());
             return streamDto != null ? File(streamDto.Stream, streamDto.ContentType, true) : NoContent();
         }
 
@@ -69,7 +62,8 @@ namespace WebHostStreaming.Controllers
         [HttpGet("stream/series")]
         public async Task<IActionResult> GetStream(string base64Url, int seasonNumber, int episodeNumber)
         {
-            var streamDto = await GetStreamDtoAsync(base64Url.DecodeBase64(), RequestFromVLC() ? new SerieEpisodeTorrentFileSelector(seasonNumber, episodeNumber) : new SerieEpisodeMp4TorrentFileSelector(seasonNumber, episodeNumber));
+            var url = base64Url.DecodeBase64();
+            var streamDto = await GetStreamDtoAsync(url, RequestFromVLC() ? new SerieEpisodeTorrentFileSelector(seasonNumber, episodeNumber) : new SerieEpisodeMp4TorrentFileSelector(seasonNumber, episodeNumber));
             return streamDto != null ? File(streamDto.Stream, streamDto.ContentType, true) : NoContent();
         }
 
@@ -84,7 +78,8 @@ namespace WebHostStreaming.Controllers
         [HttpGet("streamdownloadstate")]
         public IActionResult GetStreamDownloadState(string base64TorrentUrl)
         {
-            var state = torrentVideoStreamProvider.GetStreamDownloadingState(base64TorrentUrl.DecodeBase64());
+            var url = base64TorrentUrl.DecodeBase64();
+            var state = torrentVideoStreamProvider.GetStreamDownloadingState(url);
 
             if (state == null)
                 return BadRequest();
@@ -134,7 +129,7 @@ namespace WebHostStreaming.Controllers
 
             try
             {
-                
+
                 return await torrentVideoStreamProvider.GetStreamAsync(url, offset, torrentFileSelector);
             }
             catch (Exception ex)

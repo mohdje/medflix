@@ -17,37 +17,13 @@ class TorrentApiService extends BaseApiService {
             return this.buildTorrentUrl('stream/movies?base64Url=' + base64Url);
     }
 
-    searchVFSources(mediaId, title, year, seasonNumber, episodeNumber, onSuccess, onFail) {
-        var url = this.buildTorrentUrl(AppMode.getActiveMode().urlKey + '/vf');
-
+    searchTorrents(mediaId, title, year, imdbid, seasonNumber, episodeNumber, onSuccess, onFail) {
+        var url = this.buildTorrentUrl(AppMode.getActiveMode().urlKey);
         var parameters = [
             {
                 name: 'mediaId',
                 value: mediaId
             },
-            {
-                name: 'title',
-                value: encodeURIComponent(title)
-            },
-            {
-                name: 'year',
-                value: year
-            },
-            {
-                name: 'season',
-                value: seasonNumber
-            },
-            {
-                name: 'episode',
-                value: episodeNumber
-            },
-        ];
-        this.getRequest(url, parameters, true, onSuccess, onFail);
-    }
-
-    searchVOSources(title, year, imdbid, seasonNumber, episodeNumber, onSuccess, onFail) {
-        var url = this.buildTorrentUrl(AppMode.getActiveMode().urlKey + '/vo');
-        var parameters = [
             {
                 name: 'title',
                 value: encodeURIComponent(title)

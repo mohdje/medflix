@@ -40,7 +40,8 @@ namespace MoviesAPI.Services.Torrent
                                 .Select(torrent => new MediaTorrent()
                                 {
                                     DownloadUrl = torrent.Value,
-                                    Quality = torrent.Title.GetVideoQuality()
+                                    Quality = torrent.Title.GetVideoQuality(),
+                                    LanguageVersion = "Original"
                                 });
             }
             else
