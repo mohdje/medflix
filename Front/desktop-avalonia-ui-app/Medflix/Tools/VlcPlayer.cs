@@ -47,12 +47,8 @@ namespace Medflix.Tools
                 //{
                 //	Core.Initialize();
                 //}
-
-                lock (_libVLC)
-                {
-                    if (_libVLC == null)
-                        throw new Exception("Call InitLibVLC first");
-                }
+                if (_libVLC == null)
+                    throw new Exception("Call InitLibVLC first");
               
 
                 //_libVLC.Log += VlcLogger_Event;
@@ -177,6 +173,8 @@ namespace Medflix.Tools
         {
             return IsVideoOpened ? this.MediaPlayer.Media.Duration/1000 : 0;
         }
+
+        public bool IsPaused => IsVideoOpened && this.MediaPlayer.State == VLCState.Paused;
 
         #endregion
 

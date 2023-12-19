@@ -7,6 +7,8 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Avalonia.Threading;
 using DryIoc.ImTools;
 using DynamicData;
@@ -23,6 +25,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using WebHostStreaming.Models;
 
 namespace Medflix.Views;
 
@@ -55,6 +58,7 @@ public partial class VideoPlayerView : UserControl
 
         SetupEvents();
         SetupOptionsAsync(videoPlayerOptions);
+        SetupMediaInfoPanel(videoPlayerOptions.WatchedMedia);
 
         this.medflixApiService = medflixApiService;
     }
@@ -313,6 +317,20 @@ public partial class VideoPlayerView : UserControl
 
     }
 
+    private void SetupMediaInfoPanel(WatchedMediaDto media)
+    {
+        //TODO To display the image ,it should be downloaded first and then pass local path as argument
+        //this.MediaInfoPanelImage.Source = new Bitmap(AssetLoader.Open(new Uri(media.CoverImageUrl)));
+        this.MediaInfoPanelTitle.Text = media.Title;
+
+        var time = TimeSpan.FromSeconds(media.TotalDuration);
+        var hours = time.Hours > 0 ? $"{time.Hours}h " : string.Empty;
+        var minutes = time.Minutes > 0 ? $"{time.Minutes}min" : string.Empty;
+        this.MediaInfoPanelSubInfo.Text = $"{media.Year} | {hours}{minutes}";
+
+        this.MediaInfoPanelSynopsis.Text = media.Synopsis;
+    }
+
     #endregion
 
     #region Private methods
@@ -323,6 +341,7 @@ public partial class VideoPlayerView : UserControl
         var delayInSeconds = 3;
         VideoPlayerControls.Opacity = 1;
         VideoPlayerControls.Cursor = new Cursor(StandardCursorType.Arrow);
+        this.MediaInfoPanel.IsVisible = false;
 
         Task.Delay((delayInSeconds + 1) * 1000).ContinueWith(t =>
         {
@@ -339,10 +358,14 @@ public partial class VideoPlayerView : UserControl
 
                     VideoPlayerControls.Opacity = 0;
                     VideoPlayerControls.Cursor = new Cursor(StandardCursorType.None);
+
+                    if(this.VlcPlayer.IsPaused)
+                        this.MediaInfoPanel.IsVisible = true;
                 });
             }
         });
     }
+
     private string ToFormattedVideoTime(long time)
     {
         var timeSpan = TimeSpan.FromMilliseconds(time);

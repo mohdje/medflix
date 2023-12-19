@@ -29,6 +29,35 @@
 					</StackPanel>
 				</Panel>
 				
+				<!-- Media Info -->
+				<Panel x:Name="MediaInfoPanel" 
+					   IsVisible="False"
+					   ZIndex="1">
+					<Panel.Background>
+						<SolidColorBrush Color="Black" Opacity="0.8"/>
+					</Panel.Background>
+					<StackPanel
+						Orientation="Horizontal"
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center"
+						Margin="150 0 0 0">
+						<StackPanel>
+							<Image x:Name="MediaInfoPanelImage" Width="200" />
+						</StackPanel>
+						<StackPanel 
+							Orientation="Vertical" 
+							HorizontalAlignment="Left" 
+							VerticalAlignment="Center">
+							<TextBlock
+									x:Name="MediaInfoPanelTitle"
+									FontSize="30"
+									FontWeight="Bold"/>
+							<TextBlock x:Name="MediaInfoPanelSubInfo" />
+							<TextBlock x:Name="MediaInfoPanelSynopsis" Width="600" TextWrapping="Wrap"/>
+						</StackPanel>
+					</StackPanel>
+				</Panel>
+				
 				<!-- Options -->
 				<Panel ZIndex="3">
 					<StackPanel

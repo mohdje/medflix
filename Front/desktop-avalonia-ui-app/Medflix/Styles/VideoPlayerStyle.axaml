@@ -91,4 +91,13 @@
 			<SolidColorBrush Color="Black" Opacity="0.7"/>
 		</Setter>
 	</Style>
+	
+	<!-- Media info panel -->
+	<Style Selector="Panel#MediaInfoPanel TextBlock">
+		<Setter Property="Foreground" Value="White" />
+		<Setter Property="FontSize" Value="20" />
+		<Setter Property="FontWeight" Value="Normal" />
+		<Setter Property="Padding" Value="8" />
+		<Setter Property="HorizontalAlignment" Value="Left" />
+	</Style>
 </Styles>
