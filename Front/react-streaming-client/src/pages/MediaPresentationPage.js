@@ -266,7 +266,7 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                                         title="Versions"
                                         isLoading={torrentSearching}
                                         itemsList={torrents.current && [...new Set(torrents.current.map(t => t.languageVersion))]}
-                                        emptyMessage={"No subtitles available"} />
+                                        emptyMessage={"No version available"} />
                                     <div style={fadeTransition(!torrentSearching && torrents.current?.length > 0)} className="horizontal">
                                         <QualitySelector torrents={torrents.current} onQualityChanged={(torrent) => changeSelectedTorrent(torrent)} />
                                         <PlayButton onClick={() => setShowMediaPlayer(true)} />
