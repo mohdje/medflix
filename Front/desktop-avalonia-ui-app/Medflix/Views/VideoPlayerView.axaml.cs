@@ -405,6 +405,7 @@ public partial class VideoPlayerView : UserControl
             if (!string.IsNullOrEmpty(base64Url))
             {
                 this.currentDownloadStateBase64Url = base64Url;
+                this.videoPlayerOptions.WatchedMedia.TorrentUrl = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(base64Url));
                 await GetDownloadStateAsync(base64Url);
             }
         }
@@ -452,6 +453,19 @@ public partial class VideoPlayerView : UserControl
             }
             else
                 this.SubtitlesText.IsVisible = false;
+        }
+    }
+
+    private async Task SaveProgressionAsync(long currentTime)
+    {
+        if (this.videoPlayerOptions.WatchedMedia != null && (DateTime.Now - lastProgressSaveTime >= TimeSpan.FromSeconds(10)))
+        {
+            lastProgressSaveTime = DateTime.Now;
+            this.videoPlayerOptions.WatchedMedia.CurrentTime = currentTime / 1000;
+            if (this.videoPlayerOptions.WatchedMedia.TotalDuration == 0)
+                this.videoPlayerOptions.WatchedMedia.TotalDuration = this.VlcPlayer.TotalDuration;
+
+            await this.medflixApiService.SaveProgressionAsync(this.videoPlayerOptions.MediaType, this.videoPlayerOptions.WatchedMedia);
         }
     }
 
@@ -537,16 +551,7 @@ public partial class VideoPlayerView : UserControl
             this.RemainingTime.Text = "-" + ToFormattedVideoTime(e.RemainingTime);
 
             UpdateSubtitleText(e.CurrentTime);
-
-            if (this.videoPlayerOptions.WatchedMedia != null && (DateTime.Now - lastProgressSaveTime >= TimeSpan.FromSeconds(10)))
-            {
-                lastProgressSaveTime = DateTime.Now;
-                this.videoPlayerOptions.WatchedMedia.CurrentTime = e.CurrentTime / 1000;
-                if (this.videoPlayerOptions.WatchedMedia.TotalDuration == 0)
-                    this.videoPlayerOptions.WatchedMedia.TotalDuration = this.VlcPlayer.GetTotalDuration();
-
-                await this.medflixApiService.SaveProgressionAsync(this.videoPlayerOptions.MediaType, this.videoPlayerOptions.WatchedMedia);
-            }
+            await SaveProgressionAsync(e.CurrentTime);
         });
     }
 

@@ -31,7 +31,7 @@ namespace WebHostStreaming.Helpers
                 var directories = Directory.GetDirectories(TorrentsFolder);
                 foreach (var folder in directories)
                 {
-                    var watchedMedia = watchedMedias.SingleOrDefault(watchedMedia => watchedMedia.TorrentUrl.ToMD5Hash() == Path.GetFileName(folder));
+                    var watchedMedia = watchedMedias.SingleOrDefault(watchedMedia => watchedMedia.TorrentUrl?.ToMD5Hash() == Path.GetFileName(folder));
                     if (watchedMedia == null)
                     {
                         Directory.Delete(folder, true);

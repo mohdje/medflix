@@ -164,15 +164,7 @@ namespace Medflix.Tools
             if (IsVideoOpened) this.MediaPlayer.Time -= 10000;
         }
 
-        public long? GetCurrentTime()
-        {
-            return IsVideoOpened ? this.MediaPlayer.Time : null;
-        }
-
-        public long GetTotalDuration()
-        {
-            return IsVideoOpened ? this.MediaPlayer.Media.Duration/1000 : 0;
-        }
+        public long TotalDuration => IsVideoOpened ? this.MediaPlayer.Media.Duration/1000 : 0;
 
         public bool IsPaused => IsVideoOpened && this.MediaPlayer.State == VLCState.Paused;
 
