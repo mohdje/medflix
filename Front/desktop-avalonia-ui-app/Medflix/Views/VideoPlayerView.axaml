@@ -61,6 +61,38 @@
 				<!-- Options -->
 				<Panel ZIndex="3">
 					<StackPanel
+						x:Name="StreamDevicesListContainer"
+						IsVisible="False"
+						HorizontalAlignment="Right"
+						VerticalAlignment="Bottom">
+						<Border
+							Classes="videoOptionContainer"
+							MinWidth="150"
+							Margin="0 0 150 60">
+							<StackPanel Margin="7 10 7 10">
+								<ToggleSwitch
+									x:Name="SearchStreamDevicesToggleSwitch"
+									Foreground="White"
+									FontWeight="DemiBold"
+									Content="Stream to device"/>
+								<TextBlock
+									x:Name="SearchingStreamDevices"
+									IsVisible="False"
+									Foreground="Gray"
+									FontWeight="SemiBold"
+									Text="Searching devices..."/>
+								<ScrollViewer MaxHeight="150">
+									<StackPanel
+										x:Name="StreamDevicesList"
+										Orientation="Vertical"
+										VerticalAlignment="Stretch"
+										HorizontalAlignment="Stretch"></StackPanel>
+								</ScrollViewer>
+							</StackPanel>
+						</Border>
+					</StackPanel>
+					
+					<StackPanel
 						x:Name="SubtitlesOptionsContainer"
 						IsVisible="False"
 						HorizontalAlignment="Right"
@@ -242,14 +274,23 @@
 								VerticalAlignment="Center"
 								HorizontalAlignment="Right">
 								<Button
-								 x:Name="SubtitlesButton">
+								 x:Name="CastButton"
+								 IsVisible="False"
+								 Margin="0,0,10,0">
+									<Image
+										Width="30"
+										Source="/Assets/cast.png" />
+								</Button>
+								<Button
+								 x:Name="SubtitlesButton"
+								 Margin="0,0,10,0">
 									<Image
 										Width="30"
 										Source="/Assets/subtitles.png" />
 								</Button>
 								<Button
 								 x:Name="SettingsButton"
-								 Margin="10,0,10,0">
+								 Margin="0,0,10,0">
 									<Image
 										Width="30"
 										Source="/Assets/settings.png"/>

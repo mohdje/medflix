@@ -4,13 +4,19 @@ using LibVLCSharp.Avalonia.Unofficial;
 using Medflix.Models.EventArgs;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DryIoc;
 
 namespace Medflix.Tools
 {
     public class VlcPlayer : IDisposable
     {
         static LibVLC? _libVLC;
+        static bool isInitializing;
         private MediaPlayer? MediaPlayer;
+        private RendererDiscoverer RendererDiscoverer;
+        private List<RendererItem> StreamDevices;
+        public RendererItem SelectedStreamDevice { get; private set; }
+
         private bool IsVideoOpened => this.MediaPlayer != null && (this.MediaPlayer.State == VLCState.Playing || this.MediaPlayer.State == VLCState.Paused);
 
         public event EventHandler OnError;
@@ -20,6 +26,7 @@ namespace Medflix.Tools
         public event EventHandler<VideoPlayerEventArgs> OnMutedStateChanged;
         public event EventHandler<VideoPlayerEventArgs> OnBuffering;
         public event EventHandler<VideoPlayerEventArgs> OnPlaying;
+        public event EventHandler<RendererItem[]> OnStreamDevicesListChange;
 
 
         public static void InitLibVLC()
@@ -28,7 +35,9 @@ namespace Medflix.Tools
             {
                 Task.Run(() =>
                 {
+                    isInitializing = true;
                     _libVLC = new LibVLC();
+                    isInitializing = false;
                 });
             }
         }
@@ -47,9 +56,14 @@ namespace Medflix.Tools
                 //{
                 //	Core.Initialize();
                 //}
-                if (_libVLC == null)
+                if (_libVLC == null && !isInitializing)
                     throw new Exception("Call InitLibVLC first");
-              
+
+                while (isInitializing)
+                {
+                    Task.Delay(2000);
+                }
+
 
                 //_libVLC.Log += VlcLogger_Event;
 
@@ -65,7 +79,7 @@ namespace Medflix.Tools
                 MediaPlayer.Unmuted += MediaPlayerUnmuted;
                 MediaPlayer.EncounteredError += MediaPlayerError;
                 MediaPlayer.Buffering += MediaPlayerBuffering;
-                MediaPlayer.Playing += MediaPlayerPlaying; 
+                MediaPlayer.Playing += MediaPlayerPlaying;
             }
         }
 
@@ -73,6 +87,12 @@ namespace Medflix.Tools
         {
             this.MediaPlayer.Stop();
             this.MediaPlayer = null;
+
+            if (RendererDiscoverer != null)
+            {
+                RendererDiscoverer.Stop();
+                RendererDiscoverer.Dispose();
+            }
         }
 
         #region Public Methods
@@ -164,7 +184,41 @@ namespace Medflix.Tools
             if (IsVideoOpened) this.MediaPlayer.Time -= 10000;
         }
 
-        public long TotalDuration => IsVideoOpened ? this.MediaPlayer.Media.Duration/1000 : 0;
+        public void StartSearchStreamDevices()
+        {
+            if (_libVLC != null)
+            {
+                StreamDevices = new List<RendererItem>();
+                RendererDiscoverer = new RendererDiscoverer(_libVLC);
+                RendererDiscoverer.ItemAdded += OnStreamDeviceFound;
+                RendererDiscoverer.ItemDeleted += OnStreamDeviceLost;
+                RendererDiscoverer.Start();
+            }
+        }
+
+        public void StopSearchStreamDevices()
+        {
+            RendererDiscoverer?.Stop();
+        }
+
+        public void StartStreamToDevice(RendererItem streamDevice)
+        {
+            var position = MediaPlayer.Position * 100;
+
+            MediaPlayer?.Stop();
+            SelectedStreamDevice = streamDevice;
+            MediaPlayer?.SetRenderer(streamDevice);
+            MediaPlayer.Play();
+
+            Task.Delay(2000).ContinueWith(t => SetPosition(position));
+        }
+
+        public void StopStreamToDevice()
+        {
+            MediaPlayer?.SetRenderer(null);
+        }
+
+        public long TotalDuration => IsVideoOpened ? this.MediaPlayer.Media.Duration / 1000 : 0;
 
         public bool IsPaused => IsVideoOpened && this.MediaPlayer.State == VLCState.Paused;
 
@@ -218,7 +272,19 @@ namespace Medflix.Tools
             this.OnBuffering?.Invoke(this, null);
         }
 
-      
+        private void OnStreamDeviceFound(object? sender, RendererDiscovererItemAddedEventArgs e)
+        {
+            StreamDevices.Add(e.RendererItem);
+            this.OnStreamDevicesListChange?.Invoke(this, StreamDevices.ToArray());
+        }
+
+        private void OnStreamDeviceLost(object? sender, RendererDiscovererItemDeletedEventArgs e)
+        {
+            StreamDevices.Remove(e.RendererItem);
+            this.OnStreamDevicesListChange?.Invoke(this, StreamDevices.ToArray());
+        }
+
+
         #endregion
     }
 }

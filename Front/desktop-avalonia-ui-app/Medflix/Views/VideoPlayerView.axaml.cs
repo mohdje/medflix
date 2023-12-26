@@ -74,6 +74,7 @@ public partial class VideoPlayerView : UserControl
         VlcPlayer.OnMutedStateChanged += MediaPlayerMutedStateChanged;
         VlcPlayer.OnError += MediaPlayerOnError;
         VlcPlayer.OnBuffering += MediaPlayerOnBuffering;
+        VlcPlayer.OnStreamDevicesListChange += MediaPlayerOnStreamDevicesListChange;
 
         this.VolumeBar.ValueChanged += OnVolumeBarValueChanged;
 
@@ -152,16 +153,38 @@ public partial class VideoPlayerView : UserControl
         this.SoundOffButton.Click += OnSoundOffButtonClick;
         this.BackwardButton.Click += OnBackwardButtonClick;
         this.ForwardButton.Click += OnForwardButtonClick;
-
+        this.SearchStreamDevicesToggleSwitch.IsCheckedChanged += (s, e) =>
+        {
+            if (this.SearchStreamDevicesToggleSwitch.IsChecked.GetValueOrDefault())
+            {
+                this.SearchingStreamDevices.IsVisible = true;
+                VlcPlayer.StartSearchStreamDevices();
+            }
+            else
+            {
+                this.SearchingStreamDevices.IsVisible = false;
+                VlcPlayer.StopStreamToDevice();
+                VlcPlayer.StopSearchStreamDevices();
+                this.StreamDevicesList.Children.Clear();
+            }
+        };
+        this.CastButton.Click += (s, e) =>
+        {
+            this.StreamDevicesListContainer.IsVisible = !this.StreamDevicesListContainer.IsVisible;
+            this.SourcesListContainer.IsVisible = false;
+            this.SubtitlesOptionsContainer.IsVisible = false;
+        }; 
         this.SubtitlesButton.Click += (s, e) =>
         {
             this.SubtitlesOptionsContainer.IsVisible = !this.SubtitlesOptionsContainer.IsVisible;
             this.SourcesListContainer.IsVisible = false;
+            this.StreamDevicesListContainer.IsVisible = false;
         };
         this.SettingsButton.Click += (s, e) =>
         {
             this.SourcesListContainer.IsVisible = !this.SourcesListContainer.IsVisible;
             this.SubtitlesOptionsContainer.IsVisible = false;
+            this.StreamDevicesListContainer.IsVisible = false;
         };
         this.PointerMoved += async (s, e) =>
         {
@@ -173,6 +196,8 @@ public partial class VideoPlayerView : UserControl
             ShowControls();
         };
     }
+
+
 
     private async Task SetupOptionsAsync(VideoPlayerOptions videoPlayerOptions)
     {
@@ -314,12 +339,11 @@ public partial class VideoPlayerView : UserControl
         }
         else
             this.SubtitlesButton.IsVisible = false;
-
     }
 
     private void SetupMediaInfoPanel(WatchedMediaDto media)
     {
-        //TODO To display the image ,it should be downloaded first and then pass local path as argument
+        //TODO To display the image ,it should be downloaded first and then pass local path as argument. Or use a third library
         //this.MediaInfoPanelImage.Source = new Bitmap(AssetLoader.Open(new Uri(media.CoverImageUrl)));
         this.MediaInfoPanelTitle.Text = media.Title;
 
@@ -351,7 +375,9 @@ public partial class VideoPlayerView : UserControl
             {
                 Dispatcher.UIThread.Invoke(async () =>
                 {
-                    while (this.SourcesListContainer.IsVisible || this.SubtitlesOptionsContainer.IsVisible)
+                    while (this.SourcesListContainer.IsVisible 
+                    || this.SubtitlesOptionsContainer.IsVisible
+                    || this.StreamDevicesListContainer.IsVisible)
                     {
                         await Task.Delay(2000);
                     }
@@ -574,6 +600,7 @@ public partial class VideoPlayerView : UserControl
             this.ProgressBar.IsVisible = videoOpened;
             this.CurrentTime.IsVisible = videoOpened;
             this.RemainingTime.IsVisible = videoOpened;
+            this.CastButton.IsVisible = videoOpened;
 
             this.PlayButton.IsVisible = e.State == VLCState.Stopped || e.State == VLCState.Paused;
             this.PauseButton.IsVisible = e.State == VLCState.Playing;
@@ -616,5 +643,45 @@ public partial class VideoPlayerView : UserControl
         });
 
     }
+    private void MediaPlayerOnStreamDevicesListChange(object? sender, RendererItem[] e)
+    {
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            this.StreamDevicesList.Children.Clear();
+
+            this.SearchingStreamDevices.IsVisible = !e.Any();
+
+            foreach (var streamDevice in e)
+            {
+                var textBlock = new TextBlock();
+
+                textBlock.Text = streamDevice.Name.Length >= 18 ? $"{streamDevice.Name.Substring(0, 17)}..." : streamDevice.Name;
+
+                textBlock.Padding = new Thickness(15, 7);
+
+                textBlock.Classes.Add($"videoOption");
+                if (VlcPlayer.SelectedStreamDevice == streamDevice)
+                    textBlock.Classes.Add("selected");
+
+                textBlock.PointerPressed += async (s, e) =>
+                {
+                    if (textBlock.Classes.Contains("selected"))
+                        return;
+
+                    foreach (TextBlock txtBlock in this.StreamDevicesList.Children)
+                        txtBlock.Classes.Remove("selected");
+
+                    textBlock.Classes.Add("selected");
+
+                    VlcPlayer.StartStreamToDevice(streamDevice);
+
+                    this.StreamDevicesListContainer.IsVisible = false;
+                };
+
+                this.StreamDevicesList.Children.Add(textBlock);
+            }
+        });
+    }
+
     #endregion
 }
