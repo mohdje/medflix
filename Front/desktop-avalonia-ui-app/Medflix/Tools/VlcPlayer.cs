@@ -5,6 +5,7 @@ using Medflix.Models.EventArgs;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DryIoc;
+using System.Linq;
 
 namespace Medflix.Tools
 {
@@ -15,6 +16,7 @@ namespace Medflix.Tools
         private MediaPlayer? MediaPlayer;
         private RendererDiscoverer RendererDiscoverer;
         private List<RendererItem> StreamDevices;
+        private int? SelectedSpuId;
         public RendererItem SelectedStreamDevice { get; private set; }
 
         private bool IsVideoOpened => this.MediaPlayer != null && (this.MediaPlayer.State == VLCState.Playing || this.MediaPlayer.State == VLCState.Paused);
@@ -218,6 +220,31 @@ namespace Medflix.Tools
             MediaPlayer?.SetRenderer(null);
         }
 
+        public void AddSubtitles(string filePath)
+        {
+            var spuId = MediaPlayer.SpuDescription.Last().Id + 1;
+            if (IsVideoOpened && MediaPlayer.AddSlave(MediaSlaveType.Subtitle, filePath, true))
+            {
+                SelectedSpuId = spuId;
+            }
+        }
+
+        public void DisableSubtitles()
+        {
+            if (IsVideoOpened)
+            {
+                MediaPlayer.SetSpu(-1);
+                SelectedSpuId = null;
+            }
+        }
+
+        public void SetSubtitlesDelay(TimeSpan delay)
+        {
+            if (IsVideoOpened)
+            {
+                MediaPlayer.SetSpuDelay((long)delay.TotalMicroseconds);
+            }
+        }
         public long TotalDuration => IsVideoOpened ? this.MediaPlayer.Media.Duration / 1000 : 0;
 
         public bool IsPaused => IsVideoOpened && this.MediaPlayer.State == VLCState.Paused;
@@ -245,6 +272,10 @@ namespace Medflix.Tools
 
         private void MediaPlayerTimeChanged(object? sender, MediaPlayerTimeChangedEventArgs e)
         {
+            //Bug sometimes : Spu is reset to -1 
+            if (MediaPlayer.Spu == -1 && SelectedSpuId.HasValue)
+                MediaPlayer.SetSpu(SelectedSpuId.Value);
+
             if (this.OnTimeChanged != null)
                 this.OnTimeChanged.Invoke(this, new VideoPlayerEventArgs { CurrentTime = e.Time, RemainingTime = MediaPlayer.Media.Duration - e.Time });
         }
