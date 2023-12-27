@@ -56,5 +56,12 @@ namespace MoviesAPI.Services.Subtitles
 
             return subtitlesSearcher?.GetSubtitlesAsync(subtitlesSourceUrl);
         }
+
+        public Task<string> GetSubtitlesFileAsync(string subtitlesSourceUrl)
+        {
+            var subtitlesSearcher = subtitlesMovieSearchers.SingleOrDefault(s => s.Match(subtitlesSourceUrl));
+
+            return subtitlesSearcher?.GetSubtitlesFileAsync(subtitlesSourceUrl);
+        }
     }
 }

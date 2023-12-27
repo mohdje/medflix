@@ -129,12 +129,17 @@ namespace MoviesAPI.Services.Subtitles
             }
         }
 
-        public async Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitleSourceUrl)
+        public async Task<string> GetSubtitlesFileAsync(string subtitleSourceUrl)
         {
             var httpRequestHeaders = new List<KeyValuePair<string, string>>();
             httpRequestHeaders.Add(new KeyValuePair<string, string>("referer", baseUrl));
 
-            var subtitlesFile = await subtitlesProvider.GetSubtitlesFileAsync(subtitleSourceUrl, httpRequestHeaders);
+            return await subtitlesProvider.GetSubtitlesFileAsync(subtitleSourceUrl, httpRequestHeaders);
+        }
+
+        public async Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitleSourceUrl)
+        {
+            var subtitlesFile = await GetSubtitlesFileAsync(subtitleSourceUrl);
 
             return SubtitlesConverter.GetSubtitles(subtitlesFile);
         }
