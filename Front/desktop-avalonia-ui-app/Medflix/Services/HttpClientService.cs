@@ -58,6 +58,20 @@ namespace Medflix.Services
             }
         }
 
+        protected async Task<string> GetAsync(string uri, MedflixHttpHeaders headers = null)
+        {
+            SetHeaders(headers);
+
+            try
+            {
+                return await httpClient.GetStringAsync(uri);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         protected async Task<bool> DownloadAsync(string uri, string filePath, MedflixHttpHeaders headers = null)
         {
             SetHeaders(headers);
