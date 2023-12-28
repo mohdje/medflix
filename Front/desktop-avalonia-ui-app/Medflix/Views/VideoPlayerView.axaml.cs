@@ -44,6 +44,7 @@ public partial class VideoPlayerView : UserControl
     private VideoPlayerOptions videoPlayerOptions;
 
     private MedflixApiService medflixApiService;
+    private Subtitle[] subtitles;
 
     private string currentDownloadStateBase64Url;
 
@@ -300,14 +301,9 @@ public partial class VideoPlayerView : UserControl
                             this.NoSubtitlesOption.Classes.Remove("selected");
                             subTextBlock.Classes.Add("selected");
 
-                            this.SubtitlesOffset.IsEnabled = true;
                             this.SubtitlesOptionsContainer.IsVisible = false;
 
-                            var subtitlesFilePath = await this.medflixApiService.GetSubtitlesFileAsync(subtitlesUrl);
-                            if (!string.IsNullOrEmpty(subtitlesFilePath))
-                            {
-                                VlcPlayer.AddSubtitles($"file:///{subtitlesFilePath}");
-                            }
+                            this.subtitles = await this.medflixApiService.GetSubtitlesAsync(subtitlesUrl);
                         }
                     };
                     stackPanel.Children.Add(subTextBlock);
@@ -329,18 +325,16 @@ public partial class VideoPlayerView : UserControl
                 }
 
                 this.NoSubtitlesOption.Classes.Add("selected");
+
+                this.subtitles = null;
                 this.SubtitlesOptionsContainer.IsVisible = false;
-                this.SubtitlesOffset.IsEnabled = false;
-                VlcPlayer.DisableSubtitles();
+                this.SubtitlesText.IsVisible = false;
             };
 
-            this.SubtitlesOffset.ValueChanged += (s, e) =>
+            this.SubtitlesFontSize.ValueChanged += (s, e) =>
             {
                 if (e.NewValue.HasValue)
-                {
-                    var delay = TimeSpan.FromSeconds((double)e.NewValue);
-                    VlcPlayer.SetSubtitlesDelay(delay);
-                }
+                    this.SubtitlesText.FontSize = (double)e.NewValue.Value;
             };
         }
         else
@@ -459,6 +453,35 @@ public partial class VideoPlayerView : UserControl
         }
     }
 
+    private void UpdateSubtitleText(double time)
+    {
+        if (this.subtitles != null && this.subtitles.Any())
+        {
+            var italicMarkers = new string[] { "<i>", "</i>" };
+            var offset = (double)(this.SubtitlesOffset.Value ?? 0) * 1000;
+            var subtitle = this.subtitles.FirstOrDefault(sub => (((sub.StartTime * 1000) + offset) <= time) && (time <= ((sub.EndTime * 1000) + offset)));
+
+            if (subtitle != null)
+            {
+                var text = subtitle.Text;
+
+                this.SubtitlesText.IsVisible = true;
+
+                if (italicMarkers.Any(marker => subtitle.Text.Contains(marker)))
+                {
+                    this.SubtitlesText.FontStyle = FontStyle.Italic;
+                    italicMarkers.ForEach(marker => text = text.Replace(marker, string.Empty));
+                }
+                else
+                    this.SubtitlesText.FontStyle = FontStyle.Normal;
+
+                this.SubtitlesText.Text = text;
+            }
+            else
+                this.SubtitlesText.IsVisible = false;
+        }
+    }
+
     private async Task SaveProgressionAsync(long currentTime)
     {
         if (this.videoPlayerOptions.WatchedMedia != null && (DateTime.Now - lastProgressSaveTime >= TimeSpan.FromSeconds(10)))
@@ -553,6 +576,7 @@ public partial class VideoPlayerView : UserControl
             this.CurrentTime.Text = ToFormattedVideoTime(e.CurrentTime);
             this.RemainingTime.Text = "-" + ToFormattedVideoTime(e.RemainingTime);
 
+            UpdateSubtitleText(e.CurrentTime);
             await SaveProgressionAsync(e.CurrentTime);
         });
     }

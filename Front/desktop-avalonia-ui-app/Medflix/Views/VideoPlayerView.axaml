@@ -106,14 +106,19 @@
 								HorizontalAlignment="Stretch">
 								<Grid x:Name="SubtitlesGrid" RowDefinitions="Auto,100" Background="#1e1e1e">
 								</Grid>
+
 								<TextBlock
 									x:Name="NoSubtitlesOption"
 									Classes="videoOption"
 									HorizontalAlignment="Center"
 									Margin="0 8 0 15"
 									Text="No subtitles"/>
+								
+								<TextBlock Foreground="White" Margin="0 5 0 0" HorizontalAlignment="Center" Text="Font size"/>
+								<NumericUpDown x:Name="SubtitlesFontSize" Value="40" Width="140" HorizontalAlignment="Center" Increment="0.5" Maximum="52" Minimum="22"/>
+								
 								<TextBlock Foreground="White" Margin="0 5 0 0" HorizontalAlignment="Center" Text="Display offset (sec.)"/>
-								<NumericUpDown x:Name="SubtitlesOffset" Value="0" IsEnabled="False" Width="140" HorizontalAlignment="Center" Increment="0.05" Margin="0 0 0 7"/>
+								<NumericUpDown x:Name="SubtitlesOffset" Value="0" Width="140" HorizontalAlignment="Center" Increment="0.05" Margin="0 0 0 7"/>
 							</StackPanel>
 						</Border>
 					</StackPanel>
@@ -136,6 +141,27 @@
 									HorizontalAlignment="Stretch"></StackPanel>
 							</ScrollViewer>
 						</Border>
+					</StackPanel>
+				</Panel>
+				
+				<!--Subtitles-->
+				<Panel ZIndex="1">
+					<StackPanel
+						VerticalAlignment="Bottom"
+						HorizontalAlignment="Center"
+						Margin="0 0 0 60">
+						<StackPanel.Background>
+							<SolidColorBrush Color="Black" Opacity="0.7"/>
+						</StackPanel.Background>
+						<TextBlock 
+							x:Name="SubtitlesText" 
+							Padding="15 7 15 7" 
+							Foreground="White" 
+							FontSize="30" 
+							MaxWidth="800"
+							IsVisible="False"
+							FontFamily="Arial"
+							TextWrapping="Wrap"/>
 					</StackPanel>
 				</Panel>
 				
