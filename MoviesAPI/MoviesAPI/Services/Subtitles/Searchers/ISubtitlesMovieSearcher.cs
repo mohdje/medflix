@@ -11,8 +11,6 @@ namespace MoviesAPI.Services.Subtitles.Searchers
     {
         Task<IEnumerable<string>> GetAvailableMovieSubtitlesUrlsAsync(string imdbCode, SubtitlesLanguage subtitlesLanguage);
         Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitlesSourceUrl);
-        Task<string> GetSubtitlesFileAsync(string subtitlesSourceUrl);
-
         bool Match(string subtitlesSourceUrl);
     }
 }

@@ -44,12 +44,6 @@ namespace WebHostStreaming.Controllers
             return await searchersProvider.SubtitlesSearchManager.GetSubtitlesAsync(sourceUrl);
         }
 
-        [HttpGet("file")]
-        public async Task<string> DownloadSubtitlesFile([FromQuery(Name = "sourceUrl")] string sourceUrl)
-        {
-            return await searchersProvider.SubtitlesSearchManager.GetSubtitlesFileAsync(sourceUrl);
-        }
-
         private List<SubtitlesSourcesDto> BuildSubtitlesSourcesDto(IEnumerable<string> frenchSubtitlesSourcesDto, IEnumerable<string> englishSubtitlesSourcesDto)
         {
 

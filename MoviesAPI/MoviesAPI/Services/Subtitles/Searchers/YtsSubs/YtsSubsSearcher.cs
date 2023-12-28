@@ -55,12 +55,9 @@ namespace MoviesAPI.Services.Subtitles
             return subtitlesSourceLinks;
         }
 
-        public async Task<string> GetSubtitlesFileAsync(string subtitlesSourceUrl)
+        public async Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitlesSourceUrl)
         {
             var doc = await HttpRequester.GetHtmlDocumentAsync(subtitlesSourceUrl);
-
-            if (doc == null)
-                return null;
 
             var base64dataLink = doc.DocumentNode.SelectSingleNode("//a[@id='btn-download-subtitle']")?.Attributes["data-link"]?.Value;
             var subtitlesDownloadUrl = Base64Decode(base64dataLink);
@@ -68,12 +65,7 @@ namespace MoviesAPI.Services.Subtitles
             if (string.IsNullOrEmpty(subtitlesDownloadUrl))
                 return null;
 
-            return await subtitlesProvider.GetSubtitlesFileAsync(subtitlesDownloadUrl, null);
-        }
-
-        public async Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitlesSourceUrl)
-        {
-            var subtitlesFile = await GetSubtitlesFileAsync(subtitlesSourceUrl);
+            var subtitlesFile = await subtitlesProvider.GetSubtitlesFileAsync(subtitlesDownloadUrl, null);
 
             return SubtitlesConverter.GetSubtitles(subtitlesFile);
         }
