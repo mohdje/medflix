@@ -5,6 +5,7 @@ using Medflix.Models.EventArgs;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DryIoc;
+using System.Linq;
 
 namespace Medflix.Tools
 {
@@ -189,7 +190,9 @@ namespace Medflix.Tools
             if (_libVLC != null)
             {
                 StreamDevices = new List<RendererItem>();
-                RendererDiscoverer = new RendererDiscoverer(_libVLC);
+                var name = _libVLC.RendererList.Any() ? _libVLC.RendererList[0].Name : null;
+
+                RendererDiscoverer = new RendererDiscoverer(_libVLC, name);
                 RendererDiscoverer.ItemAdded += OnStreamDeviceFound;
                 RendererDiscoverer.ItemDeleted += OnStreamDeviceLost;
                 RendererDiscoverer.Start();
@@ -215,6 +218,7 @@ namespace Medflix.Tools
 
         public void StopStreamToDevice()
         {
+            SelectedStreamDevice = null;
             MediaPlayer?.SetRenderer(null);
         }
 
