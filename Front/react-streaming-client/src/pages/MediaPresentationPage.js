@@ -256,31 +256,37 @@ function MediaFullPresentation({ mediaId, onCloseClick }) {
                                     <AddBookmarkButton onClick={() => bookmarkMedia()} visible={addBookmarkButtonVisible} />
                                     <RemoveBookmarkButton onClick={() => unbookmarkMedia()} visible={!addBookmarkButtonVisible} />
                                 </div>
-                                <div className="play-options">
-                                    <AvailableItems
-                                        title="Subtitles"
-                                        isLoading={loadingSubtitles}
-                                        itemsList={mediaSubtitlesSources && mediaSubtitlesSources.map(s => s.language)}
-                                        emptyMessage={"No subtitles available"} />
-                                    <AvailableItems
-                                        title="Versions"
-                                        isLoading={torrentSearching}
-                                        itemsList={torrents.current && [...new Set(torrents.current.map(t => t.languageVersion))]}
-                                        emptyMessage={"No version available"} />
-                                    <div style={fadeTransition(!torrentSearching && torrents.current?.length > 0)} className="horizontal">
-                                        <QualitySelector torrents={torrents.current} onQualityChanged={(torrent) => changeSelectedTorrent(torrent)} />
-                                        <PlayButton onClick={() => setShowMediaPlayer(true)} />
-                                        <PlayWithVLCButton
-                                            videoUrl={videoSourceUrl}
-                                            onClick={() => { if (mediaDetails) AppServices.watchedMediaApiService.saveWacthedMedia(mediaDetails, 0, 0, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber) }} />
-                                    </div>
+
+                            </div>
+                        </div>
+                        <div className="play-options">
+                            <AvailableItems
+                                title="Subtitles"
+                                isLoading={loadingSubtitles}
+                                itemsList={mediaSubtitlesSources && mediaSubtitlesSources.map(s => s.language)}
+                                emptyMessage={"No subtitles available"} />
+                            <div className="horizontal">
+                                <AvailableItems
+                                    title="Versions"
+                                    isLoading={torrentSearching}
+                                    itemsList={torrents.current && [...new Set(torrents.current.map(t => t.languageVersion))]}
+                                    emptyMessage={"No version available"} />
+                                <div style={fadeTransition(!torrentSearching && torrents.current?.length > 0)} className="horizontal">
+                                    <QualitySelector torrents={torrents.current} onQualityChanged={(torrent) => changeSelectedTorrent(torrent)} />
+                                    <PlayButton onClick={() => setShowMediaPlayer(true)} />
+                                    <PlayWithVLCButton
+                                        videoUrl={videoSourceUrl}
+                                        onClick={() => { if (mediaDetails) AppServices.watchedMediaApiService.saveWacthedMedia(mediaDetails, 0, 0, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber) }} />
                                 </div>
                             </div>
                         </div>
                         <div className="extra">
-                            <TitleAndContent title="Director" content={mediaDetails.director} justify="left" />
-                            <TitleAndContent title="Cast" content={mediaDetails.cast} justify="left" />
-                            <Paragraph text={mediaDetails.synopsis}></Paragraph>
+                            <div className="media-details">
+                                <TitleAndContent title="Director" content={mediaDetails.director} justify="left" />
+                                <TitleAndContent title="Cast" content={mediaDetails.cast} justify="left" />
+                                <Paragraph text={mediaDetails.synopsis}></Paragraph>
+                            </div>
+
                             <MediasListLiteWithTitle
                                 medias={similarMedias}
                                 alignLeft
@@ -340,10 +346,8 @@ function QualitySelector({ torrents, onQualityChanged }) {
             onQualityChanged(torrent);
     }
 
-    const content = <BaseButton color="red" content={selectedVersionAndQuality} onClick={() => setModalQualitySelectorVisible(true)} />
-
     return <div>
-        <TitleAndContent title="Qualities" content={content} justify="left" />
+        <BaseButton color="red" content={selectedVersionAndQuality} onClick={() => setModalQualitySelectorVisible(true)} />
         <ModalVersionAndQualitySelector
             visible={modalQualitySelectorVisible}
             torrents={torrents}

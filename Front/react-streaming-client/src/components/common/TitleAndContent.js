@@ -11,8 +11,7 @@ function TitleAndContent({ title, content, justify }) {
         display: !!content ? 'flex' : 'none',
         alignItems: 'center',
         justifyContent: justifyContent,
-        margin: '5px 0',
-        height: '40px'
+        margin: '10px 10px 10px 0'
     }
 
     const titleStyle = {
