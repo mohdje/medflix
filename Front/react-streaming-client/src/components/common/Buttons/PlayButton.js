@@ -9,7 +9,7 @@ function PlayButton({ center, onClick }) {
     </div>);
 
     return (
-        <BaseButton content={content} centered={center} color={"grey"} onClick={() => onClick()} />
+        <BaseButton content={content} centered={center} color={"red"} onClick={() => onClick()} />
     );
 }
 

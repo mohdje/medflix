@@ -347,7 +347,7 @@ function QualitySelector({ torrents, onQualityChanged }) {
     }
 
     return <div>
-        <BaseButton color="red" content={selectedVersionAndQuality} onClick={() => setModalQualitySelectorVisible(true)} />
+        <BaseButton color="grey" content={selectedVersionAndQuality} onClick={() => setModalQualitySelectorVisible(true)} />
         <ModalVersionAndQualitySelector
             visible={modalQualitySelectorVisible}
             torrents={torrents}
