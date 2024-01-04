@@ -55,12 +55,12 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
                     var optionsJSON = JSON.stringify(options);
 
                     if (window.chrome) {
+                        window.chrome.webview.addEventListener("message", onDesktopVideoPlayerClosed);
                         window.chrome.webview.postMessage(optionsJSON);
-                        window.chrome.webview.addEventListener("message", onDesktoVideoPlayerClosed);
                     }
                     else if (window.webkit) {
+                        window.__dispatchMessageCallback = () => onDesktopVideoPlayerClosed();
                         window.webkit.messageHandlers.webview.postMessage(optionsJSON);
-                        window.__dispatchMessageCallback = () => onDesktoVideoPlayerClosed();
                     }
                 }
             });
@@ -72,16 +72,16 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
         return () => {
             if (isDesktopApp) {
                 if (window.chrome) {
-                    window.chrome.webview.removeEventListener("message", onDesktoVideoPlayerClosed);
+                    window.chrome.webview.removeEventListener("message", onDesktopVideoPlayerClosed);
                 }
                 else if (window.webkit) {
                     window.__dispatchMessageCallback = null;
                 }
             }
         }
-    })
+    }, [])
 
-    const onDesktoVideoPlayerClosed = () => {
+    const onDesktopVideoPlayerClosed = () => {
         setShowLoadingModal(false);
         onCloseClick();//trigger close click to notify parent that video player is closed
     }
