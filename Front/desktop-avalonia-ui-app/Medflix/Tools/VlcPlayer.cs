@@ -225,10 +225,13 @@ namespace Medflix.Tools
 
         public void AddSubtitles(string filePath)
         {
-            var spuId = MediaPlayer.SpuDescription.Last().Id + 1;
-            if (IsVideoOpened && MediaPlayer.AddSlave(MediaSlaveType.Subtitle, filePath, true))
+            if(MediaPlayer != null)
             {
-                SelectedSpuId = spuId;
+                var spuId = MediaPlayer.SpuDescription.Any() ? MediaPlayer.SpuDescription.Last().Id + 1 : 0;
+                if (IsVideoOpened && MediaPlayer.AddSlave(MediaSlaveType.Subtitle, filePath, true))
+                {
+                    SelectedSpuId = spuId;
+                }
             }
         }
 

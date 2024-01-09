@@ -134,7 +134,7 @@ public partial class VideoPlayerView : UserControl
                 break;
         }
 
-         if (exitFullScreenOnUserAction)
+        if (exitFullScreenOnUserAction)
             this.OnExitFullScreenRequest?.Invoke(this, null);
     }
 
@@ -172,7 +172,7 @@ public partial class VideoPlayerView : UserControl
             this.StreamDevicesListContainer.IsVisible = !this.StreamDevicesListContainer.IsVisible;
             this.SourcesListContainer.IsVisible = false;
             this.SubtitlesOptionsContainer.IsVisible = false;
-        }; 
+        };
         this.SubtitlesButton.Click += (s, e) =>
         {
             this.SubtitlesOptionsContainer.IsVisible = !this.SubtitlesOptionsContainer.IsVisible;
@@ -202,7 +202,7 @@ public partial class VideoPlayerView : UserControl
     {
         this.videoPlayerOptions = videoPlayerOptions;
 
-        await Task.Run(() => Dispatcher.UIThread.Invoke(() =>  BuildSourcesList()));
+        await Task.Run(() => Dispatcher.UIThread.Invoke(() => BuildSourcesList()));
         await Task.Run(() => Dispatcher.UIThread.Invoke(() => BuildSubtitlesOptions()));
     }
     private void BuildSourcesList()
@@ -306,7 +306,8 @@ public partial class VideoPlayerView : UserControl
                             var subtitlesFilePath = await this.medflixApiService.GetSubtitlesFileAsync(subtitlesUrl);
                             if (!string.IsNullOrEmpty(subtitlesFilePath))
                             {
-                                VlcPlayer.AddSubtitles($"file:///{subtitlesFilePath}");
+                                var fileUri = new Uri(subtitlesFilePath).AbsoluteUri;
+                                VlcPlayer.AddSubtitles(fileUri);
                             }
                         }
                     };
@@ -381,7 +382,7 @@ public partial class VideoPlayerView : UserControl
             {
                 Dispatcher.UIThread.Invoke(async () =>
                 {
-                    while (this.SourcesListContainer.IsVisible 
+                    while (this.SourcesListContainer.IsVisible
                     || this.SubtitlesOptionsContainer.IsVisible
                     || this.StreamDevicesListContainer.IsVisible)
                     {
@@ -391,7 +392,7 @@ public partial class VideoPlayerView : UserControl
                     VideoPlayerControls.Opacity = 0;
                     VideoPlayerControls.Cursor = new Cursor(StandardCursorType.None);
 
-                    if(this.VlcPlayer.IsPaused)
+                    if (this.VlcPlayer.IsPaused)
                         this.MediaInfoPanel.IsVisible = true;
                 });
             }
