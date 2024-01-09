@@ -26,8 +26,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-      //  this.MainAppView.OpenVideoPlayerRequest += (s, e) => AddVideoPlayerView(e.VideoPlayerOptions);
-        this.MainAppView.OpenVideoPlayerRequest += (s, e) => AddVideoPlayerView(TestData.GetVideoPlayerOptions());
+        this.MainAppView.OpenVideoPlayerRequest += (s, e) => AddVideoPlayerView(e.VideoPlayerOptions);
         this.MainAppView.MainAppViewLoaded += (s, e) => this.SplashScreen.IsVisible = false;
 
         medflixApiService = new MedflixApiService();
