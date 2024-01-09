@@ -55,9 +55,10 @@ public class VideoView : NativeControlHost
 	private bool _isAttached;
 	private IDisposable? _isEffectivelyVisible;
 
+	public event EventHandler<KeyEventArgs> OnKeyPressed;
+
 	public VideoView()
 	{
-
 		attacher = platformHandles.WithLatestFrom(mediaPlayers).Subscribe(x =>
 		{
 			if(x.First is not null && x.Second is not null)
@@ -163,8 +164,12 @@ public class VideoView : NativeControlHost
 			if(VisualRoot is Window window and not null)
 			{
 				if(show && _isAttached)
-					_floatingContent.Show(window);
-				else
+				{
+					_floatingContent.KeyDown += (s, e) => OnKeyPressed?.Invoke(_floatingContent, e);
+
+                    _floatingContent.Show(window);
+                }
+                else
 					_floatingContent.Hide();
 			}
 		}

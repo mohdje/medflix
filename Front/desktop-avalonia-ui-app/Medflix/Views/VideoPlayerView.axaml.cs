@@ -76,6 +76,7 @@ public partial class VideoPlayerView : UserControl
         VlcPlayer.OnStreamDevicesListChange += MediaPlayerOnStreamDevicesListChange;
 
         this.VolumeBar.ValueChanged += OnVolumeBarValueChanged;
+        this.VlcVideoView.OnKeyPressed += (s, e) => OnKeyPressed(e);
 
         await PlaySelectedSourceAsync();
     }
@@ -100,7 +101,7 @@ public partial class VideoPlayerView : UserControl
             exitFullScreenOnUserAction = false;
     }
 
-    public void NotifyKeyPressed(KeyEventArgs e)
+    public void OnKeyPressed(KeyEventArgs e)
     {
         ShowControls();
 

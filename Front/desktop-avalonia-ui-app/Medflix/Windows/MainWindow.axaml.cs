@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Medflix.Models;
 using Medflix.Services;
@@ -7,7 +6,6 @@ using Medflix.Tools;
 using Medflix.Views;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace Medflix.Windows;
@@ -28,9 +26,9 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        this.MainAppView.OpenVideoPlayerRequest += (s, e) => AddVideoPlayerView(e.VideoPlayerOptions);
+      //  this.MainAppView.OpenVideoPlayerRequest += (s, e) => AddVideoPlayerView(e.VideoPlayerOptions);
+        this.MainAppView.OpenVideoPlayerRequest += (s, e) => AddVideoPlayerView(TestData.GetVideoPlayerOptions());
         this.MainAppView.MainAppViewLoaded += (s, e) => this.SplashScreen.IsVisible = false;
-
 
         medflixApiService = new MedflixApiService();
         appUpdateService = new AppUpdateService();
@@ -61,12 +59,6 @@ public partial class MainWindow : Window
         this.MainAppView.LoadView(this);
 
         await CheckUpdateAsync();
-    }
-
-    protected override void OnKeyDown(KeyEventArgs e)
-    {
-        base.OnKeyDown(e);
-        videoPlayerView?.NotifyKeyPressed(e);
     }
 
     private void AddVideoPlayerView(VideoPlayerOptions videoPlayerOptions)
