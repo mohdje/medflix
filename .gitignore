@@ -25,6 +25,6 @@ Front/desktop-avalonia-ui-app/Medflix/Tools/Tokens.cs
 Front/.DS_Store
 Front/desktop-electron-app/.DS_Store
 Front/extract-update-package-electron-app/.DS_Store
-MacOS App bundle/Medflix.app/
-MacOS App bundle/Medflix.dmg
+Build/MacOS App bundle/Medflix.app/
+Build/MacOS App bundle/Medflix.dmg
 
