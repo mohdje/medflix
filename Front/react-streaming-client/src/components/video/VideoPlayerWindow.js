@@ -40,6 +40,7 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
                         watchedMedia: mediaDetails && {
                             title: mediaDetails.title,
                             id: mediaDetails.id,
+                            genres: mediaDetails.genres,
                             coverImageUrl: mediaDetails.coverImageUrl,
                             rating: mediaDetails.rating,
                             totalDuration: mediaDetails.duration * 60,

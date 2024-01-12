@@ -56,7 +56,7 @@ namespace WebHostStreaming.Providers
                 var minDate = GetMinDate(watchedMedias);
                 var maxDate = GetMaxDate(watchedMedias);
 
-                var allGenresIds = watchedMedias.TakeLast(3).Reverse().SelectMany(movie => movie.Genres.Select(genre => genre.Id));
+                var allGenresIds = watchedMedias.Where(media => media.Genres != null && media.Genres.Any()).TakeLast(3).Reverse().SelectMany(movie => movie.Genres.Select(genre => genre.Id));
                 var genresCount = allGenresIds.Distinct().Select(genreId => new { Id = genreId, Count = allGenresIds.Count(gId => genreId == gId) });
 
                 var selectedGenresIds = genresCount.OrderByDescending(g => g.Count).Select(g => g.Id.ToString()).Take(3);
