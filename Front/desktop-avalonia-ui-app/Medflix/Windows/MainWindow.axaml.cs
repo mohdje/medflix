@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Medflix.Models;
 using Medflix.Services;
@@ -20,8 +21,6 @@ public partial class MainWindow : Window
     private MedflixApiService medflixApiService;
     private AppUpdateService appUpdateService;
 
-
-
     public MainWindow()
     {
         InitializeComponent();
@@ -35,6 +34,12 @@ public partial class MainWindow : Window
         VlcPlayer.InitLibVLC();
 
         webhost = WebHostStreaming.AppStart.CreateHost(new string[0], true);
+    }
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        base.OnKeyDown(e);
+        this.videoPlayerView?.OnKeyPressed(e);
     }
 
     protected override void OnClosing(WindowClosingEventArgs e)
