@@ -2,29 +2,29 @@
 
 set params=%1
 
-set DESKTOP_AVALONIA_CSPROJ_PATH="..\Front\desktop-avalonia-ui-app\Medflix.Desktop\Medflix.Desktop.csproj"
-set WINDOWS_BUILD_PATH="..\Front\desktop-avalonia-ui-app\Medflix.Desktop\bin\release\net7.0\win-x64\publish"
+set DESKTOP_WINFORMS_CSPROJ_PATH="..\Desktop Application\WinFormsApp\MedflixWinForms\MedflixWinForms.csproj"
+set WINDOWS_BUILD_PATH="..\Desktop Application\WinFormsApp\MedflixWinForms\bin\Release\net7.0-windows\win-x64\publish"
 set MACOS_BUILD_PATH="..\Front\desktop-avalonia-ui-app\Medflix.Desktop\bin\release\net7.0\osx-x64\publish"
 set FRONT_END_APP_PATH="..\Front\react-streaming-client"
 set EXTRACT_UPDATE_APP_PATH="..\Front\extract-update-package-electron-app"
 set MACOS_APP_BUNDLE_BUILD_PATH=".\MacOS App bundle\macos"
 
-@REM Build Windows Avlonia App
+@REM Build Windows App
 if not "%params:windows=%"=="%params%" (
     if exist %WINDOWS_BUILD_PATH% (
         rmdir %WINDOWS_BUILD_PATH% /s /q
     )
+    
+    dotnet publish %DESKTOP_WINFORMS_CSPROJ_PATH% -c Release -r win-x64 --self-contained
 
-    dotnet publish %DESKTOP_AVALONIA_CSPROJ_PATH% -c Release -f net7.0 -r win-x64 --self-contained
-
-    move "%WINDOWS_BUILD_PATH%\Medflix.Desktop.exe" "%WINDOWS_BUILD_PATH%\Medflix.exe"
+    move %WINDOWS_BUILD_PATH%\MedflixWinForms.exe %WINDOWS_BUILD_PATH%\Medflix.exe
     
     @REM Build Frontend
     npm run build --prefix %FRONT_END_APP_PATH%
 
     xcopy %FRONT_END_APP_PATH%"\build\"  %WINDOWS_BUILD_PATH%"\view\" /E
 
-    @REM Build Exract Update App
+    @REM @REM Build Exract Update App
     npm run make --prefix %EXTRACT_UPDATE_APP_PATH%
 
     xcopy %EXTRACT_UPDATE_APP_PATH%"\out\Extract Medflix Package-win32-x64\" %WINDOWS_BUILD_PATH%"\extract-update\" /E
