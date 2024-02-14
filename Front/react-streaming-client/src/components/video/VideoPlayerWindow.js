@@ -25,8 +25,6 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
             AppServices.appInfoApiService.isDesktopApplication((isDesktopApp) => {
                 setIsDesktopApp(isDesktopApp);
                 if (isDesktopApp) {
-                    setShowLoadingModal(true);
-
                     const options = {
                         sources: sources.map(source => {
                             return {
@@ -48,7 +46,6 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
                             year: mediaDetails.year,
                             episodeNumber: sources[0].episodeNumber,
                             seasonNumber: sources[0].seasonNumber,
-                            resumeToTime: mediaDetails.currentTime
                         },
                         mediaType: AppMode.getActiveMode().urlKey
                     }
@@ -56,12 +53,13 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
                     var optionsJSON = JSON.stringify(options);
 
                     if (window.chrome) {
+                        setShowLoadingModal(true);
                         window.chrome.webview.addEventListener("message", onDesktopVideoPlayerClosed);
                         window.chrome.webview.postMessage(optionsJSON);
                     }
                     else if (window.webkit) {
-                        window.__dispatchMessageCallback = () => onDesktopVideoPlayerClosed();
-                        window.webkit.messageHandlers.webview.postMessage(optionsJSON);
+                        window.webkit.messageHandlers.medflixWebViewHandler.postMessage(optionsJSON);
+                        onCloseClick();
                     }
                 }
             });
@@ -74,9 +72,6 @@ export function VideoPlayerWindow({ sources, subtitles, visible, onCloseClick, o
             if (isDesktopApp) {
                 if (window.chrome) {
                     window.chrome.webview.removeEventListener("message", onDesktopVideoPlayerClosed);
-                }
-                else if (window.webkit) {
-                    window.__dispatchMessageCallback = null;
                 }
             }
         }
