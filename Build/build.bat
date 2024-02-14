@@ -4,7 +4,8 @@ set params=%1
 
 set DESKTOP_WINFORMS_CSPROJ_PATH="..\Desktop Application\WinFormsApp\MedflixWinForms\MedflixWinForms.csproj"
 set WINDOWS_BUILD_PATH="..\Desktop Application\WinFormsApp\MedflixWinForms\bin\Release\net7.0-windows\win-x64\publish"
-set MACOS_BUILD_PATH="..\Front\desktop-avalonia-ui-app\Medflix.Desktop\bin\release\net7.0\osx-x64\publish"
+set WEBHOST_CSPROJ_PATH="..\WebHostStreaming\WebHostStreaming\WebHostStreaming.csproj"
+set WEBHOST_MACOS_BUILD_PATH="..\WebHostStreaming\WebHostStreaming\bin\Release\net7.0\osx-x64\publish"
 set FRONT_END_APP_PATH="..\Front\react-streaming-client"
 set EXTRACT_UPDATE_APP_PATH="..\Front\extract-update-package-electron-app"
 set MACOS_APP_BUNDLE_BUILD_PATH=".\MacOS App bundle\macos"
@@ -32,24 +33,23 @@ if not "%params:windows=%"=="%params%" (
     echo Windows application is ready
 )
 
-@REM Build Macos Avlonia App
+@REM Build Webhost and view for Macos App
 if not "%params:macos=%"=="%params%" (
-    if exist %MACOS_BUILD_PATH% (
-        rmdir %MACOS_BUILD_PATH% /s /q
+    if exist %WEBHOST_MACOS_BUILD_PATH% (
+        rmdir %WEBHOST_MACOS_BUILD_PATH% /s /q
     )
 
-    dotnet publish %DESKTOP_AVALONIA_CSPROJ_PATH% -c Release -f net7.0 -r osx-x64 --self-contained
+    dotnet publish %WEBHOST_CSPROJ_PATH% -c Release -r osx-x64 --self-contained
 
     @REM Build Frontend
     npm run build --prefix %FRONT_END_APP_PATH%
 
-    xcopy %FRONT_END_APP_PATH%"\build\" %MACOS_BUILD_PATH%"\view\" /E
-
-     if exist %MACOS_APP_BUNDLE_BUILD_PATH% (
+    if exist %MACOS_APP_BUNDLE_BUILD_PATH% (
         rmdir %MACOS_APP_BUNDLE_BUILD_PATH% /s /q
     )
 
-    xcopy %MACOS_BUILD_PATH% %MACOS_APP_BUNDLE_BUILD_PATH%"\" /E
+    xcopy %WEBHOST_MACOS_BUILD_PATH% %MACOS_APP_BUNDLE_BUILD_PATH%"\" /E
+    xcopy %FRONT_END_APP_PATH%"\build\" %MACOS_APP_BUNDLE_BUILD_PATH%"\view\" /E
 
     echo Macos application is ready
 )
