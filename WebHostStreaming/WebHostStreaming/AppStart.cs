@@ -13,7 +13,8 @@ namespace WebHostStreaming
         {
             System.Console.WriteLine("---- Setup folders ----");
             AppFolders.SetupFolders();
-            CreateHostBuilder(args, false).Build().Run();
+
+            CreateHostBuilder(args, args.Contains("-d")).Build().Run();
         }
 
         public static IHost CreateHost(string[] args, bool isDesktopApplication)
