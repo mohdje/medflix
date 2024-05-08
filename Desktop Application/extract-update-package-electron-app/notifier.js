@@ -14,6 +14,12 @@ const notifier = {
 	},
 	notifySuccess(callback) {
 		notifyUI(this.app, this.window, 'Extracting package successfully done. The application will be launched.', callback);
+	},
+	writeArguments(arguments) {
+		console.log("writeArguments", arguments)
+		var msg = ""
+		arguments.forEach(arg => msg += " " + arg)
+		notifyUI(this.app, this.window, 'arguments: ' + msg);
 	}
 }
 

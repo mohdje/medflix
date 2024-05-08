@@ -15,6 +15,7 @@
 			window.addEventListener('DOMContentLoaded', () => {
 				const info = document.getElementById('info')
 				window.electronAPI.onDecompressStateChanged((_event, value) => {
+					console.log("message received", value)
 					info.innerText = value;
 				});
 			})

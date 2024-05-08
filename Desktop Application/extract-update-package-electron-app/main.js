@@ -32,10 +32,15 @@ app.whenReady().then(() => {
 	const zipFilePath = process.argv[1];
 	const destinationFolderPath = process.argv[2];
 
+	if (process.platform === 'darwin') {
+		exec('pkill -9 Medflix');
+		exec('pkill -9 MedflixWebHost');
+	}
+
 	setTimeout(() =>
 		unzipper.unzip(zipFilePath, destinationFolderPath, notifier, () => {
 			if (process.platform === 'darwin') {
-				exec('open -a Medflix');
+				exec('open -a /Applications/Medflix.app');
 			}
 			else {
 				const medflixApplicationPath = process.argv[3];
