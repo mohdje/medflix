@@ -2,35 +2,22 @@
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 cd "$parent_path"
 
-#re-create app bundle from scratch
+#copy swift app 
 rm -r './Medflix.app' 
-mkdir './Medflix.app' 
+cp -av '../../Desktop Application/Macos/Build/Medflix.app' './Medflix.app'
 
-#create app bundle folders
-mkdir './Medflix.app/Contents'
-mkdir './Medflix.app/Contents/MacOS'
-mkdir './Medflix.app/Contents/Resources'
-
-#copy app bundle info files
-cp -av './Info.plist' './Medflix.app/Contents'
-cp -av './PkgInfo' './Medflix.app/Contents'
-
-#copy app icon in app bundle Resources folder 
-cp -av './Medflix.icns' './Medflix.app/Contents/Resources'
-
-#copy avalonia app in app bundle MacOS folder
-chmod 755 './macos/Medflix.Desktop'
-cp -av './macos/.' './Medflix.app/Contents/MacOS'
+#copy webhost app in swift app Resources folder
+chmod 755 './macos/MedflixWebHost'
+cp -av './macos/.' './Medflix.app/Contents/Resources/MedflixWebHost'
 
 #build extract-update-package-electron-app 
-cd '../../Front/extract-update-package-electron-app'
-npm run make
+# cd '../../Desktop Application/extract-update-package-electron-app'
+# npm run make
 
-cd '../..'
+# cd '../..'
 
-#copy extract-update app in avalonia app
-mkdir './Medflix.app/Contents/MacOS/extract-update'
-cp -av './Front/extract-update-package-electron-app/out/Extract Medflix Package-darwin-x64' './Build/MacOS App bundle/Medflix.app/Contents/MacOS/extract-update'
+#copy extract-update app in swift app Resources folder
+cp -av '../../Desktop Application/extract-update-package-electron-app/out/Extract Medflix Package-darwin-x64/Extract Medflix Package.app' './Medflix.app/Contents/Resources/extract_medflix_package.app'
 
 #create dmg
 cd './Build/MacOS App bundle'
