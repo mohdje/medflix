@@ -14,14 +14,16 @@ WebHostStreaming/WebHostStreaming/cache/
 Front/react-streaming-client/node_modules/
 Front/react-streaming-client/build/
 Front/react-streaming-client/.eslintcache
-Front/extract-update-package-electron-app/out/
-Front/extract-update-package-electron-app/node_modules/
+Desktop Application/extract-update-package-electron-app/out/
+Desktop Application/extract-update-package-electron-app/node_modules/
 MoviesAPI/MoviesApiSample/Tokens.cs
 WebHostStreaming/WebHostStreaming/Helpers/Tokens.cs
 Front/.DS_Store
-Front/extract-update-package-electron-app/.DS_Store
+Desktop Application/extract-update-package-electron-app/.DS_Store
 Build/MacOS App bundle/Medflix.app/
 Build/MacOS App bundle/Medflix.dmg
 Desktop Application/WinFormsApp/MedflixWinForms/bin
 Desktop Application/WinFormsApp/MedflixWinForms/obj
 Desktop Application/WinFormsApp/.vs
+Desktop Application/Macos/Build
+.DS_Store
