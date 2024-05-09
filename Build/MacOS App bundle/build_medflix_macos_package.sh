@@ -11,10 +11,10 @@ chmod 755 './macos/MedflixWebHost'
 cp -av './macos/.' './Medflix.app/Contents/Resources/MedflixWebHost'
 
 #build extract-update-package-electron-app 
-# cd '../../Desktop Application/extract-update-package-electron-app'
-# npm run make
+cd '../../Desktop Application/extract-update-package-electron-app'
+npm run make
 
-# cd '../..'
+cd '../..'
 
 #copy extract-update app in swift app Resources folder
 cp -av '../../Desktop Application/extract-update-package-electron-app/out/Extract Medflix Package-darwin-x64/Extract Medflix Package.app' './Medflix.app/Contents/Resources/extract_medflix_package.app'
