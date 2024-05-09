@@ -1,0 +1,703 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		42ED0A74E8B6C916642E4FF8 /* Pods_Medflix.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ECC79A61D30767673276813 /* Pods_Medflix.framework */; };
+		D902EFE72B7951BD00426AF3 /* VLCVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D902EFE62B7951BD00426AF3 /* VLCVideoPlayer.swift */; };
+		D909D1BD2B76D7F500370261 /* VideoSubtitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D909D1BC2B76D7F500370261 /* VideoSubtitles.swift */; };
+		D909D1BF2B76D8A200370261 /* VideoSubtitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D909D1BE2B76D8A200370261 /* VideoSubtitleView.swift */; };
+		D91FA9FE2B70256400C304FB /* MouseHoverArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91FA9FD2B70256400C304FB /* MouseHoverArea.swift */; };
+		D91FAA002B702D6F00C304FB /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91FA9FF2B702D6F00C304FB /* LoadingView.swift */; };
+		D91FD4D52B762F5F00755D96 /* VideoPlayerOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91FD4D42B762F5F00755D96 /* VideoPlayerOptions.swift */; };
+		D91FD4D72B76304600755D96 /* MediaInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91FD4D62B76304600755D96 /* MediaInfo.swift */; };
+		D91FD4D92B7673FF00755D96 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91FD4D82B7673FF00755D96 /* WebView.swift */; };
+		D92634B02B7A6BC00088D55E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D92634AF2B7A6BC00088D55E /* AppDelegate.swift */; };
+		D930DD612B5C6E15001DEE43 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD602B5C6E15001DEE43 /* AudioToolbox.framework */; };
+		D930DD632B5C6E26001DEE43 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD622B5C6E26001DEE43 /* AVFoundation.framework */; };
+		D930DD652B5C6E38001DEE43 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD642B5C6E38001DEE43 /* CFNetwork.framework */; };
+		D930DD672B5C6E48001DEE43 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD662B5C6E48001DEE43 /* CoreFoundation.framework */; };
+		D930DD692B5C6E54001DEE43 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD682B5C6E54001DEE43 /* CoreGraphics.framework */; };
+		D930DD6B2B5C6E68001DEE43 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD6A2B5C6E68001DEE43 /* CoreMedia.framework */; };
+		D930DD6D2B5C6E75001DEE43 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD6C2B5C6E75001DEE43 /* CoreText.framework */; };
+		D930DD6F2B5C6E8F001DEE43 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD6E2B5C6E8F001DEE43 /* CoreVideo.framework */; };
+		D930DD712B5C6E9C001DEE43 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD702B5C6E9C001DEE43 /* Foundation.framework */; };
+		D930DD732B5C6EAC001DEE43 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD722B5C6EAC001DEE43 /* libbz2.tbd */; };
+		D930DD752B5C6EB9001DEE43 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD742B5C6EB9001DEE43 /* libc++.tbd */; };
+		D930DD772B5C6EC6001DEE43 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD762B5C6EC6001DEE43 /* libiconv.tbd */; };
+		D930DD792B5C6ED7001DEE43 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD782B5C6ED7001DEE43 /* libxml2.tbd */; };
+		D930DD7B2B5C6F0B001DEE43 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD7A2B5C6F0B001DEE43 /* QuartzCore.framework */; };
+		D930DD7D2B5C6F19001DEE43 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD7C2B5C6F19001DEE43 /* Security.framework */; };
+		D930DD7F2B5C6F23001DEE43 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD7E2B5C6F23001DEE43 /* VideoToolbox.framework */; };
+		D930DD812B5C6FD5001DEE43 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D930DD802B5C6FD5001DEE43 /* OpenGL.framework */; };
+		D930DD8D2B5C722A001DEE43 /* header.m in Sources */ = {isa = PBXBuildFile; fileRef = D930DD8C2B5C722A001DEE43 /* header.m */; };
+		D93811A32B7FA5B4009E5B0F /* AppUpdateModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D93811A22B7FA5B4009E5B0F /* AppUpdateModalView.swift */; };
+		D9432E632B69842F009D9343 /* VideoPlayerSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9432E622B69842F009D9343 /* VideoPlayerSlider.swift */; };
+		D94C6C0F2B8B735000920381 /* MediaInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94C6C0E2B8B735000920381 /* MediaInfoView.swift */; };
+		D956BA7B2B61B92F00E116A5 /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D956BA7A2B61B92F00E116A5 /* VideoPlayerView.swift */; };
+		D95B729D2B7FADF200922DB8 /* AppUpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D95B729C2B7FADF200922DB8 /* AppUpdateService.swift */; };
+		D95B729F2B7FB7E400922DB8 /* AppRelease.swift in Sources */ = {isa = PBXBuildFile; fileRef = D95B729E2B7FB7E400922DB8 /* AppRelease.swift */; };
+		D97495072B78240F00A0F42F /* MedflixApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D97495062B78240F00A0F42F /* MedflixApiService.swift */; };
+		D98A39FA2B5B270600F1625F /* MedflixApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98A39F92B5B270600F1625F /* MedflixApp.swift */; };
+		D98A39FC2B5B270600F1625F /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98A39FB2B5B270600F1625F /* MainView.swift */; };
+		D98A39FE2B5B270800F1625F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D98A39FD2B5B270800F1625F /* Assets.xcassets */; };
+		D98A3A012B5B270800F1625F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D98A3A002B5B270800F1625F /* Preview Assets.xcassets */; };
+		D9B02A822B75604600CF6018 /* QualitiesCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B02A812B75604600CF6018 /* QualitiesCommand.swift */; };
+		D9B02A852B75688500CF6018 /* SubtitlesCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B02A842B75688500CF6018 /* SubtitlesCommand.swift */; };
+		D9B02A872B7569ED00CF6018 /* ButtonCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B02A862B7569ED00CF6018 /* ButtonCommand.swift */; };
+		D9C6B6322B8E7A1A00A20D9F /* CastDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9C6B6312B8E7A1A00A20D9F /* CastDevices.swift */; };
+		D9D207B92B8D226700076A8B /* CastToDeviceCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D207B82B8D226700076A8B /* CastToDeviceCommand.swift */; };
+		D9D207BB2B8D241500076A8B /* CastToDeviceModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D207BA2B8D241500076A8B /* CastToDeviceModalView.swift */; };
+		D9DC18ED2B7A1C1200F2CD82 /* SubtitlesOptionsModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9DC18EC2B7A1C1200F2CD82 /* SubtitlesOptionsModalView.swift */; };
+		D9E601DB2B73DD3500893991 /* VideoQualityOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E601DA2B73DD3500893991 /* VideoQualityOption.swift */; };
+		D9E9C1EE2B8D2D5C00A89554 /* VLCRendererDiscovererListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E9C1ED2B8D2D5C00A89554 /* VLCRendererDiscovererListener.swift */; };
+		D9EE5D402B65979A002343D1 /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9EE5D3F2B65979A002343D1 /* VideoView.swift */; };
+		D9EE5D422B6597D6002343D1 /* VLCMediaPlayerListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9EE5D412B6597D6002343D1 /* VLCMediaPlayerListener.swift */; };
+		D9F7A15A2B7EA3EF008B938F /* SpashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F7A1592B7EA3EF008B938F /* SpashScreenView.swift */; };
+		D9FBC62C2B62FC72006D5ED6 /* VideoPlayerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FBC62B2B62FC72006D5ED6 /* VideoPlayerButton.swift */; };
+		D9FC417A2B74185E0037EAFB /* SubtitlesOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FC41792B74185E0037EAFB /* SubtitlesOption.swift */; };
+		D9FD635D2B6AEDED007901A3 /* VideoPlayerTimeLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FD635C2B6AEDED007901A3 /* VideoPlayerTimeLabel.swift */; };
+		D9FF79982B7C0176000943A8 /* DownloadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FF79972B7C0176000943A8 /* DownloadingState.swift */; };
+		D9FF799A2B7C088E000943A8 /* HttpRequestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FF79992B7C088E000943A8 /* HttpRequestService.swift */; };
+		D9FFFF342B6EE1ED009E00AA /* VideoPlayerControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FFFF332B6EE1ED009E00AA /* VideoPlayerControlsView.swift */; };
+		D9FFFF382B6FB527009E00AA /* VideoPlayerIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FFFF372B6FB527009E00AA /* VideoPlayerIcons.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		4B899FD0DE49B65E986707CE /* Pods-Medflix.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Medflix.debug.xcconfig"; path = "Target Support Files/Pods-Medflix/Pods-Medflix.debug.xcconfig"; sourceTree = "<group>"; };
+		4FF28A40D32575775CDD3061 /* Pods-Medflix.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Medflix.release.xcconfig"; path = "Target Support Files/Pods-Medflix/Pods-Medflix.release.xcconfig"; sourceTree = "<group>"; };
+		6ECC79A61D30767673276813 /* Pods_Medflix.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Medflix.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D902EFE62B7951BD00426AF3 /* VLCVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCVideoPlayer.swift; sourceTree = "<group>"; };
+		D909D1BC2B76D7F500370261 /* VideoSubtitles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSubtitles.swift; sourceTree = "<group>"; };
+		D909D1BE2B76D8A200370261 /* VideoSubtitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSubtitleView.swift; sourceTree = "<group>"; };
+		D91FA9FD2B70256400C304FB /* MouseHoverArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MouseHoverArea.swift; sourceTree = "<group>"; };
+		D91FA9FF2B702D6F00C304FB /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		D91FD4D42B762F5F00755D96 /* VideoPlayerOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerOptions.swift; sourceTree = "<group>"; };
+		D91FD4D62B76304600755D96 /* MediaInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaInfo.swift; sourceTree = "<group>"; };
+		D91FD4D82B7673FF00755D96 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
+		D92634AF2B7A6BC00088D55E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D930DD602B5C6E15001DEE43 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		D930DD622B5C6E26001DEE43 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		D930DD642B5C6E38001DEE43 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		D930DD662B5C6E48001DEE43 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		D930DD682B5C6E54001DEE43 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		D930DD6A2B5C6E68001DEE43 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		D930DD6C2B5C6E75001DEE43 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		D930DD6E2B5C6E8F001DEE43 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		D930DD702B5C6E9C001DEE43 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		D930DD722B5C6EAC001DEE43 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
+		D930DD742B5C6EB9001DEE43 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		D930DD762B5C6EC6001DEE43 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
+		D930DD782B5C6ED7001DEE43 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
+		D930DD7A2B5C6F0B001DEE43 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		D930DD7C2B5C6F19001DEE43 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		D930DD7E2B5C6F23001DEE43 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
+		D930DD802B5C6FD5001DEE43 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		D930DD8C2B5C722A001DEE43 /* header.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = header.m; sourceTree = "<group>"; };
+		D930DD8E2B5C7254001DEE43 /* Medflix-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Medflix-Bridging-Header.h"; sourceTree = "<group>"; };
+		D93811A22B7FA5B4009E5B0F /* AppUpdateModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateModalView.swift; sourceTree = "<group>"; };
+		D9432E622B69842F009D9343 /* VideoPlayerSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerSlider.swift; sourceTree = "<group>"; };
+		D94C6C0E2B8B735000920381 /* MediaInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaInfoView.swift; sourceTree = "<group>"; };
+		D956BA7A2B61B92F00E116A5 /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
+		D95B729C2B7FADF200922DB8 /* AppUpdateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateService.swift; sourceTree = "<group>"; };
+		D95B729E2B7FB7E400922DB8 /* AppRelease.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRelease.swift; sourceTree = "<group>"; };
+		D97495062B78240F00A0F42F /* MedflixApiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedflixApiService.swift; sourceTree = "<group>"; };
+		D98A39F62B5B270600F1625F /* Medflix.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Medflix.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D98A39F92B5B270600F1625F /* MedflixApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedflixApp.swift; sourceTree = "<group>"; };
+		D98A39FB2B5B270600F1625F /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		D98A39FD2B5B270800F1625F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D98A3A002B5B270800F1625F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		D98A3A022B5B270800F1625F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D98A3A032B5B270800F1625F /* Medflix.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Medflix.entitlements; sourceTree = "<group>"; };
+		D9B02A812B75604600CF6018 /* QualitiesCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QualitiesCommand.swift; sourceTree = "<group>"; };
+		D9B02A842B75688500CF6018 /* SubtitlesCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitlesCommand.swift; sourceTree = "<group>"; };
+		D9B02A862B7569ED00CF6018 /* ButtonCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonCommand.swift; sourceTree = "<group>"; };
+		D9C6B6312B8E7A1A00A20D9F /* CastDevices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastDevices.swift; sourceTree = "<group>"; };
+		D9D207B82B8D226700076A8B /* CastToDeviceCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastToDeviceCommand.swift; sourceTree = "<group>"; };
+		D9D207BA2B8D241500076A8B /* CastToDeviceModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastToDeviceModalView.swift; sourceTree = "<group>"; };
+		D9DC18EC2B7A1C1200F2CD82 /* SubtitlesOptionsModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitlesOptionsModalView.swift; sourceTree = "<group>"; };
+		D9E601DA2B73DD3500893991 /* VideoQualityOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoQualityOption.swift; sourceTree = "<group>"; };
+		D9E9C1ED2B8D2D5C00A89554 /* VLCRendererDiscovererListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCRendererDiscovererListener.swift; sourceTree = "<group>"; };
+		D9EE5D3F2B65979A002343D1 /* VideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
+		D9EE5D412B6597D6002343D1 /* VLCMediaPlayerListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCMediaPlayerListener.swift; sourceTree = "<group>"; };
+		D9F7A1592B7EA3EF008B938F /* SpashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpashScreenView.swift; sourceTree = "<group>"; };
+		D9FBC62B2B62FC72006D5ED6 /* VideoPlayerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerButton.swift; sourceTree = "<group>"; };
+		D9FC41792B74185E0037EAFB /* SubtitlesOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitlesOption.swift; sourceTree = "<group>"; };
+		D9FD635C2B6AEDED007901A3 /* VideoPlayerTimeLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerTimeLabel.swift; sourceTree = "<group>"; };
+		D9FF79972B7C0176000943A8 /* DownloadingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadingState.swift; sourceTree = "<group>"; };
+		D9FF79992B7C088E000943A8 /* HttpRequestService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpRequestService.swift; sourceTree = "<group>"; };
+		D9FFFF332B6EE1ED009E00AA /* VideoPlayerControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerControlsView.swift; sourceTree = "<group>"; };
+		D9FFFF372B6FB527009E00AA /* VideoPlayerIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerIcons.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D98A39F32B5B270600F1625F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D930DD812B5C6FD5001DEE43 /* OpenGL.framework in Frameworks */,
+				D930DD7F2B5C6F23001DEE43 /* VideoToolbox.framework in Frameworks */,
+				D930DD7D2B5C6F19001DEE43 /* Security.framework in Frameworks */,
+				D930DD7B2B5C6F0B001DEE43 /* QuartzCore.framework in Frameworks */,
+				D930DD792B5C6ED7001DEE43 /* libxml2.tbd in Frameworks */,
+				D930DD772B5C6EC6001DEE43 /* libiconv.tbd in Frameworks */,
+				D930DD752B5C6EB9001DEE43 /* libc++.tbd in Frameworks */,
+				D930DD732B5C6EAC001DEE43 /* libbz2.tbd in Frameworks */,
+				D930DD712B5C6E9C001DEE43 /* Foundation.framework in Frameworks */,
+				D930DD6F2B5C6E8F001DEE43 /* CoreVideo.framework in Frameworks */,
+				D930DD6D2B5C6E75001DEE43 /* CoreText.framework in Frameworks */,
+				D930DD6B2B5C6E68001DEE43 /* CoreMedia.framework in Frameworks */,
+				D930DD692B5C6E54001DEE43 /* CoreGraphics.framework in Frameworks */,
+				D930DD672B5C6E48001DEE43 /* CoreFoundation.framework in Frameworks */,
+				D930DD652B5C6E38001DEE43 /* CFNetwork.framework in Frameworks */,
+				D930DD632B5C6E26001DEE43 /* AVFoundation.framework in Frameworks */,
+				D930DD612B5C6E15001DEE43 /* AudioToolbox.framework in Frameworks */,
+				42ED0A74E8B6C916642E4FF8 /* Pods_Medflix.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		49908420E31D1AB7BBBF95AD /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4B899FD0DE49B65E986707CE /* Pods-Medflix.debug.xcconfig */,
+				4FF28A40D32575775CDD3061 /* Pods-Medflix.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		CC0A57AA8BC1F2C6F895EF4D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D930DD802B5C6FD5001DEE43 /* OpenGL.framework */,
+				D930DD7E2B5C6F23001DEE43 /* VideoToolbox.framework */,
+				D930DD7C2B5C6F19001DEE43 /* Security.framework */,
+				D930DD7A2B5C6F0B001DEE43 /* QuartzCore.framework */,
+				D930DD782B5C6ED7001DEE43 /* libxml2.tbd */,
+				D930DD762B5C6EC6001DEE43 /* libiconv.tbd */,
+				D930DD742B5C6EB9001DEE43 /* libc++.tbd */,
+				D930DD722B5C6EAC001DEE43 /* libbz2.tbd */,
+				D930DD702B5C6E9C001DEE43 /* Foundation.framework */,
+				D930DD6E2B5C6E8F001DEE43 /* CoreVideo.framework */,
+				D930DD6C2B5C6E75001DEE43 /* CoreText.framework */,
+				D930DD6A2B5C6E68001DEE43 /* CoreMedia.framework */,
+				D930DD682B5C6E54001DEE43 /* CoreGraphics.framework */,
+				D930DD662B5C6E48001DEE43 /* CoreFoundation.framework */,
+				D930DD642B5C6E38001DEE43 /* CFNetwork.framework */,
+				D930DD622B5C6E26001DEE43 /* AVFoundation.framework */,
+				D930DD602B5C6E15001DEE43 /* AudioToolbox.framework */,
+				6ECC79A61D30767673276813 /* Pods_Medflix.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D909D1BB2B76D20A00370261 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				D97495062B78240F00A0F42F /* MedflixApiService.swift */,
+				D9FF79992B7C088E000943A8 /* HttpRequestService.swift */,
+				D95B729C2B7FADF200922DB8 /* AppUpdateService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		D93811A12B7FA591009E5B0F /* Modals */ = {
+			isa = PBXGroup;
+			children = (
+				D9DC18EC2B7A1C1200F2CD82 /* SubtitlesOptionsModalView.swift */,
+				D93811A22B7FA5B4009E5B0F /* AppUpdateModalView.swift */,
+				D9D207BA2B8D241500076A8B /* CastToDeviceModalView.swift */,
+			);
+			path = Modals;
+			sourceTree = "<group>";
+		};
+		D93C83A72B8FC9E100FECBC8 /* VLC */ = {
+			isa = PBXGroup;
+			children = (
+				D9E9C1ED2B8D2D5C00A89554 /* VLCRendererDiscovererListener.swift */,
+				D902EFE62B7951BD00426AF3 /* VLCVideoPlayer.swift */,
+				D9EE5D412B6597D6002343D1 /* VLCMediaPlayerListener.swift */,
+			);
+			path = VLC;
+			sourceTree = "<group>";
+		};
+		D98A39ED2B5B270600F1625F = {
+			isa = PBXGroup;
+			children = (
+				D930DD8E2B5C7254001DEE43 /* Medflix-Bridging-Header.h */,
+				D98A39F82B5B270600F1625F /* Sources */,
+				D98A39F72B5B270600F1625F /* Products */,
+				49908420E31D1AB7BBBF95AD /* Pods */,
+				CC0A57AA8BC1F2C6F895EF4D /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		D98A39F72B5B270600F1625F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D98A39F62B5B270600F1625F /* Medflix.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D98A39F82B5B270600F1625F /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				D909D1BB2B76D20A00370261 /* Services */,
+				D9B02A832B75671E00CF6018 /* Commands */,
+				D9E601DD2B73E07800893991 /* Utils */,
+				D9E601DC2B73E03000893991 /* Components */,
+				D9E601D92B73DCF300893991 /* Models */,
+				D9FBC6292B62FC34006D5ED6 /* Views */,
+				D98A39F92B5B270600F1625F /* MedflixApp.swift */,
+				D98A39FD2B5B270800F1625F /* Assets.xcassets */,
+				D98A3A022B5B270800F1625F /* Info.plist */,
+				D98A3A032B5B270800F1625F /* Medflix.entitlements */,
+				D98A39FF2B5B270800F1625F /* Preview Content */,
+				D930DD8C2B5C722A001DEE43 /* header.m */,
+				D92634AF2B7A6BC00088D55E /* AppDelegate.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		D98A39FF2B5B270800F1625F /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				D98A3A002B5B270800F1625F /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		D9B02A832B75671E00CF6018 /* Commands */ = {
+			isa = PBXGroup;
+			children = (
+				D9B02A812B75604600CF6018 /* QualitiesCommand.swift */,
+				D9B02A842B75688500CF6018 /* SubtitlesCommand.swift */,
+				D9D207B82B8D226700076A8B /* CastToDeviceCommand.swift */,
+			);
+			path = Commands;
+			sourceTree = "<group>";
+		};
+		D9E601D92B73DCF300893991 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D9E601DA2B73DD3500893991 /* VideoQualityOption.swift */,
+				D9FC41792B74185E0037EAFB /* SubtitlesOption.swift */,
+				D91FD4D42B762F5F00755D96 /* VideoPlayerOptions.swift */,
+				D91FD4D62B76304600755D96 /* MediaInfo.swift */,
+				D909D1BC2B76D7F500370261 /* VideoSubtitles.swift */,
+				D9FF79972B7C0176000943A8 /* DownloadingState.swift */,
+				D95B729E2B7FB7E400922DB8 /* AppRelease.swift */,
+				D9C6B6312B8E7A1A00A20D9F /* CastDevices.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D9E601DC2B73E03000893991 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				D9B02A862B7569ED00CF6018 /* ButtonCommand.swift */,
+				D9FD635C2B6AEDED007901A3 /* VideoPlayerTimeLabel.swift */,
+				D9432E622B69842F009D9343 /* VideoPlayerSlider.swift */,
+				D9FBC62B2B62FC72006D5ED6 /* VideoPlayerButton.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		D9E601DD2B73E07800893991 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				D93C83A72B8FC9E100FECBC8 /* VLC */,
+				D9FFFF372B6FB527009E00AA /* VideoPlayerIcons.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		D9FBC6292B62FC34006D5ED6 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D93811A12B7FA591009E5B0F /* Modals */,
+				D9FBC62A2B62FC4B006D5ED6 /* VideoPlayerView */,
+				D98A39FB2B5B270600F1625F /* MainView.swift */,
+				D91FD4D82B7673FF00755D96 /* WebView.swift */,
+				D9F7A1592B7EA3EF008B938F /* SpashScreenView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D9FBC62A2B62FC4B006D5ED6 /* VideoPlayerView */ = {
+			isa = PBXGroup;
+			children = (
+				D956BA7A2B61B92F00E116A5 /* VideoPlayerView.swift */,
+				D9EE5D3F2B65979A002343D1 /* VideoView.swift */,
+				D9FFFF332B6EE1ED009E00AA /* VideoPlayerControlsView.swift */,
+				D91FA9FD2B70256400C304FB /* MouseHoverArea.swift */,
+				D91FA9FF2B702D6F00C304FB /* LoadingView.swift */,
+				D909D1BE2B76D8A200370261 /* VideoSubtitleView.swift */,
+				D94C6C0E2B8B735000920381 /* MediaInfoView.swift */,
+			);
+			path = VideoPlayerView;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D98A39F52B5B270600F1625F /* Medflix */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D98A3A062B5B270800F1625F /* Build configuration list for PBXNativeTarget "Medflix" */;
+			buildPhases = (
+				7C513B9E2B8675BF633F334C /* [CP] Check Pods Manifest.lock */,
+				D98A39F22B5B270600F1625F /* Sources */,
+				D98A39F32B5B270600F1625F /* Frameworks */,
+				D98A39F42B5B270600F1625F /* Resources */,
+				1E192B4C658022474ED4D316 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Medflix;
+			productName = Medflix;
+			productReference = D98A39F62B5B270600F1625F /* Medflix.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D98A39EE2B5B270600F1625F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				KnownAssetTags = (
+					Resources,
+				);
+				LastSwiftUpdateCheck = 1250;
+				LastUpgradeCheck = 1250;
+				TargetAttributes = {
+					D98A39F52B5B270600F1625F = {
+						CreatedOnToolsVersion = 12.5.1;
+						LastSwiftMigration = 1250;
+					};
+				};
+			};
+			buildConfigurationList = D98A39F12B5B270600F1625F /* Build configuration list for PBXProject "Medflix" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D98A39ED2B5B270600F1625F;
+			productRefGroup = D98A39F72B5B270600F1625F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D98A39F52B5B270600F1625F /* Medflix */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D98A39F42B5B270600F1625F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D98A3A012B5B270800F1625F /* Preview Assets.xcassets in Resources */,
+				D98A39FE2B5B270800F1625F /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1E192B4C658022474ED4D316 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Medflix/Pods-Medflix-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Medflix/Pods-Medflix-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Medflix/Pods-Medflix-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7C513B9E2B8675BF633F334C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Medflix-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D98A39F22B5B270600F1625F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D9EE5D402B65979A002343D1 /* VideoView.swift in Sources */,
+				D9FD635D2B6AEDED007901A3 /* VideoPlayerTimeLabel.swift in Sources */,
+				D91FD4D52B762F5F00755D96 /* VideoPlayerOptions.swift in Sources */,
+				D9DC18ED2B7A1C1200F2CD82 /* SubtitlesOptionsModalView.swift in Sources */,
+				D956BA7B2B61B92F00E116A5 /* VideoPlayerView.swift in Sources */,
+				D9D207BB2B8D241500076A8B /* CastToDeviceModalView.swift in Sources */,
+				D91FD4D72B76304600755D96 /* MediaInfo.swift in Sources */,
+				D95B729D2B7FADF200922DB8 /* AppUpdateService.swift in Sources */,
+				D930DD8D2B5C722A001DEE43 /* header.m in Sources */,
+				D98A39FC2B5B270600F1625F /* MainView.swift in Sources */,
+				D9C6B6322B8E7A1A00A20D9F /* CastDevices.swift in Sources */,
+				D97495072B78240F00A0F42F /* MedflixApiService.swift in Sources */,
+				D9B02A822B75604600CF6018 /* QualitiesCommand.swift in Sources */,
+				D9D207B92B8D226700076A8B /* CastToDeviceCommand.swift in Sources */,
+				D9B02A872B7569ED00CF6018 /* ButtonCommand.swift in Sources */,
+				D9FF79982B7C0176000943A8 /* DownloadingState.swift in Sources */,
+				D9FBC62C2B62FC72006D5ED6 /* VideoPlayerButton.swift in Sources */,
+				D909D1BD2B76D7F500370261 /* VideoSubtitles.swift in Sources */,
+				D9E601DB2B73DD3500893991 /* VideoQualityOption.swift in Sources */,
+				D9FC417A2B74185E0037EAFB /* SubtitlesOption.swift in Sources */,
+				D94C6C0F2B8B735000920381 /* MediaInfoView.swift in Sources */,
+				D9FF799A2B7C088E000943A8 /* HttpRequestService.swift in Sources */,
+				D9E9C1EE2B8D2D5C00A89554 /* VLCRendererDiscovererListener.swift in Sources */,
+				D91FAA002B702D6F00C304FB /* LoadingView.swift in Sources */,
+				D9432E632B69842F009D9343 /* VideoPlayerSlider.swift in Sources */,
+				D909D1BF2B76D8A200370261 /* VideoSubtitleView.swift in Sources */,
+				D91FA9FE2B70256400C304FB /* MouseHoverArea.swift in Sources */,
+				D98A39FA2B5B270600F1625F /* MedflixApp.swift in Sources */,
+				D9FFFF382B6FB527009E00AA /* VideoPlayerIcons.swift in Sources */,
+				D95B729F2B7FB7E400922DB8 /* AppRelease.swift in Sources */,
+				D92634B02B7A6BC00088D55E /* AppDelegate.swift in Sources */,
+				D9FFFF342B6EE1ED009E00AA /* VideoPlayerControlsView.swift in Sources */,
+				D93811A32B7FA5B4009E5B0F /* AppUpdateModalView.swift in Sources */,
+				D9EE5D422B6597D6002343D1 /* VLCMediaPlayerListener.swift in Sources */,
+				D9F7A15A2B7EA3EF008B938F /* SpashScreenView.swift in Sources */,
+				D9B02A852B75688500CF6018 /* SubtitlesCommand.swift in Sources */,
+				D902EFE72B7951BD00426AF3 /* VLCVideoPlayer.swift in Sources */,
+				D91FD4D92B7673FF00755D96 /* WebView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		D98A3A042B5B270800F1625F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D98A3A052B5B270800F1625F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		D98A3A072B5B270800F1625F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4B899FD0DE49B65E986707CE /* Pods-Medflix.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Medflix/Medflix.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"Sources/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Sources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 2.2.3;
+				PRODUCT_BUNDLE_IDENTIFIER = mohdje.Medflix;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Medflix-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D98A3A082B5B270800F1625F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4FF28A40D32575775CDD3061 /* Pods-Medflix.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Medflix/Medflix.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"Sources/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Sources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 2.2.3;
+				PRODUCT_BUNDLE_IDENTIFIER = mohdje.Medflix;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Medflix-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D98A39F12B5B270600F1625F /* Build configuration list for PBXProject "Medflix" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D98A3A042B5B270800F1625F /* Debug */,
+				D98A3A052B5B270800F1625F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D98A3A062B5B270800F1625F /* Build configuration list for PBXNativeTarget "Medflix" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D98A3A072B5B270800F1625F /* Debug */,
+				D98A3A082B5B270800F1625F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D98A39EE2B5B270600F1625F /* Project object */;
+}
