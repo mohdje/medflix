@@ -1,0 +1,547 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		91EB5BA632A9221FE0838DAB2969DF72 /* VLCKit */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = BEDBCD7B38121DBF876BB31998202415 /* Build configuration list for PBXAggregateTarget "VLCKit" */;
+			buildPhases = (
+				D53CC4C81EE0BDF20C8376EB2739EBD9 /* [CP] Copy XCFrameworks */,
+			);
+			dependencies = (
+			);
+			name = VLCKit;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		054BFF13EF21FDD0BA38834DCD3EB94D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1430F003D39D9906881A6AC724B7931 /* Cocoa.framework */; };
+		2C4A6687368997C47B1C998091A67E09 /* Pods-Medflix-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4651171ABE1D72D1B749E10EEB19CCFB /* Pods-Medflix-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BEEA5CA81256A98EA5CFAD5596B6056E /* Pods-Medflix-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = E2637768A2FA6554218D17FCAB4A0C51 /* Pods-Medflix-dummy.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9CD3CFE84934DD34ABDCE04BDCBF4A9F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 91EB5BA632A9221FE0838DAB2969DF72;
+			remoteInfo = VLCKit;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		06C5E1B0DEFA2B91D2CE5068AEBED194 /* Pods-Medflix-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Medflix-acknowledgements.plist"; sourceTree = "<group>"; };
+		0CE85D0F4765E2A28351993A9C82CE05 /* Pods-Medflix.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-Medflix.modulemap"; sourceTree = "<group>"; };
+		129DB631CC90438978D36EC3FC29B6E2 /* Pods-Medflix-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Medflix-Info.plist"; sourceTree = "<group>"; };
+		246C3F82955442FE268659B6110E67A2 /* VLCKit-xcframeworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "VLCKit-xcframeworks.sh"; sourceTree = "<group>"; };
+		4651171ABE1D72D1B749E10EEB19CCFB /* Pods-Medflix-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Medflix-umbrella.h"; sourceTree = "<group>"; };
+		588A606031180D404F0D6F23F3082D34 /* Pods-Medflix-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Medflix-frameworks.sh"; sourceTree = "<group>"; };
+		673A17956FD93E74E642655D18FDEC47 /* Pods-Medflix */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-Medflix"; path = Pods_Medflix.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D7071D8050C9760D08DF9E7F3930060 /* Pods-Medflix-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Medflix-acknowledgements.markdown"; sourceTree = "<group>"; };
+		99BF8C3124FF6B74720CA11AF08C8179 /* VLCKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = VLCKit.debug.xcconfig; sourceTree = "<group>"; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		C1430F003D39D9906881A6AC724B7931 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		C14EE183535F820947F3DB905468B132 /* VLCKit.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; path = VLCKit.xcframework; sourceTree = "<group>"; };
+		E2637768A2FA6554218D17FCAB4A0C51 /* Pods-Medflix-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Medflix-dummy.m"; sourceTree = "<group>"; };
+		E980BA0EA3A3B2349A1A66F1CFB9FA7A /* VLCKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = VLCKit.release.xcconfig; sourceTree = "<group>"; };
+		F314CF1420852F74D7340D20E81B258A /* Pods-Medflix.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Medflix.release.xcconfig"; sourceTree = "<group>"; };
+		FBC7EE7BCD59A71BE3ED4AF200F01D5B /* Pods-Medflix.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Medflix.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		06508DE85E6E18DE01F6AE944829DEE1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				054BFF13EF21FDD0BA38834DCD3EB94D /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		47F802EF1F34DEA1AAD8B87EE5AAFD12 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				673A17956FD93E74E642655D18FDEC47 /* Pods-Medflix */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A205A0FD0E75FE7D2CF41147696886DF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C14EE183535F820947F3DB905468B132 /* VLCKit.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		AAB602C7557CE8A1950DA4D47928A0E9 /* VLCKit */ = {
+			isa = PBXGroup;
+			children = (
+				A205A0FD0E75FE7D2CF41147696886DF /* Frameworks */,
+				C4DC98AED92C5CBD13350F1843ACF36E /* Support Files */,
+			);
+			name = VLCKit;
+			path = VLCKit;
+			sourceTree = "<group>";
+		};
+		AB25E6B41962321E9DFA11DA50F701A3 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				AAB602C7557CE8A1950DA4D47928A0E9 /* VLCKit */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		C4DC98AED92C5CBD13350F1843ACF36E /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				246C3F82955442FE268659B6110E67A2 /* VLCKit-xcframeworks.sh */,
+				99BF8C3124FF6B74720CA11AF08C8179 /* VLCKit.debug.xcconfig */,
+				E980BA0EA3A3B2349A1A66F1CFB9FA7A /* VLCKit.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/VLCKit";
+			sourceTree = "<group>";
+		};
+		CF1408CF629C7361332E53B88F7BD30C = {
+			isa = PBXGroup;
+			children = (
+				9D940727FF8FB9C785EB98E56350EF41 /* Podfile */,
+				E0A1E60606E0BF6E2E10F1F01350DFE8 /* Frameworks */,
+				AB25E6B41962321E9DFA11DA50F701A3 /* Pods */,
+				47F802EF1F34DEA1AAD8B87EE5AAFD12 /* Products */,
+				F330DDFFB493F7DDCAD94AE51BBE5BDE /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		E0A1E60606E0BF6E2E10F1F01350DFE8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E2A8756CA1FF5258A0344D53C5C60EC1 /* OS X */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E2A8756CA1FF5258A0344D53C5C60EC1 /* OS X */ = {
+			isa = PBXGroup;
+			children = (
+				C1430F003D39D9906881A6AC724B7931 /* Cocoa.framework */,
+			);
+			name = "OS X";
+			sourceTree = "<group>";
+		};
+		E62BF046E9251A07F60D46C69ACCAED0 /* Pods-Medflix */ = {
+			isa = PBXGroup;
+			children = (
+				0CE85D0F4765E2A28351993A9C82CE05 /* Pods-Medflix.modulemap */,
+				8D7071D8050C9760D08DF9E7F3930060 /* Pods-Medflix-acknowledgements.markdown */,
+				06C5E1B0DEFA2B91D2CE5068AEBED194 /* Pods-Medflix-acknowledgements.plist */,
+				E2637768A2FA6554218D17FCAB4A0C51 /* Pods-Medflix-dummy.m */,
+				588A606031180D404F0D6F23F3082D34 /* Pods-Medflix-frameworks.sh */,
+				129DB631CC90438978D36EC3FC29B6E2 /* Pods-Medflix-Info.plist */,
+				4651171ABE1D72D1B749E10EEB19CCFB /* Pods-Medflix-umbrella.h */,
+				FBC7EE7BCD59A71BE3ED4AF200F01D5B /* Pods-Medflix.debug.xcconfig */,
+				F314CF1420852F74D7340D20E81B258A /* Pods-Medflix.release.xcconfig */,
+			);
+			name = "Pods-Medflix";
+			path = "Target Support Files/Pods-Medflix";
+			sourceTree = "<group>";
+		};
+		F330DDFFB493F7DDCAD94AE51BBE5BDE /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				E62BF046E9251A07F60D46C69ACCAED0 /* Pods-Medflix */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8CB71576ACDFEA27A0C0B3FD373400A8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2C4A6687368997C47B1C998091A67E09 /* Pods-Medflix-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		EDEBE15F1A9C1C5F2DAC4ACEABED76D1 /* Pods-Medflix */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 72EF72319CEE13E917E28C2AC1D35C86 /* Build configuration list for PBXNativeTarget "Pods-Medflix" */;
+			buildPhases = (
+				8CB71576ACDFEA27A0C0B3FD373400A8 /* Headers */,
+				5B264117A0C376C2C0E970E72043A549 /* Sources */,
+				06508DE85E6E18DE01F6AE944829DEE1 /* Frameworks */,
+				5F287C784CA447B5BEA4FF8E5FC2D98A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				83213A2095C29962364C13EFD1905219 /* PBXTargetDependency */,
+			);
+			name = "Pods-Medflix";
+			productName = Pods_Medflix;
+			productReference = 673A17956FD93E74E642655D18FDEC47 /* Pods-Medflix */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BFDFE7DC352907FC980B868725387E98 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+			};
+			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 10.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = CF1408CF629C7361332E53B88F7BD30C;
+			productRefGroup = 47F802EF1F34DEA1AAD8B87EE5AAFD12 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EDEBE15F1A9C1C5F2DAC4ACEABED76D1 /* Pods-Medflix */,
+				91EB5BA632A9221FE0838DAB2969DF72 /* VLCKit */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5F287C784CA447B5BEA4FF8E5FC2D98A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D53CC4C81EE0BDF20C8376EB2739EBD9 /* [CP] Copy XCFrameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/VLCKit/VLCKit-xcframeworks-input-files.xcfilelist",
+			);
+			name = "[CP] Copy XCFrameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/VLCKit/VLCKit-xcframeworks-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/VLCKit/VLCKit-xcframeworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5B264117A0C376C2C0E970E72043A549 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BEEA5CA81256A98EA5CFAD5596B6056E /* Pods-Medflix-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		83213A2095C29962364C13EFD1905219 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = VLCKit;
+			target = 91EB5BA632A9221FE0838DAB2969DF72 /* VLCKit */;
+			targetProxy = 9CD3CFE84934DD34ABDCE04BDCBF4A9F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0D71B95A2C992B43680EFE92D06F91D0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 99BF8C3124FF6B74720CA11AF08C8179 /* VLCKit.debug.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		23D45DAC0B8CB226EC15316BD32AE401 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E980BA0EA3A3B2349A1A66F1CFB9FA7A /* VLCKit.release.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		82E73717A2562031D5E1F4D85DD1A982 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Release;
+		};
+		8F465FFDC81F9C17182C3FFD7D339ED6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F314CF1420852F74D7340D20E81B258A /* Pods-Medflix.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-Medflix/Pods-Medflix-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MODULEMAP_FILE = "Target Support Files/Pods-Medflix/Pods-Medflix.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		D39E634FC2CFF97419EB3682DD2807FA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		E6A658DA0AFB00F266F09F0899EEB3A7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FBC7EE7BCD59A71BE3ED4AF200F01D5B /* Pods-Medflix.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-Medflix/Pods-Medflix-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MODULEMAP_FILE = "Target Support Files/Pods-Medflix/Pods-Medflix.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D39E634FC2CFF97419EB3682DD2807FA /* Debug */,
+				82E73717A2562031D5E1F4D85DD1A982 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		72EF72319CEE13E917E28C2AC1D35C86 /* Build configuration list for PBXNativeTarget "Pods-Medflix" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E6A658DA0AFB00F266F09F0899EEB3A7 /* Debug */,
+				8F465FFDC81F9C17182C3FFD7D339ED6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BEDBCD7B38121DBF876BB31998202415 /* Build configuration list for PBXAggregateTarget "VLCKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0D71B95A2C992B43680EFE92D06F91D0 /* Debug */,
+				23D45DAC0B8CB226EC15316BD32AE401 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+}
