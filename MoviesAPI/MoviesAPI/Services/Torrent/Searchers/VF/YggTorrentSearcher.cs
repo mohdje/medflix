@@ -9,18 +9,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Xml.Linq;
 
 namespace MoviesAPI.Services.Torrent
 {
     internal class YggTorrentSearcher : ITorrentMovieSearcher, ITorrentSerieSearcher
     {
-        private const string baseUrl = "https://www5.yggtorrent.ac";
+        private const string baseUrl = "https://www.yggtorrent.pm";
 
         public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string frenchMovieName, int year)
         {
             var searchUrl = $"{baseUrl}/recherche/{frenchMovieName}";
 
             return await SearchTorrentLinks(searchUrl,
+                            (mediaType) => mediaType.Contains("Films"),
                             (mediaTitle) =>
                             {
                                 return mediaTitle.CustomStartsWith(frenchMovieName)
@@ -38,6 +40,7 @@ namespace MoviesAPI.Services.Torrent
             var searchUrl = $"{baseUrl}/recherche/{frenchSerieName}";
 
             return await SearchTorrentLinks(searchUrl,
+                            (mediaType) => mediaType.Contains("Animes") || mediaType.Contains("Séries"),
                             (mediaTitle) =>
                             {
                                 return (mediaTitle.Contains("FRENCH") || mediaTitle.Contains("TRUEFRENCH")) 
@@ -50,11 +53,11 @@ namespace MoviesAPI.Services.Torrent
             return baseUrl;
         }
 
-        private async Task<IEnumerable<MediaTorrent>> SearchTorrentLinks(string searchUrl, Func<string, bool> mediaTitleCondition)
+        private async Task<IEnumerable<MediaTorrent>> SearchTorrentLinks(string searchUrl, Func<string, bool> mediaTypeCondition, Func<string, bool> mediaTitleCondition)
         {
             var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
 
-            var searchResultList = doc.DocumentNode.SelectNodes("//div[@class='default slidable']//a");
+            var searchResultList = doc.DocumentNode.SelectNodes("//td");
 
             var result = new List<MediaTorrent>();
 
@@ -65,13 +68,22 @@ namespace MoviesAPI.Services.Torrent
 
             foreach (var node in searchResultList)
             {
-                var nodeTitle = HttpUtility.HtmlDecode(node.InnerText);
+                var type = node.Descendants()?.FirstOrDefault(n => n.Name == "img");
+                var title = HttpUtility.HtmlDecode(node.InnerText);
 
-                if (nodeTitle != null && mediaTitleCondition(nodeTitle))
+                var isTypeMatching = type != null && mediaTypeCondition(type.Attributes["src"].Value);
+                var isTitleMatching = title != null && mediaTitleCondition(title);
+
+                if (!isTypeMatching || !isTitleMatching)
+                    continue;
+
+                var torrentPageLink = node.Descendants()?.FirstOrDefault(n => n.Name == "a")?.Attributes["href"]?.Value;
+
+                if(torrentPageLink != null)
                 {
                     getTorrentTasks.Add(Task.Run(async () =>
                     {
-                        var torrentLinks = await GetTorrentLinkAsync(node.Attributes["href"].Value);
+                        var torrentLinks = await GetTorrentLinkAsync($"{baseUrl}{torrentPageLink}");
 
                         if (torrentLinks != null)
                         {
@@ -92,17 +104,20 @@ namespace MoviesAPI.Services.Torrent
             await Task.WhenAll(getTorrentTasks);
 
             return result;
-
         }
 
-        private async Task<string[]> GetTorrentLinkAsync(string moviePageUrl)
+        private async Task<string[]> GetTorrentLinkAsync(string pageUrl)
         {
-            var doc = await HttpRequester.GetHtmlDocumentAsync(moviePageUrl);
+            var doc = await HttpRequester.GetHtmlDocumentAsync(pageUrl);
 
             var downloadNodes = doc.DocumentNode.SelectNodes("//a[@class='butt' or @class='bott']");
 
-            return downloadNodes?.Select(node => node.Attributes["href"]?.Value).ToArray();
+            return downloadNodes?.Select(node => BuildTorrentUrl(node.Attributes["href"]?.Value)).ToArray();
+        }
 
+        private string BuildTorrentUrl(string originalTorrentLink)
+        {
+            return originalTorrentLink.StartsWith("magnet") ? originalTorrentLink : $"{baseUrl}{originalTorrentLink}";
         }
     }
 }

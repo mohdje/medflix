@@ -16,8 +16,10 @@ namespace MoviesAPI.Services.Torrent
         private const string baseUrl = "https://oneom.one";
         public OneomSearcher()
         {
-            httpRequestHeaders = new List<KeyValuePair<string, string>>();
-            httpRequestHeaders.Add(new KeyValuePair<string, string>("Accept", "application/json"));
+            httpRequestHeaders = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("Accept", "application/json")
+            };
         }
         public string GetPingUrl()
         {

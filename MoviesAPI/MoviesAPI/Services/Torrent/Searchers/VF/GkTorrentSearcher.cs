@@ -13,7 +13,7 @@ namespace MoviesAPI.Services.Torrent
 {
     internal class GkTorrentSearcher : ITorrentMovieSearcher, ITorrentSerieSearcher
     {
-        private const string baseUrl = "https://www.gktorrent.ac";
+        private const string baseUrl = "https://www.gktorrent.xyz";
 
         public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string frenchMovieName, int year)
         {
