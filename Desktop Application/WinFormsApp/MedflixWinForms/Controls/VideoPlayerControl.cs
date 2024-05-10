@@ -322,7 +322,7 @@ namespace MedflixWinforms.Controls
                 lastProgressSaveTime = DateTime.Now;
                 this.videoPlayerOptions.WatchedMedia.CurrentTime = currentTime / 1000;
                 if (this.videoPlayerOptions.WatchedMedia.TotalDuration == 0)
-                    this.videoPlayerOptions.WatchedMedia.TotalDuration = this.mediaPlayer.Media.Duration;
+                    this.videoPlayerOptions.WatchedMedia.TotalDuration = this.mediaPlayer.Media.Duration / 1000;
 
                 await this.medflixApiService.SaveProgressionAsync(this.videoPlayerOptions.MediaType, this.videoPlayerOptions.WatchedMedia);
             }
