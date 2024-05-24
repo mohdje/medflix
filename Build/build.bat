@@ -7,7 +7,7 @@ set WINDOWS_BUILD_PATH="..\Desktop Application\WinFormsApp\MedflixWinForms\bin\R
 set WEBHOST_CSPROJ_PATH="..\WebHostStreaming\WebHostStreaming\WebHostStreaming.csproj"
 set WEBHOST_MACOS_BUILD_PATH="..\WebHostStreaming\WebHostStreaming\bin\Release\net7.0\osx-x64\publish"
 set FRONT_END_APP_PATH="..\Front\react-streaming-client"
-set EXTRACT_UPDATE_APP_PATH="..\Front\extract-update-package-electron-app"
+set EXTRACT_UPDATE_APP_PATH="..\Desktop Application\extract-update-package-electron-app"
 set MACOS_APP_BUNDLE_BUILD_PATH=".\MacOS App bundle\macos"
 
 @REM Build Windows App
