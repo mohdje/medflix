@@ -33,7 +33,7 @@ namespace WebHostStreaming.Controllers
         {
             var frenchTitle = await searchersProvider.MovieSearcher.GetMovieFrenchTitleAsync(mediaId);
 
-            var vfTorrents = await searchersProvider.TorrentSearchManager.SearchVfTorrentsMovieAsync(string.IsNullOrEmpty(frenchTitle) ? title : frenchTitle, year);
+            var vfTorrents = await searchersProvider.TorrentSearchManager.SearchVfTorrentsMovieAsync(title, string.IsNullOrEmpty(frenchTitle) ? title : frenchTitle, year);
             var voTorrents = await searchersProvider.TorrentSearchManager.SearchVoTorrentsMovieAsync(title, year);
 
             return voTorrents.Concat(vfTorrents);
