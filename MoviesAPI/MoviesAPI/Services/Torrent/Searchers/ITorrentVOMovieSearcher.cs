@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MoviesAPI.Services.Torrent
 {
-    internal interface ITorrentMovieSearcher : ISearcherService
+    internal interface ITorrentVOMovieSearcher : ISearcherService
     {
         Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string movieName, int year);
     }

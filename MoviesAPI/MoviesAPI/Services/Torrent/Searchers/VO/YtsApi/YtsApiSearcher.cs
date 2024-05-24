@@ -11,11 +11,13 @@ using MoviesAPI.Services.Torrent.Dtos;
 
 namespace MoviesAPI.Services.Torrent
 {
-    public class YtsApiSearcher : ITorrentMovieSearcher
+    public class YtsApiSearcher : ITorrentVOMovieSearcher
     {
         IYtsApiUrlProvider ytsApiUrlProvider;
 
         private string listMovies = "list_movies.json";
+
+        public string Url => this.ytsApiUrlProvider.GetPingUrl();
 
         internal YtsApiSearcher(IYtsApiUrlProvider ytsApiUrlProvider)
         {
@@ -24,21 +26,18 @@ namespace MoviesAPI.Services.Torrent
 
         public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string movieName, int year)
         {
-            var parameters = new NameValueCollection();
-            parameters.Add("query_term", movieName);
-            parameters.Add("sort_by", "year");
-            parameters.Add("order_by", "desc");
+            var parameters = new NameValueCollection
+            {
+                { "query_term", movieName },
+                { "sort_by", "year" },
+                { "order_by", "desc" }
+            };
 
             var requestResult = await HttpRequester.GetAsync<YtsResultDto>(ytsApiUrlProvider.GetBaseApiUrl() + listMovies, parameters);
 
             var movie = requestResult?.Data?.Movies?.FirstOrDefault(m => m.Title.Replace("\'", String.Empty).Equals(movieName.Replace("\'", String.Empty), StringComparison.OrdinalIgnoreCase) && m.Year == year);
               
             return movie != null ? movie.Torrents.Select(t => new MediaTorrent() { DownloadUrl = t.Url, Quality = t.Quality, LanguageVersion = "Original" }) : new MediaTorrent[0];
-        }
-
-        public string GetPingUrl()
-        {
-            return this.ytsApiUrlProvider.GetPingUrl();
         }
     }
 }

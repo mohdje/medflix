@@ -15,6 +15,8 @@ namespace MoviesAPI.Services.Subtitles
 
         private readonly ISubtitlesFileProvider subtitlesProvider;
 
+        public string Url => baseUrl;
+
         internal YtsSubsSearcher(ISubtitlesFileProvider subtitlesProvider)
         {
             this.subtitlesProvider = subtitlesProvider;
@@ -100,11 +102,6 @@ namespace MoviesAPI.Services.Subtitles
         {
             var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
             return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-        }
-
-        public string GetPingUrl()
-        {
-            return baseUrl;
         }
     }
 }

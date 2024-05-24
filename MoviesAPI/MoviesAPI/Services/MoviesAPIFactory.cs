@@ -61,9 +61,9 @@ namespace MoviesAPI.Services
             return new TorrentSearchManager(availableVfTorrentMovieSearchers, availableVoTorrentMovieSearchers, availableVfTorrentSerieSearchers, availableVoTorrentSerieSearchers);
         }
 
-        private IEnumerable<ITorrentMovieSearcher> GetVfTorrentMovieSearchers()
+        private IEnumerable<ITorrentVFMovieSearcher> GetVfTorrentMovieSearchers()
         {
-            return new List<ITorrentMovieSearcher>()
+            return new List<ITorrentVFMovieSearcher>()
             {
                 new YggTorrentSearcher(),
                 new GkTorrentSearcher(),
@@ -71,13 +71,13 @@ namespace MoviesAPI.Services
             };
         }
 
-        private IEnumerable<ITorrentMovieSearcher> GetVoTorrentMovieSearchers()
+        private IEnumerable<ITorrentVOMovieSearcher> GetVoTorrentMovieSearchers()
         {
-            return new List<ITorrentMovieSearcher>()
+            return new List<ITorrentVOMovieSearcher>()
             {
                 new YtsHtmlV2Searcher(new YtsHtmlRsUrlProvider()),
                 new YtsHtmlSearcher(new YtsHtmlOneUrlProvider()),
-                //new YtsApiSearcher(new YtsApiUrlMxProvider()),
+                new YtsApiSearcher(new YtsApiUrlMxProvider()),
             };
         }
 
@@ -160,14 +160,14 @@ namespace MoviesAPI.Services
 
         private async Task<bool> IsAvailable(ISearcherService searcherService)
         {
-            var url = searcherService.GetPingUrl();
+            var url = searcherService.Url;
 
             if (serviceAvailibilityCache.ContainsKey(url))
                 return serviceAvailibilityCache[url];
 
             try
             {
-                var result = await HttpRequester.GetAsync(new Uri(searcherService.GetPingUrl()));
+                var result = await HttpRequester.GetAsync(new Uri(url));
                 await UpdateServiceAvailibilityCacheAsync(url, !string.IsNullOrEmpty(result));
             }
             catch (Exception ex)

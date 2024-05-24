@@ -11,7 +11,7 @@ using MoviesAPI.Services.Torrent.Dtos;
 namespace MoviesAPI.Services.Torrent
 {
 
-    public class YtsHtmlSearcher : ITorrentMovieSearcher
+    public class YtsHtmlSearcher : ITorrentVOMovieSearcher
     {
         IYtsHtmlUrlProvider htmlUrlProvider;
 
@@ -19,6 +19,8 @@ namespace MoviesAPI.Services.Torrent
         {
             htmlUrlProvider = ytsHtmlUrlProvider;
         }
+
+        public string Url => htmlUrlProvider.GetServiceUrl();
 
         public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string movieName, int year)
         {
@@ -115,11 +117,6 @@ namespace MoviesAPI.Services.Torrent
                                                             Quality = n.InnerText,
                                                             LanguageVersion = "Original"
                                                         });
-        }
-
-        public string GetPingUrl()
-        {
-            return htmlUrlProvider.GetServiceUrl();
         }
     }
 }

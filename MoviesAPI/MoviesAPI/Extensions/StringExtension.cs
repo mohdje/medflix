@@ -19,7 +19,7 @@ namespace MoviesAPI.Extensions
 
         public static string GetVideoQuality(this string movieLinkTitle)
         {
-            var qualities = new string[] { "480p","720p", "1080p", "2160p", "DVDRIP", "WEBRIP", "HDTV" };
+            var qualities = new string[] { "480p", "720p", "1080p", "2160p", "DVDRIP", "WEBRIP", "HDTV" };
 
             foreach (var quality in qualities)
             {
@@ -35,6 +35,7 @@ namespace MoviesAPI.Extensions
             if (!string.IsNullOrEmpty(text))
             {
                 var result = text.Replace(":", "")
+                            .Replace(",", "")
                             .Replace("-", "")
                             .Replace("/", "")
                             .Replace("'", "")

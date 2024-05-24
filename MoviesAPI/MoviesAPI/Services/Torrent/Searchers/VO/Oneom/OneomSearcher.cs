@@ -14,6 +14,9 @@ namespace MoviesAPI.Services.Torrent
         private List<KeyValuePair<string, string>> httpRequestHeaders;
 
         private const string baseUrl = "https://oneom.one";
+
+        public string Url => baseUrl;
+
         public OneomSearcher()
         {
             httpRequestHeaders = new List<KeyValuePair<string, string>>
@@ -21,11 +24,6 @@ namespace MoviesAPI.Services.Torrent
                 new KeyValuePair<string, string>("Accept", "application/json")
             };
         }
-        public string GetPingUrl()
-        {
-            return baseUrl;
-        }
-
 
         public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string serieName, string imdbId, int seasonNumber, int episodeNumber)
         {

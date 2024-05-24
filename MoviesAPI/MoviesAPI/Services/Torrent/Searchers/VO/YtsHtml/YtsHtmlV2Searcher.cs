@@ -11,9 +11,11 @@ using MoviesAPI.Services.Torrent.Dtos;
 namespace MoviesAPI.Services.Torrent
 {
 
-    public class YtsHtmlV2Searcher : ITorrentMovieSearcher
+    public class YtsHtmlV2Searcher : ITorrentVOMovieSearcher
     {
         IYtsHtmlUrlProvider htmlUrlProvider;
+
+        public string Url => htmlUrlProvider.GetServiceUrl();
 
         internal YtsHtmlV2Searcher(IYtsHtmlUrlProvider ytsHtmlUrlProvider)
         {
@@ -111,11 +113,6 @@ namespace MoviesAPI.Services.Torrent
                                                             Quality = n.InnerText,
                                                             LanguageVersion = "Original"
                 }).DistinctBy(t => t.DownloadUrl);
-        }
-
-        public string GetPingUrl()
-        {
-            return htmlUrlProvider.GetServiceUrl();
         }
     }
 }

@@ -13,10 +13,8 @@ namespace MoviesAPI.Services.Torrent
     internal class YtsTvSearcher : ITorrentSerieSearcher
     {
         private string baseUrl = "https://ytstv.me";
-        public string GetPingUrl()
-        {
-            return baseUrl;
-        }
+
+        public string Url => baseUrl;
 
         public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string serieName, string imdbId, int seasonNumber, int episodeNumber)
         {

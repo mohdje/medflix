@@ -9,14 +9,14 @@ namespace MoviesAPI.Services.Torrent
 {
     public class TorrentSearchManager
     {
-        private readonly IEnumerable<ITorrentMovieSearcher> vfTorrentMovieSearchers;
-        private readonly IEnumerable<ITorrentMovieSearcher> voTorrentMovieSearchers;
+        private readonly IEnumerable<ITorrentVFMovieSearcher> vfTorrentMovieSearchers;
+        private readonly IEnumerable<ITorrentVOMovieSearcher> voTorrentMovieSearchers;
 
         private readonly IEnumerable<ITorrentSerieSearcher> vfTorrentSerieSearchers;
         private readonly IEnumerable<ITorrentSerieSearcher> voTorrentSeriesSearchers;
         internal TorrentSearchManager(
-            IEnumerable<ITorrentMovieSearcher> vfTorrentMovieSearchers, 
-            IEnumerable<ITorrentMovieSearcher> voTorrentMovieSearchers,
+            IEnumerable<ITorrentVFMovieSearcher> vfTorrentMovieSearchers, 
+            IEnumerable<ITorrentVOMovieSearcher> voTorrentMovieSearchers,
             IEnumerable<ITorrentSerieSearcher> vfTorrentSerieSearchers,
             IEnumerable<ITorrentSerieSearcher> voTorrentSeriesSearchers)
         {
@@ -26,9 +26,19 @@ namespace MoviesAPI.Services.Torrent
             this.voTorrentSeriesSearchers = voTorrentSeriesSearchers;
         }
 
-        public async Task<IEnumerable<MediaTorrent>> SearchVfTorrentsMovieAsync(string frenchMovieName, int year)
+        public async Task<IEnumerable<MediaTorrent>> SearchVfTorrentsMovieAsync(string originalMovieName, string frenchMovieName, int year)
         {
-            var torrentLinks = await SearchTorrentsMovie(vfTorrentMovieSearchers, frenchMovieName, year);
+            var tasks = new List<Task<IEnumerable<MediaTorrent>>>();
+
+            foreach (var searcher in vfTorrentMovieSearchers)
+            {
+                tasks.Add(searcher.GetTorrentLinksAsync(originalMovieName, frenchMovieName, year));
+            }
+
+            var movieTorrents = await Task.WhenAll(tasks);
+
+            var torrentLinks = movieTorrents.Where(r => r != null).SelectMany(m => m);
+
             return torrentLinks.DistinctBy(t => t.DownloadUrl);
         }
 
@@ -40,7 +50,17 @@ namespace MoviesAPI.Services.Torrent
 
         public async Task<IEnumerable<MediaTorrent>> SearchVoTorrentsMovieAsync(string originalMovieName, int year)
         {
-            var torrentLinks = await SearchTorrentsMovie(voTorrentMovieSearchers, originalMovieName, year);
+            var tasks = new List<Task<IEnumerable<MediaTorrent>>>();
+
+            foreach (var searcher in voTorrentMovieSearchers)
+            {
+                tasks.Add(searcher.GetTorrentLinksAsync(originalMovieName, year));
+            }
+
+            var movieTorrents = await Task.WhenAll(tasks);
+
+            var torrentLinks = movieTorrents.Where(r => r != null).SelectMany(m => m);
+
             return torrentLinks.DistinctBy(t => t.DownloadUrl);
         }
 
@@ -50,7 +70,7 @@ namespace MoviesAPI.Services.Torrent
             return torrentLinks.DistinctBy(t => t.DownloadUrl);
         }
 
-        private async Task<IEnumerable<MediaTorrent>> SearchTorrentsMovie(IEnumerable<ITorrentMovieSearcher> torrentSearchers, string movieName, int year)
+        private async Task<IEnumerable<MediaTorrent>> SearchTorrentsMovie(IEnumerable<ITorrentVOMovieSearcher> torrentSearchers, string movieName, int year)
         {
             var tasks = new List<Task<IEnumerable<MediaTorrent>>>();
 

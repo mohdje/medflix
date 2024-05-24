@@ -8,6 +8,6 @@ namespace MoviesAPI.Services
 {
     internal interface ISearcherService
     {
-        string GetPingUrl();
+        string Url { get; }
     }
 }
