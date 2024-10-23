@@ -1,0 +1,51 @@
+.modal-episode-selector-container {
+    width: 60%;
+    height: 70%;
+    color: white;
+    margin: auto auto;
+    border-radius: 10px;
+    background: linear-gradient(342deg, rgba(42,42,42,1) 0%, rgba(0,0,0,1) 75%);
+    display: flex;
+    flex-direction: column;
+}
+
+.season-selector-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 7px;
+}
+
+.episode-list-container {
+    flex-grow: 10;
+    overflow-y: auto;
+    margin-top: 12px;
+    position: relative
+}
+
+.episode-container {
+    display: flex;
+    margin: 15px 5px;
+    cursor: pointer;
+}
+
+.episode-container:hover {
+    background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(195,64,53,0.2665441176470589) 50%, rgba(195,64,53,0) 100%);
+}
+
+.episode-container:active{
+    background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(131, 130, 130, 0.267) 50%, rgba(195,64,53,0) 100%);
+}
+
+.episode-container img {
+    width: auto;
+    height: 150px;
+    margin: auto 7px auto 0
+}
+
+.loading-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}

@@ -1,0 +1,15 @@
+.video-player-window-container{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.video-player-container{
+    width: 80%;
+    height: 70%;
+    margin: 10px auto;
+}
+

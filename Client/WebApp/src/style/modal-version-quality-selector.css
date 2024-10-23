@@ -1,0 +1,47 @@
+.modal-version-quality-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    font-size: 22px;
+    gap: 15%;
+}
+
+.modal-version-quality-container .version-column {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10%;
+}
+
+.modal-version-quality-container .version-column .version-name {
+    font-weight: bold;
+    color: gray;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.modal-version-quality-container .version-column .qualities-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.modal-version-quality-container .version-column .qualities-list .quality {
+    font-weight: 400;
+    color: white;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.modal-version-quality-container .version-column .qualities-list .quality.selected {
+    color: red;
+    font-weight: 500;
+}
+
+.modal-version-quality-container .version-column .qualities-list .quality:hover {
+    color: gray;
+}
+
+.modal-version-quality-container .version-column .qualities-list .quality:active {
+    color: red;
+}

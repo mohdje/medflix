@@ -1,0 +1,42 @@
+.text-input-container{
+    display: flex;
+    align-items: flex-end;
+}
+
+.text-input{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    position: relative;
+}
+
+.text-input input{
+    padding: 15px;
+    color: rgb(255, 255, 255);
+    font-size: 1.5rem !important;
+    background-color: rgba(114, 114, 114, 0.26);
+}
+
+.text-input.large input{    
+    width: 400px;
+}
+
+.text-input .MuiInput-underline:after {
+    border-bottom: 2px solid red !important;
+}
+
+.delete-text-cross{
+    position: absolute;
+    right: -50px;
+    color: white;
+    font-size: 30px !important;
+}
+
+.delete-text-cross:hover{
+    cursor: pointer;
+}
+
+
+.delete-text-cross:active{
+    color: rgb(131, 131, 131);
+}

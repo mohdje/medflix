@@ -1,0 +1,44 @@
+.vlc-player-instructions-container{
+    color: white;
+    margin: auto;
+    font-size: 20px;
+    max-width: 80%;
+}
+
+.vlc-player-instructions-container .instruction{
+    margin-bottom: 15px;
+}
+
+.vlc-player-instructions-container .instruction .qualities{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.vlc-player-instructions-container .instruction .copy-link{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.vlc-player-instructions-container .instruction .copy-link input{
+    font-size: inherit;
+    color: inherit;
+    border: none;
+    background: none;
+    outline: none;
+    margin: 7px 0;
+    width: 100%;
+    text-align: center;
+    text-overflow: ellipsis;
+}
+
+.vlc-player-instructions-container .instruction .link-copied-message{
+    font-style: italic;
+}
+
+.vlc-player-instructions-container .instruction .link-copied-message.hidden{
+    display: none;
+}
+

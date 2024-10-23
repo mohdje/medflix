@@ -1,0 +1,83 @@
+.medias-list-container{
+    position: relative;
+    width: 98%;
+    margin: 0 auto;
+}
+
+.medias-list-container.full{
+    height: 90%;
+}
+
+.medias-list{
+    display: flex;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.medias-list.center{
+    justify-content: center;
+}
+
+.medias-list.wrap-content{
+    flex-flow: row wrap;
+    overflow-y: scroll;
+    height: 100%;
+}
+
+.medias-list-header{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.medias-list-by-categorie-container{
+    height: 100%;
+    overflow-y: hidden;
+}
+
+.medias-list-by-categorie-header{
+    padding: 10px 10px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.medias-list-categorie{
+    color: white;
+    font-size: 1.8rem;
+    text-align: start;
+    padding-left: 10px;
+    margin: 0 30px 0 10px;
+}
+
+
+.medias-list-more{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    margin: auto 0;
+    min-height: 220px;
+}
+
+.medias-list-categorie-container{
+    margin: 20px auto;
+    position: relative;
+}
+
+.opacity-filter{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    opacity: 0.5;
+    background-color: black;
+    z-index: 4;
+    transition: opacity 0.5s linear;
+}
+
+.opacity-filter.hidden{
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.5s, opacity 0.5s linear;
+}
