@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Medflix.Pages.StartingPage">
+    <FlexLayout 
+            AlignItems="Center" 
+            JustifyContent="Center" 
+            Direction="Column">
+            <FlexLayout.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="Black" Offset="0.4" />
+                    <GradientStop Color="#333232" Offset="1.0" />
+                </LinearGradientBrush>
+            </FlexLayout.Background>
+            <Image
+            HeightRequest="40"
+            Aspect="AspectFit"
+            Source="medflix_full_logo.svg"/>
+            <ActivityIndicator 
+            x:Name="Spinner"
+            Color="White" 
+            Margin="10"
+            WidthRequest="50"
+            HeightRequest="50"/>
+            <VerticalStackLayout 
+            x:Name="AddressInputArea">
+                <Label 
+                TextColor="White"
+                Text="No response from service. Enter the correct IP and port to access Medflix service:"/>
+            <Entry 
+                  x:Name="AddressInput"
+                  WidthRequest="300"
+                  FontSize="20"
+                  Margin="0,15,0,0"
+                  Placeholder="0.0.0.0:1234"
+                  Completed="EntryCompleted"/>
+        </VerticalStackLayout>
+        </FlexLayout>
+</ContentPage>

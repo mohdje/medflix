@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Medflix.Views.AndroidTv.NavigationBarView"
+             xmlns:controls="clr-namespace:Medflix.Controls.AndroidTv">
+    <Grid RowDefinitions="130,*">
+        <FlexLayout 
+          Grid.Row="0"
+          AlignItems="Center" 
+          JustifyContent="Center"
+          Direction="Column"
+          BackgroundColor="#1f1e1e">
+            <controls:NavigationBarButton   
+                x:Name="MoviesButton"
+                Selected="True"
+                Source="movie.svg"
+                Clicked="MoviesButtonClicked"/>
+            <controls:NavigationBarButton   
+                x:Name="SeriesButton"
+                Selected="False"
+                Source="tv.svg"
+                Clicked="SeriesButtonClicked"/>
+        </FlexLayout>
+        <FlexLayout 
+         Grid.Row="1"
+         AlignItems="Center" 
+         JustifyContent="Center"
+         Direction="Column"
+         BackgroundColor="#0f0f0f">
+            <controls:NavigationBarButton   
+                 x:Name="HomeButton"
+                 Selected="True"
+                 Source="home.svg"
+                 Clicked="HomeButtonClicked"/>
+            <controls:NavigationBarButton   
+                 x:Name="SearchButton"
+                 Selected="False"
+                 Source="search.svg"
+                 Clicked="SearchButtonClicked"/>
+            <controls:NavigationBarButton   
+                 x:Name="WatchHistoryButton"
+                 Selected="False"
+                 Source="eye.svg"
+                 Clicked="WatchHistoryButtonClicked"/>
+            <controls:NavigationBarButton   
+                  x:Name="BookmarkButton"
+                  Selected="False"
+                  Source="bookmark.svg"
+                  Clicked="BookmarkButtonClicked"/>
+        </FlexLayout>
+    </Grid>
+
+</ContentView>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Medflix.Views.AndroidTv.HomePageView">
+
+    <ScrollView VerticalOptions="Fill" HorizontalOptions="Fill">
+        <VerticalStackLayout
+          x:Name="HomeContent"
+          HorizontalOptions="FillAndExpand"
+          VerticalOptions="FillAndExpand">
+            <ActivityIndicator 
+                  x:Name="Spinner" 
+                  WidthRequest="100"
+                  HeightRequest="100"
+                  Margin="0,200,0,0"
+                  IsRunning="True"
+                  HorizontalOptions="Center"
+                  VerticalOptions="Center"
+                  Color="White"/>
+        </VerticalStackLayout>
+    </ScrollView>
+   
+</ContentView>

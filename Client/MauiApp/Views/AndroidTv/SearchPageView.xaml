@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Medflix.Views.AndroidTv.SearchPageView">
+
+    <VerticalStackLayout
+      HorizontalOptions="FillAndExpand"
+      VerticalOptions="FillAndExpand">
+        <Entry 
+         x:Name="SearchInput"
+         WidthRequest="300"
+         FontSize="20"
+         Margin="0,70,0,0"
+         Placeholder="Enter the title..."
+         Completed="SearchCompleted"/>
+        <ActivityIndicator 
+           x:Name="SearchSpinner" 
+           IsRunning="True"
+           WidthRequest="50"
+           HeightRequest="50"
+           IsVisible="False"
+           Margin="0,20,0,0"
+           HorizontalOptions="Center"
+           VerticalOptions="Center"
+           Color="White"/>
+        <Label 
+            x:Name="NoResultMessage" 
+            Text="No result found"
+            IsVisible="False"
+            TextColor="White"
+            FontSize="18"
+            FontAttributes="Bold"
+            HorizontalTextAlignment="Center"/>
+        <StackLayout x:Name="SearchResultContainer" Margin="0,30,0,0"/>
+    </VerticalStackLayout>
+
+</ContentView>

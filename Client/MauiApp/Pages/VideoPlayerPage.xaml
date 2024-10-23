@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Medflix.Pages.VideoPlayerPage"
+             xmlns:shared="clr-namespace:LibVLCSharp.MAUI;assembly=LibVLCSharp.MAUI"
+             xmlns:local="clr-namespace:Medflix.ViewModels"         
+             xmlns:controls="clr-namespace:Medflix.Controls.VideoPlayer"
+             xmlns:views="clr-namespace:Medflix.Views"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="Black"
+>
+    <ContentPage.BindingContext>
+        <local:MediaPlayerViewModel />
+    </ContentPage.BindingContext>
+    <Grid>
+
+        <controls:LoadingSpinner 
+            x:Name="LoadingSpinner"
+            Grid.Row="0" 
+            ZIndex="5" />
+
+        <views:VideoPlayerSideMenuView
+            x:Name="VideoPlayerMenu"
+            Grid.Row="0" 
+            ZIndex="4"
+            />
+
+        <controls:VideoPlayerControls  
+            x:Name="PlayerControls"
+            Grid.Row="0" 
+            ZIndex="3">
+            <controls:VideoPlayerControls.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="Transparent" Offset="0.5" />
+                    <GradientStop Color="Black" Offset="1.0" />
+                </LinearGradientBrush>
+            </controls:VideoPlayerControls.Background>
+        </controls:VideoPlayerControls>
+
+        <controls:VideoSubtitles   
+            x:Name="Subtitles"
+            Grid.Row="0" 
+            ZIndex="2"/>
+
+        <shared:VideoView 
+            x:Name="VideoView" 
+            Grid.Row="0"
+            ZIndex="1" 
+            MediaPlayer="{Binding MediaPlayer}" 
+            MediaPlayerChanged="VideoView_MediaPlayerChanged"  
+            HorizontalOptions="FillAndExpand" 
+            VerticalOptions="FillAndExpand"/>
+    </Grid>
+
+</ContentPage>

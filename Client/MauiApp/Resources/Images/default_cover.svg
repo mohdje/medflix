@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="200" height="300" viewBox="0 0 200 300" xml:space="preserve">
+<desc>Created with Fabric.js 3.6.6</desc>
+<defs>
+<linearGradient id="SVGID_163" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1 0 0 1 0 0) matrix(1 0 0 1 -100 -150)"  x1="0" y1="165" x2="220.00000000000003" y2="165">
+<stop offset="0%" style="stop-color:rgba(49, 49, 49, 1);"/>
+<stop offset="99.011%" style="stop-color:rgba(107, 107, 107, 1);"/>
+</linearGradient>
+</defs>
+<rect transform="matrix(1 0 0 1 0 0) translate(100,150)" x="-100" y="-150" width="200" height="300" fill="url(#SVGID_163)"></rect>
+<g transform="matrix(2.37 0 0 2.37 100.09 150.35)" id="SVGRepo_iconCarrier"  >
+<path style="stroke: rgb(138,138,138); stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(138,138,138); fill-rule: nonzero; opacity: 1;"  transform=" translate(-16, -16.02)" d="M 0 28 v -20 q 0 -0.832 0.576 -1.408 t 1.44 -0.576 h 4 q 0.8 0 1.408 -0.576 t 0.576 -1.44 t 0.576 -1.408 t 1.44 -0.576 h 12 q 0.8 0 1.408 0.576 t 0.576 1.408 t 0.576 1.44 t 1.44 0.576 h 4 q 0.8 0 1.408 0.576 t 0.576 1.408 v 20 q 0 0.832 -0.576 1.44 t -1.408 0.576 h -28 q -0.832 0 -1.44 -0.576 t -0.576 -1.44 z M 6.016 16 q 0 2.048 0.768 3.904 t 2.144 3.168 t 3.2 2.144 t 3.872 0.8 q 2.72 0 5.024 -1.344 t 3.648 -3.648 t 1.344 -5.024 t -1.344 -4.992 t -3.648 -3.648 t -5.024 -1.344 q -2.016 0 -3.872 0.8 t -3.2 2.112 t -2.144 3.2 t -0.768 3.872 z M 10.016 16 q 0 -2.464 1.728 -4.224 t 4.256 -1.76 t 4.256 1.76 t 1.76 4.224 t -1.76 4.256 t -4.256 1.76 t -4.256 -1.76 t -1.728 -4.256 z" stroke-linecap="round" />
+</g>
+</svg>

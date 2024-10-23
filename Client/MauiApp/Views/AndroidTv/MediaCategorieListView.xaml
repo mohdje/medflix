@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Medflix.Views.AndroidTv.MediaCategorieListView">
+    <Grid Padding="30,10,0,0" RowDefinitions="50, *">
+        <Label 
+            Grid.Row="0"
+            x:Name="ListTitle"
+            TextColor="White"
+            FontSize="20"
+            FontAttributes="Bold"
+            Margin="0,0,0,5"/>
+        <Grid Grid.Row="1">
+            <ScrollView >
+                <FlexLayout      
+                  x:Name="MediaList" 
+                  Wrap="Wrap"
+                  VerticalOptions="FillAndExpand"/> 
+            </ScrollView>
+        </Grid>
+      
+    </Grid>
+</ContentView>

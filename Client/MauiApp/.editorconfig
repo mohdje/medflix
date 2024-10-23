@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CS8765: La nullabilité de type du paramètre ne correspond pas au membre substitué (probablement en raison des attributs de nullabilité).
+dotnet_diagnostic.CS8765.severity = none

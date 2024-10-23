@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Medflix.Views.AndroidTv.MediaLitePresentationView">
+    <VerticalStackLayout Margin="0,0,15,15">
+        <Border
+          x:Name="ButtonBorder"
+          StrokeThickness="4"
+          Stroke="Transparent">
+            <Border.StrokeShape>
+                <RoundRectangle 
+              CornerRadius="10"/>
+            </Border.StrokeShape>
+            <Grid>
+                <Button 
+                 Grid.Row="0"
+                 ZIndex="1"
+                 x:Name="MediaButton"
+                 HeightRequest="180"
+                 CornerRadius="10"
+                 BackgroundColor="Transparent"
+                 Padding="0" />
+                <Grid
+                  x:Name="InfoPanel"
+                  RowDefinitions="*,*"
+                  ColumnDefinitions="*,*"
+                  IsVisible="False"
+                  Grid.Row="0"
+                  ZIndex="2"
+                  VerticalOptions="Fill"
+                  HorizontalOptions="Fill"
+           >
+                    <Grid.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="Black" Offset="0.0" />
+                            <GradientStop Color="Transparent" Offset="0.5" />
+                            <GradientStop Color="Black" Offset="0.9" />
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                    <Label 
+                  x:Name="Year" 
+                  Grid.Row="0" 
+                  Grid.Column="0" 
+                  TextColor="White" 
+                  HorizontalTextAlignment="Center" 
+                  HorizontalOptions="Fill" 
+                  FontAttributes="Bold" />
+                    <Label 
+                  x:Name="Rating"  
+                  Grid.Row="0" 
+                  Grid.Column="1" 
+                  TextColor="White" 
+                  HorizontalTextAlignment="Center" 
+                  HorizontalOptions="Fill" 
+                  FontAttributes="Bold"  />
+                    <Label 
+                  x:Name="Title"
+                  Grid.Row="1" 
+                  Grid.Column="0"
+                  Grid.ColumnSpan="2"
+                  VerticalTextAlignment="End"
+                  HorizontalTextAlignment="Center" 
+                  MaximumWidthRequest="120"
+                  HorizontalOptions="Fill"
+                  LineBreakMode="WordWrap" 
+                  TextColor="White" 
+                  FontAttributes="Bold"/>
+                </Grid>
+            </Grid>
+        </Border>
+        <ProgressBar x:Name="WatchingProgress" IsVisible="False" ProgressColor="Red" />
+        <Label x:Name="SeasonEpisode" IsVisible="False"  TextColor="White" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+    </VerticalStackLayout>
+  
+</ContentView>

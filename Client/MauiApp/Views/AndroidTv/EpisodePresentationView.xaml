@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Medflix.Views.AndroidTv.EpisodePresentationView">
+    <Border 
+        x:Name="EpisodePresentationContainer" 
+        Padding="5"
+        Stroke="Transparent"
+        StrokeThickness="4">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="10"/>
+        </Border.StrokeShape>
+        <VerticalStackLayout>
+            <FlexLayout
+            AlignContent="Center"
+            JustifyContent="Center"
+            >
+                <Button x:Name="HiddenButton" WidthRequest="1" BackgroundColor="Transparent"/>
+                <Image 
+                   x:Name="ImagePreview" 
+                   WidthRequest="200"
+                   Aspect="AspectFit"
+                   />
+                <VerticalStackLayout 
+                Margin="10,0,0,0"    
+                WidthRequest="350">
+                    <Label 
+                     x:Name="Title" 
+                     TextColor="White"
+                     FontAttributes="Bold"
+                     />
+                    <Label 
+                    x:Name="ReleaseDate" 
+                    TextColor="LightGray"
+                    FontAttributes="Bold"/>
+                    <Label 
+                     x:Name="Runtime" 
+                     TextColor="LightGray"
+                     FontAttributes="Bold"/>
+                    <Label 
+                     x:Name="Synopsis" 
+                     TextColor="Gray" />
+                </VerticalStackLayout>
+            </FlexLayout>
+            <ProgressBar x:Name="WatchProgress" ProgressColor="Red" WidthRequest="500"/>
+
+        </VerticalStackLayout>
+    </Border>
+</ContentView>

@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage  xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Medflix.Pages.AndroidTv.AndroidTvMainPage"
+             xmlns:controls="clr-namespace:Medflix.Controls.AndroidTv"
+             xmlns:views="clr-namespace:Medflix.Views.AndroidTv"
+             NavigationPage.HasNavigationBar="False">
+
+<Grid>
+    <Grid.RowDefinitions>
+        <RowDefinition />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="50" />
+        <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+        <views:NavigationBarView  
+            Grid.Row="0"
+            Grid.Column="0"
+            OnHomeButtonClicked="HomeButtonClicked"
+            OnSearchButtonClicked="SearchButtonClicked"
+            OnWatchHistoryButtonClicked="OnWatchHistoryButtonClicked"
+            OnBookmarkButtonButtonClicked="OnBookmarkButtonButtonClicked"/>
+        <Grid    
+            x:Name="ActivePage"
+            Grid.Row="0"
+            Grid.Column="1"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill"
+            Padding="5,10,0,0">
+            <Grid.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="Black" Offset="0.4" />
+                    <GradientStop Color="#333232" Offset="1.0" />
+                </LinearGradientBrush>
+            </Grid.Background>
+        
+        </Grid>
+    </Grid>
+</ContentPage>

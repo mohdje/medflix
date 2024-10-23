@@ -1,0 +1,37 @@
+﻿<html>
+<head>
+
+</head>
+<body>
+    <h1>My Application on Google TV</h1>
+    <p id="remote-command"></p>
+   
+    <script>
+        window.addEventListener("RemoteCommandAction", (e) => {
+            console.log("remote command listener web view", e);
+            const element = document.getElementById("remote-command");
+            element.innerText = e.detail;
+            if (e.detail === 1) {
+                execute();
+            }
+          
+        });
+
+        function execute() {
+            
+            const runCSharpObject = {
+                functionName: "ToVideoPlayerPage",
+                arguments: []
+            }
+
+            var json = JSON.stringify(runCSharpObject);
+            var base64 = btoa(json);
+
+            setTimeout(() => {
+                window.location.href = "http://runcsharp?object=" + base64;
+            }, 300);
+
+        }
+    </script>
+</body>
+</html>
