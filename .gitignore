@@ -1,29 +1,35 @@
-MoviesAPI/.vs
-MoviesAPI/MoviesAPI/obj
-MoviesAPI/MoviesAPI/bin
-MoviesAPI/VfTorrentSearcher/bin
-MoviesAPI/VfTorrentSearcher/obj
-MoviesAPI.Tests/
-MoviesAPI/MoviesApiSample/bin
-MoviesAPI/MoviesApiSample/obj
-WebHostStreaming/WebHostStreaming/bin
-WebHostStreaming/WebHostStreaming/obj
-WebHostStreaming/WebHostStreaming/GPUcache
-WebHostStreaming/.vs
-WebHostStreaming/WebHostStreaming/cache/
-Front/react-streaming-client/node_modules/
-Front/react-streaming-client/build/
-Front/react-streaming-client/.eslintcache
+Backend/MoviesAPI/.vs
+Backend/MoviesAPI/MoviesAPI/obj
+Backend/MoviesAPI/MoviesAPI/bin
+
+Backend/MoviesAPI/MoviesApiSample/bin
+Backend/MoviesAPI/MoviesApiSample/obj
+Backend/WebHostStreaming/WebHostStreaming/bin
+Backend/WebHostStreaming/WebHostStreaming/obj
+Backend/WebHostStreaming/WebHostStreaming/GPUcache
+Backend/WebHostStreaming/.vs
+Backend/WebHostStreaming/WebHostStreaming/cache/
+Backend/MoviesAPI/MoviesApiSample/Tokens.cs
+Backend/WebHostStreaming/WebHostStreaming/Helpers/Tokens.cs
+
+Client/WebApp/node_modules/
+Client/WebApp/build/
+Client/WebApp/.eslintcache
+Client/MauiApp/.vs
+Client/MauiApp/bin
+Client/MauiApp/obj
+
 Desktop Application/extract-update-package-electron-app/out/
 Desktop Application/extract-update-package-electron-app/node_modules/
-MoviesAPI/MoviesApiSample/Tokens.cs
-WebHostStreaming/WebHostStreaming/Helpers/Tokens.cs
-Front/.DS_Store
 Desktop Application/extract-update-package-electron-app/.DS_Store
+
+Front/.DS_Store
 Build/MacOS App bundle/Medflix.app/
 Build/MacOS App bundle/Medflix.dmg
+
 Desktop Application/WinFormsApp/MedflixWinForms/bin
 Desktop Application/WinFormsApp/MedflixWinForms/obj
 Desktop Application/WinFormsApp/.vs
 Desktop Application/Macos/Build
+
 .DS_Store
