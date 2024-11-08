@@ -7,6 +7,8 @@ using WebHostStreaming.Providers;
 using MoviesAPI.Services.Subtitles;
 using MoviesAPI.Services.Subtitles.DTOs;
 using WebHostStreaming.Models;
+using System.IO;
+using WebHostStreaming.Helpers;
 
 namespace WebHostStreaming.Controllers
 {
@@ -17,6 +19,9 @@ namespace WebHostStreaming.Controllers
         ISearchersProvider searchersProvider;
         public SubtitlesController(ISearchersProvider searchersProvider)
         {
+            if (!Directory.Exists(AppFolders.SubtitlesFolder))
+                Directory.CreateDirectory(AppFolders.SubtitlesFolder);
+
             this.searchersProvider = searchersProvider;
         }
 

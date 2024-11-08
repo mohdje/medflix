@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WebHostStreaming.Extensions;
+using WebHostStreaming.Helpers;
 
 namespace WebHostStreaming.Torrent
 {
@@ -15,11 +16,13 @@ namespace WebHostStreaming.Torrent
     {
         DownloadHasStarted,
         DownloadFailed,
-        DownloadCompleted
+        DownloadCompleted,
+        DownloadAborted
     }
     public class TorrentDownloader
     {
-        private readonly string torrentUri;
+        private string torrentUri;
+        private CancellationTokenSource cancellationTokenSource;
         private static HttpClient client = new HttpClient();
 
         private const string TORRENT_HEXA_SIGNATURE = "64383a616e6e6f756e6365";
@@ -28,28 +31,23 @@ namespace WebHostStreaming.Torrent
 
         private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
-        public string TorrentDownloadDirectory => Path.Combine(Helpers.AppFolders.TorrentsFolder, torrentUri.ToMD5Hash());
+        public string TorrentDownloadDirectory => !string.IsNullOrEmpty(torrentUri) ? Path.Combine(Helpers.AppFolders.TorrentsFolder, torrentUri.ToMD5Hash()) : string.Empty;
         public string TorrentFilePath => Path.Combine(TorrentDownloadDirectory, "torrent");
 
         public TorrentDownloaderStatus Status { get; private set; }
 
-        public TorrentDownloader(string torrentUri)
+        public async Task<string> DownloadTorrentFileAsync(string torrentUri, ClientEngine clientEngine)
         {
-            this.torrentUri = torrentUri;
-        }
+            this.cancellationTokenSource?.Cancel();
+            this.cancellationTokenSource = new CancellationTokenSource();
 
-        public async Task DownloadTorrentFileAsync(CancellationToken cancellationToken)
-        {
-            await semaphoreSlim.WaitAsync();
+            this.torrentUri = torrentUri;
 
             if (File.Exists(TorrentFilePath))
             {
                 Status = TorrentDownloaderStatus.DownloadCompleted;
-                semaphoreSlim.Release();
-                return;
+                return TorrentFilePath;
             }
-
-            Status = TorrentDownloaderStatus.DownloadHasStarted;
 
             if (!Directory.Exists(TorrentDownloadDirectory))
                 Directory.CreateDirectory(TorrentDownloadDirectory);
@@ -57,36 +55,47 @@ namespace WebHostStreaming.Torrent
             byte[] bytes = null;
             try
             {
+                AppLogger.LogInfo($"Downloading torrent : {torrentUri}");
+                Status = TorrentDownloaderStatus.DownloadHasStarted;
+
                 if (IsMagnetLink)
-                    bytes = await TorrentClientEngine.Instance.ClientEngine.DownloadMetadataAsync(MagnetLink.Parse(torrentUri), cancellationToken);
-                else
-                    bytes = await client.GetByteArrayAsync(torrentUri, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                if (!cancellationToken.IsCancellationRequested)
-                    Status = TorrentDownloaderStatus.DownloadFailed;
-
-                return;
-            }
-            finally
-            {
-                semaphoreSlim.Release();
-            }
-
-            if (bytes != null && bytes.Any())
-            {
-                File.WriteAllBytes(TorrentFilePath, bytes);
-                if (File.Exists(TorrentFilePath))
                 {
+                    var metadata = await clientEngine.DownloadMetadataAsync(MagnetLink.Parse(torrentUri), cancellationTokenSource.Token);
+                    bytes = metadata.ToArray();
+                }
+                else
+                    bytes = await client.GetByteArrayAsync(torrentUri, cancellationTokenSource.Token);
+
+                if (bytes != null && bytes.Any())
+                {
+                    File.WriteAllBytes(TorrentFilePath, bytes);
+
                     if (!IsTorrentValid())
                         FixTorrentFile();
 
                     Status = TorrentDownloaderStatus.DownloadCompleted;
+
+                    AppLogger.LogInfo($"Torrent successfully downloaded: {torrentUri}");
+
+                    return TorrentFilePath;
+                }
+                else
+                {
+                    AppLogger.LogInfo($"Torrent download failed: {torrentUri}");
+
+                    Status = TorrentDownloaderStatus.DownloadFailed;
+                    return null;
                 }
             }
-            else
-                Status = TorrentDownloaderStatus.DownloadFailed;
+            catch (Exception ex)
+            {
+                if (!this.cancellationTokenSource.Token.IsCancellationRequested)
+                    Status = TorrentDownloaderStatus.DownloadFailed;
+                else
+                    AppLogger.LogInfo($"Torrent download aborted: {torrentUri}");
+
+                return null;
+            }
         }
 
         private bool IsTorrentValid()

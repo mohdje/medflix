@@ -17,54 +17,41 @@ namespace WebHostStreaming.Helpers
         public static string TorrentsFolder => Path.Combine(StorageFolder, "torrents");
         public static string ViewFolder => Path.Combine(CurrentFolder, "view");
 
-        public static void SetupFolders()
-        {
-            SetupTorrentsFolder();
-            SetupSubtitlesFolder();
-        }
-        private static void SetupTorrentsFolder()
+        private static void CleanUpTorrentsFolder()
         {
             if (!Directory.Exists(TorrentsFolder))
-                Directory.CreateDirectory(TorrentsFolder);
-            else
+                return;
+
+            var watchedMedias = GetWatchedMedias();
+            var directories = Directory.GetDirectories(TorrentsFolder);
+            foreach (var folder in directories)
             {
-                var watchedMedias = GetWatchedMedias();
-                var directories = Directory.GetDirectories(TorrentsFolder);
-                foreach (var folder in directories)
+                var watchedMedia = watchedMedias.SingleOrDefault(watchedMedia => watchedMedia.TorrentUrl?.ToMD5Hash() == Path.GetFileName(folder));
+                if (watchedMedia == null)
                 {
-                    var watchedMedia = watchedMedias.SingleOrDefault(watchedMedia => watchedMedia.TorrentUrl?.ToMD5Hash() == Path.GetFileName(folder));
-                    if (watchedMedia == null)
-                    {
-                        Directory.Delete(folder, true);
-                    }
-                    else
-                    {
-                        var files = Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories);
+                    Directory.Delete(folder, true);
+                }
+                else
+                {
+                    var files = Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories);
 
-                        if (files.Any())
-                        {
-                            var oldestUsedFileDateTime = files.Select(f => File.GetLastAccessTime(f))
-                                    .OrderBy(f => f.Ticks)
-                                    .Reverse()
-                                    .First();
+                    if (files.Any())
+                    {
+                        var oldestUsedFileDateTime = files.Select(f => File.GetLastAccessTime(f))
+                                .OrderBy(f => f.Ticks)
+                                .Reverse()
+                                .First();
 
-                            if((watchedMedia.CurrentTime / watchedMedia.TotalDuration) >= 0.95
-                                && DateTime.Now - oldestUsedFileDateTime >= TimeSpan.FromDays(3))
-                               Directory.Delete(folder, true);
-                            else if (DateTime.Now - oldestUsedFileDateTime >= TimeSpan.FromDays(10))
-                                Directory.Delete(folder, true);
-                        }
-                        else
+                        if ((watchedMedia.CurrentTime / watchedMedia.TotalDuration) >= 0.95
+                            && DateTime.Now - oldestUsedFileDateTime >= TimeSpan.FromDays(3))
+                            Directory.Delete(folder, true);
+                        else if (DateTime.Now - oldestUsedFileDateTime >= TimeSpan.FromDays(10))
                             Directory.Delete(folder, true);
                     }
+                    else
+                        Directory.Delete(folder, true);
                 }
             }
-        }
-
-        private static void SetupSubtitlesFolder()
-        {
-            if (!Directory.Exists(SubtitlesFolder))
-                Directory.CreateDirectory(SubtitlesFolder);
         }
 
         private static IEnumerable<WatchedMediaDto> GetWatchedMedias()

@@ -1,4 +1,5 @@
-﻿using MonoTorrent.Client;
+﻿using MonoTorrent;
+using MonoTorrent.Client;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace WebHostStreaming.Torrent
         {
             this.fileNameToSelect = fileNameToSelect;
         }
-        public ITorrentFileInfo SelectTorrentFileInfo(IList<ITorrentFileInfo> torrentFileInfos)
+        public ITorrentManagerFile SelectTorrentFileInfo(IList<ITorrentManagerFile> torrentFileInfos)
         {
             return torrentFileInfos.SingleOrDefault(f => Path.GetFileName(f.FullPath) == fileNameToSelect);
         }

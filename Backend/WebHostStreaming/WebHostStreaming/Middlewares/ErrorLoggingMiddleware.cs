@@ -5,13 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebHostStreaming.Helpers;
 
 namespace WebHostStreaming.Middlewares
 {
     public class ErrorLoggingMiddleware
     {
         private readonly RequestDelegate _next;
-        private string _loggingFile = Path.Combine(AppContext.BaseDirectory, "error.txt");
+        private string _loggingFile = Path.Combine(AppFolders.StorageFolder, "error.txt");
 
         public ErrorLoggingMiddleware(RequestDelegate next)
         {

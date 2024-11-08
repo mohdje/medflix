@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using System.IO;
 using WebHostStreaming.Helpers;
 using WebHostStreaming.Providers;
+using WebHostStreaming.Providers.TorrentContentProvider;
 
 namespace WebHostStreaming.StartupExtensions
 {
@@ -13,7 +14,7 @@ namespace WebHostStreaming.StartupExtensions
         public static void AddProviders(this IServiceCollection services)
         {
             services.AddSingleton<ISearchersProvider, SearchersProvider>();
-            services.AddSingleton<ITorrentContentProvider, TorrentContentProvider>();
+            services.AddSingleton<ITorrentClientProvider, TorrentClientProvider>();
             services.AddSingleton<ITorrentHistoryProvider, TorrentHistoryProvider>();
             services.AddSingleton<IBookmarkedMediaProvider, BookmarkedMediaProvider>();
             services.AddSingleton<IWatchedMediaProvider, WatchedMediaProvider>();

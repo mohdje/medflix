@@ -1,4 +1,5 @@
-﻿using MonoTorrent.Client;
+﻿using MonoTorrent;
+using MonoTorrent.Client;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace WebHostStreaming.Torrent
         {
             episodeId = BuildEpisodeId(seasonNumber, episodeNumber);
         }
-        public virtual ITorrentFileInfo SelectTorrentFileInfo(IList<ITorrentFileInfo> torrentFileInfos)
+        public virtual ITorrentManagerFile SelectTorrentFileInfo(IList<ITorrentManagerFile> torrentFileInfos)
         {
             return torrentFileInfos.FirstOrDefault(f => Path.GetFileName(f.FullPath).Contains(episodeId, System.StringComparison.OrdinalIgnoreCase));
         }

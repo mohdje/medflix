@@ -1,4 +1,5 @@
-﻿using MonoTorrent.Client;
+﻿using MonoTorrent;
+using MonoTorrent.Client;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,7 +11,7 @@ namespace WebHostStreaming.Torrent
         {
         }
 
-        public override ITorrentFileInfo SelectTorrentFileInfo(IList<ITorrentFileInfo> torrentFileInfos)
+        public override ITorrentManagerFile SelectTorrentFileInfo(IList<ITorrentManagerFile> torrentFileInfos)
         {
             return base.SelectTorrentFileInfo(torrentFileInfos.Where(f => f.FullPath.EndsWith(".mp4")).ToList());
         }

@@ -9,7 +9,22 @@ namespace WebHostStreaming
     {
         public static void Main(string[] args)
         {
-            AppStart.Start(args);
+            CreateHostBuilder(args).Build().Run();
+        }
+
+        private static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            var configuration = new ConfigurationBuilder()
+                                .AddJsonFile("appsettings.json", false)
+                                .Build();
+
+            return Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseConfiguration(configuration);
+                    webBuilder.UseUrls("http://0.0.0.0:5000");
+                    webBuilder.UseStartup<Startup>();
+                });
         }
     }
 }
