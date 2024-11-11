@@ -14,9 +14,9 @@ namespace MoviesAPI.Services.Torrent
 {
     internal class ZeTorrentsSearcher : TorrentVFSearcher
     {
-        public override string Url => "https://www.zetorrents.sk/";
+        public override string Url => "https://www.zetorrents.sk";
         protected override string SearchResultListIdentifier => "//div[@class='content-list-torrent']//div[@class='maxi']";
-        protected override string MagnetButtonIdentifier => "//div[@class='btn-download']/a";
-        protected override string TorrentButtonIdentifier => string.Empty;
+        protected override string MagnetButtonIdentifier => "//div[@class='btn-magnet']/a";
+        protected override string TorrentButtonIdentifier => "//div[@class='btn-download']/a";
     }
 }

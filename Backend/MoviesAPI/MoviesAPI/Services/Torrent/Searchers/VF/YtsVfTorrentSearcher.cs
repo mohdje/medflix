@@ -12,8 +12,8 @@ namespace MoviesAPI.Services.Torrent
 
         protected override string SearchResultListIdentifier => "//div[@class='browse-movie-bottom']";
 
-        protected override string MagnetButtonIdentifier => "//div[contains(@class, 'torrent-modal-download')]/a";
+        protected override string MagnetButtonIdentifier => "//div[contains(@class, 'download-magnet')]//a";
 
-        protected override string TorrentButtonIdentifier => string.Empty;
+        protected override string TorrentButtonIdentifier => "//div[contains(@class, 'torrent-modal-download')]/a";
     }
 }

@@ -15,7 +15,7 @@ namespace MoviesAPI.Services.Torrent
 {
     internal class YggTorrentSearcher : TorrentVFSearcher
     {
-        public override string Url => "https://www.torrent911.in/";
+        public override string Url => "https://www.torrent911.in";
         protected override string SearchResultListIdentifier => "//td";
         protected override string MagnetButtonIdentifier => "//div[@class='btn-magnet']/a";
         protected override string TorrentButtonIdentifier => "//div[@class='btn-download']/a";
