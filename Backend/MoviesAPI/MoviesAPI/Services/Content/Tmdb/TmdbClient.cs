@@ -118,7 +118,7 @@ namespace MoviesAPI.Services.Tmdb
             var tmdbSearchResult = await HttpRequester.GetAsync<TmdbSearchResult>(tmdbUrlBuilder.BuildContentDetailsUrl(tmdbContentId));
             var logoImgUrl = await GetLogoImageUrlAsync(tmdbContentId);
             var tmdbCredits = await GetCredits(tmdbContentId);
-           
+
             return new ContentDto()
             {
                 Title = !string.IsNullOrEmpty(tmdbSearchResult.Title) ? tmdbSearchResult.Title : tmdbSearchResult.Name,
@@ -132,7 +132,7 @@ namespace MoviesAPI.Services.Tmdb
                 Genres = tmdbSearchResult.Genres,
                 Duration = tmdbSearchResult.Runtime.GetValueOrDefault(0),
                 YoutubeTrailerUrl = GetYoutubeTrailerUrlVideo(tmdbSearchResult.Videos.Results),
-                Cast = tmdbCredits?.Cast?.Take(4).Select(c => c.Name).Aggregate((a, b) => $"{a}, {b}"),
+                Cast = tmdbCredits?.Cast != null && tmdbCredits.Cast.Any() ? tmdbCredits?.Cast?.Take(4).Select(c => c.Name).Aggregate((a, b) => $"{a}, {b}") : null,
                 Director = tmdbCredits?.DirectorName,
                 ImdbId = tmdbSearchResult.ImdbId,
                 SeasonsCount = tmdbSearchResult.SeasonsCount
