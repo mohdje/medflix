@@ -31,7 +31,7 @@ namespace WebHostStreaming.Torrent
 
         private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
-        public string TorrentDownloadDirectory => !string.IsNullOrEmpty(torrentUri) ? Path.Combine(Helpers.AppFolders.TorrentsFolder, torrentUri.ToMD5Hash()) : string.Empty;
+        public string TorrentDownloadDirectory => torrentUri?.ToTorrentFolderPath();
         public string TorrentFilePath => Path.Combine(TorrentDownloadDirectory, "torrent");
 
         public TorrentDownloaderStatus Status { get; private set; }

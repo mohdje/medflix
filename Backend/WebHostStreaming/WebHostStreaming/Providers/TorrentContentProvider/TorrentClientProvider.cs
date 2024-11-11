@@ -195,7 +195,7 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
                 {
                     AppLogger.LogInfo($"Remove TorrentManager : {torrent.Name}");
 
-                    await ClientEngine.RemoveAsync(torrent);
+                    await ClientEngine.RemoveAsync(torrent, RemoveMode.KeepAllData);
                     torrentStreams.Remove(torrent.SavePath);
                 }
             });
@@ -203,7 +203,7 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
 
         public DownloadingState GetStreamDownloadingState(string torrentUri)
         {
-            var torrentDirectory = Path.Combine(Helpers.AppFolders.TorrentsFolder, torrentUri.ToMD5Hash());
+            var torrentDirectory = torrentUri.ToTorrentFolderPath();
 
             var torrentManager = ClientEngine.Torrents.SingleOrDefault(t => t.SavePath == torrentDirectory);
 
@@ -241,7 +241,7 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
 
         public string GetContentType(string torrentUri)
         {
-            var torrentDirectory = Path.Combine(Helpers.AppFolders.TorrentsFolder, torrentUri.ToMD5Hash());
+            var torrentDirectory = torrentUri.ToTorrentFolderPath();
 
             var torrentManager = ClientEngine.Torrents.SingleOrDefault(t => t.SavePath == torrentDirectory);
 
@@ -253,16 +253,7 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
             if (file == null)
                 return null;
 
-            var videoFormat = Path.GetExtension(file.FullPath);
-
-            if (videoFormat == ".mp4")
-                return "video/mp4";
-            else if (videoFormat == ".avi")
-                return "video/x-msvideo";
-            else if (videoFormat == ".mkv")
-                return "video/x-matroska";
-            else
-                return null;
+            return file.FullPath.GetContentType();
         }
         public Task<IEnumerable<string>> GetTorrentFilesAsync(string torrentUri)
         {

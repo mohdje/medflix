@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,6 +30,25 @@ namespace WebHostStreaming.Extensions
         public static string DecodeBase64(this string base64string)
         {
             return Encoding.UTF8.GetString(Convert.FromBase64String(base64string));
+        }
+
+        public static string ToTorrentFolderPath(this string url)
+        {
+            return Path.Combine(Helpers.AppFolders.TorrentsFolder, url.ToMD5Hash());
+        }
+
+        public static string GetContentType(this string filePath)
+        {
+            var videoFormat = Path.GetExtension(filePath);
+
+            if (videoFormat == ".mp4")
+                return "video/mp4";
+            else if (videoFormat == ".avi")
+                return "video/x-msvideo";
+            else if (videoFormat == ".mkv")
+                return "video/x-matroska";
+            else
+                return null;
         }
     }
 }
