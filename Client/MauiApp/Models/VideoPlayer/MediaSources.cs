@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Medflix.Models.VideoPlayer
 {
-    public class TorrentSources
+    public class MediaSources
     {
         public string Language { get; set; }
 
-        public MediaTorrent[] Torrents { get; set; }
+        public MediaSource[] Sources { get; set; }
     }
 }

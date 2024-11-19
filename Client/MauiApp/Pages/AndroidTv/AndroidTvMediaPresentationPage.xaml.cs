@@ -22,8 +22,8 @@ namespace Medflix.Pages.AndroidTv
 
         IEnumerable<string> frenchSubtitlesUrls;
         IEnumerable<string> englishSubtitlesUrls;
-        IEnumerable<MediaTorrent> vfTorrents;
-        IEnumerable<MediaTorrent> voTorrents;
+        IEnumerable<MediaSource> vfSources;
+        IEnumerable<MediaSource> voSources;
 
         public AndroidTvMediaPresentationPage(string mediaId)
         {
@@ -138,14 +138,14 @@ namespace Medflix.Pages.AndroidTv
                 Versions.ShowLoading = true;
             });
 
-            voTorrents = await MedflixApiService.Instance.GetAvailableVOTorrents(
+            voSources = await MedflixApiService.Instance.GetAvailableVOSources(
              title: mediaDetails.Title,
              year: MediaIsMovie ? mediaDetails.Year : null,
              imdbId: MediaIsSerie ? mediaDetails.ImdbId : null,
              seasonNumber: seasonNumber,
              episodeNumber: episodeNumber);
 
-            vfTorrents = await MedflixApiService.Instance.GetAvailableVFTorrents(
+            vfSources = await MedflixApiService.Instance.GetAvailableVFSources(
                  title: mediaDetails.Title,
                  mediaId: mediaDetails.Id,
                  year: MediaIsMovie ? mediaDetails.Year : null,
@@ -154,9 +154,9 @@ namespace Medflix.Pages.AndroidTv
                 );
 
             var availableTorrents = new List<string>();
-            if (voTorrents != null && voTorrents.Any())
+            if (voSources != null && voSources.Any())
                 availableTorrents.Add("Original");
-            if (vfTorrents != null && vfTorrents.Any())
+            if (vfSources != null && vfSources.Any())
                 availableTorrents.Add("French");
 
             MainThread.BeginInvokeOnMainThread(() =>
@@ -244,21 +244,26 @@ namespace Medflix.Pages.AndroidTv
 
             videoPlayerOptions.SubtitlesSources = subtitlesSources.ToArray();
 
-           var torrentSources = new List<TorrentSources>();
-            if (voTorrents != null && voTorrents.Any())
-                torrentSources.Add(new TorrentSources { Language = "Original", Torrents = voTorrents.ToArray() });
+           var mediaSources = new List<MediaSources>();
+            if (voSources != null && voSources.Any())
+                mediaSources.Add(new MediaSources { Language = "Original", Sources = voSources.ToArray() });
 
-            if (vfTorrents != null && vfTorrents.Any())
-                torrentSources.Add(new TorrentSources { Language = "French", Torrents = vfTorrents.ToArray() });
+            if (vfSources != null && vfSources.Any())
+                mediaSources.Add(new MediaSources { Language = "French", Sources = vfSources.ToArray() });
 
-            videoPlayerOptions.TorrentSources = torrentSources.ToArray();
+            videoPlayerOptions.MediaSources = mediaSources.ToArray();
 
-            var torrentUrl = string.Empty;  
+            var videoSource = string.Empty;  
             if (videoPlayerMediaWatched != null)
             {
-                var urls = torrentSources.SelectMany(s => s.Torrents.Select(t => t.DownloadUrl));
-                if (urls.Any(url => url == videoPlayerMediaWatched.TorrentUrl))
-                    torrentUrl = videoPlayerMediaWatched.TorrentUrl;             
+                var files = mediaSources.SelectMany(s => s.Sources.Select(t => t.FilePath));
+                var torrents = mediaSources.SelectMany(s => s.Sources.Select(t => t.TorrentUrl));
+
+                if (files.Any(url => url == videoPlayerMediaWatched.VideoSource))
+                    videoSource = videoPlayerMediaWatched.VideoSource;
+
+                else if (torrents.Any(url => url == videoPlayerMediaWatched.VideoSource))
+                    videoSource = videoPlayerMediaWatched.VideoSource;             
             }
 
             videoPlayerOptions.WatchMedia = new WatchMediaInfo
@@ -267,7 +272,7 @@ namespace Medflix.Pages.AndroidTv
                 CurrentTime = videoPlayerMediaWatched?.CurrentTime ?? 0,
                 EpisodeNumber = episodeNumber.GetValueOrDefault(0),
                 SeasonNumber = seasonNumber.GetValueOrDefault(0),
-                TorrentUrl = torrentUrl
+                VideoSource = videoSource
             };
 
             await Navigation.PushAsync(new VideoPlayerPage(videoPlayerOptions));

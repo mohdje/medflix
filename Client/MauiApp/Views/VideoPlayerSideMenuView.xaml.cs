@@ -20,7 +20,7 @@ namespace Medflix.Views
             IsVisible = false;
         }
 
-        public void Init(SubtitlesSources[] subtitlesSources, TorrentSources[] torrentSources, string defaultVideoUrl)
+        public void Init(SubtitlesSources[] subtitlesSources, MediaSources[] mediaSources, string defaultVideoUrl)
         {
             subtitlesMenuContainer = new VideoPlayerMenu("Subtitles");
             subtitlesMenuContainer.AddMenu("No subtitles", true, onClickAction: () => OnNoSubtitlesClick?.Invoke(this, null));
@@ -38,32 +38,32 @@ namespace Medflix.Views
 
             qualitiesMenuContainer = new VideoPlayerMenu("Versions");
             var qualityIndexes = new Dictionary<string, int>();
-            foreach (var torrentSource in torrentSources)
+            foreach (var mediaSource in mediaSources)
             {
-                var urlsMenuContainer = new VideoPlayerMenu($"{torrentSource.Language} qualities");
+                var urlsMenuContainer = new VideoPlayerMenu($"{mediaSource.Language} qualities");
 
                 bool selected = false;
-                foreach (var torrent in torrentSource.Torrents.OrderBy(t => t.Quality))
+                foreach (var videoSource in mediaSource.Sources.OrderBy(t => t.Quality))
                 {
                     var text = "";
-                    if (qualityIndexes.ContainsKey(torrent.Quality))
+                    if (qualityIndexes.ContainsKey(videoSource.Quality))
                     {
-                        qualityIndexes[torrent.Quality]++;
-                        text = $"{torrent.Quality} ({qualityIndexes[torrent.Quality]})";
+                        qualityIndexes[videoSource.Quality]++;
+                        text = $"{videoSource.Quality} ({qualityIndexes[videoSource.Quality]})";
                     }
                     else
                     {
-                        qualityIndexes.Add(torrent.Quality, 0);
-                        text = $"{torrent.Quality}";
+                        qualityIndexes.Add(videoSource.Quality, 0);
+                        text = $"{videoSource.Quality}";
                     }
 
-                    if (defaultVideoUrl == torrent.DownloadUrl)
+                    if (defaultVideoUrl == videoSource.TorrentUrl || defaultVideoUrl == videoSource.FilePath)
                         selected = true;
 
-                    urlsMenuContainer.AddMenu(text, selected: defaultVideoUrl == torrent.DownloadUrl, onClickAction: () => OnVideoQualityClick?.Invoke(this, torrent.DownloadUrl));
+                    urlsMenuContainer.AddMenu(text, selected: selected, onClickAction: () => OnVideoQualityClick?.Invoke(this, !string.IsNullOrEmpty(videoSource.FilePath) ? videoSource.FilePath : videoSource.TorrentUrl));
                 }
 
-                qualitiesMenuContainer.AddMenu(torrentSource.Language,selected: selected, subMenusContainer: urlsMenuContainer, onClickAction: () => ShowMenus(urlsMenuContainer));
+                qualitiesMenuContainer.AddMenu(mediaSource.Language, selected: selected, subMenusContainer: urlsMenuContainer, onClickAction: () => ShowMenus(urlsMenuContainer));
             }
 
         }

@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace Medflix.Models.Media
 {
-    public class MediaTorrent
+    public class MediaSource
     {
-        public string DownloadUrl { get; set; }
-
+        public string TorrentUrl { get; set; }
+        public string FilePath { get; set; }
         public string Quality { get; set; }
-
-        public string LanguageVersion { get; set; }
     }
 }

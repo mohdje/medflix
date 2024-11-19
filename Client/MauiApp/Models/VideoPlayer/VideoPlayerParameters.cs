@@ -9,7 +9,7 @@ namespace Medflix.Models.VideoPlayer
 {
     public class VideoPlayerParameters
     {
-        public TorrentSources[] TorrentSources { get; set; }
+        public MediaSources[] MediaSources { get; set; }
         public SubtitlesSources[] SubtitlesSources { get; set; }
         public WatchMediaInfo WatchMedia { get; set; }
 

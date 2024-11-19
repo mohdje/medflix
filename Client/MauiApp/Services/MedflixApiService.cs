@@ -10,6 +10,7 @@ using System.Text.Json.Serialization;
 using Medflix.Models;
 using System.Text.Json;
 using System.Diagnostics.Metrics;
+using System.Net.Http;
 
 
 namespace Medflix.Services
@@ -31,7 +32,7 @@ namespace Medflix.Services
             }
         }
 
-        string hostServiceUrl = "http://www.google.com";// string.Empty;
+        string hostServiceUrl = string.Empty;
 
         string mediaType = Consts.Movies;
 
@@ -43,29 +44,31 @@ namespace Medflix.Services
             if (httpClient == null)
             {
                 httpClient = new HttpClient();
+             //   httpClient.Timeout = TimeSpan.FromSeconds(10);
                 httpClient.DefaultRequestHeaders.Add("User-Agent", userAgent);
             }
         }
-
 
         public async Task<bool> SetHostServiceAddressAsync(string serviceAddress)
         {
             try
             {
                 var url = $"http://{serviceAddress}";
+
                 var response = await httpClient.GetAsync($"{url}/application/ping");
+
                 if (response.IsSuccessStatusCode)
                 {
                     hostServiceUrl = url;
                     return true;
                 }
+                else
+                    return false;
             }
-            catch
+            catch (Exception ex)
             {
-
+                return false;
             }
-
-            return false;
         }
         public void SwitchToMoviesMode()
         {
@@ -88,13 +91,11 @@ namespace Medflix.Services
         #region Media fetch operations
         public async Task<IEnumerable<MediaDetails>> GetMediasOfTodaysAsync()
         {
-
             return await GetAsync<IEnumerable<MediaDetails>>($"{hostServiceUrl}/{mediaType}/mediasoftoday");
         }
 
         public async Task<IEnumerable<MediaDetails>> GetPopularMediasAsync()
         {
-
             return await GetAsync<IEnumerable<MediaDetails>>($"{hostServiceUrl}/{mediaType}/popular");
         }
 
@@ -105,7 +106,6 @@ namespace Medflix.Services
 
         public async Task<IEnumerable<MediaDetails>> GetPopularAmazonPrimeAsync()
         {
-
             return await GetAsync<IEnumerable<MediaDetails>>($"{hostServiceUrl}/{mediaType}/amazonprime");
         }
 
@@ -116,20 +116,16 @@ namespace Medflix.Services
 
         public async Task<IEnumerable<MediaDetails>> GetPopularAppleTvAsync()
         {
-
             return await GetAsync<IEnumerable<MediaDetails>>($"{hostServiceUrl}/{mediaType}/appletv");
         }
 
         public async Task<IEnumerable<MediaDetails>> SearchMedia(string text)
         {
-
-
             return await GetAsync<IEnumerable<MediaDetails>>($"{hostServiceUrl}/{mediaType}/search?t={text}");
         }
 
         public async Task<IEnumerable<MediaDetails>> GetSimilarMediasAsync(string mediaId)
         {
-
             return await GetAsync<IEnumerable<MediaDetails>>($"{hostServiceUrl}/{mediaType}/similar/{mediaId}");
         }
 
@@ -157,18 +153,18 @@ namespace Medflix.Services
             return await GetAsync<IEnumerable<string>>($"{hostServiceUrl}/subtitles/{mediaType}/en?{queyString}");
         }
 
-        public async Task<IEnumerable<MediaTorrent>> GetAvailableVOTorrents(string title, int? year = null, string? imdbId = null, int? seasonNumber = null, int? episodeNumber = null)
+        public async Task<IEnumerable<MediaSource>> GetAvailableVOSources(string title, int? year = null, string? imdbId = null, int? seasonNumber = null, int? episodeNumber = null)
         {
             var queyString = BuildQueryString(title: title, year: year, imdbId: imdbId, seasonNumber: seasonNumber, episodeNumber: episodeNumber);
 
-            return await GetAsync<IEnumerable<MediaTorrent>>($"{hostServiceUrl}/torrent/{mediaType}/vo?{queyString}");
+            return await GetAsync<IEnumerable<MediaSource>>($"{hostServiceUrl}/mediasource/{mediaType}/vo?{queyString}");
         }
 
-        public async Task<IEnumerable<MediaTorrent>> GetAvailableVFTorrents(string title, int? year = null, string? mediaId = null, int? seasonNumber = null, int? episodeNumber = null)
+        public async Task<IEnumerable<MediaSource>> GetAvailableVFSources(string title, int? year = null, string? mediaId = null, int? seasonNumber = null, int? episodeNumber = null)
         {
             var queyString = BuildQueryString(title: title, year: year, mediaId: mediaId, seasonNumber: seasonNumber, episodeNumber: episodeNumber);
 
-            return await GetAsync<IEnumerable<MediaTorrent>>($"{hostServiceUrl}/torrent/{mediaType}/vf?{queyString}");
+            return await GetAsync<IEnumerable<MediaSource>>($"{hostServiceUrl}/mediasource/{mediaType}/vf?{queyString}");
         }
 
         public async Task<IEnumerable<WatchMediaInfo>> GetWatchMediaHistory()
@@ -239,11 +235,19 @@ namespace Medflix.Services
         public string BuildStreamUrl(string mediaUrl, int? seasonNumber, int? episodeNumber)
         {
             // mediaUrl = TestData.TorrentUrl;
-            //  return TestData.Mp4Url;
-            var queryString = $"base64TorrentUrl={ToBase64(mediaUrl)}&";
-            queryString += BuildQueryString(seasonNumber: seasonNumber, episodeNumber: episodeNumber);
+            // return TestData.Mp4Url;
+            if (mediaUrl.StartsWith("http") || mediaUrl.StartsWith("magnet"))
+            {
+                var queryString = $"base64TorrentUrl={ToBase64(mediaUrl)}&";
+                queryString += BuildQueryString(seasonNumber: seasonNumber, episodeNumber: episodeNumber);
 
-            return $"{hostServiceUrl}/torrent/stream/{mediaType}?{queryString}";
+                return $"{hostServiceUrl}/torrent/stream/{mediaType}?{queryString}";
+            }
+            else
+            {
+                var queryString = $"base64VideoPath={ToBase64(mediaUrl)}";
+                return $"{hostServiceUrl}/application/video?{queryString}";
+            }
         }
 
         #endregion

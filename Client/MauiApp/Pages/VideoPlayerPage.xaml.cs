@@ -2,6 +2,7 @@
 using Android.Views;
 using LibVLCSharp.Shared;
 using Medflix.Controls;
+using Medflix.Models.Media;
 using Medflix.Models.VideoPlayer;
 using Medflix.Services;
 using Medflix.ViewModels;
@@ -31,12 +32,25 @@ namespace Medflix.Pages
 
             InitVideoPlayerControls();
 
-            var videoUrl = !string.IsNullOrEmpty(videoPlayerParameters.WatchMedia.TorrentUrl) ? videoPlayerParameters.WatchMedia.TorrentUrl : videoPlayerParameters.TorrentSources.First().Torrents.First().DownloadUrl;
+            var videoUrl = SelectDefaultVideoUrl(videoPlayerParameters);
             PlayMedia(videoUrl, (long)(videoPlayerParameters.WatchMedia.CurrentTime * 1000));
 
-            VideoPlayerMenu.Init(videoPlayerParameters.SubtitlesSources, videoPlayerParameters.TorrentSources, videoUrl);
+            VideoPlayerMenu.Init(videoPlayerParameters.SubtitlesSources, videoPlayerParameters.MediaSources, videoUrl);
         }
 
+        private string SelectDefaultVideoUrl(VideoPlayerParameters videoPlayerParameters)
+        {
+            if (!string.IsNullOrEmpty(videoPlayerParameters.WatchMedia.VideoSource))
+                return videoPlayerParameters.WatchMedia.VideoSource;
+            else
+            {
+                var mediaSource = videoPlayerParameters.MediaSources.SelectMany(ms => ms.Sources).FirstOrDefault(s => !string.IsNullOrEmpty(s.FilePath));
+                if (mediaSource != null)
+                    return mediaSource.FilePath;
+                else
+                    return videoPlayerParameters.MediaSources.First().Sources.First().TorrentUrl;
+            }
+        }
         private void InitVideoPlayerControls()
         {
             PlayerControls.SetSubtitlesButtonVisibility(VideoPlayerParameters.SubtitlesSources.Any());
@@ -59,23 +73,23 @@ namespace Medflix.Pages
             MediaPlayerViewModel.OnAppearing();
             RemoteCommandActionNotifier.Instance.OnButtonPressed += OnUserAction;
 
-            #if ANDROID
+#if ANDROID
                 Microsoft.Maui.ApplicationModel.Platform.CurrentActivity.Window.AddFlags(WindowManagerFlags.KeepScreenOn |
                             WindowManagerFlags.DismissKeyguard |
                             WindowManagerFlags.ShowWhenLocked |
                             WindowManagerFlags.TurnScreenOn);
-            #endif
+#endif
         }
 
 
         protected override void OnDisappearing()
         {
-            #if ANDROID
+#if ANDROID
                         Microsoft.Maui.ApplicationModel.Platform.CurrentActivity.Window.ClearFlags(WindowManagerFlags.KeepScreenOn |
                                     WindowManagerFlags.DismissKeyguard |
                                     WindowManagerFlags.ShowWhenLocked |
                                     WindowManagerFlags.TurnScreenOn);
-            #endif
+#endif
             RemoteCommandActionNotifier.Instance.OnButtonPressed -= OnUserAction;
             MediaPlayerViewModel.OnDisappearing();
             base.OnDisappearing();
@@ -116,7 +130,7 @@ namespace Medflix.Pages
             int? episodeNumber = VideoPlayerParameters.WatchMedia.EpisodeNumber == 0 ? null : VideoPlayerParameters.WatchMedia.EpisodeNumber;
 
             var url = MedflixApiService.Instance.BuildStreamUrl(mediaUrl, seasonNumber, episodeNumber);
-            VideoPlayerParameters.WatchMedia.TorrentUrl = mediaUrl;
+            VideoPlayerParameters.WatchMedia.VideoSource = mediaUrl;
 
             MediaPlayerViewModel.PlayMedia(url, startTime);
         }
@@ -170,7 +184,7 @@ namespace Medflix.Pages
                     PlayerControls.NotifyTimeUpdated(e.Time, MediaPlayerViewModel.MediaPlayer.Media.Duration);
                     PlayerControls.EnableTimeBarNavigation();
                 }
-               
+
 
                 if (Subtitles.IsVisible)
                     Subtitles.Update(e.Time);
