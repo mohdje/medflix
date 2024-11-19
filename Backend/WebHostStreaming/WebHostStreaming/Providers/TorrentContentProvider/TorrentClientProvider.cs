@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using WebHostStreaming.Extensions;
 using WebHostStreaming.Helpers;
 using WebHostStreaming.Models;
+using WebHostStreaming.Providers.AvailableVideosListProvider;
 using WebHostStreaming.Torrent;
 
 namespace WebHostStreaming.Providers.TorrentContentProvider
@@ -19,12 +20,15 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
         private ClientEngine ClientEngine;
         private TorrentDownloader torrentDownloader;
         private Dictionary<string, Stream> torrentStreams;
+        private Timer downloadWatcher;
+        private IAvailableVideosListProvider availableVideosListProvider;
 
-        public TorrentClientProvider()
+        public TorrentClientProvider(IAvailableVideosListProvider availableVideosListProvider)
         {
             ClientEngine = BuildClientEngine();
             torrentStreams = new Dictionary<string, Stream>();
             torrentDownloader = new TorrentDownloader();
+            this.availableVideosListProvider = availableVideosListProvider;
         }
 
         private ClientEngine BuildClientEngine()
@@ -37,7 +41,7 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
 
         public async Task<Stream> GetTorrentStreamAsync(string torrentMetadaPath, ITorrentFileSelector torrentFileSelector)
         {
-            var torrentManager = await GetTorrentManagerAsync(torrentMetadaPath, torrentFileSelector);
+            var torrentManager = await GetTorrentManagerAsync(torrentMetadaPath);
             if (torrentManager == null)
                 return null;
 
@@ -114,7 +118,7 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
             }
         }
 
-        public async Task<TorrentManager> GetTorrentManagerAsync(string torrentMetadaPath, ITorrentFileSelector torrentFileSelector)
+        public async Task<TorrentManager> GetTorrentManagerAsync(string torrentMetadaPath)
         {
             try
             {
@@ -131,8 +135,7 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
                 {
                     AppLogger.LogInfo($"Create TorrentManager : {torrentMetadaPath}");
 
-                    torrentManager = await ClientEngine.AddStreamingAsync(torrentFilePath, torrentDirectory);
-                    ReleaseUnusedTorrentManagersAsync(torrentDirectory);
+                    torrentManager = await CreateTorrentManagerAsync(torrentFilePath, torrentDirectory);
                 }
                 else if (torrentManager != null && torrentManager.State == TorrentState.Stopping)
                 {
@@ -146,8 +149,7 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
 
                     AppLogger.LogInfo($"Create TorrentManager : {torrentMetadaPath}");
 
-                    torrentManager = await ClientEngine.AddStreamingAsync(torrentFilePath, torrentDirectory);
-                    ReleaseUnusedTorrentManagersAsync(torrentDirectory);
+                    torrentManager = await CreateTorrentManagerAsync(torrentFilePath, torrentDirectory);
                 }
 
                 return torrentManager;
@@ -155,6 +157,57 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
             catch (Exception ex)
             {
                 return null;
+            }
+        }
+
+        private async Task<TorrentManager> CreateTorrentManagerAsync(string torrentFilePath, string torrentDirectory)
+        {
+            var torrentManager = await ClientEngine.AddStreamingAsync(torrentFilePath, torrentDirectory);
+            ReleaseUnusedTorrentManagersAsync(torrentDirectory);
+
+            InitDoawnloadWatcher();
+
+            return torrentManager;
+        }
+
+        private void InitDoawnloadWatcher()
+        {
+            if (downloadWatcher == null)
+            {
+                AppLogger.LogInfo($"Init Download Watcher");
+
+                downloadWatcher = new Timer(async (e) =>
+                {
+                    var torrents = ClientEngine.Torrents.Where(t => t.State != TorrentState.Stopped && t.State != TorrentState.Stopping);
+
+                    if (torrents.Any())
+                    {
+                        foreach (var torrent in torrents)
+                        {
+                            AppLogger.LogInfo($"Download progress for {torrent.SavePath}: {torrent.PartialProgress}");
+                            if(torrent.PartialProgress > 97)
+                            {
+                                var file = torrent.Files.SingleOrDefault(f => f.Priority == Priority.Highest);
+                                if (file != null)
+                                {
+                                    AppLogger.LogInfo($"Register file as complete : {torrent.Name}");
+
+                                    await availableVideosListProvider.AddMediaSource(file.FullPath);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        AppLogger.LogInfo($"Stop Download Watcher");
+
+                        downloadWatcher.Change(Timeout.Infinite, Timeout.Infinite);
+                        downloadWatcher.Dispose();
+                        downloadWatcher = null;
+                    }
+
+
+                }, null, 30000, 30000);
             }
         }
 

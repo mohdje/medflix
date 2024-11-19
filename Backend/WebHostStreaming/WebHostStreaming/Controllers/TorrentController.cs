@@ -23,40 +23,12 @@ namespace WebHostStreaming.Controllers
         ITorrentHistoryProvider torrentHistoryProvider;
         public TorrentController(
            ISearchersProvider searchersProvider,
-           ITorrentClientProvider torrentVideoStreamProvider,
+           ITorrentClientProvider torrentClientProvider,
            ITorrentHistoryProvider torrentHistoryProvider)
         {
             this.searchersProvider = searchersProvider;
-            this.torrentClientProvider = torrentVideoStreamProvider;
+            this.torrentClientProvider = torrentClientProvider;
             this.torrentHistoryProvider = torrentHistoryProvider;
-        }
-
-        [HttpGet("movies/vf")]
-        public async Task<IEnumerable<MediaTorrent>> SearchVFMovieTorrents(string mediaId, string title, int year)
-        {
-            var frenchTitle = await searchersProvider.MovieSearcher.GetMovieFrenchTitleAsync(mediaId);
-
-            return await searchersProvider.TorrentSearchManager.SearchVfTorrentsMovieAsync(string.IsNullOrEmpty(frenchTitle) ? title : frenchTitle, year);
-        }
-
-        [HttpGet("movies/vo")]
-        public async Task<IEnumerable<MediaTorrent>> SearchVOMovieTorrents(string title, int year)
-        {
-            return await searchersProvider.TorrentSearchManager.SearchVoTorrentsMovieAsync(title, year);
-        }
-
-        [HttpGet("series/vo")]
-        public async Task<IEnumerable<MediaTorrent>> SearchSerieVOTorrents(string imdbId, string title, int seasonNumber, int episodeNumber)
-        {
-            return await searchersProvider.TorrentSearchManager.SearchVoTorrentsSerieAsync(title, imdbId, seasonNumber, episodeNumber);
-        }
-
-        [HttpGet("series/vf")]
-        public async Task<IEnumerable<MediaTorrent>> SearchSerieVFTorrents(string mediaId, string title, int seasonNumber, int episodeNumber)
-        {
-            var frenchTitle = await searchersProvider.SeriesSearcher.GetSerieFrenchTitleAsync(mediaId);
-
-            return await searchersProvider.TorrentSearchManager.SearchVfTorrentsSerieAsync(string.IsNullOrEmpty(frenchTitle) ? title : frenchTitle, seasonNumber, episodeNumber);
         }
 
         [HttpGet("stream/movies")]
@@ -84,6 +56,9 @@ namespace WebHostStreaming.Controllers
         [HttpGet("streamdownloadstate")]
         public IActionResult GetStreamDownloadState(string base64TorrentUrl)
         {
+            if (string.IsNullOrEmpty(base64TorrentUrl))
+                return BadRequest();
+
             var url = base64TorrentUrl.DecodeBase64();
             var state = torrentClientProvider.GetStreamDownloadingState(url);
 

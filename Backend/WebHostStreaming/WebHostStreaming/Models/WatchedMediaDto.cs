@@ -10,6 +10,6 @@ namespace WebHostStreaming.Models
         public float CurrentTime { get; set; }
         public int SeasonNumber { get; set; }
         public int EpisodeNumber { get; set; }
-        public string TorrentUrl { get; set; }
+        public string VideoSource { get; set; }
     }
 }

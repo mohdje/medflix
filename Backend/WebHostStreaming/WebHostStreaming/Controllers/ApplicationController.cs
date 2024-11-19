@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using WebHostStreaming.Extensions;
 using WebHostStreaming.Helpers;
 
 namespace WebHostStreaming.Controllers
@@ -17,16 +18,24 @@ namespace WebHostStreaming.Controllers
     [ApiController]
     public class ApplicationController : ControllerBase
     {
-        IHostApplicationLifetime appliationLifeTime;
-        public ApplicationController(IHostApplicationLifetime hostApplicationLifetime)
-        {
-            appliationLifeTime = hostApplicationLifetime;
-        }
-
         [HttpGet("ping")]
         public IActionResult Ping()
         {
             return Ok("Medflix Pong");
+        }
+
+        [HttpGet("video")]
+        public IActionResult GetVideoStream(string base64VideoPath)
+        {
+            var videoPath = base64VideoPath.DecodeBase64();
+
+            if (System.IO.File.Exists(videoPath))
+            {
+                var stream = new FileStream(videoPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+                return File(stream, videoPath.GetContentType(), true);
+            }
+            else return NoContent();
         }
     }
 }

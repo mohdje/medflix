@@ -5,7 +5,7 @@ using System.Web;
 
 namespace MoviesAPI.Extensions
 {
-    internal static class StringExtension
+    public static class StringExtension
     {
         public static bool ContainsWords(this string str, string[] words)
         {
@@ -17,13 +17,13 @@ namespace MoviesAPI.Extensions
             return true;
         }
 
-        public static string GetVideoQuality(this string movieLinkTitle)
+        public static string GetVideoQuality(this string mediaTitle)
         {
             var qualities = new string[] { "480p", "720p", "1080p", "2160p", "DVDRIP", "WEBRIP", "HDTV" };
 
             foreach (var quality in qualities)
             {
-                if (movieLinkTitle.Contains(quality))
+                if (mediaTitle.Contains(quality, StringComparison.OrdinalIgnoreCase))
                     return quality;
             }
 
@@ -37,6 +37,9 @@ namespace MoviesAPI.Extensions
                 var result = text.Replace(":", "")
                             .Replace(",", "")
                             .Replace("-", " ")
+                            .Replace("_", " ")
+                            .Replace(".", " ")
+                            .Replace("?", "")
                             .Replace("/", "")
                             .Replace("'", "")
                             .Replace("é", "e")
