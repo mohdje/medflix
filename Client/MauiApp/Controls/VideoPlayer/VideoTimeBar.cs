@@ -26,6 +26,7 @@ namespace Medflix.Controls.VideoPlayer
         Border Border;
 
         long totalDurationInMs;
+        double pourcentProgress;
         long navigationAmountInMs = 10000; //navigate 10 seconds per left/right button click
         double pourcentNavigation => (double)navigationAmountInMs / totalDurationInMs;
 
@@ -80,27 +81,30 @@ namespace Medflix.Controls.VideoPlayer
       
         private async void OnLeftButtonPressed(object? sender, EventArgs e)
         {
-            await StartNavigationAsync(ProgressBar.Progress - pourcentNavigation);
+            await StartNavigationAsync(-pourcentNavigation);
         }
 
         private async void OnRightButtonPressed(object? sender, EventArgs e)
         {
-            await StartNavigationAsync(ProgressBar.Progress + pourcentNavigation);
+            await StartNavigationAsync(pourcentNavigation);
         }
-        private async Task StartNavigationAsync(double percentage)
+        private async Task StartNavigationAsync(double offset)
         {
             LastNavigationDateTime = DateTime.Now;
 
-            var newTimeInMs = (long)(percentage * totalDurationInMs);
+            if(pourcentProgress >= 0 && pourcentProgress <= 100)
+                pourcentProgress += offset;
+
+            var newTimeInMs = (long)(pourcentProgress * totalDurationInMs);
             OnNavigationStart?.Invoke(this, newTimeInMs);
 
-            await ProgressBar.ProgressTo(percentage, 0, Easing.Default);
+            await ProgressBar.ProgressTo(pourcentProgress, 0, Easing.Default);
 
             await Task.Delay(2500).ContinueWith(t =>
             {
                 if ((DateTime.Now - LastNavigationDateTime).TotalSeconds >= 2)
                 {
-                    OnNavigationEnd?.Invoke(this, ProgressBar.Progress);
+                    OnNavigationEnd?.Invoke(this, pourcentProgress);
                 }
             });
         }
@@ -120,9 +124,9 @@ namespace Medflix.Controls.VideoPlayer
             totalDurationInMs = totalTimeInMs;
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                var pourcentage = timeInMs / (double)totalTimeInMs;
+                pourcentProgress = timeInMs / (double)totalTimeInMs;
 
-                await ProgressBar.ProgressTo(pourcentage, 0, Easing.Linear);
+                await ProgressBar.ProgressTo(pourcentProgress, 0, Easing.Linear);
 
             });
         }

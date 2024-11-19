@@ -55,7 +55,8 @@ namespace Medflix.Controls.AndroidTv
         {
             Button = new Button
             {
-                FontAttributes = FontAttributes.Bold
+                FontAttributes = FontAttributes.Bold,
+                CornerRadius = 30
             };
 
             Button.Focused += (s, e) => 

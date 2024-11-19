@@ -56,8 +56,16 @@ namespace Medflix.Controls.VideoPlayer
             var timeInS = timeInMs / 1000;
             var subtitles = Subtitles?.FirstOrDefault(s => timeInS >= s.StartTime && timeInS <= s.EndTime);
 
-            SubtitlesLabel.FontAttributes = subtitles?.Text.Contains("<i>") ?? false ? FontAttributes.Italic : FontAttributes.None;
-            SubtitlesLabel.Text = subtitles?.Text.Replace("<i>", "").Replace("</i>", "");
+            if(subtitles?.Text.Contains("<i>") ?? false)
+            {
+                SubtitlesLabel.FontAttributes = FontAttributes.Italic;
+                SubtitlesLabel.Text = $"{subtitles?.Text.Replace("<i>", "").Replace("</i>", "")} ";//add extra space because last char is cropped in Italic (Android only)
+            }
+            else
+            {
+                SubtitlesLabel.FontAttributes = FontAttributes.None;
+                SubtitlesLabel.Text = subtitles?.Text;
+            }
         }
     }
 }

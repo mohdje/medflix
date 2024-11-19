@@ -84,16 +84,16 @@ namespace Medflix.ViewModels
                 Media = media
             };
 
-
             MediaPlayer.Playing += (s, e) =>
             {
+                MediaPlayer.SetSpu(-1);//disable subtitles included in the video
+
                 if (ResumeTime > 0)
                 {
                     MediaPlayer.Position = ResumeTime / (float)MediaPlayer.Media.Duration;
                     ResumeTime = -1;
                 }
             };
-            
         }
 
         private void Play()

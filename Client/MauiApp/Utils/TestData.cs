@@ -1,4 +1,5 @@
 ﻿using Medflix.Models.Media;
+using Medflix.Models.VideoPlayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -127,7 +128,7 @@ namespace Medflix.Utils
                 }
             };
 
-        public static List<MediaTorrent> MediaTorrents = new List<MediaTorrent>() { new MediaTorrent { DownloadUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", Quality = "1080p" }, new MediaTorrent { DownloadUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", Quality = "720p" } };
+        public static List<MediaSource> MediaTorrents = new List<MediaSource>() { new MediaSource { TorrentUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", Quality = "1080p" }, new MediaSource { TorrentUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", Quality = "720p" } };
 
         public static WatchMediaInfo WatchMedia = new WatchMediaInfo
         {
@@ -136,13 +137,56 @@ namespace Medflix.Utils
             EpisodeNumber = 23,
             CurrentTime = 2000,
             TotalDuration = 4213,
-            TorrentUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+            VideoSource = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
         };
 
         public static List<WatchMediaInfo> WatchMedias = new List<WatchMediaInfo>() { WatchMedia, WatchMedia, WatchMedia, WatchMedia, WatchMedia, WatchMedia, WatchMedia, WatchMedia, WatchMedia, WatchMedia, WatchMedia };
 
         public static string Mp4Url = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
         public static string TorrentUrl = "https://raw.githubusercontent.com/webtorrent/webtorrent-fixtures/refs/heads/master/fixtures/bunny.torrent";
+
+        public static List<Subtitles> Subtitles = new List<Subtitles>()
+        {
+            new Subtitles
+            {
+                StartTime = 3,
+                EndTime = 20,
+                Text = "<i>Coucou comment ca va ??!</i>"
+            },
+              new Subtitles
+            {
+                StartTime = 22,
+                EndTime = 28,
+                Text = "Bien et toi ???"
+            }
+        };
+
+        public static VideoPlayerParameters VideoPlayerParameters = new VideoPlayerParameters
+        {
+            SubtitlesSources = new SubtitlesSources[]
+                {
+                    new SubtitlesSources
+                    {
+                        Language = "French",
+                        Urls = new string []{"ffzezefz"}
+                    }
+                },
+            MediaSources = new MediaSources[]
+                {
+                    new MediaSources
+                    {
+                        Language = "French",
+                        Sources = new Models.Media.MediaSource[]
+                        {
+                            new Models.Media.MediaSource{ TorrentUrl= "", Quality = "1080p"}
+                        }
+                     }
+                },
+            WatchMedia = new Models.Media.WatchMediaInfo
+            {
+                Media = TestData.Media,
+            }
+        };
     }
 }
 

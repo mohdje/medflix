@@ -9,7 +9,7 @@ namespace Medflix.Controls.AndroidTv
     public class BorderedButton : ContentView
     {
         private Button button;
-        private const int CornerRadius = 8;
+        private const int CornerRadius = 30;
         public Button Button 
         {
             get

@@ -35,6 +35,8 @@ namespace Medflix.Controls.VideoPlayer
             _currentUrl = torrentUrl;
 
             UpdateUI("Loading", true);
+			
+			await Task.Delay(2000);
 
             await GetDownloadState(torrentUrl);
         }

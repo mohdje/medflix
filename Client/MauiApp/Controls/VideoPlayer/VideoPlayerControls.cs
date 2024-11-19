@@ -119,11 +119,17 @@ namespace Medflix.Controls.VideoPlayer
         public void Show()
         {
             this.Opacity = 1;
+            PlayPauseButton.IsEnabled = true;
+            SubtitlesButton.IsEnabled = true;
+            QualitiesButton.IsEnabled = true;
         }
 
         public void Hide()
         {
             this.Opacity = 0;
+            PlayPauseButton.IsEnabled = false;
+            SubtitlesButton.IsEnabled = false;
+            QualitiesButton.IsEnabled = false;
         }
     }
 }
