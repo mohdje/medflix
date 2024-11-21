@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Manrope:wght@200..800&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <title>Medflix - Manage videos</title>
+    <style>
+        html {
+            height: 100%;
+        }
+
+        body {
+            height: 100%;
+            margin: 0;
+            background: rgb(0, 0, 0);
+            background: linear-gradient(164deg, rgba(0, 0, 0, 1) 0%, rgba(128, 128, 128, 1) 100%);
+            color: white;
+            font-family: "Host Grotesk", sans-serif;
+            font-optical-sizing: auto;
+            font-style: normal;
+        }
+
+        h1 {
+            margin: 0;
+            padding: 7px;
+        }
+
+        button {
+            outline: none;
+            margin: 5px;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+        }
+
+        button.red:disabled {
+            color: rgb(204, 204, 204);
+            background-color: rgb(102, 2, 2);
+            cursor: default;
+        }
+
+        button.red {
+            background-color: red;
+        }
+
+        button.red:hover:enabled {
+            background-color: rgb(158, 2, 2);
+        }
+
+        button.gray {
+            background-color: gray;
+        }
+
+        button.gray:hover:enabled {
+            background-color: rgb(61, 61, 61);
+        }
+
+        button.gray:disabled {
+            color: rgb(204, 204, 204);
+            background-color: rgb(61, 61, 61);
+            cursor: default;
+        }
+
+        #videos {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .modal-container {
+            height: 100%;
+            width: 100%;
+            z-index: 2;
+            top: 0;
+            left: 0;
+            position: fixed;
+            background-color: rgba(0, 0, 0, 0.534);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            width: 40%;
+            height: 30%;
+            background: linear-gradient(164deg, rgba(0, 0, 0, 1) 0%, rgb(70, 69, 69) 100%);
+            border-radius: 10px;
+            box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+    </style>
+</head>
+
+<body onload="loadAvailableVideos()">
+
+    <div style="padding: 20px 0 0 20px">
+        <h1>Medflix - Videos Manager</h1>
+        <div style="display: flex;">
+            <button id="addBtn" class="gray" onclick="showAddFileModal()">Add File</button>
+            <button id="deleteBtn" class="red" disabled onclick="deleteVideos()">Delete File(s)</button>
+        </div>
+
+        <h4 id="loadingListMessage" style="margin: 5px;visibility: hidden;">Loading videos list, please wait...</h4>
+        <ul id="videos">
+        </ul>
+    </div>
+
+
+    <div id="addFileModal" class="modal-container" style="visibility: hidden;">
+        <div class="modal">
+            <input type="file" id="fileInput" accept=".mp4,.mkv,.avi">
+            <div style="display: flex;">
+                <button id="uploadBtn" class="red" onclick="uploadFile()">Upload File</button>
+                <button id="closeBtn" class="gray" onclick="closeAddFileModal()">Close</button>
+            </div>
+
+
+            <div>
+                <h4 id="progress" style="text-align: center;"></h4>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteFileModal" class="modal-container" style="visibility: hidden;">
+        <div class="modal">
+            <h4 style="text-align: center;">Delete in progress, please wait...</h4>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const progressLabel = document.getElementById('progress');
+        const videosList = document.getElementById('videos');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const addBtn = document.getElementById('addBtn');
+        const addFileModal = document.getElementById('addFileModal');
+        const deleteFileModal = document.getElementById('deleteFileModal');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const loadingListMessage = document.getElementById('loadingListMessage');
+
+
+
+        let videoFilePathsToRemove = [];
+
+        async function loadAvailableVideos() {
+            videosList.innerHTML = "";
+            loadingListMessage.style.visibility = "visible";
+            videoFilePathsToRemove = [];
+
+            var response = await fetch(`/application/availablevideos`);
+            if (response.ok) {
+                var list = await response.json();
+                list.forEach(videoFilePath => {
+                    var videoNode = document.createElement('li');
+                    var checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+
+                    checkbox.onchange = () => {
+                        if (checkbox.checked)
+                            videoFilePathsToRemove.push(videoFilePath);
+                        else
+                            videoFilePathsToRemove = videoFilePathsToRemove.filter(v => v !== videoFilePath);
+
+                        deleteBtn.disabled = videoFilePathsToRemove.length === 0;
+                    };
+
+                    var label = document.createElement('label');
+                    label.innerText = videoFilePath.replace(/^.*[\\/]/, '');
+
+                    videoNode.appendChild(checkbox);
+                    videoNode.appendChild(label);
+
+                    videosList.appendChild(videoNode);
+                });
+            }
+            else {
+                alert("Error trying to load the videos list");
+            }
+
+            loadingListMessage.style.visibility = "hidden";
+        }
+
+        async function deleteVideos() {
+            deleteFileModal.style.visibility = 'visible';
+
+            const formData = new FormData();
+            formData.append('videoFilePaths', videoFilePathsToRemove.join('?'));
+            deleteBtn.disabled = true;
+
+            var response = await fetch(`/application/availablevideos`, {
+                method: 'DELETE',
+                body: formData
+            });
+
+            if (response.ok) {
+                var result = await response.json();
+
+                var msg = result.total === result.success ? "All selected files have been deleted" : `${result.total - result.success} files have not been deleted`;
+                alert("Delete operation finished: " + msg);
+
+            } else {
+                alert("Delete operation failed");
+            }
+
+            deleteFileModal.style.visibility = "hidden";
+
+            loadAvailableVideos();
+        }
+
+        function showAddFileModal() {
+            addFileModal.style.visibility = "visible";
+            uploadBtn.disabled = false;
+            closeBtn.disabled = false;
+        }
+
+        function closeAddFileModal() {
+            addFileModal.style.visibility = "hidden";
+        }
+
+
+        function uploadFile() {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            uploadBtn.disabled = true;
+            closeBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            progressLabel.textContent = 'Upload starting...';
+
+            fetch('/application/upload', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data.fileName);
+                    loadAvailableVideos();
+                    alert('File uploaded successfully');
+                    uploadBtn.disabled = false;
+                    closeBtn.disabled = false;
+
+
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('Upload failed');
+                    uploadBtn.disabled = false;
+                    closeBtn.disabled = false;
+                });
+
+            setTimeout(() => {
+                checkUploadProgress();
+            }, 2000);
+        }
+
+        async function checkUploadProgress() {
+            const file = fileInput.files[0];
+            var response = await fetch(`/application/upload?fileName=${file.name}`);
+            if (response.ok) {
+                var uploadedLength = await response.json();
+                var progress = (uploadedLength / file.size) * 100;
+
+                progressLabel.textContent = `${progress.toFixed(1)}%`;
+
+                if (progress < 100) {
+                    setTimeout(() => {
+                        checkUploadProgress();
+                    }, 1000);
+                }
+                else {
+                    progressLabel.textContent = "";
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

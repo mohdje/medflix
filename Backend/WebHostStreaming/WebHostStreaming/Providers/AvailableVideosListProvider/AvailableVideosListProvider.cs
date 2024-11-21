@@ -18,13 +18,20 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
 
         SemaphoreSlim Locker = new SemaphoreSlim(1, 1);
         List<string> videoSourcesList;
-        public async Task AddMediaSource(string videoFilePath)
-        {
-            if (videoSourcesList == null)
-                await LoadListAsync();
+        public string[] VideosSourcesList 
+        { 
+            get
+            {
+                if (videoSourcesList == null)
+                    videoSourcesList = LoadList().ToList();
 
-            if (videoSourcesList != null && videoSourcesList.Contains(videoFilePath))
-                return;
+                return videoSourcesList.ToArray();
+            } 
+        }
+        public async Task<bool> AddMediaSource(string videoFilePath)
+        {
+            if (VideosSourcesList.Contains(videoFilePath))
+                return false;
 
             if (!Directory.Exists(AppFolders.DataFolder))
                 Directory.CreateDirectory(AppFolders.DataFolder);
@@ -35,10 +42,12 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
                 File.AppendAllLines(AppFiles.AvailableMediaSources, new string[] { videoFilePath });
               
                 videoSourcesList.Add(videoFilePath);
+
+                return true;
             }
             catch
             {
-
+                return false;
             }
             finally
             {
@@ -58,13 +67,10 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
 
         private async Task<string> GetMovieSource(string originalMovieName, string frenchMovieName, int year, bool frenchVersion)
         {
-            if (videoSourcesList == null)
-                await LoadListAsync();
-
-            if (videoSourcesList == null || !videoSourcesList.Any())
+            if (!VideosSourcesList.Any())
                 return null;
 
-            var mediaSource = videoSourcesList.FirstOrDefault
+            var mediaSource = VideosSourcesList.FirstOrDefault
             (videoPath =>
                 {
                     var fileName = Path.GetFileName(videoPath);
@@ -83,7 +89,7 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
                 }
             );
 
-            return mediaSource;
+            return await Task.FromResult(mediaSource);
         }
         public async Task<string> GetVoSerieSource(string serieName, int seasonNumber, int episodeNumber)
         {
@@ -96,16 +102,13 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
 
         private async Task<string> GetSerieSource(string originalSerieName, string frenchSerieName, int seasonNumber, int episodeNumber, bool frenchVersion)
         {
-            if (videoSourcesList == null)
-                await LoadListAsync();
-
-            if (videoSourcesList == null || !videoSourcesList.Any())
+            if (!VideosSourcesList.Any())
                 return null;
 
             var seasonId = $"S{seasonNumber.ToString("D2")}";
             var episodeId = $"E{episodeNumber.ToString("D2")}";
 
-            var mediaSource = videoSourcesList.FirstOrDefault
+            var mediaSource = VideosSourcesList.FirstOrDefault
             (videoPath =>
                 {
                     var fileName = Path.GetFileName(videoPath);
@@ -129,14 +132,14 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
             return mediaSource;
         }
 
-        private async Task LoadListAsync()
+        private string[] LoadList()
         {
-            await Locker.WaitAsync();
+            Locker.Wait();
 
             try
             {
                 var lines = File.ReadAllLines(AppFiles.AvailableMediaSources);
-                videoSourcesList = lines.ToList();
+                return lines;
             }
             catch (Exception ex)
             {
@@ -144,8 +147,36 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
             }
             finally
             {
-                videoSourcesList = videoSourcesList ?? new List<string>();
+                Locker.Release();
+            }
+            return Array.Empty<string>();
+        }
 
+        public bool RemoveMediaSource(string videoFilePath)
+        {
+            if (!File.Exists(videoFilePath) && !videoSourcesList.Contains(videoFilePath))
+                return false;
+
+            try
+            {
+                if (System.IO.File.Exists(videoFilePath))
+                    File.Delete(videoFilePath);
+
+                if (videoSourcesList.Contains(videoFilePath))
+                    videoSourcesList.Remove(videoFilePath);
+
+                Locker.Wait();
+
+                File.WriteAllLines(AppFiles.AvailableMediaSources, videoSourcesList);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
                 Locker.Release();
             }
         }

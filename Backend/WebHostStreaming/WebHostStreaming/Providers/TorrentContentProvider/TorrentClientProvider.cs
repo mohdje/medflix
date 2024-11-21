@@ -190,9 +190,10 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
                                 var file = torrent.Files.SingleOrDefault(f => f.Priority == Priority.Highest);
                                 if (file != null)
                                 {
-                                    AppLogger.LogInfo($"Register file as complete : {torrent.Name}");
+                                    var success = await availableVideosListProvider.AddMediaSource(file.FullPath);
 
-                                    await availableVideosListProvider.AddMediaSource(file.FullPath);
+                                    if(success)
+                                        AppLogger.LogInfo($"Register file as complete : {torrent.Name}");
                                 }
                             }
                         }
@@ -205,7 +206,6 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
                         downloadWatcher.Dispose();
                         downloadWatcher = null;
                     }
-
 
                 }, null, 30000, 30000);
             }

@@ -21,6 +21,10 @@ namespace WebHostStreaming
             return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseKestrel(options =>
+                    {
+                        options.Limits.MaxRequestBodySize = null;
+                    });
                     webBuilder.UseConfiguration(configuration);
                     webBuilder.UseUrls("http://0.0.0.0:5000");
                     webBuilder.UseStartup<Startup>();

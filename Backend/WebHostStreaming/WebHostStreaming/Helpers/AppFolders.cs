@@ -15,7 +15,10 @@ namespace WebHostStreaming.Helpers
         public static string DataFolder => Path.Combine(StorageFolder, "data");
         public static string SubtitlesFolder => Path.Combine(CurrentFolder, "subtitles");
         public static string TorrentsFolder => Path.Combine(StorageFolder, "torrents");
+        public static string UploadFoler => Path.Combine(StorageFolder, "upload");
         public static string ViewFolder => Path.Combine(CurrentFolder, "view");
+        public static string ManageViewFolder => Path.Combine(ViewFolder, "manage");
+        
 
         private static void CleanUpTorrentsFolder()
         {

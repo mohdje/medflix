@@ -59,5 +59,24 @@ namespace WebHostStreaming.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à &lt;!DOCTYPE html&gt;
+        ///&lt;html lang=&quot;en&quot;&gt;
+        ///
+        ///&lt;head&gt;
+        ///    &lt;meta charset=&quot;UTF-8&quot;&gt;
+        ///    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+        ///    &lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
+        ///    &lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;
+        ///    &lt;link
+        ///        href=&quot;https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&amp;family=Manrope:wght@200..800&amp;family=Raleway:ital,wght@0,100..900;1,100..900&amp;display=swap&quot;
+        ///        rel=&quot;styleshee [le reste de la chaîne a été tronqué]&quot;;.
+        /// </summary>
+        internal static string UploadPage {
+            get {
+                return ResourceManager.GetString("UploadPage", resourceCulture);
+            }
+        }
     }
 }

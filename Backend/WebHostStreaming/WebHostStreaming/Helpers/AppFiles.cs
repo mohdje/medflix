@@ -14,5 +14,6 @@ namespace WebHostStreaming.Helpers
         public static string BookmarkedSeries => Path.Combine(AppFolders.DataFolder, "bookmarkedseries.json");
         public static string TorrentHistory => Path.Combine(AppFolders.DataFolder, "torrenthistory.json");
         public static string AvailableMediaSources => Path.Combine(AppFolders.DataFolder, "available_media_sources.txt");
+        public static string UploadHtmlPage => Path.Combine(AppFolders.ManageViewFolder, "index.html");
     }
 }

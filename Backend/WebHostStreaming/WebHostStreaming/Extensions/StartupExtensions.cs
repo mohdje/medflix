@@ -4,6 +4,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using System.IO;
 using WebHostStreaming.Helpers;
+using WebHostStreaming.Properties;
 using WebHostStreaming.Providers;
 using WebHostStreaming.Providers.AvailableVideosListProvider;
 using WebHostStreaming.Providers.TorrentContentProvider;
@@ -33,6 +34,19 @@ namespace WebHostStreaming.StartupExtensions
             //    FileProvider = new PhysicalFileProvider(AppFolders.ViewFolder),
             //    RequestPath = "/home"
             //});
+
+            if (Directory.Exists(AppFolders.ManageViewFolder))
+                Directory.Delete(AppFolders.ManageViewFolder);
+
+            Directory.CreateDirectory(AppFolders.ManageViewFolder);
+
+            File.WriteAllText(AppFiles.UploadHtmlPage, Resources.UploadPage);
+
+            applicationBuilder.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(AppFolders.ManageViewFolder),
+                RequestPath = "/manage"
+            });
 
             System.Console.WriteLine("Web application accessible here : http://localhost:5000/home/index.html");
         }
