@@ -21,7 +21,8 @@ namespace Medflix.Controls.VideoPlayer
             }
         }
 
-        ProgressBar ProgressBar;
+        Frame ProgressBar;
+        Grid ProgressBarContainer;
         Button HiddenButton;
         Border Border;
 
@@ -33,11 +34,33 @@ namespace Medflix.Controls.VideoPlayer
         DateTime LastNavigationDateTime;
         public VideoTimeBar()
         {
-            ProgressBar = new ProgressBar
+            ProgressBar = new Frame
             {
-                ProgressColor = Brush.Red.Color,
+                VerticalOptions = LayoutOptions.Fill,
+                HorizontalOptions = LayoutOptions.Start,
+                WidthRequest = 0,
+                BackgroundColor = Brush.Red.Color,
+                BorderColor = Brush.Transparent.Color,
+                ZIndex = 2,
+            };
+
+            ProgressBarContainer = new Grid
+            {
                 HorizontalOptions = LayoutOptions.Fill,
-                Margin = new Thickness(0, 10)
+                HeightRequest = 10,
+                Margin = new Thickness(0, 10),
+                Children =
+                {
+                    ProgressBar,
+                    new Frame
+                    {
+                        HorizontalOptions = LayoutOptions.Fill,
+                        VerticalOptions = LayoutOptions.Fill,
+                        BackgroundColor = Brush.Gray.Color.WithAlpha(0.5f),
+                        BorderColor = Brush.Transparent.Color,
+                        ZIndex = 1,
+                    }
+                }
             };
 
             HiddenButton = new Button
@@ -60,7 +83,7 @@ namespace Medflix.Controls.VideoPlayer
                     Children = 
                     {
                         HiddenButton,
-                        ProgressBar
+                        ProgressBarContainer
                     }
                 }
             };
@@ -98,7 +121,7 @@ namespace Medflix.Controls.VideoPlayer
             var newTimeInMs = (long)(pourcentProgress * totalDurationInMs);
             OnNavigationStart?.Invoke(this, newTimeInMs);
 
-            await ProgressBar.ProgressTo(pourcentProgress, 0, Easing.Default);
+            UpdateProgressBar();
 
             await Task.Delay(2500).ContinueWith(t =>
             {
@@ -125,10 +148,13 @@ namespace Medflix.Controls.VideoPlayer
             MainThread.BeginInvokeOnMainThread(async () =>
             {
                 pourcentProgress = timeInMs / (double)totalTimeInMs;
-
-                await ProgressBar.ProgressTo(pourcentProgress, 0, Easing.Linear);
-
+                UpdateProgressBar();
             });
+        }
+
+        private void UpdateProgressBar()
+        {
+            ProgressBar.WidthRequest = ProgressBarContainer.Width * pourcentProgress;
         }
     }
 }

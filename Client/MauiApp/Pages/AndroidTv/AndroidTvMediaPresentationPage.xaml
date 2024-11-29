@@ -92,8 +92,7 @@
                 
                 <HorizontalStackLayout Margin="0,15,0,0">
                     <controls:BorderedButton
-                        x:Name="EpisodeSelectionButton" 
-                        Margin="0,0,10,0">
+                        x:Name="EpisodeSelectionButton">
                         <controls:BorderedButton.Button>
                             <Button 
                                Text="Season 1   Episode 1" 
@@ -109,7 +108,7 @@
                     </controls:BorderedButton>
                     <controls:BorderedButton 
                             x:Name="PlayButton"
-                            Margin="0,0,10,0">
+                            Margin="3,0,0,0">
                         <controls:BorderedButton.Button>
                             <Button 
                               Text="Play" 
@@ -124,8 +123,25 @@
                               Clicked="OnPlayButtonClicked"/>
                         </controls:BorderedButton.Button>
                     </controls:BorderedButton>
+                    <controls:BorderedButton 
+                         x:Name="PlayFromBeginningButton"
+                         Margin="3,0,0,0">
+                        <controls:BorderedButton.Button>
+                            <Button 
+                               Text="Restart" 
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               BackgroundColor="White"
+                               TextColor="Black" 
+                               Padding="13"
+                               ImageSource="restart.svg"
+                               ContentLayout="Left,8"
+                               WidthRequest="100"
+                               Clicked="OnPlayFromBeginningButton"/>
+                        </controls:BorderedButton.Button>
+                    </controls:BorderedButton>
 
-                    <controls:TransparentImageButton x:Name="TrailerButton" ImgSource="trailer_video.svg" Clicked="OnTrailerButtonClicked"/>
+                    <controls:TransparentImageButton Margin="10,0,0,0" x:Name="TrailerButton" ImgSource="trailer_video.svg" Clicked="OnTrailerButtonClicked"/>
                     <controls:TransparentImageButton x:Name="AddBookmarkButton" ImgSource="plus.svg" Clicked="OnAddBookmarkButtonClicked"/>
                     <controls:TransparentImageButton x:Name="RemoveBookmarkButton" ImgSource="minus.svg" Clicked="OnRemoveBookmarkButtonClicked"/>
 

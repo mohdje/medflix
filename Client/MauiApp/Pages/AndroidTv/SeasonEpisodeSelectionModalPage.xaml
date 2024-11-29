@@ -3,27 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Medflix.Pages.SeasonEpisodeSelectionModalPage"
              xmlns:controls="clr-namespace:Medflix.Controls.AndroidTv"
-             BackgroundColor="Transparent">
-    <Frame 
-        CornerRadius="10"  
-        HeightRequest="500"
-        WidthRequest="700"
-        BorderColor="Transparent">
-        <Frame.Background>
-            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                <GradientStop Color="#3b3b3b" Offset="0.0" />
-                <GradientStop Color="Black" Offset="0.8" />
-            </LinearGradientBrush>
-        </Frame.Background>
-        <Grid RowDefinitions="80,*">
-            <ScrollView  
-                Grid.Row="0" 
-                Orientation="Horizontal" 
-                Margin="0,0,0,20">
-                <HorizontalStackLayout x:Name="SeasonsList"/>
-            </ScrollView>
-           
-            <Label 
+             BackgroundColor="#CC000000">
+    <Grid ColumnDefinitions="300,*">
+        <ScrollView  
+                Grid.Column="0" 
+                Orientation="Vertical" 
+                Padding="50,100,50,0">
+            <VerticalStackLayout x:Name="SeasonsList"/>
+        </ScrollView>
+
+        <Label 
                 x:Name="NoEpisodesMessage"
                 Grid.Row="1"  
                 ZIndex="2"
@@ -34,24 +23,23 @@
                 FontAttributes="Bold"
                 FontSize="Medium" />
 
-            <ScrollView 
-                Grid.Row="1" 
+        <ScrollView 
+                Grid.Column="1" 
                 ZIndex="2"
                 Orientation="Vertical">
-                <VerticalStackLayout>
-                    <VerticalStackLayout x:Name="EpisodesList"/>
-                    <ActivityIndicator 
+            <VerticalStackLayout>
+                <VerticalStackLayout x:Name="EpisodesList"/>
+                <ActivityIndicator 
                      x:Name="Spinner"
                      Color="White"
                      HeightRequest="70"
                      IsRunning="True"/>
-                    <controls:TransparentImageButton 
+                <controls:TransparentImageButton 
                         x:Name="PlusButton"
                         IsVisible="False" 
                         Clicked="OnPlusButtonClicked"
                         ImgSource="plus.svg"/>
-                </VerticalStackLayout>
-            </ScrollView>
-        </Grid>
-    </Frame>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

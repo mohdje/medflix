@@ -19,11 +19,12 @@ namespace Medflix.Pages
         int seasonNumber = 1;
         IEnumerable<Episode> episodes;
 
-        public SeasonEpisodeSelectionModalPage(string mediaId, int seasonCount)
+        public SeasonEpisodeSelectionModalPage(string mediaId, int seasonCount, int selectedSeason)
         {
             InitializeComponent();
 
             this.mediaId = mediaId;
+            this.seasonNumber = selectedSeason;
 
             for (int i = 1; i <= seasonCount; i++)
                 SeasonsList.Children.Add(BuildSeasonButton(i));
@@ -33,7 +34,7 @@ namespace Medflix.Pages
 
         private void OnLoaded(object sender, EventArgs e)
         {
-            var firstButton = SeasonsList.Children.First() as ThreeStateButton;
+            var firstButton = SeasonsList.Children[seasonNumber - 1] as ThreeStateButton;
             firstButton.Selected = true;
             firstButton.SetFocus();
 
@@ -49,16 +50,18 @@ namespace Medflix.Pages
                 EpisodesList.Children.Clear();
             });
 
-            episodes = await MedflixApiService.Instance.GetEpisodesAsync(mediaId, seasonNumber);
+            var episodesForSeason = await MedflixApiService.Instance.GetEpisodesAsync(mediaId, seasonNumber);
 
-            if (episodes != null && episodes.Any())
+            if (episodesForSeason != null && episodesForSeason.Any())
+            {
+                episodes = episodesForSeason.OrderBy(e => e.EpisodeNumber);
                 DisplayNextEpisodes();
+            }
             else
             {
                 NoEpisodesMessage.IsVisible = true;
                 Spinner.IsVisible = false;
             }
-
         }
         private void DisplayNextEpisodes()
         {
@@ -75,7 +78,7 @@ namespace Medflix.Pages
 
                 foreach (var episode in episodes.Take(range))
                 {
-                    var watchMediaInfo = await MedflixApiService.Instance.GetWatchMediaInfo(mediaId, seasonNumber, episode.EpisodeNumber);
+                    var watchMediaInfo = await MedflixApiService.Instance.GetEpisodeWatchMediaInfo(mediaId, seasonNumber, episode.EpisodeNumber);
                     var progress = watchMediaInfo?.Progress ?? 0;
 
                     var episodePresentationView = new EpisodePresentationView(episode, progress);

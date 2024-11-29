@@ -24,6 +24,7 @@ namespace Medflix.Views.AndroidTv
             });
 
             IEnumerable<MediaDetails> mediasOfToday = null;
+            IEnumerable<MediaDetails> recommandations = null;
             IEnumerable<MediaDetails> popularMedias = null;
             IEnumerable<MediaDetails> netflix = null;
             IEnumerable<MediaDetails> amazonPrime = null;
@@ -33,6 +34,7 @@ namespace Medflix.Views.AndroidTv
             var tasks = new Task[]
             {
                 MedflixApiService.Instance.GetMediasOfTodaysAsync().ContinueWith(t => mediasOfToday = t.Result),
+                MedflixApiService.Instance.GetMediasOfTodaysAsync().ContinueWith(t => recommandations = t.Result),
                 MedflixApiService.Instance.GetPopularMediasAsync().ContinueWith(t => popularMedias = t.Result),
                 MedflixApiService.Instance.GetPopularNetflixAsync().ContinueWith(t => netflix = t.Result),
                 MedflixApiService.Instance.GetPopularAmazonPrimeAsync().ContinueWith(t => amazonPrime = t.Result),
@@ -47,6 +49,8 @@ namespace Medflix.Views.AndroidTv
                 Spinner.IsVisible = false;
                 if(mediasOfToday != null && mediasOfToday.Any())
                     HomeContent.Children.Add(new MediaHorizontalCoverListView(mediasOfToday));
+                if (mediasOfToday != null && mediasOfToday.Any())
+                    HomeContent.Children.Add(new MediaLitePresentationListView("Recommandations for you", recommandations));
                 if (popularMedias != null && popularMedias.Any())
                     HomeContent.Children.Add(new MediaLitePresentationListView("Popular", popularMedias));
                 if (netflix != null && netflix.Any())

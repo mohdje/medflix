@@ -31,7 +31,7 @@ namespace Medflix.Utils
             BackgroundImageUrl = "https://image.tmdb.org/t/p/original/f6TCICUC8OSBtZDKgg18T6PjfIM.jpg",
             LogoImageUrl = "https://image.tmdb.org/t/p/original/63tQ41DjyWokH4b6kqL7Umnf3PP.png",
             Rating = 5.8,
-            SeasonsCount = 4
+            SeasonsCount = 3
         };
 
         public static List<MediaDetails> Medias = new List<MediaDetails> { Media, Media, Media, Media, Media, Media, Media, Media, Media, Media, Media, Media, Media, Media, Media, Media, Media, Media, Media, Media };
@@ -178,13 +178,20 @@ namespace Medflix.Utils
                         Language = "French",
                         Sources = new Models.Media.MediaSource[]
                         {
-                            new Models.Media.MediaSource{ TorrentUrl= "", Quality = "1080p"}
+                            new Models.Media.MediaSource{ TorrentUrl= "aaaa", Quality = "1080p"},
+                            new Models.Media.MediaSource{ TorrentUrl= "bbbb", Quality = "1080p"},
+                            new Models.Media.MediaSource{ TorrentUrl= "cccc", Quality = "1080p"},
+                            new Models.Media.MediaSource{ TorrentUrl= "ddd", Quality = "1080p"},
+                            new Models.Media.MediaSource{ TorrentUrl= "eeeee", Quality = "1080p"}
                         }
                      }
                 },
             WatchMedia = new Models.Media.WatchMediaInfo
             {
                 Media = TestData.Media,
+                VideoSource = "cccc",
+                SeasonNumber = 2,
+                EpisodeNumber = 3,  
             }
         };
     }

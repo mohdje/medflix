@@ -3,6 +3,7 @@ using Medflix.Models.VideoPlayer;
 using Medflix.Pages;
 using Medflix.Pages.AndroidTv;
 using Medflix.Services;
+using Medflix.Utils;
 
 namespace Medflix
 {

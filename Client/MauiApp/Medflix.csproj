@@ -73,6 +73,7 @@
 	  <None Remove="Resources\Images\pause.svg" />
 	  <None Remove="Resources\Images\play.svg" />
 	  <None Remove="Resources\Images\plus.svg" />
+	  <None Remove="Resources\Images\restart.svg" />
 	  <None Remove="Resources\Images\right_arrow.svg" />
 	  <None Remove="Resources\Images\search.svg" />
 	  <None Remove="Resources\Images\settings.svg" />

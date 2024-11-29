@@ -6,6 +6,7 @@ using Medflix.Services;
 using Medflix.Views.AndroidTv;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Diagnostics;
 
 namespace Medflix.Pages.AndroidTv
 {
@@ -13,10 +14,9 @@ namespace Medflix.Pages.AndroidTv
     {
         string mediaId;
         MediaDetails mediaDetails;
+        WatchMediaInfo videoPlayerMediaWatched;
         int? seasonNumber;
         int? episodeNumber;
-        WatchMediaInfo videoPlayerMediaWatched;
-        
         bool MediaIsSerie => mediaDetails.SeasonsCount > 0;
         bool MediaIsMovie => mediaDetails.SeasonsCount == 0;
 
@@ -29,31 +29,31 @@ namespace Medflix.Pages.AndroidTv
         {
             InitializeComponent();
             this.mediaId = mediaId;
-            this.Loaded += LoadContent;
+            this.Loaded += async (s, e) => await LoadContent();
         }
 
-        private void LoadContent(object sender, EventArgs e)
+        private async Task LoadContent()
         {
-            if (PageContent.IsVisible)
+            if (PageContent.IsVisible) //When closing video player, PageContent is already set. Just update watchingProgress
+            {
+                videoPlayerMediaWatched = await MedflixApiService.Instance.GetWatchMediaInfo(mediaId);
+                UpdateWatchingProgress();
                 return;
+            }
 
             MainThread.BeginInvokeOnMainThread(async () =>
             {
                 mediaDetails = await MedflixApiService.Instance.GetMediaDetailsAsync(mediaId);
 
-                if(mediaDetails == null)
+                if (mediaDetails == null)
                 {
                     LoadingView.IsVisible = false;
                     return;
                 }
 
-                seasonNumber = MediaIsSerie ? 1 : null;
-                episodeNumber = MediaIsSerie ? 1 : null;
+                await LoadMediaRessources();
 
-                await GetAvailableSubtitlesAsync();
-                await GetAvailableTorrentsAsync();
                 await GetRecommandationsAsync();
-                await GetWatchingProgressAsync();
 
                 var isBookmarked = await MedflixApiService.Instance.IsMediaBookmarked(mediaId);
                 AddBookmarkButton.IsVisible = !isBookmarked;
@@ -97,7 +97,20 @@ namespace Medflix.Pages.AndroidTv
                 PageContent.IsVisible = true;
             });
         }
+        private async Task LoadMediaRessources()
+        {
+            videoPlayerMediaWatched = await MedflixApiService.Instance.GetWatchMediaInfo(mediaId);
 
+            if (MediaIsSerie)
+            {
+                seasonNumber = videoPlayerMediaWatched?.SeasonNumber ?? 1;
+                episodeNumber = videoPlayerMediaWatched?.EpisodeNumber ?? 1;
+            }
+            UpdateWatchingProgress();
+
+            await GetAvailableSubtitlesAsync();
+            await GetAvailableVideoSourcesAsync();
+        }
         private async Task GetRecommandationsAsync()
         {
             var recommandations = await MedflixApiService.Instance.GetSimilarMediasAsync(mediaId);
@@ -131,10 +144,12 @@ namespace Medflix.Pages.AndroidTv
             });
         }
 
-        private async Task GetAvailableTorrentsAsync()
+        private async Task GetAvailableVideoSourcesAsync()
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
+                PlayButton.IsEnabled = false;
+                PlayFromBeginningButton.IsEnabled = false;
                 Versions.ShowLoading = true;
             });
 
@@ -163,14 +178,10 @@ namespace Medflix.Pages.AndroidTv
             {
                 Versions.Text = availableTorrents.Any() ? String.Join(", ", availableTorrents) : "No version available";
                 PlayButton.IsVisible = availableTorrents.Any();
+                PlayButton.IsEnabled = true;
+                PlayFromBeginningButton.IsEnabled = true;
                 Versions.ShowLoading = false;
             });
-        }
-
-        private async Task GetWatchingProgressAsync()
-        {
-            videoPlayerMediaWatched = await MedflixApiService.Instance.GetWatchMediaInfo(mediaId, seasonNumber, episodeNumber);
-            UpdateWatchingProgress();
         }
 
         private void UpdateWatchingProgress()
@@ -180,6 +191,7 @@ namespace Medflix.Pages.AndroidTv
                 if (videoPlayerMediaWatched != null)
                 {
                     WatchingProgressSection.IsVisible = true;
+                    PlayFromBeginningButton.IsVisible = true;
 
                     var timeSpan = TimeSpan.FromSeconds(videoPlayerMediaWatched.TotalDuration).Subtract(TimeSpan.FromSeconds(videoPlayerMediaWatched.CurrentTime));
                     RemainingTime.Text = $"{timeSpan.ToTimeFormat()} remaining";
@@ -188,9 +200,13 @@ namespace Medflix.Pages.AndroidTv
                     await WatchingProgress.ProgressTo(progress, 0, Easing.Default);
                 }
                 else
+                {
                     WatchingProgressSection.IsVisible = false;
+                    PlayFromBeginningButton.IsVisible = false;
+                }
+
+                EpisodeSelectionButton.Text = $"Season {seasonNumber.GetValueOrDefault(1)}   Episode {episodeNumber.GetValueOrDefault(1)}";
             });
-         
         }
 
         private void OnTrailerButtonClicked(object sender, EventArgs e)
@@ -205,33 +221,42 @@ namespace Medflix.Pages.AndroidTv
         {
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                var page = new SeasonEpisodeSelectionModalPage(mediaId, mediaDetails.SeasonsCount);
+                var page = new SeasonEpisodeSelectionModalPage(mediaId, mediaDetails.SeasonsCount, seasonNumber.GetValueOrDefault(1));
                 page.OnEpisodeSelected += async (s, e) =>
                 {
                     await Navigation.PopModalAsync();
-                    await OnEpisodeSeleced(e.SeasonNumber, e.EpisodeNumber, e.WatchMedia);
+                    await OnEpisodeSelected(e.SeasonNumber, e.EpisodeNumber, e.WatchMedia);
                 };
 
                 await Navigation.PushModalAsync(page);
             });
         }
 
-        private async Task OnEpisodeSeleced(int seasonNumber, int episodeNumber, WatchMediaInfo videoPlayerMedia)
+        private async Task OnEpisodeSelected(int seasonNumber, int episodeNumber, WatchMediaInfo videoPlayerMedia)
         {
-            EpisodeSelectionButton.Text = $"Season {seasonNumber}   Episode {episodeNumber}";
             this.seasonNumber = seasonNumber;
             this.episodeNumber = episodeNumber;
             this.videoPlayerMediaWatched = videoPlayerMedia;
 
             await Task.Run(async () =>
             {
-                await GetAvailableSubtitlesAsync();
-                await GetAvailableTorrentsAsync();
                 UpdateWatchingProgress();
+                await GetAvailableSubtitlesAsync();
+                await GetAvailableVideoSourcesAsync();
             });
         }
 
         private async void OnPlayButtonClicked(object sender, EventArgs e)
+        {
+            await PlayMedia();
+        }
+
+        private async void OnPlayFromBeginningButton(object sender, EventArgs e)
+        {
+            await PlayMedia(true);
+        }
+
+        private async Task PlayMedia(bool forceRestart = false)
         {
             var videoPlayerOptions = new VideoPlayerParameters();
 
@@ -244,7 +269,7 @@ namespace Medflix.Pages.AndroidTv
 
             videoPlayerOptions.SubtitlesSources = subtitlesSources.ToArray();
 
-           var mediaSources = new List<MediaSources>();
+            var mediaSources = new List<MediaSources>();
             if (voSources != null && voSources.Any())
                 mediaSources.Add(new MediaSources { Language = "Original", Sources = voSources.ToArray() });
 
@@ -253,7 +278,7 @@ namespace Medflix.Pages.AndroidTv
 
             videoPlayerOptions.MediaSources = mediaSources.ToArray();
 
-            var videoSource = string.Empty;  
+            var videoSource = string.Empty;
             if (videoPlayerMediaWatched != null)
             {
                 var files = mediaSources.SelectMany(s => s.Sources.Select(t => t.FilePath));
@@ -263,13 +288,13 @@ namespace Medflix.Pages.AndroidTv
                     videoSource = videoPlayerMediaWatched.VideoSource;
 
                 else if (torrents.Any(url => url == videoPlayerMediaWatched.VideoSource))
-                    videoSource = videoPlayerMediaWatched.VideoSource;             
+                    videoSource = videoPlayerMediaWatched.VideoSource;
             }
 
             videoPlayerOptions.WatchMedia = new WatchMediaInfo
             {
                 Media = mediaDetails,
-                CurrentTime = videoPlayerMediaWatched?.CurrentTime ?? 0,
+                CurrentTime = forceRestart ? 0 : videoPlayerMediaWatched?.CurrentTime ?? 0,
                 EpisodeNumber = episodeNumber.GetValueOrDefault(0),
                 SeasonNumber = seasonNumber.GetValueOrDefault(0),
                 VideoSource = videoSource
@@ -287,9 +312,9 @@ namespace Medflix.Pages.AndroidTv
 
             var message = isSuccess ? "Added to your list with success" : "Error trying to add to your list";
 
-            #if ANDROID
-                Android.Widget.Toast.MakeText( Microsoft.Maui.ApplicationModel.Platform.CurrentActivity, message, Android.Widget.ToastLength.Long).Show(); 
-            #endif
+#if ANDROID
+            Android.Widget.Toast.MakeText(Microsoft.Maui.ApplicationModel.Platform.CurrentActivity, message, Android.Widget.ToastLength.Long).Show();
+#endif
         }
 
         private async void OnRemoveBookmarkButtonClicked(object sender, EventArgs e)
@@ -301,9 +326,11 @@ namespace Medflix.Pages.AndroidTv
 
             var message = isSuccess ? "Removed from your list with success" : "Error trying to remove from your list";
 
-            #if ANDROID
-             Android.Widget.Toast.MakeText( Microsoft.Maui.ApplicationModel.Platform.CurrentActivity, message, Android.Widget.ToastLength.Long).Show(); 
-            #endif
+#if ANDROID
+            Android.Widget.Toast.MakeText(Microsoft.Maui.ApplicationModel.Platform.CurrentActivity, message, Android.Widget.ToastLength.Long).Show();
+#endif
         }
+
+
     }
 }

@@ -28,7 +28,6 @@ namespace Medflix.Views.AndroidTv
                 ReleaseDate.Text =$"Release date :{episode.AirDate.ToString("dd-MM-yyyy")}";
             }
 
-
             if (progress > 0)
             {
                 WatchProgress.IsVisible = true;

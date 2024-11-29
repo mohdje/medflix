@@ -44,7 +44,6 @@ namespace Medflix.Services
             if (httpClient == null)
             {
                 httpClient = new HttpClient();
-             //   httpClient.Timeout = TimeSpan.FromSeconds(10);
                 httpClient.DefaultRequestHeaders.Add("User-Agent", userAgent);
             }
         }
@@ -70,6 +69,7 @@ namespace Medflix.Services
                 return false;
             }
         }
+
         public void SwitchToMoviesMode()
         {
             if (mediaType != Consts.Movies)
@@ -88,37 +88,48 @@ namespace Medflix.Services
             }
         }
 
+
         #region Media fetch operations
         public async Task<IEnumerable<MediaDetails>> GetMediasOfTodaysAsync()
         {
-            return await GetAsync<IEnumerable<MediaDetails>>($"{hostServiceUrl}/{mediaType}/mediasoftoday");
+            return await GetMediaListAsync($"{hostServiceUrl}/{mediaType}/mediasoftoday");
         }
 
         public async Task<IEnumerable<MediaDetails>> GetPopularMediasAsync()
         {
-            return await GetAsync<IEnumerable<MediaDetails>>($"{hostServiceUrl}/{mediaType}/popular");
+            return await GetMediaListAsync($"{hostServiceUrl}/{mediaType}/popular");
         }
 
         public async Task<IEnumerable<MediaDetails>> GetPopularNetflixAsync()
         {
-            return await GetAsync<IEnumerable<MediaDetails>>($"{hostServiceUrl}/{mediaType}/netflix");
+            return await GetMediaListAsync($"{hostServiceUrl}/{mediaType}/netflix");
         }
 
         public async Task<IEnumerable<MediaDetails>> GetPopularAmazonPrimeAsync()
         {
-            return await GetAsync<IEnumerable<MediaDetails>>($"{hostServiceUrl}/{mediaType}/amazonprime");
+            return await GetMediaListAsync($"{hostServiceUrl}/{mediaType}/amazonprime");
         }
 
         public async Task<IEnumerable<MediaDetails>> GetPopularDisneyPlusAsync()
         {
-            return await GetAsync<IEnumerable<MediaDetails>>($"{hostServiceUrl}/{mediaType}/disneyplus");
+            return await GetMediaListAsync($"{hostServiceUrl}/{mediaType}/disneyplus");
         }
 
         public async Task<IEnumerable<MediaDetails>> GetPopularAppleTvAsync()
         {
-            return await GetAsync<IEnumerable<MediaDetails>>($"{hostServiceUrl}/{mediaType}/appletv");
+            return await GetMediaListAsync($"{hostServiceUrl}/{mediaType}/appletv");
         }
 
+        public async Task<IEnumerable<MediaDetails>> GetRecommandationsAsync()
+        {
+            return await GetMediaListAsync($"{hostServiceUrl}/{mediaType}/recommandations");
+        }
+
+        private async Task<IEnumerable<MediaDetails>> GetMediaListAsync(string url)
+        {
+            var list = await GetAsync<IEnumerable<MediaDetails>>(url);
+            return list?.Take(10);
+        }
         public async Task<IEnumerable<MediaDetails>> SearchMedia(string text)
         {
             return await GetAsync<IEnumerable<MediaDetails>>($"{hostServiceUrl}/{mediaType}/search?t={text}");
@@ -172,7 +183,16 @@ namespace Medflix.Services
             return await GetAsync<IEnumerable<WatchMediaInfo>>($"{hostServiceUrl}/{mediaType}/watchedmedia");
         }
 
-        public async Task<WatchMediaInfo> GetWatchMediaInfo(string mediaId, int? seasonNumber, int? episodeNumber)
+        public async Task<WatchMediaInfo> GetWatchMediaInfo(string mediaId)
+        {
+            var watchMediaHistory = await GetWatchMediaHistory();
+
+            var lastEpisodeWatched = watchMediaHistory.FirstOrDefault(w => w.Media.Id == mediaId);
+
+            return lastEpisodeWatched;
+        }
+
+        public async Task<WatchMediaInfo> GetEpisodeWatchMediaInfo(string mediaId, int seasonNumber, int episodeNumber)
         {
             var queryString = BuildQueryString(seasonNumber: seasonNumber, episodeNumber: episodeNumber);
 

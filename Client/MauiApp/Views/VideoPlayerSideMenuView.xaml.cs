@@ -42,10 +42,11 @@ namespace Medflix.Views
             {
                 var urlsMenuContainer = new VideoPlayerMenu($"{mediaSource.Language} qualities");
 
-                bool selected = false;
+                bool parentSelected = false;
                 foreach (var videoSource in mediaSource.Sources.OrderBy(t => t.Quality))
                 {
                     var text = "";
+                    bool sourceSelected = false;
                     if (qualityIndexes.ContainsKey(videoSource.Quality))
                     {
                         qualityIndexes[videoSource.Quality]++;
@@ -58,12 +59,15 @@ namespace Medflix.Views
                     }
 
                     if (defaultVideoUrl == videoSource.TorrentUrl || defaultVideoUrl == videoSource.FilePath)
-                        selected = true;
+                    {
+                        parentSelected = true;
+                        sourceSelected = true;
+                    }
 
-                    urlsMenuContainer.AddMenu(text, selected: selected, onClickAction: () => OnVideoQualityClick?.Invoke(this, !string.IsNullOrEmpty(videoSource.FilePath) ? videoSource.FilePath : videoSource.TorrentUrl));
+                    urlsMenuContainer.AddMenu(text, selected: sourceSelected, onClickAction: () => OnVideoQualityClick?.Invoke(this, !string.IsNullOrEmpty(videoSource.FilePath) ? videoSource.FilePath : videoSource.TorrentUrl));
                 }
 
-                qualitiesMenuContainer.AddMenu(mediaSource.Language, selected: selected, subMenusContainer: urlsMenuContainer, onClickAction: () => ShowMenus(urlsMenuContainer));
+                qualitiesMenuContainer.AddMenu(mediaSource.Language, selected: parentSelected, subMenusContainer: urlsMenuContainer, onClickAction: () => ShowMenus(urlsMenuContainer));
             }
 
         }
