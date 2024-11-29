@@ -171,8 +171,9 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                AppLogger.LogInfo($"RemoveMediaSource Error: {ex.Message}");
                 return false;
             }
             finally

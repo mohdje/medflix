@@ -41,7 +41,7 @@ namespace MoviesAPI.Extensions
                             .Replace(".", " ")
                             .Replace("?", "")
                             .Replace("/", "")
-                            .Replace("'", "")
+                            .Replace("'", " ")
                             .Replace("é", "e")
                             .Replace("è", "e")
                             .Replace("&", " ")

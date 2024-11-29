@@ -36,7 +36,7 @@ namespace WebHostStreaming.StartupExtensions
             //});
 
             if (Directory.Exists(AppFolders.ManageViewFolder))
-                Directory.Delete(AppFolders.ManageViewFolder);
+                Directory.Delete(AppFolders.ManageViewFolder, true);
 
             Directory.CreateDirectory(AppFolders.ManageViewFolder);
 
