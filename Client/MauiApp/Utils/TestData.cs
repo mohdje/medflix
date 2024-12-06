@@ -18,11 +18,11 @@ namespace Medflix.Utils
             CoverImageUrl = "https://image.tmdb.org/t/p/original/1Qb4L5L8UUWj9nRf6p779q27S9O.jpg",
             YoutubeTrailerUrl = "https://youtube.com/embed/",
             Duration = 7378,
-            Genres = new Genre[] 
+            Genres = new Category[] 
             {
-                new Genre { Id = 12, Name ="Action"},
-                new Genre { Id = 123, Name ="Thriller"},
-                new Genre { Id = 12, Name ="Comedy"},
+                new Category { Id = 12, Name ="Action"},
+                new Category { Id = 123, Name ="Thriller"},
+                new Category { Id = 12, Name ="Comedy"},
             },
             Year = 2024,
             Director = "Christopher Nolan",

@@ -37,7 +37,7 @@ namespace Medflix.Pages.AndroidTv
         protected override void OnAppearing()
         {
             if (!ActivePage.Children.Any())
-                ShowView(HomePageView);
+              ShowView(HomePageView);
 
             MedflixApiService.Instance.ContextChanged += (s, e) =>
             {
@@ -74,6 +74,11 @@ namespace Medflix.Pages.AndroidTv
         private void OnBookmarkButtonButtonClicked(object sender, EventArgs e)
         {
             ShowView(new BookmarkView());
+        }
+
+        private void OnCategoriesButtonButtonClicked(object sender, EventArgs e)
+        {
+            ShowView(new CategoriesView());
         }
     }
 }

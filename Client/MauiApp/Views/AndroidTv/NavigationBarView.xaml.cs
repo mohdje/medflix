@@ -1,4 +1,5 @@
 ﻿
+using Medflix.Controls.AndroidTv;
 using Medflix.Services;
 
 namespace Medflix.Views.AndroidTv
@@ -9,6 +10,7 @@ namespace Medflix.Views.AndroidTv
         public event EventHandler OnSearchButtonClicked;
         public event EventHandler OnWatchHistoryButtonClicked;
         public event EventHandler OnBookmarkButtonButtonClicked;
+        public event EventHandler OnCategoriesButtonButtonClicked;
 
         public NavigationBarView()
         {
@@ -32,47 +34,52 @@ namespace Medflix.Views.AndroidTv
             MoviesButton.Selected = false;
 
             HomeButton.Selected = true;
-            SearchButton.Selected = false;
-            WatchHistoryButton.Selected = false;
-            BookmarkButton.Selected = false;
+            UpdateNavBarButtonsState(HomeButton);
 
             MedflixApiService.Instance.SwitchToSeriesMode();
         }
         private void HomeButtonClicked(object sender, EventArgs e)
         {
-            SearchButton.Selected = false;
-            WatchHistoryButton.Selected = false;
-            BookmarkButton.Selected = false;
-
+            UpdateNavBarButtonsState(HomeButton);
             OnHomeButtonClicked?.Invoke(this, e);
         }
 
         private void SearchButtonClicked(object sender, EventArgs e)
         {
-            HomeButton.Selected = false;
-            WatchHistoryButton.Selected = false;
-            BookmarkButton.Selected = false;
-
+            UpdateNavBarButtonsState(SearchButton);
             OnSearchButtonClicked?.Invoke(this, e);
         }
 
         private void WatchHistoryButtonClicked(object sender, EventArgs e)
         {
-            HomeButton.Selected = false;
-            SearchButton.Selected = false;
-            BookmarkButton.Selected = false;
-
+            UpdateNavBarButtonsState(WatchHistoryButton);
             OnWatchHistoryButtonClicked?.Invoke(this, e);
         }
 
         private void BookmarkButtonClicked(object sender, EventArgs e)
         {
-            HomeButton.Selected = false;
-            SearchButton.Selected = false;
-            WatchHistoryButton.Selected = false;
-
+            UpdateNavBarButtonsState(BookmarkButton);
             OnBookmarkButtonButtonClicked?.Invoke(this, e);
         }
 
+        private void CategoriesButtonClicked(object sender, EventArgs e)
+        {
+            UpdateNavBarButtonsState(CategoriesButton);
+            OnCategoriesButtonButtonClicked?.Invoke(this, e);
+        }
+
+        private void UpdateNavBarButtonsState(NavigationBarButton selectedButton)
+        {
+            var buttons = new NavigationBarButton[]
+            {
+                HomeButton, SearchButton, WatchHistoryButton, BookmarkButton, CategoriesButton
+            };
+
+            foreach (var button in buttons)
+            {
+                if(selectedButton != button)
+                    button.Selected = false;
+            }
+        }
     }
 }

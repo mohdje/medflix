@@ -47,6 +47,11 @@
                   Selected="False"
                   Source="bookmark.svg"
                   Clicked="BookmarkButtonClicked"/>
+            <controls:NavigationBarButton   
+               x:Name="CategoriesButton"
+               Selected="False"
+               Source="categories.svg"
+               Clicked="CategoriesButtonClicked"/>
         </FlexLayout>
     </Grid>
 

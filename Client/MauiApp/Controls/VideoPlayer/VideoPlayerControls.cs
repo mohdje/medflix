@@ -22,6 +22,7 @@ namespace Medflix.Controls.VideoPlayer
         public event EventHandler OnQualitiesButtonClick;
         public event EventHandler OnTimeBarStartNavigating;
         public event EventHandler<double> OnTimeBarNavigated;
+        public event EventHandler<bool> OnVisibilityChanged;
 
         public bool IsShown => this.Opacity == 1;
 
@@ -73,7 +74,7 @@ namespace Medflix.Controls.VideoPlayer
 
             TimeBar.OnNavigationEnd += (s, percentage) => OnTimeBarNavigated?.Invoke(s, percentage);
 
-             VideoTimeIndicator = new VideoTimeIndicator();
+            VideoTimeIndicator = new VideoTimeIndicator();
 
             PlayPauseButton = new VideoPlayerControlButton(Icons.PauseIcon);
             PlayPauseButton.Clicked += (s, e) => OnPlayPauseButtonClick?.Invoke(this, EventArgs.Empty);
@@ -81,7 +82,6 @@ namespace Medflix.Controls.VideoPlayer
             SubtitlesButton = new VideoPlayerControlButton(Icons.SubtitlesIcon);
             SubtitlesButton.Margin = new Thickness(0, 0, 30, 0);
             SubtitlesButton.Clicked += (s, e) => OnSubtitlesButtonClick?.Invoke(this, EventArgs.Empty);
-
 
             QualitiesButton = new VideoPlayerControlButton(Icons.QualitiesIcon);
             QualitiesButton.Clicked += (s, e) => OnQualitiesButtonClick?.Invoke(this, EventArgs.Empty);
@@ -118,18 +118,24 @@ namespace Medflix.Controls.VideoPlayer
 
         public void Show()
         {
-            this.Opacity = 1;
+            var fadeInAnimation = new Animation(v => Opacity = v, start: 0, end: 1, Easing.CubicOut);
+            fadeInAnimation.Commit(this, nameof(fadeInAnimation));
+
             PlayPauseButton.IsEnabled = true;
             SubtitlesButton.IsEnabled = true;
             QualitiesButton.IsEnabled = true;
+            OnVisibilityChanged?.Invoke(this, true);
         }
 
         public void Hide()
         {
-            this.Opacity = 0;
+            var fadeOutAnimation = new Animation(v => Opacity = v, start: 1, end: 0, Easing.CubicOut);
+            fadeOutAnimation.Commit(this, nameof(fadeOutAnimation));
+
             PlayPauseButton.IsEnabled = false;
             SubtitlesButton.IsEnabled = false;
             QualitiesButton.IsEnabled = false;
+            OnVisibilityChanged?.Invoke(this, false);
         }
     }
 }

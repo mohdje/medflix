@@ -20,7 +20,8 @@
             OnHomeButtonClicked="HomeButtonClicked"
             OnSearchButtonClicked="SearchButtonClicked"
             OnWatchHistoryButtonClicked="OnWatchHistoryButtonClicked"
-            OnBookmarkButtonButtonClicked="OnBookmarkButtonButtonClicked"/>
+            OnBookmarkButtonButtonClicked="OnBookmarkButtonButtonClicked"
+            OnCategoriesButtonButtonClicked="OnCategoriesButtonButtonClicked"/>
         <Grid    
             x:Name="ActivePage"
             Grid.Row="0"

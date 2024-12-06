@@ -128,7 +128,7 @@ namespace Medflix.Services
         private async Task<IEnumerable<MediaDetails>> GetMediaListAsync(string url)
         {
             var list = await GetAsync<IEnumerable<MediaDetails>>(url);
-            return list?.Take(10);
+            return list?.Take(6);
         }
         public async Task<IEnumerable<MediaDetails>> SearchMedia(string text)
         {
@@ -143,6 +143,26 @@ namespace Medflix.Services
         public async Task<MediaDetails> GetMediaDetailsAsync(string mediaId)
         {
             return await GetAsync<MediaDetails>($"{hostServiceUrl}/{mediaType}/details/{mediaId}");
+        }
+
+        public async Task<IEnumerable<Category>> GetAvailablePlatforms()
+        {
+            return await GetAsync<IEnumerable<Category>>($"{hostServiceUrl}/{mediaType}/platforms");
+        }
+
+        public async Task<IEnumerable<Category>> GetAvailableGenres()
+        {
+            return await GetAsync<IEnumerable<Category>>($"{hostServiceUrl}/{mediaType}/genres");
+        }
+
+        public async Task<IEnumerable<MediaDetails>> GetMediasForPlatform(int platformId, int page)
+        {
+            return await GetAsync<IEnumerable<MediaDetails>>($"{hostServiceUrl}/{mediaType}/platform/{platformId}/{page}");
+        }
+
+        public async Task<IEnumerable<MediaDetails>> GetMediasForGenre(int genreId, int page)
+        {
+            return await GetAsync<IEnumerable<MediaDetails>>($"{hostServiceUrl}/{mediaType}/genre/{genreId}/{page}");
         }
 
         public async Task<IEnumerable<Episode>> GetEpisodesAsync(string mediaId, int seasonNumber)

@@ -64,9 +64,11 @@
 	  <None Remove="Resources\AppIcon\appicon.svg" />
 	  <None Remove="Resources\AppIcon\appiconfg.svg" />
 	  <None Remove="Resources\Images\bookmark.svg" />
+	  <None Remove="Resources\Images\categories.svg" />
 	  <None Remove="Resources\Images\default_cover.svg" />
 	  <None Remove="Resources\Images\eye.svg" />
 	  <None Remove="Resources\Images\home.svg" />
+	  <None Remove="Resources\Images\left_arrow.svg" />
 	  <None Remove="Resources\Images\medflix_full_logo.svg" />
 	  <None Remove="Resources\Images\minus.svg" />
 	  <None Remove="Resources\Images\movie.svg" />
@@ -99,6 +101,9 @@
 	  <MauiXaml Update="Pages\AndroidTv\AndroidTvMediaPresentationPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\AndroidTv\MediasForCategoryListPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\AndroidTv\MediaTrailerPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -112,6 +117,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\AndroidTv\BookmarkView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\AndroidTv\CategoriesView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\AndroidTv\EpisodePresentationView.xaml">

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Medflix.Pages.AndroidTv.MediasForCategoryListPage"
+             xmlns:controls="clr-namespace:Medflix.Controls.AndroidTv"
+             NavigationPage.HasNavigationBar="False">
+    <Grid RowDefinitions="60,*,60">
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0,1">
+                <GradientStop Color="Black" Offset="0.4" />
+                <GradientStop Color="#333232" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Label 
+            Grid.Row="0" 
+            x:Name="CategoryName" 
+            TextColor="White" 
+            FontSize="Title" 
+            FontAttributes="Bold"
+            Padding="10"/>
+        <ActivityIndicator Grid.Row="1" x:Name="Spinner" IsRunning="True" WidthRequest="100" HeightRequest="100" Color="White"/>
+        <FlexLayout Grid.Row="1" x:Name="MediaList" Wrap="Wrap" JustifyContent="Center"/>
+        <FlexLayout  Grid.Row="2" JustifyContent="Center" AlignItems="Center">
+            <controls:BorderedButton x:Name="PreviousButton">
+                <controls:BorderedButton.Button>
+                    <Button 
+                      BackgroundColor="Gray"
+                      Padding="6"
+                      ImageSource="left_arrow.svg"
+                      WidthRequest="45"
+                      IsEnabled="False"
+                      Clicked="PreviousButtonClicked"/>
+                </controls:BorderedButton.Button>
+            </controls:BorderedButton>
+            <controls:BorderedButton x:Name="NextButton">
+                <controls:BorderedButton.Button>
+                    <Button 
+                        BackgroundColor="Gray"
+                        Padding="6"
+                        ImageSource="right_arrow.svg"
+                        WidthRequest="45"
+                        IsEnabled="False"
+                        Clicked="NextButtonClicked"/>
+                </controls:BorderedButton.Button>
+            </controls:BorderedButton>
+        </FlexLayout>
+    </Grid>
+
+</ContentPage>

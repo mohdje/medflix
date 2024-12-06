@@ -34,7 +34,7 @@ namespace Medflix.Views.AndroidTv
             var tasks = new Task[]
             {
                 MedflixApiService.Instance.GetMediasOfTodaysAsync().ContinueWith(t => mediasOfToday = t.Result),
-                MedflixApiService.Instance.GetMediasOfTodaysAsync().ContinueWith(t => recommandations = t.Result),
+                MedflixApiService.Instance.GetRecommandationsAsync().ContinueWith(t => recommandations = t.Result),
                 MedflixApiService.Instance.GetPopularMediasAsync().ContinueWith(t => popularMedias = t.Result),
                 MedflixApiService.Instance.GetPopularNetflixAsync().ContinueWith(t => netflix = t.Result),
                 MedflixApiService.Instance.GetPopularAmazonPrimeAsync().ContinueWith(t => amazonPrime = t.Result),

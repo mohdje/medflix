@@ -53,6 +53,11 @@ namespace Medflix.Pages
         }
         private void InitVideoPlayerControls()
         {
+            var episodeInfo =VideoPlayerParameters.WatchMedia.Media.SeasonsCount > 0 ? $" (Season {VideoPlayerParameters.WatchMedia.SeasonNumber} Ep. {VideoPlayerParameters.WatchMedia.EpisodeNumber})" : null;
+            MediaTitle.Text = VideoPlayerParameters.WatchMedia.Media.Title + episodeInfo;
+
+            PlayerControls.OnVisibilityChanged += (s, isVisible) => MediaTitle.IsVisible = isVisible;
+
             PlayerControls.SetSubtitlesButtonVisibility(VideoPlayerParameters.SubtitlesSources.Any());
 
             PlayerControls.OnPlayPauseButtonClick += (s, e) => MediaPlayerViewModel.TogglePlay();

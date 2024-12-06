@@ -128,16 +128,16 @@
                          Margin="3,0,0,0">
                         <controls:BorderedButton.Button>
                             <Button 
-                               Text="Restart" 
-                               FontSize="14"
-                               FontAttributes="Bold"
-                               BackgroundColor="White"
-                               TextColor="Black" 
-                               Padding="13"
-                               ImageSource="restart.svg"
-                               ContentLayout="Left,8"
-                               WidthRequest="100"
-                               Clicked="OnPlayFromBeginningButton"/>
+                           Text="Restart" 
+                           FontSize="11"
+                           FontAttributes="Bold"
+                           BackgroundColor="White"
+                           TextColor="Black" 
+                           Padding="11"
+                           ImageSource="restart.svg"
+                           ContentLayout="Left,8"
+                           WidthRequest="100"
+                           Clicked="OnPlayFromBeginningButton"/>
                         </controls:BorderedButton.Button>
                     </controls:BorderedButton>
 

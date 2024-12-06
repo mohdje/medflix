@@ -24,7 +24,7 @@ namespace Medflix.Models.Media
         public string Synopsis { get; set; }
 
         public string LogoImageUrl { get; set; }
-        public Genre[] Genres { get; set; }
+        public Category[] Genres { get; set; }
         public string Director { get; set; }
 
         public string Cast { get; set; }

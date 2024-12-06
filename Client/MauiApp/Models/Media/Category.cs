@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Medflix.Models.Media
 {
-    public class Genre
+    public class Category
     {
         public int Id { get; set; }
         public string Name { get; set; }
