@@ -112,6 +112,7 @@
         <div style="display: flex;">
             <button id="addBtn" class="gray" onclick="showAddFileModal()">Add File</button>
             <button id="deleteBtn" class="red" disabled onclick="deleteVideos()">Delete File(s)</button>
+            <button id="cleanBtn" class="red" onclick="cleanUnusedRessources()">Clean unused ressources</button>
         </div>
 
         <h4 id="loadingListMessage" style="margin: 5px;visibility: hidden;">Loading videos list, please wait...</h4>
@@ -146,13 +147,13 @@
         const progressLabel = document.getElementById('progress');
         const videosList = document.getElementById('videos');
         const deleteBtn = document.getElementById('deleteBtn');
+        const cleanBtn = document.getElementById('cleanBtn');
         const addBtn = document.getElementById('addBtn');
         const addFileModal = document.getElementById('addFileModal');
         const deleteFileModal = document.getElementById('deleteFileModal');
         const uploadBtn = document.getElementById('uploadBtn');
         const closeBtn = document.getElementById('closeBtn');
         const loadingListMessage = document.getElementById('loadingListMessage');
-
 
 
         let videoFilePathsToRemove = [];
@@ -198,13 +199,12 @@
         async function deleteVideos() {
             deleteFileModal.style.visibility = 'visible';
 
-            const formData = new FormData();
-            formData.append('videoFilePaths', videoFilePathsToRemove.join('?'));
+            var videoFilePathsBase64 = btoa(videoFilePathsToRemove.map(path => encodeURIComponent(path)).join('|'));
+
             deleteBtn.disabled = true;
 
-            var response = await fetch(`/application/availablevideos`, {
-                method: 'DELETE',
-                body: formData
+            var response = await fetch(`/application/availablevideos?videoFilePathsBase64=${videoFilePathsBase64}`, {
+                method: 'DELETE'
             });
 
             if (response.ok) {
@@ -220,6 +220,23 @@
             deleteFileModal.style.visibility = "hidden";
 
             loadAvailableVideos();
+        }
+
+        async function cleanUnusedRessources() {
+            deleteFileModal.style.visibility = 'visible';
+
+            var response = await fetch(`/application/clean`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                var result = await response.json();
+                alert(`Cleaning operation finished: ${result.foldersDeleted} folders have been deleted`);
+            } else {
+                alert("Cleaning operation failed");
+            }
+
+            deleteFileModal.style.visibility = "hidden";
         }
 
         function showAddFileModal() {

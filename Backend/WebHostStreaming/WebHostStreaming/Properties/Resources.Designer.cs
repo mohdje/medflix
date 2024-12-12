@@ -73,9 +73,9 @@ namespace WebHostStreaming.Properties {
         ///        href=&quot;https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&amp;family=Manrope:wght@200..800&amp;family=Raleway:ital,wght@0,100..900;1,100..900&amp;display=swap&quot;
         ///        rel=&quot;styleshee [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
-        internal static string UploadPage {
+        internal static string ManageVideosPage {
             get {
-                return ResourceManager.GetString("UploadPage", resourceCulture);
+                return ResourceManager.GetString("ManageVideosPage", resourceCulture);
             }
         }
     }

@@ -40,7 +40,7 @@ namespace WebHostStreaming.StartupExtensions
 
             Directory.CreateDirectory(AppFolders.ManageViewFolder);
 
-            File.WriteAllText(AppFiles.UploadHtmlPage, Resources.UploadPage);
+            File.WriteAllText(AppFiles.UploadHtmlPage, Resources.ManageVideosPage);
 
             applicationBuilder.UseStaticFiles(new StaticFileOptions
             {

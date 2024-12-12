@@ -8,9 +8,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using WebHostStreaming.Extensions;
 using WebHostStreaming.Helpers;
 using WebHostStreaming.Models;
+using WebHostStreaming.Providers;
 using WebHostStreaming.Providers.AvailableVideosListProvider;
 using MediaTypeHeaderValue = Microsoft.Net.Http.Headers.MediaTypeHeaderValue;
 
@@ -20,11 +22,13 @@ namespace WebHostStreaming.Controllers
     [ApiController]
     public class ApplicationController : ControllerBase
     {
-        private IAvailableVideosListProvider availableVideosListProvider;
+        IAvailableVideosListProvider availableVideosListProvider;
+        IWatchedMediaProvider watchedMediaProvider;
 
-        public ApplicationController(IAvailableVideosListProvider availableVideosListProvider)
+        public ApplicationController(IAvailableVideosListProvider availableVideosListProvider, IWatchedMediaProvider watchedMediaProvider)
         {
             this.availableVideosListProvider = availableVideosListProvider;
+            this.watchedMediaProvider = watchedMediaProvider;
         }
         [HttpGet("ping")]
         public IActionResult Ping()
@@ -75,7 +79,7 @@ namespace WebHostStreaming.Controllers
 
             var success = await availableVideosListProvider.AddMediaSource(filePath);
 
-            if(success)
+            if (success)
             {
                 return CreatedAtAction(nameof(UploadFile), new
                 {
@@ -104,35 +108,16 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpDelete("availablevideos")]
-        public async Task<IActionResult> DeleteAvailableVideos()
+        public IActionResult DeleteAvailableVideos([FromQuery] string videoFilePathsBase64)
         {
-            string body = null;
-            using (StreamReader sr = new StreamReader(HttpContext.Request.Body))
-            {
-                body = await sr.ReadToEndAsync();
-            }
-
-            if (string.IsNullOrEmpty(body))
+            if (string.IsNullOrEmpty(videoFilePathsBase64))
                 return BadRequest();
 
-            var boundary = HeaderUtilities.RemoveQuotes(MediaTypeHeaderValue.Parse(HttpContext.Request.ContentType).Boundary).Value;
-
-            body = body.Replace(boundary, string.Empty);
-            body = body.Replace("-", string.Empty);
-
-            var parameterName = "\"videoFilePaths\"";
-            var index = body.IndexOf(parameterName);
-
-            if (index == -1)
-                return BadRequest();
-
-            var list = body.Substring(index + parameterName.Length).Trim();
-
-            var videoFilePaths = list.Split("?");
+            var videoFilePaths = HttpUtility.UrlDecode(videoFilePathsBase64.DecodeBase64()).Split("|");
 
             var counter = 0;
 
-            foreach(var videoFilePath in videoFilePaths)
+            foreach (var videoFilePath in videoFilePaths)
             {
                 if (availableVideosListProvider.RemoveMediaSource(videoFilePath))
                     counter++;
@@ -145,6 +130,54 @@ namespace WebHostStreaming.Controllers
             });
         }
 
+
+        [HttpDelete("clean")]
+        public async Task<IActionResult> CleanUnusedResources()
+        {
+            var watchedMovies = await watchedMediaProvider.GetWatchedMoviesAsync();
+            var watchedSeries = await watchedMediaProvider.GetWatchedSeriesAsync();
+            var counter = 0;
+            var videoExtensions = new string[] { ".mp4", ".avi", ".mkv" };
+
+            foreach (var torrentFolder in Directory.GetDirectories(AppFolders.TorrentsFolder))
+            {
+                var shouldDeleteFolder = true;
+
+                var videoFiles = Directory.GetFiles(torrentFolder, "*.*", SearchOption.AllDirectories).Where(f => videoExtensions.Contains(Path.GetExtension(f)));
+             
+                foreach (var videofilePath in videoFiles)
+                {
+                    var torrentUrlMd5Hash = Path.GetFileName(torrentFolder);
+
+                    if (availableVideosListProvider.VideosSourcesList.Contains(videofilePath)
+                        || (watchedMovies != null && watchedMovies.Any(m => m.VideoSource.ToMD5Hash() == torrentUrlMd5Hash))
+                        || (watchedSeries != null && watchedSeries.Any(s => s.VideoSource.ToMD5Hash() == torrentUrlMd5Hash)))
+                    {
+                        shouldDeleteFolder = false;
+                    }
+                }
+
+                if (shouldDeleteFolder)
+                {
+                    try
+                    {
+                        Directory.Delete(torrentFolder, true);
+                        counter++;
+
+                        AppLogger.LogInfo($"Deleted folder {torrentFolder}");
+                    }
+                    catch (Exception ex)
+                    {
+                        AppLogger.LogInfo($"Error occured trying to delete folder {torrentFolder}: {ex.Message}");
+                    }
+                }
+            }
+
+            return Ok( new
+            {
+                foldersDeleted = counter
+            });
+        }
 
         private async Task<string> SaveFileAsync(FileMultipartSection fileSection)
         {

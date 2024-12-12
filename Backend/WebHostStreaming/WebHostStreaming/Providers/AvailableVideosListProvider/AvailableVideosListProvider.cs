@@ -154,20 +154,34 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
 
         public bool RemoveMediaSource(string videoFilePath)
         {
-            if (!File.Exists(videoFilePath) && !videoSourcesList.Contains(videoFilePath))
+            AppLogger.LogInfo($"RemoveMediaSource called for : {videoFilePath}");
+
+            if (!File.Exists(videoFilePath) && !VideosSourcesList.Contains(videoFilePath))
+            {
+                AppLogger.LogInfo($"{videoFilePath} does not exist on disk and is not in the list");
                 return false;
+            }
 
             try
             {
                 if (System.IO.File.Exists(videoFilePath))
+                {
+                    AppLogger.LogInfo($"RemoveMediaSource try to delete {videoFilePath}");
                     File.Delete(videoFilePath);
+                    AppLogger.LogInfo($"RemoveMediaSource successfully deleted {videoFilePath}");
+                }
 
-                if (videoSourcesList.Contains(videoFilePath))
+                if (VideosSourcesList.Contains(videoFilePath))
+                {
+                    AppLogger.LogInfo($"Remove from list {videoFilePath}");
                     videoSourcesList.Remove(videoFilePath);
+                }
 
                 Locker.Wait();
 
                 File.WriteAllLines(AppFiles.AvailableMediaSources, videoSourcesList);
+
+                AppLogger.LogInfo($"RemoveMediaSource success for {videoFilePath}");
 
                 return true;
             }
