@@ -22,12 +22,14 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
         private Dictionary<string, Stream> torrentStreams;
         private Timer downloadWatcher;
         private IAvailableVideosListProvider availableVideosListProvider;
+        private ITorrentFileSelector videoTorrentFileSelector;
 
         public TorrentClientProvider(IAvailableVideosListProvider availableVideosListProvider)
         {
             ClientEngine = BuildClientEngine();
             torrentStreams = new Dictionary<string, Stream>();
             torrentDownloader = new TorrentDownloader();
+            videoTorrentFileSelector = new VideoTorrentFileSelector();
             this.availableVideosListProvider = availableVideosListProvider;
         }
 
@@ -184,18 +186,19 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
                     {
                         foreach (var torrent in torrents)
                         {
-                            AppLogger.LogInfo($"Download progress for {torrent.SavePath}: {torrent.PartialProgress}");
-                            if(torrent.PartialProgress > 97)
+                            var file = videoTorrentFileSelector.SelectTorrentFileInfo(torrent.Files.Where(f => f.Priority == Priority.Highest).ToList());
+                            if (file != null)
                             {
-                                var file = torrent.Files.SingleOrDefault(f => f.Priority == Priority.Highest);
-                                if (file != null)
+                                if (torrent.PartialProgress < 97)
+                                    AppLogger.LogInfo($"Download progress for {file.Path}: {torrent.PartialProgress}");
+                                else
                                 {
                                     var success = await availableVideosListProvider.AddMediaSource(file.FullPath);
 
-                                    if(success)
+                                    if (success)
                                         AppLogger.LogInfo($"Register file as complete : {torrent.Name}");
                                 }
-                            }
+                            }                         
                         }
                     }
                     else
@@ -260,11 +263,11 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
 
             var torrentManager = ClientEngine.Torrents.SingleOrDefault(t => t.SavePath == torrentDirectory);
 
-            if(torrentManager != null)
+            if (torrentManager != null)
             {
-                if(torrentManager.PartialProgress > 0.5)
+                if (torrentManager.PartialProgress > 0.5)
                     return new DownloadingState("Download in progress, ready to play soon (6/6)");
-                else if(torrentManager.PartialProgress > 0)
+                else if (torrentManager.PartialProgress > 0)
                     return new DownloadingState("Download has started (5/6)");
                 else if (torrentManager.Peers.Available > 0)
                     return new DownloadingState("Download is about to start (4/6)");
@@ -331,6 +334,6 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
             //return torrentManager?.Files.Select(f => f.Path);
         }
 
-      
+
     }
 }

@@ -61,6 +61,15 @@ namespace WebHostStreaming.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à .
+        /// </summary>
+        internal static string ManageVideosPage {
+            get {
+                return ResourceManager.GetString("ManageVideosPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à &lt;!DOCTYPE html&gt;
         ///&lt;html lang=&quot;en&quot;&gt;
         ///
@@ -73,9 +82,9 @@ namespace WebHostStreaming.Properties {
         ///        href=&quot;https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&amp;family=Manrope:wght@200..800&amp;family=Raleway:ital,wght@0,100..900;1,100..900&amp;display=swap&quot;
         ///        rel=&quot;styleshee [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
-        internal static string ManageVideosPage {
+        internal static string ManageVideosPage0 {
             get {
-                return ResourceManager.GetString("ManageVideosPage", resourceCulture);
+                return ResourceManager.GetString("ManageVideosPage0", resourceCulture);
             }
         }
     }

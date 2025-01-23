@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using WebHostStreaming.Providers;
 using MoviesAPI.Services.Subtitles;
 using MoviesAPI.Services.Subtitles.DTOs;
-using WebHostStreaming.Models;
 using System.IO;
 using WebHostStreaming.Helpers;
 

@@ -68,6 +68,11 @@ namespace MoviesAPI.Extensions
             return text.RemoveSpecialCharacters(removeSpaces: true, toLower: true).StartsWith(value.RemoveSpecialCharacters(removeSpaces: true, toLower: true));
         }
 
+        public static bool CustomContains(this string text, string value)
+        {
+            return text.RemoveSpecialCharacters(removeSpaces: true, toLower: true).Contains(value.RemoveSpecialCharacters(removeSpaces: true, toLower: true));
+        }
+
         public static bool CustomCompare(this string text, string value)
         {
             return text.RemoveSpecialCharacters(removeSpaces: true, toLower: true) == value.RemoveSpecialCharacters(removeSpaces: true, toLower: true);

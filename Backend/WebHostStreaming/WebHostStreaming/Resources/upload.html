@@ -11,12 +11,10 @@
         rel="stylesheet">
     <title>Medflix - Manage videos</title>
     <style>
-        html {
-            height: 100%;
-        }
-
         body {
-            height: 100%;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
             margin: 0;
             background: rgb(0, 0, 0);
             background: linear-gradient(164deg, rgba(0, 0, 0, 1) 0%, rgba(128, 128, 128, 1) 100%);
@@ -74,6 +72,19 @@
             list-style-type: none;
             padding: 0;
             margin: 0;
+            width: 100%;
+        }
+
+        #videos li {
+            width: 100%;
+        }
+
+        #videos label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 90%;
+            display: inline-block;
+            white-space: nowrap;
         }
 
         .modal-container {
@@ -90,12 +101,10 @@
         }
 
         .modal {
-            width: 40%;
-            height: 30%;
             background: linear-gradient(164deg, rgba(0, 0, 0, 1) 0%, rgb(70, 69, 69) 100%);
             border-radius: 10px;
             box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
-            padding: 10px;
+            padding: 30px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -107,7 +116,7 @@
 
 <body onload="loadAvailableVideos()">
 
-    <div style="padding: 20px 0 0 20px">
+    <div style="height:100%; width: 95%;overflow-y: auto; margin-left: 5%;">
         <h1>Medflix - Videos Manager</h1>
         <div style="display: flex;">
             <button id="addBtn" class="gray" onclick="showAddFileModal()">Add File</button>

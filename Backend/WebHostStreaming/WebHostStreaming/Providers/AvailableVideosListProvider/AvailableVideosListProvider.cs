@@ -55,17 +55,17 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
             }
         }
 
-        public async Task<string> GetVoMovieSource(string movieName, int year)
+        public string GetVoMovieSource(string movieName, int year)
         {
-            return await GetMovieSource(movieName, string.Empty, year, false);
+            return GetMovieSource(movieName, string.Empty, year, false);
         }
 
-        public async Task<string> GetVfMovieSource(string originalMovieName, string frenchMovieName, int year)
+        public string GetVfMovieSource(string originalMovieName, string frenchMovieName, int year)
         {
-            return await GetMovieSource(originalMovieName, frenchMovieName, year, true);
+            return GetMovieSource(originalMovieName, frenchMovieName, year, true);
         }
 
-        private async Task<string> GetMovieSource(string originalMovieName, string frenchMovieName, int year, bool frenchVersion)
+        private string GetMovieSource(string originalMovieName, string frenchMovieName, int year, bool frenchVersion)
         {
             if (!VideosSourcesList.Any())
                 return null;
@@ -83,24 +83,24 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
                         isCorrectVersion = !FrenchTags.Any(tag => fileName.Contains(tag, StringComparison.OrdinalIgnoreCase));
 
                     return
-                    (fileName.CustomStartsWith(originalMovieName) || (frenchVersion && fileName.CustomStartsWith(frenchMovieName)))
+                    (fileName.CustomContains(originalMovieName) || (frenchVersion && fileName.CustomContains(frenchMovieName)))
                      && isCorrectVersion
                      && fileName.Contains(year.ToString());
                 }
             );
 
-            return await Task.FromResult(mediaSource);
+            return mediaSource;
         }
-        public async Task<string> GetVoSerieSource(string serieName, int seasonNumber, int episodeNumber)
+        public string GetVoSerieSource(string serieName, int seasonNumber, int episodeNumber)
         {
-            return await GetSerieSource(serieName, string.Empty, seasonNumber, episodeNumber, false);
+            return GetSerieSource(serieName, string.Empty, seasonNumber, episodeNumber, false);
         }
-        public async Task<string> GetVfSerieSource(string originalSerieName, string frenchSerieName, int seasonNumber, int episodeNumber)
+        public string GetVfSerieSource(string originalSerieName, string frenchSerieName, int seasonNumber, int episodeNumber)
         {
-            return await GetSerieSource(originalSerieName, frenchSerieName,seasonNumber, episodeNumber, true);
+            return GetSerieSource(originalSerieName, frenchSerieName,seasonNumber, episodeNumber, true);
         }
 
-        private async Task<string> GetSerieSource(string originalSerieName, string frenchSerieName, int seasonNumber, int episodeNumber, bool frenchVersion)
+        private string GetSerieSource(string originalSerieName, string frenchSerieName, int seasonNumber, int episodeNumber, bool frenchVersion)
         {
             if (!VideosSourcesList.Any())
                 return null;
@@ -123,7 +123,7 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
                     var isCorrectEpisode = fileName.Contains(seasonId, StringComparison.OrdinalIgnoreCase) && fileName.Contains(episodeId, StringComparison.OrdinalIgnoreCase);
 
                     return 
-                    (fileName.CustomStartsWith(originalSerieName) || (frenchVersion && fileName.CustomStartsWith(frenchSerieName)))
+                    (fileName.CustomContains(originalSerieName) || (frenchVersion && fileName.CustomContains(frenchSerieName)))
                     && isCorrectVersion
                     && isCorrectEpisode;
                 }

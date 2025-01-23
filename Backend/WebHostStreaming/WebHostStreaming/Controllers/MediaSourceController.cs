@@ -31,7 +31,7 @@ namespace WebHostStreaming.Controllers
             if (string.IsNullOrEmpty(frenchTitle))
                 frenchTitle = title;
 
-            var videoPath = await availableVideosListProvider.GetVfMovieSource(title, frenchTitle, year);
+            var videoPath = availableVideosListProvider.GetVfMovieSource(title, frenchTitle, year);
 
             if (!string.IsNullOrEmpty(videoPath))
                 return ToMediaSources(videoPath);
@@ -44,7 +44,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("movies/vo")]
         public async Task<IEnumerable<MediaSource>> SearchVOMovieSources(string title, int year)
         {
-            var videoPath = await availableVideosListProvider.GetVoMovieSource(title, year);
+            var videoPath = availableVideosListProvider.GetVoMovieSource(title, year);
 
             if (!string.IsNullOrEmpty(videoPath))
                 return ToMediaSources(videoPath);
@@ -57,7 +57,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("series/vo")]
         public async Task<IEnumerable<MediaSource>> SearchSerieVOSources(string imdbId, string title, int seasonNumber, int episodeNumber)
         {
-            var videoPath = await availableVideosListProvider.GetVoSerieSource(title, seasonNumber, episodeNumber);
+            var videoPath = availableVideosListProvider.GetVoSerieSource(title, seasonNumber, episodeNumber);
 
             if (!string.IsNullOrEmpty(videoPath))
                 return ToMediaSources(videoPath);
@@ -74,7 +74,7 @@ namespace WebHostStreaming.Controllers
             if (string.IsNullOrEmpty(frenchTitle))
                 frenchTitle = title;
 
-            var videoPath = await availableVideosListProvider.GetVfSerieSource(title, frenchTitle, seasonNumber, episodeNumber);
+            var videoPath = availableVideosListProvider.GetVfSerieSource(title, frenchTitle, seasonNumber, episodeNumber);
             if (!string.IsNullOrEmpty(videoPath))
                 return ToMediaSources(videoPath);
 
