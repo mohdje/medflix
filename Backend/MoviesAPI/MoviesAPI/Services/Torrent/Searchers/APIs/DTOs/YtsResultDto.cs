@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MoviesAPI.Services.VOMovies.YtsApi.DTOs
+﻿
+namespace MoviesAPI.Services.Torrent
 {
     class YtsResultDto
     {

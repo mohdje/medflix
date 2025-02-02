@@ -1,29 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Web;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 using System.Linq;
-using MoviesAPI.Services.VOMovies.YtsApi.DTOs;
 using MoviesAPI.Helpers;
 using MoviesAPI.Services.Torrent.Dtos;
-using MoviesAPI.Extensions;
+using MoviesAPI.Services.Torrent.Searchers;
 
 namespace MoviesAPI.Services.Torrent
 {
-    public class YtsApiSearcher : ITorrentVOMovieSearcher
+    public class YtsApiSearcher : ITorrentSearcher
     {
-        IYtsApiUrlProvider ytsApiUrlProvider;
+        string listMovies = "list_movies.json";
 
-        private string listMovies = "list_movies.json";
-
-        public string Url => this.ytsApiUrlProvider.GetPingUrl();
-
-        internal YtsApiSearcher(IYtsApiUrlProvider ytsApiUrlProvider)
-        {
-            this.ytsApiUrlProvider = ytsApiUrlProvider;
-        }
+        string Url => "https://yts.mx/api/v2/";
 
         public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string movieName, int year)
         {
@@ -34,11 +24,17 @@ namespace MoviesAPI.Services.Torrent
                 { "order_by", "desc" }
             };
 
-            var requestResult = await HttpRequester.GetAsync<YtsResultDto>(ytsApiUrlProvider.GetBaseApiUrl() + listMovies, parameters);
+            var searchurl = $"{Url}{listMovies}";
+            var requestResult = await HttpRequester.GetAsync<YtsResultDto>(searchurl, parameters);
 
             var movie = requestResult?.Data?.Movies?.FirstOrDefault(m => m.Title.Replace("\'", String.Empty).Equals(movieName.Replace("\'", String.Empty), StringComparison.OrdinalIgnoreCase) && m.Year == year);
               
-            return movie != null ? movie.Torrents.Select(t => new MediaTorrent() { DownloadUrl = t.Url, Quality = t.Quality }) : new MediaTorrent[0];
+            return movie != null ? movie.Torrents.Select(t => new MediaTorrent() { DownloadUrl = t.Url, Quality = t.Quality }) : Array.Empty<MediaTorrent>();
+        }
+
+        public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string serieName, int seasonNumber, int episodeNumber)
+        {
+            return await Task.FromResult(Array.Empty<MediaTorrent>());
         }
     }
 }

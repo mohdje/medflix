@@ -25,8 +25,8 @@ namespace MoviesApiSample.Samples
             //await GetPopularSeries();
             //await GetPopularSeriesByGenre(16);
             //await GetSeriesByGenre(10767);
-            // await GetSerieDetails("119051");
-           await GetPopularNetflixSeries();
+             await GetSerieDetails("42009");
+          // await GetPopularNetflixSeries();
             //await GetPopularDisneyPlusSeries();
            // await GetPopularAmazonPrimeSeries();
 

@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using MoviesAPI.Services.Content;
 using System.Threading;
 using System.Runtime.CompilerServices;
+using MoviesAPI.Services.Torrent.Searchers;
+using MoviesAPI.Services.Torrent.Searchers.WebScrappers;
 
 namespace MoviesAPI.Services
 {
@@ -51,54 +53,56 @@ namespace MoviesAPI.Services
         }
 
         #region Torrent
-        public async Task<TorrentSearchManager> CreateTorrentSearchManagerAsync()
+        public TorrentSearchManager CreateTorrentSearchManager()
         {
-            var availableVoTorrentMovieSearchers = await GetAvailableServicesAsync(GetVoTorrentMovieSearchers());
-            var availableVoTorrentSerieSearchers = await GetAvailableServicesAsync(GetVoTorrentSerieSearchers());
-            var availableVfTorrentMovieSearchers = await GetAvailableServicesAsync(GetVfTorrentMovieSearchers());
-            var availableVfTorrentSerieSearchers = await GetAvailableServicesAsync(GetVfTorrentSerieSearchers());
+            var availableVoTorrentMovieSearchers = GetVoTorrentMovieSearchers();
+            var availableVoTorrentSerieSearchers = GetVoTorrentSerieSearchers();
+            var availableVfTorrentMovieSearchers = GetVfTorrentMovieSearchers();
+            var availableVfTorrentSerieSearchers = GetVfTorrentSerieSearchers();
 
             return new TorrentSearchManager(availableVfTorrentMovieSearchers, availableVoTorrentMovieSearchers, availableVfTorrentSerieSearchers, availableVoTorrentSerieSearchers);
         }
 
-        private IEnumerable<ITorrentVFMovieSearcher> GetVfTorrentMovieSearchers()
+        private IEnumerable<ITorrentSearcher> GetVfTorrentMovieSearchers()
         {
-            return new List<ITorrentVFMovieSearcher>()
+            return new List<ITorrentSearcher>()
             {
-                new YggTorrentSearcher(),
-                new YtsVfTorrentSearcher(),
+                new YggTorrentScrapper(),
+                new YtsVfTorrentScrapper(),
+                new ZeTorrentsScrapper()
                 //new GkTorrentSearcher(),
-                new ZeTorrentsSearcher()
             };
         }
 
-        private IEnumerable<ITorrentVOMovieSearcher> GetVoTorrentMovieSearchers()
+        private IEnumerable<ITorrentSearcher> GetVoTorrentMovieSearchers()
         {
-            return new List<ITorrentVOMovieSearcher>()
+            return new List<ITorrentSearcher>()
             {
-                new YtsHtmlV2Searcher(new YtsHtmlRsUrlProvider()),
-                new YtsHtmlSearcher(new YtsHtmlOneUrlProvider()),
-                new YtsApiSearcher(new YtsApiUrlMxProvider()),
+               //new YtsMxWebScrapper(),
+               new YtsDoWebScrapper(),
+               new YtsRsWebScrapper(),
+               new YtsApiSearcher(),
             };
         }
 
-        private IEnumerable<ITorrentSerieSearcher> GetVoTorrentSerieSearchers()
+        private IEnumerable<ITorrentSearcher> GetVoTorrentSerieSearchers()
         {
-            return new List<ITorrentSerieSearcher>()
+            return new List<ITorrentSearcher>()
             {
-                new OneomSearcher(),
-                new YtsTvSearcher()
+               // new OneomSearcher(),
+               //GloTorrents //https://rarbgdump.com/search/severance%20s01e02
+               // new YtsTvSearcher()
             };
         }
 
-        private IEnumerable<ITorrentSerieSearcher> GetVfTorrentSerieSearchers()
+        private IEnumerable<ITorrentSearcher> GetVfTorrentSerieSearchers()
         {
-            return new List<ITorrentSerieSearcher>()
+            return new List<ITorrentSearcher>()
             {
-                new YggTorrentSearcher(),
-                new YtsVfTorrentSearcher(),
+                new YggTorrentScrapper(),
+                new YtsVfTorrentScrapper(),
+                new ZeTorrentsScrapper(),
                 //new GkTorrentSearcher(),
-                new ZeTorrentsSearcher()
             };
         }
 
@@ -109,10 +113,10 @@ namespace MoviesAPI.Services
         {
             this.subtitlesFolder = subtitlesFolder;
         }
-        public async Task<SubtitlesSearchManager> CreateSubstitlesSearchManagerAsync()
+        public SubtitlesSearchManager CreateSubstitlesSearchManager()
         {
-            var availableMovieSubtitlesSearchers = await GetAvailableServicesAsync(GetMovieSubtitlesSearchers());
-            var availableSerieSubtitlesSearchers = await GetAvailableServicesAsync(GetSerieSubtitlesSearchers());
+            var availableMovieSubtitlesSearchers = GetMovieSubtitlesSearchers();
+            var availableSerieSubtitlesSearchers = GetSerieSubtitlesSearchers();
 
             return new SubtitlesSearchManager(availableMovieSubtitlesSearchers, availableSerieSubtitlesSearchers);
         }
@@ -140,60 +144,5 @@ namespace MoviesAPI.Services
             };
         }
         #endregion
-
-        private async Task<IEnumerable<T>> GetAvailableServicesAsync<T>(IEnumerable<T> searcherServices) where T : ISearcherService
-        {
-            var availableServices = new List<T>();
-            var tasks = new List<Task>();
-
-            foreach (var searcher in searcherServices)
-            {
-                tasks.Add(IsAvailable(searcher).ContinueWith(t =>
-                {
-                    if (t.Result)
-                        availableServices.Add(searcher);
-                }));
-            }
-
-            await Task.WhenAll(tasks); 
-
-            return availableServices;
-        }
-
-        private async Task<bool> IsAvailable(ISearcherService searcherService)
-        {
-            var url = searcherService.Url;
-
-            if (serviceAvailibilityCache.ContainsKey(url))
-                return serviceAvailibilityCache[url];
-
-            try
-            {
-                var result = await HttpRequester.GetAsync(new Uri(url));
-                await UpdateServiceAvailibilityCacheAsync(url, !string.IsNullOrEmpty(result));
-            }
-            catch (Exception ex)
-            {
-                await UpdateServiceAvailibilityCacheAsync(url, false);
-            }
-
-            return serviceAvailibilityCache[url];
-        }
-
-        private async Task UpdateServiceAvailibilityCacheAsync(string url, bool isAvailable)
-        {
-            await semaphoreSlim.WaitAsync();
-            try
-            {
-                if (serviceAvailibilityCache.ContainsKey(url))
-                    serviceAvailibilityCache[url] = isAvailable;
-                else
-                    serviceAvailibilityCache.Add(url, isAvailable);
-            }
-            finally
-            {
-                semaphoreSlim.Release();
-            }
-        }
     }
 }

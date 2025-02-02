@@ -1,14 +1,13 @@
 ﻿using MoviesAPI.Services.Torrent.Dtos;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace MoviesAPI.Services.Torrent
+namespace MoviesAPI.Services.Torrent.Searchers
 {
-    internal interface ITorrentVOMovieSearcher : ISearcherService
+    internal interface ITorrentSearcher
     {
         Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string movieName, int year);
+
+        Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string serieName, int seasonNumber, int episodeNumber);
     }
 }

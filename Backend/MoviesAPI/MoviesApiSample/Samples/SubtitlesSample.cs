@@ -14,7 +14,7 @@ namespace MoviesApiSample.Samples
         public SubtitlesSample()
         {
             MoviesAPIFactory.Instance.SetSubtitlesFolder(AppContext.BaseDirectory);
-            subtitlesSearchManager = MoviesAPIFactory.Instance.CreateSubstitlesSearchManagerAsync().Result;
+            subtitlesSearchManager = MoviesAPIFactory.Instance.CreateSubstitlesSearchManager();
         }
 
         public async Task GetMovieSubtitles(string imdbCode, SubtitlesLanguage language)

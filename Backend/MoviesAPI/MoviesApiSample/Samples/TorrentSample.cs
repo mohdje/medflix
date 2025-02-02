@@ -14,15 +14,15 @@ namespace MoviesApiSample.Samples
         TorrentSearchManager torrentSearchManager;
         public TorrentSample()
         {
-            torrentSearchManager = MoviesAPIFactory.Instance.CreateTorrentSearchManagerAsync().Result;
+            torrentSearchManager = MoviesAPIFactory.Instance.CreateTorrentSearchManager();
         }
 
         public async Task Test()
         {
-            //await SearchVfMovieTorrents("Vice-Versa 2", 2024);
-           // await SearchVfSerieTorrents("From", 3, 2);
-           // await SearchVoMovieTorrents("Deadpool & Wolverine", 2024);
-            await SearchVoSerieTorrents("Only murders in the building", "tt11691774", 1, 1);
+           // await SearchVfMovieTorrents("Le Robot Sauvage", 2024);
+            await SearchVfSerieTorrents("Severance", 2, 3);
+           //await SearchVoMovieTorrents("Deadpool", 2016);
+             //await SearchVoSerieTorrents("Severance", 1, 1);
         }
         private async Task SearchVfMovieTorrents(string frenchMovieName, int year)
         {
@@ -45,18 +45,15 @@ namespace MoviesApiSample.Samples
         private async Task SearchVoMovieTorrents(string originalTitle, int year)
         {
             Console.WriteLine($"Search vo torrents for {originalTitle}, {year}");
-            var voTorrentSearcher = await MoviesAPIFactory.Instance.CreateTorrentSearchManagerAsync();
 
-            var voTorrents = await voTorrentSearcher.SearchVoTorrentsMovieAsync(originalTitle, year);
+            var voTorrents = await torrentSearchManager.SearchVoTorrentsMovieAsync(originalTitle, year);
 
             PrintResult(voTorrents);
         }
 
-        private async Task SearchVoSerieTorrents(string serieName, string imdbId, int seasonNumber, int episodeNumber)
+        private async Task SearchVoSerieTorrents(string serieName, int seasonNumber, int episodeNumber)
         {
-            var torrentSerieSearcher = await MoviesAPIFactory.Instance.CreateTorrentSearchManagerAsync();
-
-            var voTorrents = await torrentSerieSearcher.SearchVoTorrentsSerieAsync(serieName, imdbId, seasonNumber, episodeNumber);
+            var voTorrents = await torrentSearchManager.SearchVoTorrentsSerieAsync(serieName, seasonNumber, episodeNumber);
 
             PrintResult(voTorrents);
         }
