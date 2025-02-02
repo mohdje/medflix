@@ -4,9 +4,6 @@ using Medflix.Models.Media;
 using Medflix.Models.VideoPlayer;
 using Medflix.Services;
 using Medflix.Views.AndroidTv;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Diagnostics;
 
 namespace Medflix.Pages.AndroidTv
 {
@@ -41,23 +38,35 @@ namespace Medflix.Pages.AndroidTv
                 return;
             }
 
-            MainThread.BeginInvokeOnMainThread(async () =>
+            mediaDetails = await MedflixApiService.Instance.GetMediaDetailsAsync(mediaId);
+            MainThread.BeginInvokeOnMainThread(() =>
             {
-                mediaDetails = await MedflixApiService.Instance.GetMediaDetailsAsync(mediaId);
-
                 if (mediaDetails == null)
                 {
                     LoadingView.IsVisible = false;
                     return;
                 }
+            });
+            
+            bool isMediaBookmarked = false;
+            await Task.WhenAll(
+              MedflixApiService.Instance.GetWatchMediaInfo(mediaId).ContinueWith(t => videoPlayerMediaWatched = t.Result),
+              MedflixApiService.Instance.IsMediaBookmarked(mediaId).ContinueWith(t => isMediaBookmarked = t.Result));
 
-                await LoadMediaRessources();
+            if (MediaIsSerie)
+            {
+                seasonNumber = videoPlayerMediaWatched?.SeasonNumber ?? 1;
+                episodeNumber = videoPlayerMediaWatched?.EpisodeNumber ?? 1;
+            }
 
-                await GetRecommandationsAsync();
+            await Task.WhenAll(
+                GetMediaResourcesAsync(),
+                GetRecommandationsAsync());
 
-                var isBookmarked = await MedflixApiService.Instance.IsMediaBookmarked(mediaId);
-                AddBookmarkButton.IsVisible = !isBookmarked;
-                RemoveBookmarkButton.IsVisible = isBookmarked;
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                AddBookmarkButton.IsVisible = !isMediaBookmarked;
+                RemoveBookmarkButton.IsVisible = isMediaBookmarked;
 
                 if (!string.IsNullOrEmpty(mediaDetails.LogoImageUrl))
                     LogoTitle.Source = ImageSource.FromUri(new Uri(mediaDetails.LogoImageUrl));
@@ -95,92 +104,9 @@ namespace Medflix.Pages.AndroidTv
 
                 LoadingView.IsVisible = false;
                 PageContent.IsVisible = true;
-            });
-        }
-        private async Task LoadMediaRessources()
-        {
-            videoPlayerMediaWatched = await MedflixApiService.Instance.GetWatchMediaInfo(mediaId);
 
-            if (MediaIsSerie)
-            {
-                seasonNumber = videoPlayerMediaWatched?.SeasonNumber ?? 1;
-                episodeNumber = videoPlayerMediaWatched?.EpisodeNumber ?? 1;
-            }
-            UpdateWatchingProgress();
-
-            await GetAvailableSubtitlesAsync();
-            await GetAvailableVideoSourcesAsync();
-        }
-        private async Task GetRecommandationsAsync()
-        {
-            var recommandations = await MedflixApiService.Instance.GetSimilarMediasAsync(mediaId);
-
-            if (recommandations != null && recommandations.Any())
-                Recommandations.Children.Add(new MediaLitePresentationListView("You may also like", recommandations));
-            else
-                Recommandations.IsVisible = false;
-        }
-        private async Task GetAvailableSubtitlesAsync()
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Subtitles.ShowLoading = true;
-            });
-
-            englishSubtitlesUrls = await MedflixApiService.Instance.GetAvailableEnglishSubtitlesAsync(mediaDetails.ImdbId, seasonNumber, episodeNumber);
-            frenchSubtitlesUrls = await MedflixApiService.Instance.GetAvailableFrenchSubtitlesAsync(mediaDetails.ImdbId, seasonNumber, episodeNumber);
-
-            var availableSubtitles = new List<string>();
-            if (englishSubtitlesUrls != null && englishSubtitlesUrls.Any())
-                availableSubtitles.Add("English");
-            if (frenchSubtitlesUrls != null && frenchSubtitlesUrls.Any())
-                availableSubtitles.Add("French");
-
-
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Subtitles.Text = availableSubtitles.Any() ? String.Join(", ", availableSubtitles) : "No subtitles available";
-                Subtitles.ShowLoading = false;
-            });
-        }
-
-        private async Task GetAvailableVideoSourcesAsync()
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                PlayButton.IsEnabled = false;
-                PlayFromBeginningButton.IsEnabled = false;
-                Versions.ShowLoading = true;
-            });
-
-            voSources = await MedflixApiService.Instance.GetAvailableVOSources(
-             title: mediaDetails.Title,
-             year: MediaIsMovie ? mediaDetails.Year : null,
-             imdbId: MediaIsSerie ? mediaDetails.ImdbId : null,
-             seasonNumber: seasonNumber,
-             episodeNumber: episodeNumber);
-
-            vfSources = await MedflixApiService.Instance.GetAvailableVFSources(
-                 title: mediaDetails.Title,
-                 mediaId: mediaDetails.Id,
-                 year: MediaIsMovie ? mediaDetails.Year : null,
-                 seasonNumber: seasonNumber,
-                 episodeNumber: episodeNumber
-                );
-
-            var availableTorrents = new List<string>();
-            if (voSources != null && voSources.Any())
-                availableTorrents.Add("Original");
-            if (vfSources != null && vfSources.Any())
-                availableTorrents.Add("French");
-
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Versions.Text = availableTorrents.Any() ? String.Join(", ", availableTorrents) : "No version available";
-                PlayButton.IsVisible = availableTorrents.Any();
-                PlayButton.IsEnabled = true;
-                PlayFromBeginningButton.IsEnabled = true;
-                Versions.ShowLoading = false;
+                UpdateSelectEpisodeButtonLabel();
+                UpdateWatchingProgress();
             });
         }
 
@@ -204,56 +130,23 @@ namespace Medflix.Pages.AndroidTv
                     WatchingProgressSection.IsVisible = false;
                     PlayFromBeginningButton.IsVisible = false;
                 }
-
-                EpisodeSelectionButton.Text = $"Season {seasonNumber.GetValueOrDefault(1)}   Episode {episodeNumber.GetValueOrDefault(1)}";
             });
         }
 
-        private void OnTrailerButtonClicked(object sender, EventArgs e)
+        private void UpdateSelectEpisodeButtonLabel()
         {
-            MainThread.BeginInvokeOnMainThread(async () =>
-            {
-                await Navigation.PushAsync(new MediaTrailerPage(mediaDetails.YoutubeTrailerUrl));
-            });
+            EpisodeSelectionButton.Text = $"Season {seasonNumber.GetValueOrDefault(1)}   Episode {episodeNumber.GetValueOrDefault(1)}";
         }
 
-        private void OnEpisodeSelectionButtonClicked(object sender, EventArgs e)
-        {
-            MainThread.BeginInvokeOnMainThread(async () =>
-            {
-                var page = new SeasonEpisodeSelectionModalPage(mediaId, mediaDetails.SeasonsCount, seasonNumber.GetValueOrDefault(1));
-                page.OnEpisodeSelected += async (s, e) =>
-                {
-                    await Navigation.PopModalAsync();
-                    await OnEpisodeSelected(e.SeasonNumber, e.EpisodeNumber, e.WatchMedia);
-                };
-
-                await Navigation.PushModalAsync(page);
-            });
-        }
-
+     
         private async Task OnEpisodeSelected(int seasonNumber, int episodeNumber, WatchMediaInfo videoPlayerMedia)
         {
             this.seasonNumber = seasonNumber;
             this.episodeNumber = episodeNumber;
             this.videoPlayerMediaWatched = videoPlayerMedia;
-
-            await Task.Run(async () =>
-            {
-                UpdateWatchingProgress();
-                await GetAvailableSubtitlesAsync();
-                await GetAvailableVideoSourcesAsync();
-            });
-        }
-
-        private async void OnPlayButtonClicked(object sender, EventArgs e)
-        {
-            await PlayMedia();
-        }
-
-        private async void OnPlayFromBeginningButton(object sender, EventArgs e)
-        {
-            await PlayMedia(true);
+            UpdateSelectEpisodeButtonLabel();
+            UpdateWatchingProgress();
+            await GetMediaResourcesAsync();
         }
 
         private async Task PlayMedia(bool forceRestart = false)
@@ -303,6 +196,130 @@ namespace Medflix.Pages.AndroidTv
             await Navigation.PushAsync(new VideoPlayerPage(videoPlayerOptions));
         }
 
+        #region Fetching Resources
+        
+        private async Task GetMediaResourcesAsync()
+        {
+            await Task.WhenAll(GetAvailableSubtitlesAsync(), GetAvailableVideoSourcesAsync());
+        }
+        private async Task GetAvailableSubtitlesAsync()
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                Subtitles.ShowLoading = true;
+            });
+
+            await Task.WhenAll(
+                MedflixApiService.Instance.GetAvailableEnglishSubtitlesAsync(mediaDetails.ImdbId, seasonNumber, episodeNumber).ContinueWith(t => englishSubtitlesUrls = t.Result),
+                MedflixApiService.Instance.GetAvailableFrenchSubtitlesAsync(mediaDetails.ImdbId, seasonNumber, episodeNumber).ContinueWith(t => frenchSubtitlesUrls = t.Result)
+                );
+
+            var availableSubtitles = new List<string>();
+            if (englishSubtitlesUrls != null && englishSubtitlesUrls.Any())
+                availableSubtitles.Add("English");
+            if (frenchSubtitlesUrls != null && frenchSubtitlesUrls.Any())
+                availableSubtitles.Add("French");
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                Subtitles.Text = availableSubtitles.Any() ? String.Join(", ", availableSubtitles) : "No subtitles available";
+                Subtitles.ShowLoading = false;
+            });
+        }
+
+        private async Task GetAvailableVideoSourcesAsync()
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                PlayButton.IsEnabled = false;
+                PlayFromBeginningButton.IsEnabled = false;
+                Versions.ShowLoading = true;
+            });
+
+            var tasks = new List<Task<IEnumerable<MediaSource>>>()
+            {
+                MedflixApiService.Instance.GetAvailableVOSources(
+                     title: mediaDetails.Title,
+                     year: MediaIsMovie ? mediaDetails.Year : null,
+                     imdbId: MediaIsSerie ? mediaDetails.ImdbId : null,
+                     seasonNumber: seasonNumber,
+                     episodeNumber: episodeNumber)
+                    .ContinueWith(t => voSources = t.Result),
+                 MedflixApiService.Instance.GetAvailableVFSources(
+                     title: mediaDetails.Title,
+                     mediaId: mediaDetails.Id,
+                     year: MediaIsMovie ? mediaDetails.Year : null,
+                     seasonNumber: seasonNumber,
+                     episodeNumber: episodeNumber)
+                    .ContinueWith(t => vfSources = t.Result)
+            };
+
+            await Task.WhenAll(tasks);
+
+            var availableTorrents = new List<string>();
+            if (voSources != null && voSources.Any())
+                availableTorrents.Add("Original");
+            if (vfSources != null && vfSources.Any())
+                availableTorrents.Add("French");
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                Versions.Text = availableTorrents.Any() ? String.Join(", ", availableTorrents) : "No version available";
+                PlayButton.IsVisible = availableTorrents.Any();
+                PlayButton.IsEnabled = true;
+                PlayFromBeginningButton.IsEnabled = true;
+                Versions.ShowLoading = false;
+            });
+        }
+        private async Task GetRecommandationsAsync()
+        {
+            var recommandations = await MedflixApiService.Instance.GetSimilarMediasAsync(mediaId);
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                if (recommandations != null && recommandations.Any())
+                    Recommandations.Children.Add(new MediaLitePresentationListView("You may also like", recommandations));
+                else
+                    Recommandations.IsVisible = false;
+            });
+        }
+
+        #endregion
+
+        #region Button Click Events
+        private void OnTrailerButtonClicked(object sender, EventArgs e)
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                await Navigation.PushAsync(new MediaTrailerPage(mediaDetails.YoutubeTrailerUrl));
+            });
+        }
+
+        private void OnEpisodeSelectionButtonClicked(object sender, EventArgs e)
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                var page = new SeasonEpisodeSelectionModalPage(mediaId, mediaDetails.SeasonsCount, seasonNumber.GetValueOrDefault(1));
+                page.OnEpisodeSelected += async (s, e) =>
+                {
+                    await Navigation.PopModalAsync();
+                    await OnEpisodeSelected(e.SeasonNumber, e.EpisodeNumber, e.WatchMedia);
+                };
+
+                await Navigation.PushModalAsync(page);
+            });
+        }
+
+        private async void OnPlayButtonClicked(object sender, EventArgs e)
+        {
+            await PlayMedia();
+        }
+
+        private async void OnPlayFromBeginningButtonClicked(object sender, EventArgs e)
+        {
+            await PlayMedia(true);
+        }
+
         private async void OnAddBookmarkButtonClicked(object sender, EventArgs e)
         {
             var isSuccess = await MedflixApiService.Instance.BookmarkMedia(mediaDetails);
@@ -331,6 +348,6 @@ namespace Medflix.Pages.AndroidTv
 #endif
         }
 
-
+        #endregion
     }
 }

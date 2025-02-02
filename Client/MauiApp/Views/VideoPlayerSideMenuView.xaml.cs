@@ -105,7 +105,9 @@ namespace Medflix.Views
                 MenuContainer.Add(menu.Button);
             }
 
-            playerMenusContainer.Menus.First().Button.Focus();
+            var menuToFocus = playerMenusContainer.Menus.FirstOrDefault(m => m.Selected) ?? playerMenusContainer.Menus.First();
+            menuToFocus.Button.Focus();
+
             MenuTitle.Text = playerMenusContainer.Title;
 
             IsVisible = true;

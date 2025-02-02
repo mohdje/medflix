@@ -106,11 +106,6 @@ namespace Medflix.Controls.VideoPlayer
             TimeBar.IsEnabled = false;
         }
 
-        public void EnableTimeBarNavigation()
-        {
-            TimeBar.IsEnabled = true;
-        }
-
         public void SetSubtitlesButtonVisibility(bool visible)
         {
             SubtitlesButton.IsVisible = visible;
@@ -118,12 +113,17 @@ namespace Medflix.Controls.VideoPlayer
 
         public void Show()
         {
+            if (IsShown)
+                return;
+
             var fadeInAnimation = new Animation(v => Opacity = v, start: 0, end: 1, Easing.CubicOut);
             fadeInAnimation.Commit(this, nameof(fadeInAnimation));
 
             PlayPauseButton.IsEnabled = true;
             SubtitlesButton.IsEnabled = true;
             QualitiesButton.IsEnabled = true;
+            TimeBar.IsEnabled = true;
+
             OnVisibilityChanged?.Invoke(this, true);
         }
 
@@ -135,6 +135,7 @@ namespace Medflix.Controls.VideoPlayer
             PlayPauseButton.IsEnabled = false;
             SubtitlesButton.IsEnabled = false;
             QualitiesButton.IsEnabled = false;
+            DisableTimeBarNavigation();
             OnVisibilityChanged?.Invoke(this, false);
         }
     }

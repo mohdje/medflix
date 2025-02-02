@@ -12,22 +12,22 @@
             <VerticalStackLayout x:Name="SeasonsList"/>
         </ScrollView>
 
-        <Label 
-                x:Name="NoEpisodesMessage"
-                Grid.Row="1"  
-                ZIndex="2"
-                HorizontalTextAlignment="Center"
-                TextColor="White"
-                Text="No episodes found"
-                IsVisible="False"
-                FontAttributes="Bold"
-                FontSize="Medium" />
-
         <ScrollView 
                 Grid.Column="1" 
                 ZIndex="2"
                 Orientation="Vertical">
             <VerticalStackLayout>
+                <Label 
+                    x:Name="NoEpisodesMessage"
+                   Grid.Row="1"  
+                   ZIndex="2"
+                   HorizontalTextAlignment="Center"
+                   TextColor="White"
+                   Text="No episodes found"
+                   IsVisible="False"
+                   FontAttributes="Bold"
+                   FontSize="Medium"
+                   Margin="0,60,0,0"/>
                 <VerticalStackLayout x:Name="EpisodesList"/>
                 <ActivityIndicator 
                      x:Name="Spinner"

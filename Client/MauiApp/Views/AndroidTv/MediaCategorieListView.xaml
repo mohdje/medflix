@@ -11,6 +11,7 @@
             FontAttributes="Bold"
             Margin="0,0,0,5"/>
         <Grid Grid.Row="1">
+            <ActivityIndicator x:Name="Spinner" IsRunning="True" WidthRequest="80" HeightRequest="80"/>
             <ScrollView >
                 <FlexLayout      
                   x:Name="MediaList" 

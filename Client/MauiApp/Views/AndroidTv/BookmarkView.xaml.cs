@@ -12,21 +12,20 @@ public partial class BookmarkView : ContentView
 
     private void OnLoaded(object sender, EventArgs e)
     {
-        Spinner.IsVisible = true;
-
-        Task.Run(async () =>
+        MainThread.BeginInvokeOnMainThread(async () =>
         {
+            MediaListView.ShowSpinner = true;
+
+            await Task.Delay(500);
+
             var medias = await MedflixApiService.Instance.GetBookmarkedMedias();
 
-            MainThread.BeginInvokeOnMainThread(() =>
+            if (medias != null && medias.Any())
             {
-                if (medias != null && medias.Any())
-                {
-                    MediaListView.AddMedias(medias);
-                }
+                MediaListView.AddMedias(medias);
+            }
 
-                Spinner.IsVisible = false;
-            });
+            MediaListView.ShowSpinner = false;
         });
     }
 }

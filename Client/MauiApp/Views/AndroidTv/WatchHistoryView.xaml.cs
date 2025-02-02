@@ -1,5 +1,4 @@
 using Medflix.Services;
-using System.Runtime.CompilerServices;
 
 namespace Medflix.Views.AndroidTv;
 
@@ -12,21 +11,20 @@ public partial class WatchHistoryView : ContentView
 
     private void OnLoaded(object sender, EventArgs e)
     {
-		Spinner.IsVisible = true;
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            MediaListView.ShowSpinner = true;
 
-		Task.Run(async () =>
-		{
-            var watchMediaInfos = await MedflixApiService.Instance.GetWatchMediaHistory();
+            await Task.Delay(500);
 
-            MainThread.BeginInvokeOnMainThread(() => 
+            var medias = await MedflixApiService.Instance.GetWatchMediaHistory();
+
+            if (medias != null && medias.Any())
             {
-                if (watchMediaInfos != null && watchMediaInfos.Any())
-                {
-                    MediaListView.AddMedias(watchMediaInfos);
-                }
+                MediaListView.AddMedias(medias);
+            }
 
-                Spinner.IsVisible = false;
-            });
+            MediaListView.ShowSpinner = false;
         });
     }
 }

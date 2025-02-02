@@ -87,7 +87,7 @@ namespace Medflix.Pages
         }
 
 
-        protected override void OnDisappearing()
+        protected override async void OnDisappearing()
         {
 #if ANDROID
                         Microsoft.Maui.ApplicationModel.Platform.CurrentActivity.Window.ClearFlags(WindowManagerFlags.KeepScreenOn |
@@ -170,6 +170,10 @@ namespace Medflix.Pages
 
         private void MediaPlayer_TimeChanged(object sender, MediaPlayerTimeChangedEventArgs e)
         {
+            //If back button pressed MediaPlayerViewModel is disposed. MediaPlayer_TimeChanged can be triggered at the same time
+            if (MediaPlayerViewModel?.MediaPlayer?.Media == null)
+                return;
+
             MainThread.BeginInvokeOnMainThread(async () =>
             {
                 if (shouldRedraw)
@@ -185,11 +189,7 @@ namespace Medflix.Pages
                 }
 
                 if (PlayerControls.IsShown)
-                {
                     PlayerControls.NotifyTimeUpdated(e.Time, MediaPlayerViewModel.MediaPlayer.Media.Duration);
-                    PlayerControls.EnableTimeBarNavigation();
-                }
-
 
                 if (Subtitles.IsVisible)
                     Subtitles.Update(e.Time);

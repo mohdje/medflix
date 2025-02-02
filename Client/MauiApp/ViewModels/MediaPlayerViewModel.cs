@@ -55,8 +55,8 @@ namespace Medflix.ViewModels
         {
             if (MediaPlayer != null)
             {
-                MediaPlayer.SetPause(true);
                 MediaPlayer.Stop();
+
                 MediaPlayer.Dispose();
             }
               

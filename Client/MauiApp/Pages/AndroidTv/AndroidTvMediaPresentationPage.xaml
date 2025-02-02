@@ -137,7 +137,7 @@
                            ImageSource="restart.svg"
                            ContentLayout="Left,8"
                            WidthRequest="100"
-                           Clicked="OnPlayFromBeginningButton"/>
+                           Clicked="OnPlayFromBeginningButtonClicked"/>
                         </controls:BorderedButton.Button>
                     </controls:BorderedButton>
 

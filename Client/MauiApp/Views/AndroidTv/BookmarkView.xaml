@@ -5,7 +5,6 @@
              xmlns:views="clr-namespace:Medflix.Views.AndroidTv"
              Loaded="OnLoaded">
     <Grid>
-        <ActivityIndicator x:Name="Spinner" IsRunning="True" WidthRequest="50" HeightRequest="50"/>
         <views:MediaCategorieListView x:Name="MediaListView" TitleText="Your list" />
     </Grid>
 </ContentView>

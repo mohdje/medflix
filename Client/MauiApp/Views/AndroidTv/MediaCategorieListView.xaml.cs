@@ -1,3 +1,4 @@
+using LibVLCSharp.Shared;
 using Medflix.Models.Media;
 
 namespace Medflix.Views.AndroidTv;
@@ -15,6 +16,20 @@ public partial class MediaCategorieListView : ContentView
 			ListTitle.Text = value;
 		}
 	}
+
+    public bool ShowSpinner
+    {
+        get
+        {
+            return Spinner.IsVisible;
+        }
+        set
+        {
+            MediaList.IsVisible = !value;
+            Spinner.IsVisible = value;
+        }
+    }
+
     public MediaCategorieListView()
 	{
 		InitializeComponent();
