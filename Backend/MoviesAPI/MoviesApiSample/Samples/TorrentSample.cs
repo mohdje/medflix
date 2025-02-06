@@ -20,9 +20,9 @@ namespace MoviesApiSample.Samples
         public async Task Test()
         {
            // await SearchVfMovieTorrents("Le Robot Sauvage", 2024);
-            await SearchVfSerieTorrents("Severance", 2, 3);
+           // await SearchVfSerieTorrents("Severance", 2, 3);
            //await SearchVoMovieTorrents("Deadpool", 2016);
-             //await SearchVoSerieTorrents("Severance", 1, 1);
+             await SearchVoSerieTorrents("Years and years", 1, 2);
         }
         private async Task SearchVfMovieTorrents(string frenchMovieName, int year)
         {

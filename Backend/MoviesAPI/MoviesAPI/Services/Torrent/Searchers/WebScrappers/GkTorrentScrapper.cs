@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Linq;
 using HtmlAgilityPack;
 using MoviesAPI.Extensions;
 
@@ -19,9 +20,9 @@ namespace MoviesAPI.Services.Torrent
 
         protected override string TorrentLinkPageIdentifier => throw new NotImplementedException();
 
-        protected override string BuildSearchUrl(TorrentSearchRequest torrentSearchRequest)
+        protected override string[] GetSearchUrls(TorrentSearchRequest torrentSearchRequest)
         {
-           return $"{Url}/recherche/{torrentSearchRequest.MediaName.RemoveSpecialCharacters()}";
+            return torrentSearchRequest.MediaSearchIdentifiers.Select(mediaId => $"{Url}/recherche/{mediaId}").ToArray();
         }
 
         protected override string GetTorrentTitle(HtmlDocument htmlNode)

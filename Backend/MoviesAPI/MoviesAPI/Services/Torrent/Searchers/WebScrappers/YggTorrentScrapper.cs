@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using MoviesAPI.Extensions;
+using System.Linq;
 
 namespace MoviesAPI.Services.Torrent
 {
@@ -13,9 +14,9 @@ namespace MoviesAPI.Services.Torrent
         protected override bool FrenchVersion => true;
         protected override bool CheckQuality => true;
 
-        protected override string BuildSearchUrl(TorrentSearchRequest torrentSearchRequest)
+        protected override string[] GetSearchUrls(TorrentSearchRequest torrentSearchRequest)
         {
-            return $"{Url}/recherche/{torrentSearchRequest.MediaName.RemoveSpecialCharacters()}";
+            return torrentSearchRequest.MediaSearchIdentifiers.Select(mediaId => $"{Url}/recherche/{mediaId}").ToArray();
         }
 
         protected override string GetTorrentTitle(HtmlDocument htmlNode)

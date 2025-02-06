@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MoviesAPI.Services.Subtitles.Searchers
 {
-    internal interface ISubtitlesMovieSearcher : ISearcherService
+    internal interface ISubtitlesMovieSearcher 
     {
         Task<IEnumerable<string>> GetAvailableMovieSubtitlesUrlsAsync(string imdbCode, SubtitlesLanguage subtitlesLanguage);
         Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitlesSourceUrl);

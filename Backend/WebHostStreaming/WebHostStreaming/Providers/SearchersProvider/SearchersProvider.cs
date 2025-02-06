@@ -26,18 +26,11 @@ namespace WebHostStreaming.Providers
         {
            MoviesAPIFactory.Instance.SetSubtitlesFolder(AppFolders.SubtitlesFolder);
 
-            Initialize().Wait();
-        }
-
-        private async Task Initialize()
-        {
-            _subtitlesSearchManager = await  MoviesAPIFactory.Instance.CreateSubstitlesSearchManagerAsync();
-            _torrentSearchManager = await MoviesAPIFactory.Instance.CreateTorrentSearchManagerAsync();
+            _subtitlesSearchManager = MoviesAPIFactory.Instance.CreateSubstitlesSearchManager();
+            _torrentSearchManager = MoviesAPIFactory.Instance.CreateTorrentSearchManager();
 
             _movieSearcher = MoviesAPIFactory.Instance.CreateMovieSearcher(Tokens.TmdbApiKey);
             _seriesSearcher = MoviesAPIFactory.Instance.CreateSeriesSearcher(Tokens.TmdbApiKey);
-        }
-
-     
+        }     
     }
 }

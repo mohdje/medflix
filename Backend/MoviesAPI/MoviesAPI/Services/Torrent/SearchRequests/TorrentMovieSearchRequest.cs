@@ -6,6 +6,8 @@ namespace MoviesAPI.Services.Torrent
     {
         public int Year { get; }
 
+        public override string[] MediaSearchIdentifiers => [MediaName.RemoveSpecialCharacters()];
+
         bool checkQuality;
 
         public TorrentMovieSearchRequest(string movieName, int year, bool checkQuality, bool searchFrenchVersion = false) : base(movieName, searchFrenchVersion)

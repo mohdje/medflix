@@ -1,10 +1,7 @@
 ﻿using MoviesAPI.Helpers;
 using MoviesAPI.Services.Subtitles.DTOs;
 using MoviesAPI.Services.Subtitles.Searchers;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MoviesAPI.Services.Subtitles
@@ -14,8 +11,6 @@ namespace MoviesAPI.Services.Subtitles
         private const string baseUrl = "https://yts-subs.com";
 
         private readonly ISubtitlesFileProvider subtitlesProvider;
-
-        public string Url => baseUrl;
 
         internal YtsSubsSearcher(ISubtitlesFileProvider subtitlesProvider)
         {

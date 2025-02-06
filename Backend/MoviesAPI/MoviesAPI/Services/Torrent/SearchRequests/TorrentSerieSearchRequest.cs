@@ -1,4 +1,5 @@
 ﻿using MoviesAPI.Extensions;
+using System.Linq;
 
 namespace MoviesAPI.Services.Torrent
 {
@@ -7,6 +8,8 @@ namespace MoviesAPI.Services.Torrent
         public int EpisodeNumber { get; }
         public int SeasonNumber { get; }
 
+        public override string[] MediaSearchIdentifiers => [$"{MediaName} S{SeasonNumber.ToString("D2")}E{EpisodeNumber.ToString("D2")}", $"{MediaName} {(FrenchVersion ? "Saison" : "Season")} {SeasonNumber}"];
+
         public TorrentSerieSearchRequest(string serieName, int episodeNumber, int seasonNumber, bool searchFrenchVersion) : base(serieName, searchFrenchVersion)
         {
             EpisodeNumber = episodeNumber;
@@ -14,10 +17,7 @@ namespace MoviesAPI.Services.Torrent
         }
         public override bool MatchWithTorrentTitle(string title)
         {
-            var seasonId = $"S{SeasonNumber.ToString("D2")}";
-            var episodeId = $"E{EpisodeNumber.ToString("D2")}";
-
-            return (title.CustomStartsWith($"{MediaName} Saison {SeasonNumber}") || title.CustomStartsWith($"{MediaName} {seasonId}{episodeId}"))
+            return MediaSearchIdentifiers.Any(mediaId => title.CustomStartsWith(mediaId))
                    && (!FrenchVersion || title.Contains("FRENCH") || title.Contains("TRUEFRENCH"))
                    && !title.Contains("VOSTFR");
         }

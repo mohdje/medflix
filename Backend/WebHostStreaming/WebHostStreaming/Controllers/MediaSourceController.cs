@@ -62,7 +62,7 @@ namespace WebHostStreaming.Controllers
             if (!string.IsNullOrEmpty(videoPath))
                 return ToMediaSources(videoPath);
 
-            var torrents = await searchersProvider.TorrentSearchManager.SearchVoTorrentsSerieAsync(title, imdbId, seasonNumber, episodeNumber);
+            var torrents = await searchersProvider.TorrentSearchManager.SearchVoTorrentsSerieAsync(title, seasonNumber, episodeNumber);
 
             return ToMediaSources(torrents);
         }

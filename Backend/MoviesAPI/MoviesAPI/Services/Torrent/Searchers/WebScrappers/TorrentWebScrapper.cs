@@ -20,7 +20,7 @@ namespace MoviesAPI.Services.Torrent
         protected abstract string MediaQualityIdentifier { get; }
         protected abstract bool FrenchVersion { get; }
         protected abstract bool CheckQuality { get; }
-        protected abstract string BuildSearchUrl(TorrentSearchRequest torrentSearchRequest);
+        protected abstract string[] GetSearchUrls(TorrentSearchRequest torrentSearchRequest);
         protected abstract string GetTorrentTitle(HtmlDocument htmlNode);
 
 
@@ -40,14 +40,15 @@ namespace MoviesAPI.Services.Torrent
 
         protected async Task<IEnumerable<MediaTorrent>> SearchTorrentLinks(TorrentSearchRequest torrentSearchRequest)
         {
-            var searchUrl = BuildSearchUrl(torrentSearchRequest); 
+            var searchUrls = GetSearchUrls(torrentSearchRequest);
 
-            var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
-
-            if (doc == null)
-                return Array.Empty<MediaTorrent>();
-
-            var searchResultList = doc.DocumentNode.SelectNodes(SearchResultListIdentifier);
+            HtmlNodeCollection searchResultList = null;
+            foreach (var searchUrl in searchUrls)
+            {
+                searchResultList = await GetSearchResults(searchUrl);
+                if (searchResultList != null && searchResultList.Any())
+                    break;
+            }
 
             if (searchResultList == null)
                 return Array.Empty<MediaTorrent>();
@@ -89,10 +90,22 @@ namespace MoviesAPI.Services.Torrent
             return result;
         }
 
+        protected async Task<HtmlNodeCollection> GetSearchResults(string searchUrl)
+        {
+            var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
+
+            if (doc == null)
+                return null;
+
+            return doc.DocumentNode.SelectNodes(SearchResultListIdentifier);
+        }
   
         protected async Task<IEnumerable<MediaTorrent>> GetMediaTorrentsAsync(string moviePageUrl)
         {
             var doc = await HttpRequester.GetHtmlDocumentAsync(moviePageUrl);
+
+            if (doc == null)
+                return Array.Empty<MediaTorrent>();
 
             var mediaTorrents = new List<MediaTorrent>();
 

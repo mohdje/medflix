@@ -2,6 +2,7 @@
 
 
 using HtmlAgilityPack;
+using System.Linq;
 
 namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
 {
@@ -21,9 +22,9 @@ namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
 
         protected override string TorrentLinkPageIdentifier => "//a";
 
-        protected override string BuildSearchUrl(TorrentSearchRequest torrentSearchRequest)
+        protected override string[] GetSearchUrls(TorrentSearchRequest torrentSearchRequest)
         {
-            return $"{Url}/browse-movies/{torrentSearchRequest.MediaName}/all/all/0/latest";
+            return torrentSearchRequest.MediaSearchIdentifiers.Select(mediaSearchId => $"{Url}/browse-movies/{mediaSearchId}/all/all/0/latest").ToArray();
         }
 
         protected override string GetTorrentTitle(HtmlDocument htmlNode)

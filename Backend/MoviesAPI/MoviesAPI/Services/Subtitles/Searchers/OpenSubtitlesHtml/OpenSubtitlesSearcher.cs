@@ -23,8 +23,6 @@ namespace MoviesAPI.Services.Subtitles
 
         private readonly ISubtitlesFileProvider subtitlesProvider;
 
-        public string Url => baseUrl;
-
         internal OpenSubtitlesSearcher(ISubtitlesFileProvider subtitlesProvider)
         {
             this.subtitlesProvider = subtitlesProvider;

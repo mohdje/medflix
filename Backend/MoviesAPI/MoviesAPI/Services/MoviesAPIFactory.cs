@@ -89,9 +89,8 @@ namespace MoviesAPI.Services
         {
             return new List<ITorrentSearcher>()
             {
-               // new OneomSearcher(),
-               //GloTorrents //https://rarbgdump.com/search/severance%20s01e02
-               // new YtsTvSearcher()
+                new LimeTorrentsScrapper(),
+               // new One337xScapper()
             };
         }
 
