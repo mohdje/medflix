@@ -4,7 +4,6 @@ using MoviesAPI.Services.Content.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using MoviesAPI.Helpers;
 
@@ -86,7 +85,7 @@ namespace MoviesAPI.Services.Content
             var seasonEpisodes = await GetEpisodesBySeason(serieId, seasonNumber);
 
             if (seasonEpisodes == null)
-                return new EpisodeDto[0];
+                return Array.Empty<EpisodeDto>();
 
             var episodeDtos = new List<EpisodeDto>();
             foreach (var episode in seasonEpisodes.Episodes)

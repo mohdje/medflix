@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MoviesAPI.Services.Tmdb
+﻿namespace MoviesAPI.Services.Tmdb
 {
     internal class TmdbSeriesUrlBuilder : TmdbUrlBuilder
     {
-        public TmdbSeriesUrlBuilder(string apiKey) : base(apiKey, TmdbUrlMode.Series)
+        public TmdbSeriesUrlBuilder(string apiKey) : base(apiKey)
         {
 
         }
+
+        protected override string ContentMode => "tv";
+
+        protected override string SortBy => "first_air_date";
     }
 }

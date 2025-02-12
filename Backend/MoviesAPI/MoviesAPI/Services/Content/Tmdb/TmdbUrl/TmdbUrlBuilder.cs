@@ -1,40 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace MoviesAPI.Services.Tmdb
 {
     internal abstract class TmdbUrlBuilder
     {
         private readonly string apiKey;
-        private readonly string ContentMode;
+        protected abstract string ContentMode { get; }
+        protected abstract string SortBy { get; }
 
         private const string BaseUrl = "https://api.themoviedb.org/3";
         private const string BaseImageUrl = "https://image.tmdb.org/t/p";
 
-        public TmdbUrlBuilder(string apiKey, TmdbUrlMode tmdbUrlMode)
+        public TmdbUrlBuilder(string apiKey)
         {
             if (string.IsNullOrEmpty(apiKey))
                 throw new ArgumentNullException("apiKey cannot be null or empty");
 
             this.apiKey = apiKey;
-            this.ContentMode = GetContentMode(tmdbUrlMode);
         }
 
-        private string GetContentMode(TmdbUrlMode tmdbUrlMode)
-        {
-            switch (tmdbUrlMode)
-            {
-                case TmdbUrlMode.Movies:
-                    return "movie";
-                case TmdbUrlMode.Series:
-                    return "tv";
-                default:
-                    return string.Empty;
-            }
-        }
         public string BuildSearchUrl(string title)
         {
             return $"{BaseUrl}/search/{ContentMode}?api_key={apiKey}&language=en-US&query={title}&page=1&include_adult=false";
@@ -72,7 +57,7 @@ namespace MoviesAPI.Services.Tmdb
         {
             var today = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
 
-            return $"{BaseUrl}/discover/{ContentMode}?api_key={apiKey}&sort_by=release_date.desc&include_adult=false&with_genres={genreId}&release_date.lte={today}&page={page}&vote_count.gte=15";
+            return $"{BaseUrl}/discover/{ContentMode}?api_key={apiKey}&sort_by={SortBy}.desc&include_adult=false&with_genres={genreId}&release_date.lte={today}&page={page}&vote_count.gte=15";
         }
 
         public string BuildCoverImageUrl(string imageName)
@@ -142,7 +127,7 @@ namespace MoviesAPI.Services.Tmdb
         {
             var today = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
 
-            return $"{BaseUrl}/discover/{ContentMode}?api_key={apiKey}&sort_by=release_date.desc&include_adult=false&release_date.lte={today}&page={page}&vote_count.gte=15&with_watch_providers={platformId}&watch_region=US";
+            return $"{BaseUrl}/discover/{ContentMode}?api_key={apiKey}&sort_by={SortBy}.desc&include_adult=false&release_date.lte={today}&page={page}&vote_count.gte=15&with_watch_providers={platformId}&watch_region=US";
         }
 
         public string BuildEpisodesBySeasonUrl(string tmdbContentId, int seasonNumber)
