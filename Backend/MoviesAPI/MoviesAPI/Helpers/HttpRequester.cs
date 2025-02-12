@@ -139,7 +139,7 @@ namespace MoviesAPI.Helpers
 
                 if (response.StatusCode == HttpStatusCode.OK)
                     return await response.Content.ReadAsStringAsync();
-                else if (response.StatusCode == HttpStatusCode.Found)
+                else if (response.StatusCode == HttpStatusCode.Found || response.StatusCode == HttpStatusCode.Moved)
                     return await PerformGetStringCallAsync(response.Headers.Location);
                 else
                     return null;

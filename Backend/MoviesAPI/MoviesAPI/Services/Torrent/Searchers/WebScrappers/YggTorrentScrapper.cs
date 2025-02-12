@@ -1,5 +1,4 @@
 ﻿using HtmlAgilityPack;
-using MoviesAPI.Extensions;
 using System.Linq;
 
 namespace MoviesAPI.Services.Torrent
@@ -23,6 +22,16 @@ namespace MoviesAPI.Services.Torrent
         {
             var titleNode = htmlNode.DocumentNode.SelectSingleNode("//a");
             return titleNode?.InnerText.Trim();
+        }
+
+        protected override bool TorrentHasSeeders(HtmlDocument torrentHtmlPage)
+        {
+            var seedersNode = torrentHtmlPage.DocumentNode.SelectSingleNode("//font[@id='retourSeeds']");
+
+            if (int.TryParse(seedersNode?.InnerText.Trim(), out var nbSeeders))
+                return nbSeeders > 0;
+            else
+                return false;
         }
     }
 }

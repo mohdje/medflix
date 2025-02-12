@@ -32,5 +32,10 @@ namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
             var titleNode = htmlNode.DocumentNode.SelectSingleNode("//div[@class='browse-movie-bottom']");
             return titleNode?.InnerText.Trim();
         }
+
+        protected override bool TorrentHasSeeders(HtmlDocument torrentHtmlPage)
+        {
+            return true;
+        }
     }
 }

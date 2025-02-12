@@ -1,16 +1,10 @@
-﻿using MoviesAPI.Helpers;
-using MoviesAPI.Services.Tmdb;
-using MoviesAPI.Services.Subtitles;
+﻿using MoviesAPI.Services.Subtitles;
 using MoviesAPI.Services.Subtitles.Searchers;
 using MoviesAPI.Services.Torrent;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MoviesAPI.Services.Content;
 using System.Threading;
-using System.Runtime.CompilerServices;
 using MoviesAPI.Services.Torrent.Searchers;
 using MoviesAPI.Services.Torrent.Searchers.WebScrappers;
 

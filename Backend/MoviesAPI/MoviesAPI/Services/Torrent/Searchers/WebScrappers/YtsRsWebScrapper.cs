@@ -32,5 +32,10 @@ namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
             var titleNode = htmlNode.DocumentNode.SelectSingleNode("//a[contains(@class, 'image-container-link')]");
             return titleNode?.Attributes["title"]?.Value.Replace("(", string.Empty).Replace(")", string.Empty);
         }
+
+        protected override bool TorrentHasSeeders(HtmlDocument torrentHtmlPage)
+        {
+            return true;
+        }
     }
 }

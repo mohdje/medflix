@@ -1,9 +1,6 @@
 ﻿using HtmlAgilityPack;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
 {
@@ -33,6 +30,11 @@ namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
             var nodes = htmlNode.DocumentNode.SelectNodes("//a");
             var titleNode = nodes.FirstOrDefault(node => node.Attributes["href"]?.Value.Contains("torrent") ?? false);
             return titleNode?.InnerText.Trim();
+        }
+
+        protected override bool TorrentHasSeeders(HtmlDocument torrentHtmlPage)
+        {
+            throw new NotImplementedException();
         }
     }
 }

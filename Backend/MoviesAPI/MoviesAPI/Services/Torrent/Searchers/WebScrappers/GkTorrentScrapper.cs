@@ -2,7 +2,6 @@
 using System;
 using System.Linq;
 using HtmlAgilityPack;
-using MoviesAPI.Extensions;
 
 namespace MoviesAPI.Services.Torrent
 {
@@ -26,6 +25,11 @@ namespace MoviesAPI.Services.Torrent
         }
 
         protected override string GetTorrentTitle(HtmlDocument htmlNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override bool TorrentHasSeeders(HtmlDocument torrentHtmlPage)
         {
             throw new NotImplementedException();
         }

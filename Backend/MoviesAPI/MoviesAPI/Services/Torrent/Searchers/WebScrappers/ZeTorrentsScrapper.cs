@@ -1,6 +1,6 @@
 ﻿using HtmlAgilityPack;
-using MoviesAPI.Extensions;
 using System.Linq;
+using System.Xml;
 
 namespace MoviesAPI.Services.Torrent
 {
@@ -19,10 +19,20 @@ namespace MoviesAPI.Services.Torrent
             return torrentSearchRequest.MediaSearchIdentifiers.Select(mediaSearchId => $"{Url}/recherche/{mediaSearchId}").ToArray();
         }
 
-        protected override string GetTorrentTitle(HtmlDocument htmlNode)
+        protected override string GetTorrentTitle(HtmlDocument torrentHtmlPage)
         {
-            var titleNode = htmlNode.DocumentNode.SelectSingleNode("//a");
+            var titleNode = torrentHtmlPage.DocumentNode.SelectSingleNode("//a");
             return titleNode?.InnerText.Trim();
+        }
+
+        protected override bool TorrentHasSeeders(HtmlDocument torrentHtmlPage)
+        {
+            var seedersNode = torrentHtmlPage.DocumentNode.SelectSingleNode("//font[@id='retourSeeds']");
+
+            if (int.TryParse(seedersNode?.InnerText.Trim(), out var nbSeeders))
+                return nbSeeders > 0;
+            else
+                return false;
         }
     }
 }
