@@ -1,6 +1,7 @@
 ﻿using MoviesAPI.Helpers;
 using MoviesAPI.Services.Subtitles.DTOs;
 using MoviesAPI.Services.Subtitles.Searchers;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,24 +11,24 @@ namespace MoviesAPI.Services.Subtitles
     {
         private const string baseUrl = "https://yts-subs.com";
 
-        private readonly ISubtitlesFileProvider subtitlesProvider;
+        private readonly SubtitlesDownloader subtitlesDownloader;
 
-        internal YtsSubsSearcher(ISubtitlesFileProvider subtitlesProvider)
+        internal YtsSubsSearcher(SubtitlesDownloader subtitlesDownloader)
         {
-            this.subtitlesProvider = subtitlesProvider;
+            this.subtitlesDownloader = subtitlesDownloader;
         }
         public async Task<IEnumerable<string>> GetAvailableMovieSubtitlesUrlsAsync(string imdbCode, SubtitlesLanguage subtitlesLanguage)
         {
-            var searchUrl = baseUrl + "/movie-imdb/" + imdbCode;
+            var searchUrl = $"{baseUrl}/movie-imdb/{imdbCode}";
             var doc = await HttpRequester.GetHtmlDocumentAsync(searchUrl);
 
             if (doc == null)
-                return new string[0];
+                return Array.Empty<string>();
 
             var nodes = doc.DocumentNode.SelectNodes("//table[@class='table other-subs']/tbody/tr");
 
             if (nodes == null)
-                return new string[0];
+                return Array.Empty<string>();
 
             var subtitlesSourceLinks = new List<string>();
 
@@ -52,27 +53,20 @@ namespace MoviesAPI.Services.Subtitles
             return subtitlesSourceLinks;
         }
 
-        public async Task<string> GetSubtitlesFileAsync(string subtitlesSourceUrl)
+        public async Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitlesSourceUrl)
         {
             var doc = await HttpRequester.GetHtmlDocumentAsync(subtitlesSourceUrl);
 
             if (doc == null)
-                return null;
+                return Array.Empty<SubtitlesDto>();
 
             var base64dataLink = doc.DocumentNode.SelectSingleNode("//a[@id='btn-download-subtitle']")?.Attributes["data-link"]?.Value;
             var subtitlesDownloadUrl = Base64Decode(base64dataLink);
 
             if (string.IsNullOrEmpty(subtitlesDownloadUrl))
-                return null;
+                return Array.Empty<SubtitlesDto>();
 
-            return await subtitlesProvider.GetSubtitlesFileAsync(subtitlesDownloadUrl, null);
-        }
-
-        public async Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitlesSourceUrl)
-        {
-            var subtitlesFile = await GetSubtitlesFileAsync(subtitlesSourceUrl);
-
-            return SubtitlesConverter.GetSubtitles(subtitlesFile);
+            return await subtitlesDownloader.DownloadSubtitlesAsync(subtitlesDownloadUrl);
         }
 
         public bool Match(string subtitlesSourceUrl)

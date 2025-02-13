@@ -1,13 +1,7 @@
-﻿using MoviesAPI.Helpers;
-using MoviesAPI.Services.Subtitles.DTOs;
-using MoviesAPI.Services.Subtitles.OpenSubtitlesHtml.DTOs;
+﻿using MoviesAPI.Services.Subtitles.DTOs;
 using MoviesAPI.Services.Subtitles.Searchers;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MoviesAPI.Services.Subtitles
@@ -55,13 +49,6 @@ namespace MoviesAPI.Services.Subtitles
             var subtitlesSearcher = subtitlesMovieSearchers.SingleOrDefault(s => s.Match(subtitlesSourceUrl));
 
             return subtitlesSearcher?.GetSubtitlesAsync(subtitlesSourceUrl);
-        }
-
-        public Task<string> GetSubtitlesFileAsync(string subtitlesSourceUrl)
-        {
-            var subtitlesSearcher = subtitlesMovieSearchers.SingleOrDefault(s => s.Match(subtitlesSourceUrl));
-
-            return subtitlesSearcher?.GetSubtitlesFileAsync(subtitlesSourceUrl);
         }
     }
 }
