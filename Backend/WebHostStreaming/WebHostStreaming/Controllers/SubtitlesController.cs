@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using WebHostStreaming.Providers;
 using MoviesAPI.Services.Subtitles;
 using MoviesAPI.Services.Subtitles.DTOs;
-using System.IO;
-using WebHostStreaming.Helpers;
 
 namespace WebHostStreaming.Controllers
 {
@@ -16,9 +14,6 @@ namespace WebHostStreaming.Controllers
         ISearchersProvider searchersProvider;
         public SubtitlesController(ISearchersProvider searchersProvider)
         {
-            if (!Directory.Exists(AppFolders.SubtitlesFolder))
-                Directory.CreateDirectory(AppFolders.SubtitlesFolder);
-
             this.searchersProvider = searchersProvider;
         }
 
@@ -50,12 +45,6 @@ namespace WebHostStreaming.Controllers
         public async Task<IEnumerable<SubtitlesDto>> GetSubtitles([FromQuery(Name = "sourceUrl")] string sourceUrl)
         {
             return await searchersProvider.SubtitlesSearchManager.GetSubtitlesAsync(sourceUrl);
-        }
-
-        [HttpGet("file")]
-        public async Task<string> DownloadSubtitlesFile([FromQuery(Name = "sourceUrl")] string sourceUrl)
-        {
-            return await searchersProvider.SubtitlesSearchManager.GetSubtitlesFileAsync(sourceUrl);
         }
     }
 }
