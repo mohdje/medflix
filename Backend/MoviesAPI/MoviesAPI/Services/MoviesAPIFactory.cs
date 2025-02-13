@@ -1,19 +1,17 @@
 ﻿using MoviesAPI.Services.Subtitles;
-using MoviesAPI.Services.Subtitles.Searchers;
 using MoviesAPI.Services.Torrent;
 using System;
 using System.Collections.Generic;
 using MoviesAPI.Services.Content;
-using System.Threading;
 using MoviesAPI.Services.Torrent.Searchers;
 using MoviesAPI.Services.Torrent.Searchers.WebScrappers;
+using System.IO;
 
 namespace MoviesAPI.Services
 {
     public class MoviesAPIFactory
     {
         private static MoviesAPIFactory _instance;
-        private static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
         public static MoviesAPIFactory Instance
         {
@@ -25,16 +23,6 @@ namespace MoviesAPI.Services
                 return _instance;
             }
         }
-
-        private string subtitlesFolder;
-
-        private Dictionary<string, bool> serviceAvailibilityCache;
-
-        private MoviesAPIFactory()
-        {
-            serviceAvailibilityCache = new Dictionary<string, bool>();
-        }
-
        
         public IMovieSearcher CreateMovieSearcher(string apiKey)
         {
@@ -46,96 +34,40 @@ namespace MoviesAPI.Services
             return new TmdbSeriesClient(apiKey);
         }
 
-        #region Torrent
         public TorrentSearchManager CreateTorrentSearchManager()
         {
-            var availableVoTorrentMovieSearchers = GetVoTorrentMovieSearchers();
-            var availableVoTorrentSerieSearchers = GetVoTorrentSerieSearchers();
-            var availableVfTorrentMovieSearchers = GetVfTorrentMovieSearchers();
-            var availableVfTorrentSerieSearchers = GetVfTorrentSerieSearchers();
+            var yggTorrentScrapper = new YggTorrentScrapper();
+            var ytsVfTorrentScrapper = new YtsVfTorrentScrapper();
+            var zeTorrentsScrapper = new ZeTorrentsScrapper();
+            //var gkTorrentSearcher = new GkTorrentSearcher();
 
-            return new TorrentSearchManager(availableVfTorrentMovieSearchers, availableVoTorrentMovieSearchers, availableVfTorrentSerieSearchers, availableVoTorrentSerieSearchers);
+            // var ytsMxWebScrapper = new YtsMxWebScrapper();
+            var ytsDoWebScrapper = new YtsDoWebScrapper();
+            var ytsRsWebScrapper = new YtsRsWebScrapper();
+            var ytsApiSearcher = new YtsApiSearcher();
+
+            var limeTorrentsScrapper = new LimeTorrentsScrapper();
+            //var one337xScapper = new One337xScapper();
+
+            IEnumerable<ITorrentSearcher> vfTorrentSearchers = [yggTorrentScrapper, ytsVfTorrentScrapper, zeTorrentsScrapper];
+
+            return new TorrentSearchManager(
+                vfTorrentSearchers,
+                [ytsApiSearcher, ytsDoWebScrapper, ytsRsWebScrapper],
+                vfTorrentSearchers, 
+                [limeTorrentsScrapper]);
         }
 
-        private IEnumerable<ITorrentSearcher> GetVfTorrentMovieSearchers()
+        public SubtitlesSearchManager CreateSubstitlesSearchManager(string subtitlesFolder)
         {
-            return new List<ITorrentSearcher>()
-            {
-                new YggTorrentScrapper(),
-                new YtsVfTorrentScrapper(),
-                new ZeTorrentsScrapper()
-                //new GkTorrentSearcher(),
-            };
+            if (string.IsNullOrEmpty(subtitlesFolder) || !Directory.Exists(subtitlesFolder))
+                throw new Exception("subtitlesFolder null or does not exist");
+
+            var subtitlesDownloader = new SubtitlesDownloader(subtitlesFolder);
+            var ytsSubsSearcher = new YtsSubsSearcher(subtitlesDownloader);
+            var openSubtitlesSearcher = new OpenSubtitlesSearcher(subtitlesDownloader);
+
+            return new SubtitlesSearchManager([openSubtitlesSearcher, ytsSubsSearcher], [openSubtitlesSearcher]);
         }
-
-        private IEnumerable<ITorrentSearcher> GetVoTorrentMovieSearchers()
-        {
-            return new List<ITorrentSearcher>()
-            {
-               //new YtsMxWebScrapper(),
-               new YtsDoWebScrapper(),
-               new YtsRsWebScrapper(),
-               new YtsApiSearcher(),
-            };
-        }
-
-        private IEnumerable<ITorrentSearcher> GetVoTorrentSerieSearchers()
-        {
-            return new List<ITorrentSearcher>()
-            {
-                new LimeTorrentsScrapper(),
-               // new One337xScapper()
-            };
-        }
-
-        private IEnumerable<ITorrentSearcher> GetVfTorrentSerieSearchers()
-        {
-            return new List<ITorrentSearcher>()
-            {
-                new YggTorrentScrapper(),
-                new YtsVfTorrentScrapper(),
-                new ZeTorrentsScrapper(),
-                //new GkTorrentSearcher(),
-            };
-        }
-
-        #endregion
-
-        #region Subtitles
-        public void SetSubtitlesFolder(string subtitlesFolder)
-        {
-            this.subtitlesFolder = subtitlesFolder;
-        }
-        public SubtitlesSearchManager CreateSubstitlesSearchManager()
-        {
-            var availableMovieSubtitlesSearchers = GetMovieSubtitlesSearchers();
-            var availableSerieSubtitlesSearchers = GetSerieSubtitlesSearchers();
-
-            return new SubtitlesSearchManager(availableMovieSubtitlesSearchers, availableSerieSubtitlesSearchers);
-        }
-
-        private IEnumerable<ISubtitlesMovieSearcher> GetMovieSubtitlesSearchers()
-        {
-            if(string.IsNullOrEmpty(this.subtitlesFolder))
-                throw new Exception("You have to call SetSubtitlesFolder method first");
-
-            return new List<ISubtitlesMovieSearcher>()
-            {
-                new YtsSubsSearcher(new SubtitlesFileProvider(subtitlesFolder)),
-                new OpenSubtitlesSearcher(new SubtitlesFileProvider(subtitlesFolder))
-            };
-        }
-
-        private IEnumerable<ISubtitlesSerieSearcher> GetSerieSubtitlesSearchers()
-        {
-            if (string.IsNullOrEmpty(this.subtitlesFolder))
-                throw new Exception("You have to call SetSubtitlesFolder method first");
-
-            return new List<ISubtitlesSerieSearcher>()
-            {
-                new OpenSubtitlesSearcher(new SubtitlesFileProvider(subtitlesFolder))
-            };
-        }
-        #endregion
     }
 }
