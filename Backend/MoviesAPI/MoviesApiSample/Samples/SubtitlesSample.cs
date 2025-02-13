@@ -1,9 +1,7 @@
 ﻿using MoviesAPI.Services;
 using MoviesAPI.Services.Subtitles;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MoviesApiSample.Samples
@@ -13,11 +11,17 @@ namespace MoviesApiSample.Samples
         SubtitlesSearchManager subtitlesSearchManager;
         public SubtitlesSample()
         {
-            MoviesAPIFactory.Instance.SetSubtitlesFolder(AppContext.BaseDirectory);
-            subtitlesSearchManager = MoviesAPIFactory.Instance.CreateSubstitlesSearchManager();
+            subtitlesSearchManager = MoviesAPIFactory.Instance.CreateSubstitlesSearchManager(AppContext.BaseDirectory);
         }
 
-        public async Task GetMovieSubtitles(string imdbCode, SubtitlesLanguage language)
+        public async Task Test()
+        {
+            //await GetMovieSubtitlesAsync("tt1431045", SubtitlesLanguage.French);
+            await GetSerieSubtitlesAsync(1, 5, "tt11280740", SubtitlesLanguage.English);
+            //await DisplaySubtitles("https://yts-subs.com/subtitles/deadpool-2016-english-yify-280634");
+        }
+
+        private async Task GetMovieSubtitlesAsync(string imdbCode, SubtitlesLanguage language)
         {
             Console.WriteLine($"Search {language} subtitles for {imdbCode}");
 
@@ -29,21 +33,12 @@ namespace MoviesApiSample.Samples
             {
                 Console.WriteLine($"subtitles found:{language} - {string.Join(',', availableSubtitlesUrls)}");
 
-                var subtitles = await subtitlesSearchManager.GetSubtitlesAsync(availableSubtitlesUrls.Last());
-                var counter = 0;
-                foreach (var sub in subtitles)
-                {
-                    Console.WriteLine($"{sub.StartTime} - {sub.EndTime} : {sub.Text}");
-                    counter++;
-
-                    if (counter == 10)
-                        break;
-                }
-
+                await DisplaySubtitles(availableSubtitlesUrls.First());
             }
         }
 
-        public async Task GetSerieSubtitles(int seasonNumber, int episodeNumber, string imdbCode, SubtitlesLanguage language)
+
+        private async Task GetSerieSubtitlesAsync(int seasonNumber, int episodeNumber, string imdbCode, SubtitlesLanguage language)
         {
             Console.WriteLine($"Search {language} subtitles for {imdbCode}");
 
@@ -55,17 +50,20 @@ namespace MoviesApiSample.Samples
             {
                 Console.WriteLine($"subtitles found:{language} - {string.Join(',', availableSubtitlesUrls)}");
 
-                var subtitles = await subtitlesSearchManager.GetSubtitlesAsync(availableSubtitlesUrls.Last());
-                var counter = 0;
-                foreach (var sub in subtitles)
-                {
-                    Console.WriteLine($"{sub.StartTime} - {sub.EndTime} : {sub.Text}");
-                    counter++;
+                await DisplaySubtitles(availableSubtitlesUrls.First());
+            }
+        }
 
-                    if (counter == 10)
-                        break;
-                }
+        private async Task DisplaySubtitles(string subtitlesSourceUrl)
+        {
+            var subtitles = await subtitlesSearchManager.GetSubtitlesAsync(subtitlesSourceUrl);
 
+            if(subtitles == null || !subtitles.Any())
+                Console.WriteLine($"Enable to get subtitles from {subtitlesSourceUrl}");
+
+            foreach (var sub in subtitles.Take(15))
+            {
+                Console.WriteLine($"{sub.StartTime} - {sub.EndTime} : {sub.Text}");
             }
         }
     }
