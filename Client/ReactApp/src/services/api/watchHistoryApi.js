@@ -11,5 +11,5 @@ export async function getWatchedEpisodes(mediaId, seasonNumber) {
 
 export async function getLastWatchedMediaInfo(mediaId) {
     const watchedMedias = await getWatchedMedias();
-    return watchedMedias.find(watchedMedia => watchedMedia.media.id === mediaId);
+    return watchedMedias?.find(watchedMedia => watchedMedia.media.id === mediaId);
 }
