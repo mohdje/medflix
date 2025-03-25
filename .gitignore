@@ -15,6 +15,9 @@ Backend/WebHostStreaming/WebHostStreaming/Helpers/Tokens.cs
 Client/WebApp/node_modules/
 Client/WebApp/build/
 Client/WebApp/.eslintcache
+Client/ReactApp/node_modules/
+Client/ReactApp/build/
+Client/ReactApp/.eslintcache
 Client/MauiApp/.vs
 Client/MauiApp/bin
 Client/MauiApp/obj
