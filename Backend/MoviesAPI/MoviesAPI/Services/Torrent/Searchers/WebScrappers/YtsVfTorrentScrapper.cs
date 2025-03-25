@@ -5,7 +5,7 @@ namespace MoviesAPI.Services.Torrent
 {
     internal class YtsVfTorrentScrapper : TorrentWebScrapper
     {
-        public override string Url => "https://yts.com.mx";
+        public override string Url => "https://www-yts.com";
 
         protected override string SearchResultListIdentifier => "//div[@class='browse-movie-bottom']";
 

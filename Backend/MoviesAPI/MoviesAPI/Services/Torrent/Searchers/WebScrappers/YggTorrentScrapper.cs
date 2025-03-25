@@ -5,9 +5,9 @@ namespace MoviesAPI.Services.Torrent
 {
     internal class YggTorrentScrapper : TorrentWebScrapper
     {
-        public override string Url => "https://www-torrent911.com";
-        protected override string SearchResultListIdentifier => "//td";
-        protected override string TorrentLinkButtonsIdentifier => "//div[@class='btn-download' or @class='btn-magnet']/a";
+        public override string Url => "https://www.zone-torrent1.com";
+        protected override string SearchResultListIdentifier => "//td//div[@class='maxi']";
+        protected override string TorrentLinkButtonsIdentifier => "//table[@class='table']//a[starts-with(@href, '/get_torrents') or starts-with(@href, 'magnet')]"; 
         protected override string MediaQualityIdentifier => "//div[@id='torrentsdesc']//div[@class='maximum']";
         protected override string TorrentLinkPageIdentifier => "//a";
         protected override bool FrenchVersion => true;

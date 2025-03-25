@@ -1,12 +1,11 @@
 ﻿using HtmlAgilityPack;
 using System.Linq;
-using System.Xml;
 
 namespace MoviesAPI.Services.Torrent
 {
     internal class ZeTorrentsScrapper : TorrentWebScrapper
     {
-        public override string Url => "https://www.zetorrents.my";
+        public override string Url => "https://www.zetorrents1.com";
         protected override string SearchResultListIdentifier => "//div[@class='content-list-torrent']//div[@class='maxi']";
         protected override string TorrentLinkButtonsIdentifier => "//div[@class='btn-download']/a";
         protected override bool FrenchVersion => true;

@@ -114,6 +114,9 @@ namespace MoviesAPI.Services.Torrent
 
             var torrentLinkNodes = doc.DocumentNode.SelectNodes(TorrentLinkButtonsIdentifier);
 
+            if (torrentLinkNodes == null || !torrentLinkNodes.Any())
+                return Array.Empty<MediaTorrent>();
+
             foreach (var torrentLinkNode in torrentLinkNodes)
             {
                 var torrentLink = torrentLinkNode.Attributes["href"].Value;
