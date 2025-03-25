@@ -1,0 +1,41 @@
+@import "variables.less";
+
+.App {
+  padding-top: @nav-bar-height;
+  text-align: center;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+
+  // .app-content {
+  //   overflow-x: hidden;
+  //   overflow-y: auto;
+  //   height: @app-content-height;
+  //   display: flex;
+  //   flex-direction: column;
+  //   align-items: stretch;
+  // }
+
+}
+
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px rgba(128, 128, 128, 0.589);
+  border-radius: 3px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: @dark-gray;
+  border-radius: 20px;
+
+  &:hover {
+    background: @dark-red;
+  }
+}

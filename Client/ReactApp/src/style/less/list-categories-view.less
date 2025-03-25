@@ -1,0 +1,53 @@
+@import "variables.less";
+
+.list-categories-view-container {
+    @media @desktop {
+        width: 70%;
+        margin: auto;
+    }
+
+    @media @mobile {
+        width: 95%;
+        height: 100%;
+        margin: @large-space*2 auto;
+        overflow-y: auto;
+    }
+
+    h1 {
+        color: @dark-gray;
+    }
+
+    .list-categories {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        gap: @large-space;
+        margin-bottom: @large-space * 2;
+        margin-top: @large-space;
+
+        @media @desktop {
+            flex-wrap: wrap;
+        }
+
+        @media @mobile {
+            flex-direction: column;
+        }
+
+        h2 {
+            transition: transform 0.5s ease;
+            font-weight: @semi-bold-font-weight;
+
+            &:hover {
+                cursor: pointer;
+                transform: translateY(-@small-space);
+                transition: all 0.5s ease;
+                color: @gray;
+            }
+
+            &:active {
+                color: @red;
+            }
+        }
+    }
+}

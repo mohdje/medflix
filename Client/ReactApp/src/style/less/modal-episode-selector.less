@@ -1,0 +1,95 @@
+@import "variables.less";
+
+.modal-episode-selector-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .season-selector-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        @media @desktop {
+            height: 20%;
+        }
+
+        @media @mobile {
+            height: 10%;
+        }
+    }
+
+    .episode-list-container {
+        flex-grow: 1;
+        overflow-y: auto;
+        margin-top: @normal-space;
+        position: relative;
+
+        @media @desktop {
+            max-height: 80%;
+            width: 60%;
+        }
+
+        @media @mobile {
+            width: 100%;
+            max-height: 90%;
+        }
+
+        .loading-container {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .episode-container {
+            display: flex;
+            margin: @normal-space @small-space;
+            cursor: pointer;
+            padding: @small-space;
+            border: fade(white, 0%) 2px solid;
+            border-radius: @border-radius;
+
+            @media @mobile {
+                align-items: center;
+            }
+
+            &:hover {
+                border: white 2px solid;
+            }
+
+            &:active {
+                border: @red 2px solid;
+            }
+
+            img {
+                width: auto;
+                height: 150px;
+                margin: auto @small-space auto 0;
+
+                @media @mobile {
+
+                    height: 80px;
+                }
+            }
+
+            .title {
+                text-align: left;
+                font-weight: @semi-bold-font-weight;
+
+                .episode-info {
+                    color: @gray;
+                    margin-left: @normal-space;
+                }
+            }
+
+            .synopsis {
+                color: @gray;
+                text-align: left;
+                font-size: @small-font-size;
+            }
+        }
+    }
+}

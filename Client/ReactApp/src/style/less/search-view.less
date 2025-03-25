@@ -1,0 +1,36 @@
+@import "variables.less";
+
+.search-view-container {
+    width: 100%;
+    margin-top: 10%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .search-input-container {
+        @media @desktop {
+            width: 50%;
+        }
+
+        @media @mobile {
+            width: 80%;
+        }
+    }
+
+    .desktop-search-result {
+        width: 100%;
+
+        @media @mobile {
+            display: none;
+        }
+    }
+
+    .mobile-search-result {
+        width: 100%;
+
+        @media @desktop {
+            display: none;
+        }
+    }
+}

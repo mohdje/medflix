@@ -1,0 +1,94 @@
+@import 'variables.less';
+
+.medias-list-container {
+    position: relative;
+    margin: 20px auto;
+    width: 98%;
+
+    @media @mobile {
+        width: 90%;
+        margin: 15px auto;
+    }
+
+    &.full {
+        height: 90%;
+    }
+
+    .media-list-title {
+        color: white;
+        font-weight: @light-semi-bold-font-weight;
+        text-align: left;
+        margin-bottom: 10px;
+
+        &.center {
+            text-align: center;
+        }
+    }
+
+    .medias-list {
+        display: flex;
+        width: 100%;
+        gap: 20px;
+
+        @media @desktop {
+            overflow-x: hidden;
+        }
+
+        @media @mobile {
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        &.center {
+            justify-content: center;
+        }
+
+        &.wrap-content {
+            flex-flow: row wrap;
+            overflow-y: scroll;
+            height: 100%;
+        }
+    }
+
+    .floating-navigation-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        border-radius: 50%;
+        background-color: fade(black, 40%);
+        padding: 5px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: @z-index-second-layer;
+
+        @media @mobile {
+            display: none;
+        }
+
+        &:hover {
+            cursor: pointer;
+            background-color: fade(@dark-gray, 80%);
+        }
+
+        img {
+            color: white;
+            width: 80%;
+            height: auto;
+        }
+
+        &.right {
+            right: 0;
+        }
+
+        &.left {
+            left: 0;
+        }
+
+        &:active {
+            background-color: fade(@gray, 80%);
+        }
+    }
+}

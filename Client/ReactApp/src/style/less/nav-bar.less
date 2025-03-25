@@ -1,0 +1,208 @@
+@import "variables.less";
+
+.nav-bar-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: @z-index-third-layer;
+    background-color: black;
+
+    display: flex;
+    width: 100%;
+    @padding: 3%;
+    // @height: calc(100% - @app-content-height);
+    // height: @height;
+
+    height: @nav-bar-height;
+
+
+    .mobile-menu {
+        @media @desktop {
+            display: none;
+        }
+
+        .drop-down-menu {
+            position: fixed;
+            top: @nav-bar-height;
+            left: @small-space;
+            background-color: black;
+            color: white;
+            border-radius: @border-radius;
+            box-shadow: rgba(182, 182, 182, 0.35) 0px 5px 15px;
+            z-index: @z-index-third-layer;
+
+            &.show {
+                transition: visibility 0.1s, opacity 0.2s;
+                opacity: 1;
+                visibility: visible;
+            }
+
+            &.hide {
+                transition: visibility 1s, opacity 0.2s;
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        .slide-right-menu-container {
+            position: fixed;
+            height: 100vh;
+            width: 100vw;
+            top: 0;
+            left: 0;
+            z-index: @z-index-third-layer;
+            background-color: fade(black, 70%);
+
+            .slide-right-menu {
+                position: absolute;
+                width: 50%;
+                height: 100%;
+
+                background-color: black;
+                right: -100%;
+                top: 0;
+                transition: right 0.5s;
+            }
+
+            &.show {
+                transition: visibility 0.1s, opacity 0.5s;
+                opacity: 1;
+                visibility: visible;
+
+                .slide-right-menu {
+                    right: 0;
+                }
+            }
+
+            &.hide {
+                transition: visibility 1s, opacity 0.5s;
+                opacity: 0;
+                visibility: hidden;
+
+                .slide-right-menu {
+                    right: -100%;
+                }
+            }
+        }
+
+        .menu-item {
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            margin: 15px 0;
+
+            img {
+                width: @menu-size-img;
+                height: @menu-size-img;
+                color: white;
+            }
+
+            h3 {
+                font-weight: @semi-bold-font-weight;
+            }
+
+            &:active {
+                background-color: fade(@dark-gray, 70%);
+            }
+        }
+    }
+
+    .nav-bar-left {
+        flex-basis: 100%;
+        display: flex;
+        align-items: center;
+        padding-left: @padding;
+
+        .desktop-menu {
+            display: flex;
+            gap: 18px;
+
+            @media @mobile {
+                display: none;
+            }
+
+            .mode {
+                color: @gray;
+                font-weight: @semi-bold-font-weight;
+
+                &:hover {
+                    cursor: pointer;
+                }
+
+                &.active {
+                    color: white;
+                }
+            }
+        }
+
+    }
+
+    .nav-bar-middle {
+        flex-basis: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .nav-bar-logo {
+            width: auto;
+
+            @media @desktop {
+                height: 50%;
+            }
+
+            @media @mobile {
+                height: 30%;
+            }
+        }
+    }
+
+    .nav-bar-right {
+        flex-basis: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: @padding;
+
+        .desktop-menu {
+            display: flex;
+            gap: @normal-space;
+
+            @media @mobile {
+                display: none;
+            }
+        }
+    }
+
+    .nav-bar-btn {
+        border-radius: @border-round;
+        padding: @small-space;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:active {
+            background-color: @dark-gray;
+        }
+
+        @media @mobile {
+            justify-content: start;
+            gap: @normal-space;
+        }
+
+        @media @desktop {
+            &:hover {
+                cursor: pointer;
+                background-color: @gray;
+            }
+        }
+
+        img {
+            width: @menu-size-img;
+            height: @menu-size-img;
+        }
+    }
+
+
+}

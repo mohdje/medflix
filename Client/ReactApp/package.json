@@ -1,0 +1,59 @@
+{
+  "name": "react-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^13.5.0",
+    "css-loader": "^7.1.2",
+    "node-less-chokidar": "^0.4.1",
+    "npm-watch": "^0.13.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "watch": {
+    "build-less": {
+      "patterns": [
+        "src"
+      ],
+      "extensions": "less",
+      "quiet": false
+    }
+  },
+  "scripts": {
+    "dev-start": "concurrently --kill-others \"npm run build-css\" \"npm run start\"",
+    "start": "react-scripts start",
+    "build": "less-watch-compiler --run-once src/style/less src/style/css  && react-scripts build",
+    "eject": "react-scripts eject",
+    "build-css": "less-watch-compiler src/style/less src/style/css"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "less": "^4.2.2",
+    "less-loader": "^12.2.0",
+    "less-watch-compiler": "^1.16.3",
+    "style-loader": "^4.0.0"
+  }
+}

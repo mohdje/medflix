@@ -1,0 +1,76 @@
+@import "variables.less";
+
+.rotate {
+    transform-origin: center;
+    animation: rotate 0.7s linear infinite;
+
+    @keyframes rotate {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+}
+
+.fade-in {
+    animation: fade-in 0.5s linear forwards;
+
+    @keyframes fade-in {
+        from {
+            visibility: visible;
+            opacity: 0;
+        }
+
+        to {
+            visibility: visible;
+            opacity: 1;
+        }
+    }
+}
+
+.fade-out {
+    animation: fade-out 0.3s linear forwards;
+
+    @keyframes fade-out {
+        0% {
+            opacity: 1;
+        }
+
+        90% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 0;
+            visibility: hidden;
+        }
+    }
+}
+
+.ripple {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: fade(white, 60%);
+    border-radius: @border-round;
+    animation: ripple 0.3s linear;
+
+    @keyframes ripple {
+        from {
+            height: 0;
+            width: 0;
+            opacity: 1;
+        }
+
+        to {
+            height: var(--ripple-size);
+            width: var(--ripple-size);
+            opacity: 0;
+        }
+    }
+
+}

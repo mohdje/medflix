@@ -1,0 +1,46 @@
+@import 'variables.less';
+
+.text-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+
+    input {
+        padding: @medium-space;
+        color: white;
+        background-color: fade(@black-gray, 50%);
+        border: none;
+        outline: none;
+        border-radius: @small-border-radius;
+        width: 100%;
+        text-align: center;
+    }
+
+    .bottom-outline {
+        border-bottom: 2px solid red !important;
+        width: 0px;
+        transition: width 0.2s;
+    }
+
+    &:focus-within {
+        .bottom-outline {
+            width: calc(100% + @medium-space);
+        }
+    }
+
+    .delete-text-cross {
+        position: absolute;
+        right: 2%;
+        cursor: pointer;
+        width: @menu-size-img;
+        height: @menu-size-img;
+        z-index: @z-index-second-layer;
+
+        :active {
+            color: @gray;
+        }
+    }
+}

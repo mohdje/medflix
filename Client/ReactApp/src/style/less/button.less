@@ -1,0 +1,189 @@
+@import "variables.less";
+
+
+button {
+    appearance: button;
+    border: none;
+    border-radius: @medium-border-radius;
+    cursor: pointer;
+    padding: 7px;
+    width: 100px;
+    font-size: @large-font-size;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.3s linear;
+
+    &:disabled {
+        cursor: default;
+        opacity: 0.5;
+    }
+
+    &.large {
+        width: 120px;
+    }
+
+    img {
+        height: 20px;
+        width: auto;
+    }
+
+    &.img-only {
+        img {
+            height: 40px;
+            width: auto;
+        }
+    }
+
+    h4 {
+        font-weight: @strong-semi-bold-font-weight;
+        text-align: center;
+        flex-grow: 1;
+    }
+
+    &.rounded {
+        border-radius: @border-round;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+            height: 30px;
+            width: auto;
+        }
+    }
+
+    &.gray {
+        background-color: @black-gray;
+        border-bottom: solid 2px black;
+        color: white;
+
+        &:hover {
+            background-color: @dark-gray;
+        }
+    }
+
+    &.black {
+        background-color: black;
+        color: white;
+
+        &:hover {
+            background-color: @dark-gray;
+        }
+    }
+
+    &.white {
+        background-color: white;
+        border-bottom: solid 4px darken(white, 20%);
+        color: black;
+
+        &:hover {
+            background-color: darken(white, 20%);
+            border-bottom: solid 4px darken(white, 40%);
+        }
+    }
+
+    &.transparent {
+        background-color: fade(@dark-gray, 40%);
+        color: white;
+
+        &:hover {
+            background-color: fade(@gray, 40%);
+        }
+
+        &:disabled {
+            background-color: fade(@dark-gray, 40%);
+        }
+    }
+
+    &.red {
+        background-color: @red;
+        border-bottom: solid 4px @dark-red;
+        color: white;
+
+        &:hover {
+            background-color: darken(@red, 20%);
+            border-bottom: solid 4px darken(@dark-red, 20%);
+        }
+
+        &:disabled {
+            background-color: @gray;
+            border-bottom: solid 4px darken(@gray, 60%);
+        }
+    }
+
+
+}
+
+
+
+/* CSS */
+.button-19 {
+    appearance: button;
+    background-color: #1899D6;
+    border: solid transparent;
+    border-radius: 16px;
+    border-width: 0 0 4px;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-family: din-round, sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    line-height: 20px;
+    margin: 0;
+    outline: none;
+    overflow: visible;
+    padding: 13px 16px;
+    text-align: center;
+    text-transform: uppercase;
+    touch-action: manipulation;
+    transform: translateZ(0);
+    transition: filter .2s;
+    user-select: none;
+    -webkit-user-select: none;
+    vertical-align: middle;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.button-19:after {
+    background-clip: padding-box;
+    background-color: #1CB0F6;
+    border: solid transparent;
+    border-radius: 16px;
+    border-width: 0 0 4px;
+    bottom: -4px;
+    content: "";
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: -1;
+}
+
+.button-19,
+.button-19:focus {
+    user-select: auto;
+}
+
+.button-19:hover:not(:disabled) {
+    filter: brightness(1.1);
+    -webkit-filter: brightness(1.1);
+}
+
+.button-19:disabled {
+    cursor: auto;
+}
+
+.button-19:active {
+    border-width: 4px 0 0;
+    background: none;
+}

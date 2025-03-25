@@ -1,0 +1,66 @@
+@import 'variables.less';
+
+
+.media-lite-presentation {
+    @media @desktop {
+        width: 150px;
+        cursor: pointer;
+    }
+
+    @media @mobile {
+        width: 110px;
+    }
+
+    .media-lite-presentation-img {
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        border-radius: @small-border-radius;
+        position: relative;
+        width: 100%;
+
+        @media @desktop {
+            height: 225px;
+        }
+
+        @media @mobile {
+            height: 165px;
+        }
+
+        .rating-container {
+            position: absolute;
+            right: 2px;
+            bottom: 2px;
+        }
+
+        .year-container {
+            position: absolute;
+            bottom: 2px;
+            left: 2px;
+
+            .year {
+                color: white;
+                text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+                margin: 2px auto;
+                text-align: center;
+                font-weight: @light-semi-bold-font-weight;
+            }
+        }
+
+        .title {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6699054621848739) 40%, rgba(0, 0, 0, 0.87718837535014) 76%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            text-align: center;
+        }
+
+        &:hover {
+            .title {
+                opacity: 1;
+            }
+        }
+    }
+}

@@ -1,0 +1,54 @@
+@import "variables.less";
+
+.circular-progress-bar-container {
+
+    &.normal {
+        display: flex;
+        align-items: center;
+        justify-content: center
+    }
+
+    &.fixed-center {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        z-index: @z-index-third-layer;
+        transform: translate(-50%; -50%);
+        text-align: center;
+    }
+
+    &.none {
+        img {
+            width: 0px;
+            height: 0px;
+        }
+    }
+
+    &.small {
+        img {
+            width: 20px;
+            height: 20px;
+        }
+    }
+
+    &.medium {
+        img {
+            width: 40px;
+            height: 40px;
+        }
+    }
+
+    &.large {
+        img {
+            width: 60px;
+            height: 60px;
+        }
+    }
+
+    &.x-large {
+        img {
+            width: 80px;
+            height: 80px;
+        }
+    }
+}
