@@ -136,6 +136,9 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
         {
             Locker.Wait();
 
+            if(!File.Exists(AppFiles.AvailableMediaSources))
+                return Array.Empty<string>();
+
             try
             {
                 var lines = File.ReadAllLines(AppFiles.AvailableMediaSources);

@@ -26,14 +26,14 @@ namespace WebHostStreaming.StartupExtensions
 
         public static void SetupUI(this IApplicationBuilder applicationBuilder)
         {
-            //if (!Directory.Exists(AppFolders.ViewFolder))
-            //    throw new DirectoryNotFoundException(AppFolders.ViewFolder);
+            if (!Directory.Exists(AppFolders.ViewFolder))
+                throw new DirectoryNotFoundException(AppFolders.ViewFolder);
 
-            //applicationBuilder.UseStaticFiles(new StaticFileOptions
-            //{
-            //    FileProvider = new PhysicalFileProvider(AppFolders.ViewFolder),
-            //    RequestPath = "/home"
-            //});
+            applicationBuilder.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(AppFolders.ViewFolder),
+                RequestPath = "/home"
+            });
 
             if (Directory.Exists(AppFolders.ManageViewFolder))
                 Directory.Delete(AppFolders.ManageViewFolder, true);
@@ -48,7 +48,8 @@ namespace WebHostStreaming.StartupExtensions
                 RequestPath = "/manage"
             });
 
-            System.Console.WriteLine("Web application accessible here : http://localhost:5000/home/index.html");
+            System.Console.WriteLine("Web application accessible here : http://*:5000/home/index.html");
+            System.Console.WriteLine("Media resources management page accessible here : http://*:5000/manage/index.html");
         }
     }
 }
