@@ -1,15 +1,15 @@
 #Build react app
-# FROM node:15.4 as frontbuild 
+FROM node:18-alpine AS frontbuild 
 
-# WORKDIR /medflix-frontend
+WORKDIR /medflix-frontend
 
-# COPY /development/Front/react-streaming-client/package*.json .
+COPY ./Client/ReactApp/package*.json .
 
-# RUN npm install
+RUN npm install
 
-# COPY /development/Front/react-streaming-client .
+COPY ./Client/ReactApp .
 
-# RUN npm run build --prefix
+RUN npm run build
 
 #Build .Net App
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS backendbuild
@@ -17,8 +17,8 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS backendbuild
 WORKDIR /medflix-build
 
 #Copy dll with same path inside image because csproj is using this relative path
-COPY ./MoviesAPI/MoviesAPI/bin/Release/net8.0 /MoviesAPI/MoviesAPI/bin/Release/net8.0
-COPY ./WebHostStreaming /WebHostStreaming
+COPY ./Backend/MoviesAPI/MoviesAPI/bin/Release/net8.0 /MoviesAPI/MoviesAPI/bin/Release/net8.0
+COPY ./Backend/WebHostStreaming /WebHostStreaming
 
 WORKDIR /WebHostStreaming/WebHostStreaming
 
@@ -27,7 +27,7 @@ RUN dotnet publish "./WebHostStreaming.csproj"  -c release -o /release --no-rest
 
 WORKDIR /release
 
-# COPY --from=frontbuild /medflix-frontend/build /release/view
+COPY --from=frontbuild /medflix-frontend/build /release/view
 
 #Serve .Net App
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
