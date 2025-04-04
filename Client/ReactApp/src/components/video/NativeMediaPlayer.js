@@ -1,3 +1,4 @@
+import AppMode from "../../services/appMode";
 import CircularProgressBar from "../common/CircularProgressBar";
 import ModalWindow from "../modal/ModalWindow";
 import { useEffect } from "react";
@@ -28,12 +29,14 @@ export default function NativeMediaPlayer({
                     subtitlesSources
                 };
             }
+            window.getAppMode = () => AppMode.getActiveMode().urlKey;
             window.closeNativeMediaPlayer = () => onCloseClick();
             window.location.href = `http://playMedia`;
         }
         return () => {
             delete window.closeNativeMediaPlayer;
             delete window.getMediaPlayerParameters;
+            delete window.getAppMode;
         }
     }, [visible]);
 
