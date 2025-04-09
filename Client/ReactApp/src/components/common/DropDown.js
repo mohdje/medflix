@@ -3,7 +3,7 @@ import DropdownArrow from '../../assets/dropdown_arrow.svg'
 import { useOnClickOutside } from '../../helpers/customHooks';
 import { useEffect, useState, useRef } from 'react';
 
-function DropDown({ values, width, onValueChanged, textAlignement }) {
+function DropDown({ values, defaultSelectedValue, width, onValueChanged, textAlignement }) {
 
     const [showList, setShowList] = useState(false);
     const [selectedValue, setSelectedValue] = useState('');
@@ -13,9 +13,16 @@ function DropDown({ values, width, onValueChanged, textAlignement }) {
     useEffect(() => {
         if (shouldUpdateDropDownValues(values)) {
             setDropDownValues(values);
-            setSelectedValue(values[0]);
+
+            if (!defaultSelectedValue)
+                setSelectedValue(values[0]);
         }
     }, [values])
+
+    useEffect(() => {
+        const defaultSelectedValueIndex = values.findIndex(val => val === defaultSelectedValue);
+        setSelectedValue(values[defaultSelectedValueIndex >= 0 ? defaultSelectedValueIndex : 0]);
+    }, [defaultSelectedValue])
 
     useOnClickOutside(dropdownRef, () => setShowList(false));
 

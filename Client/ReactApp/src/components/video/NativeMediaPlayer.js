@@ -6,6 +6,7 @@ import { useEffect } from "react";
 export default function NativeMediaPlayer({
     mediaDetails,
     currentTime,
+    shouldRestart,
     episodeNumber,
     seasonNumber,
     videoSource,
@@ -20,7 +21,7 @@ export default function NativeMediaPlayer({
                 return {
                     watchMedia: {
                         media: mediaDetails,
-                        currentTime,
+                        currentTime: shouldRestart ? 0 : currentTime,
                         episodeNumber,
                         seasonNumber,
                         videoSource,

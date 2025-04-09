@@ -86,6 +86,18 @@ button {
             background-color: darken(white, 20%);
             border-bottom: solid 4px darken(white, 40%);
         }
+
+        /* Prevent dark mode from affecting colors */
+        @media (prefers-color-scheme: dark) {
+            background-color: white !important;
+            border-bottom: solid 4px darken(white, 20%) !important;
+            color: black !important;
+
+            &:hover {
+                background-color: darken(white, 20%) !important;
+                border-bottom: solid 4px darken(white, 40%) !important;
+            }
+        }
     }
 
     &.transparent {
@@ -115,75 +127,22 @@ button {
             background-color: @gray;
             border-bottom: solid 4px darken(@gray, 60%);
         }
+
+        /* Prevent dark mode from affecting colors */
+        @media (prefers-color-scheme: dark) {
+            background-color: @red !important;
+            border-bottom: solid 4px @dark-red !important;
+            color: white !important;
+
+            &:hover {
+                background-color: darken(@red, 20%) !important;
+                border-bottom: solid 4px darken(@dark-red, 20%) !important;
+            }
+
+            &:disabled {
+                background-color: @gray !important;
+                border-bottom: solid 4px darken(@gray, 60%) !important;
+            }
+        }
     }
-
-
-}
-
-
-
-/* CSS */
-.button-19 {
-    appearance: button;
-    background-color: #1899D6;
-    border: solid transparent;
-    border-radius: 16px;
-    border-width: 0 0 4px;
-    box-sizing: border-box;
-    color: #FFFFFF;
-    cursor: pointer;
-    display: inline-block;
-    font-family: din-round, sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: .8px;
-    line-height: 20px;
-    margin: 0;
-    outline: none;
-    overflow: visible;
-    padding: 13px 16px;
-    text-align: center;
-    text-transform: uppercase;
-    touch-action: manipulation;
-    transform: translateZ(0);
-    transition: filter .2s;
-    user-select: none;
-    -webkit-user-select: none;
-    vertical-align: middle;
-    white-space: nowrap;
-    width: 100%;
-}
-
-.button-19:after {
-    background-clip: padding-box;
-    background-color: #1CB0F6;
-    border: solid transparent;
-    border-radius: 16px;
-    border-width: 0 0 4px;
-    bottom: -4px;
-    content: "";
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-    z-index: -1;
-}
-
-.button-19,
-.button-19:focus {
-    user-select: auto;
-}
-
-.button-19:hover:not(:disabled) {
-    filter: brightness(1.1);
-    -webkit-filter: brightness(1.1);
-}
-
-.button-19:disabled {
-    cursor: auto;
-}
-
-.button-19:active {
-    border-width: 4px 0 0;
-    background: none;
 }

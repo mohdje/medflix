@@ -1,0 +1,27 @@
+@import "variables";
+
+.toast-message-container {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 100%);
+    z-index: @z-index-third-layer;
+    transition: all 0.5s;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 1) 46%, rgba(38, 37, 37, 1) 100%);
+    box-shadow: rgba(0, 0, 0, 0.507) 0px 20px 20px 20px, rgba(0, 0, 0, 0.555) 0px 20px 20px 20px;
+    border-radius: @border-radius;
+
+    @media @mobile {
+        width: 80%;
+    }
+
+    &.visible {
+        transform: translate(-50%, -100%);
+    }
+
+    h3 {
+        padding: @large-space;
+
+        font-weight: @semi-bold-font-weight;
+    }
+}

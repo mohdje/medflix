@@ -6,7 +6,7 @@ export async function bookmarkMedia(mediaDto) {
 }
 
 export async function unbookmarkMedia(mediaDto) {
-    return await httpDelete(`${AppMode.getActiveMode().urlKey}/bookmarks`, null, mediaDto, false);
+    return await httpDelete(`${AppMode.getActiveMode().urlKey}/bookmarks?id=${mediaDto.id}`, null, null, false);
 }
 
 export async function isMediaBookmarked(mediaId) {

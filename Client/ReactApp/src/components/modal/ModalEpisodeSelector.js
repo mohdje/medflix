@@ -10,12 +10,12 @@ import { ToTimeFormat } from "../../helpers/timeFormatHelper";
 
 import { useEffect, useState, useRef } from "react";
 
-export default function ModalEpisodeSelector({ visible, serieId, numberOfSeasons, selectedSeason, onEpisodeSelected, onCloseClick }) {
-    const [selectedSeasonNumber, setSelectedSeasonNumber] = useState(selectedSeason);
+export default function ModalEpisodeSelector({ visible, serieId, numberOfSeasons, defaultSeasonNumber, onEpisodeSelected, onCloseClick }) {
     const [episodes, setEpisodes] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [noEpisodeMessageVisible, setNoEpisodeMessageVisible] = useState(false);
     const episodeListRef = useRef(null);
+    const selectedSeasonNumberRef = useRef(null)
 
     const seasonNumberList = Array.from(
         { length: numberOfSeasons },
@@ -23,29 +23,31 @@ export default function ModalEpisodeSelector({ visible, serieId, numberOfSeasons
     );
 
     useEffect(() => {
-        const loadEpisodes = async () => {
-            if (serieId) {
-                setEpisodes([]);
-                setIsLoading(true);
-                setNoEpisodeMessageVisible(false);
-                const episodes = await mediasInfoApi.getEpisodes(serieId, selectedSeasonNumber);
+        if (visible && defaultSeasonNumber >= 1)
+            loadEpisodes(defaultSeasonNumber);
+    }, [visible]);
 
-                if (episodeListRef.current)
-                    episodeListRef.current.scrollTop = 0;
+    const loadEpisodes = async (seasonNumber) => {
+        selectedSeasonNumberRef.current = seasonNumber;
+        if (serieId) {
+            setEpisodes([]);
+            setIsLoading(true);
+            setNoEpisodeMessageVisible(false);
+            const episodes = await mediasInfoApi.getEpisodes(serieId, seasonNumber);
 
-                setIsLoading(false);
-                if (episodes && episodes.length > 0) {
-                    loadEpisodesProgress(episodes, selectedSeasonNumber);
-                }
-                else {
-                    setIsLoading(false);
-                    setNoEpisodeMessageVisible(true)
-                }
+            if (episodeListRef.current)
+                episodeListRef.current.scrollTop = 0;
+
+            setIsLoading(false);
+            if (episodes && episodes.length > 0) {
+                loadEpisodesProgress(episodes, seasonNumber);
             }
-        };
-        loadEpisodes();
-
-    }, [serieId, selectedSeasonNumber]);
+            else {
+                setIsLoading(false);
+                setNoEpisodeMessageVisible(true)
+            }
+        }
+    };
 
     const loadEpisodesProgress = async (episodesOfSeason, seasonNumber) => {
         const watchedEpisodes = await watchHistoryApi.getWatchedEpisodes(serieId, seasonNumber);
@@ -69,7 +71,12 @@ export default function ModalEpisodeSelector({ visible, serieId, numberOfSeasons
         return (
             <div className="modal-episode-selector-container">
                 <div className="season-selector-container">
-                    <DropDown values={seasonNumberList} width="120px" textAlignement={"center"} onValueChanged={(selectedIndex) => setSelectedSeasonNumber(selectedIndex + 1)} />
+                    <DropDown
+                        values={seasonNumberList}
+                        defaultSelectedValue={`Season ${defaultSeasonNumber}`}
+                        width="120px"
+                        textAlignement={"center"}
+                        onValueChanged={(selectedIndex) => loadEpisodes(selectedIndex + 1)} />
                 </div>
                 <div ref={episodeListRef} className="episode-list-container">
                     <div className="loading-container">
@@ -80,7 +87,7 @@ export default function ModalEpisodeSelector({ visible, serieId, numberOfSeasons
                         <Episode
                             key={episode.episodeNumber}
                             episode={episode}
-                            onClick={() => onEpisodeSelected(selectedSeasonNumber, episode.episodeNumber, episode.progression)} />)}
+                            onClick={() => onEpisodeSelected(selectedSeasonNumberRef.current, episode.episodeNumber, episode.progression)} />)}
                 </div>
             </div>
         );

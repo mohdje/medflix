@@ -12,6 +12,7 @@ import RestartIcon from "../assets/restart.svg";
 import CircularProgressBar from "../components/common/CircularProgressBar";
 import ProgressionBar from "../components/common/ProgressionBar";
 import Button from "../components/common/Button.js";
+import Toast from "../components/common/Toast.js";
 
 import ModalMediaTrailer from '../components/modal/ModalMediaTrailer';
 import ModalEpisodeSelector from '../components/modal/ModalEpisodeSelector';
@@ -25,6 +26,7 @@ import {
     bookmarkApi
 } from "../services/api";
 import { ToTimeFormat } from "../helpers/timeFormatHelper";
+import { eventsNames, raiseEvent } from "../helpers/eventHelper.js";
 
 import { useEffect, useState, useRef } from 'react';
 
@@ -33,6 +35,7 @@ export default function MediaFullPresentation({ mediaId, onSimilarMediaClick, on
     const [loadingMediaDetails, setLoadingMediaDetails] = useState(true);
     const [mediaDetails, setMediaDetails] = useState({});
     const [mediaProgression, setMediaProgression] = useState({});
+    const [shouldRestart, setShouldRestart] = useState(false);
 
     const [mediaVersionsSources, setMediaVersionsSources] = useState([]);
     const [searchingVersionsSources, setSearchingVersionsSources] = useState([]);
@@ -43,6 +46,8 @@ export default function MediaFullPresentation({ mediaId, onSimilarMediaClick, on
     const [showMediaPlayer, setShowMediaPlayer] = useState(false);
     const [showMediaTrailer, setShowMediaTrailer] = useState(false);
     const [showEpisodeSelection, setShowEpisodeSelection] = useState(false);
+    const [showToastMessage, setShowToastMessage] = useState(false);
+    const [toastMessage, setToastMessage] = useState(null);
 
     const [mediaIsBookmarked, setMediaIsBookmarked] = useState(true);
     const [changingBookmark, setChangingBookmark] = useState(false);
@@ -64,17 +69,7 @@ export default function MediaFullPresentation({ mediaId, onSimilarMediaClick, on
             if (mediaDetailsResult) {
                 setMediaDetails(mediaDetailsResult);
                 await Promise.all([
-                    watchHistoryApi.getLastWatchedMediaInfo(mediaId).then(watchedMedia => {
-                        if (watchedMedia) {
-                            selectedEpisode.current.episodeNumber = watchedMedia.episodeNumber;
-                            selectedEpisode.current.seasonNumber = watchedMedia.seasonNumber;
-                            setMediaProgression({
-                                progression: watchedMedia.currentTime / watchedMedia.totalDuration,
-                                remainingTime: watchedMedia.totalDuration - watchedMedia.currentTime,
-                                currentTime: watchedMedia.currentTime,
-                                videoSource: watchedMedia.videoSource
-                            })
-                        }
+                    getWatchMediaInfo().then(watchedMedia => {
                         searchAvailableSubtitles(mediaDetailsResult, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber);
                         searchMediaVersionsSources(mediaDetailsResult, selectedEpisode.current.seasonNumber, selectedEpisode.current.episodeNumber);
                     }),
@@ -87,6 +82,24 @@ export default function MediaFullPresentation({ mediaId, onSimilarMediaClick, on
         loadPage();
 
     }, []);
+
+    const getWatchMediaInfo = async () => {
+        const watchedMedia = await watchHistoryApi.getLastWatchedMediaInfo(mediaId);
+        if (watchedMedia) {
+            selectedEpisode.current = {
+                episodeNumber: watchedMedia.episodeNumber,
+                seasonNumber: watchedMedia.seasonNumber
+            };
+
+            setMediaProgression({
+                progression: watchedMedia.currentTime / watchedMedia.totalDuration,
+                remainingTime: watchedMedia.totalDuration - watchedMedia.currentTime,
+                currentTime: watchedMedia.currentTime,
+                videoSource: watchedMedia.videoSource
+            })
+        }
+        return watchedMedia;
+    }
 
     const searchMediaVersionsSources = async (mediaDetails, seasonNumber, episodeNumber) => {
         setMediaVersionsSources([]);
@@ -112,8 +125,14 @@ export default function MediaFullPresentation({ mediaId, onSimilarMediaClick, on
     const toggleBookmark = async () => {
         setChangingBookmark(true);
         const result = mediaIsBookmarked ? await bookmarkApi.unbookmarkMedia(mediaDetails) : await bookmarkApi.bookmarkMedia(mediaDetails);
-        if (result)
+        if (result) {
+            displayToastMessage(mediaIsBookmarked ? "Removed from your list with success" : "Added to your list with success");
             setMediaIsBookmarked(!mediaIsBookmarked);
+            raiseEvent(eventsNames.bookmarkUpdated)
+        }
+        else {
+            displayToastMessage("Failing to add/remove from your list");
+        }
 
         setChangingBookmark(false);
     }
@@ -137,6 +156,17 @@ export default function MediaFullPresentation({ mediaId, onSimilarMediaClick, on
             setMediaProgression({});
     }
 
+    const openMediaPlayer = (restart) => {
+        setShouldRestart(restart);
+        setShowMediaPlayer(true);
+    };
+
+    const displayToastMessage = (message) => {
+        setToastMessage(message);
+        setShowToastMessage(true);
+        setTimeout(() => setShowToastMessage(false), 3000);
+    }
+
     const enablePlayButton = mediaVersionsSources?.length > 0;
     const enableTrailerButton = mediaDetails?.youtubeTrailerUrl;
     const selectedEpisodeIndentifier = `Season ${selectedEpisode.current.seasonNumber} Episode ${selectedEpisode.current.episodeNumber}`;
@@ -154,22 +184,23 @@ export default function MediaFullPresentation({ mediaId, onSimilarMediaClick, on
                 visible={showMediaPlayer}
                 mediaDetails={mediaDetails}
                 currentTime={mediaProgression?.currentTime}
+                shouldRestart={shouldRestart}
                 videoSource={mediaProgression?.videoSource}
                 episodeNumber={selectedEpisode.current.episodeNumber}
                 seasonNumber={selectedEpisode.current.seasonNumber}
                 mediaSources={mediaVersionsSources}
                 subtitlesSources={mediaSubtitlesSources}
-                onCloseClick={() => setShowMediaPlayer(false)} />
+                onCloseClick={() => { setShowMediaPlayer(false); getWatchMediaInfo(); }} />
             <CircularProgressBar size="x-large" position="center" visible={loadingMediaDetails} />
             <ModalMediaTrailer visible={showMediaTrailer} youtubeTrailerUrl={mediaDetails?.youtubeTrailerUrl} onCloseClick={() => setShowMediaTrailer(false)} />
             {mediaDetails?.seasonsCount ? <ModalEpisodeSelector
                 visible={showEpisodeSelection}
                 serieId={mediaDetails?.id}
                 numberOfSeasons={mediaDetails?.seasonsCount}
-                selectedSeason={selectedEpisode.current.seasonNumber}
+                defaultSeasonNumber={selectedEpisode.current.seasonNumber}
                 onEpisodeSelected={(seasonNumber, episodeNumber, watchProgress) => onEpisodeSelected(seasonNumber, episodeNumber, watchProgress)}
                 onCloseClick={() => setShowEpisodeSelection(false)} /> : null}
-
+            <Toast message={toastMessage} visible={showToastMessage} />
             <div style={noInfoMessageStyle}>
                 <h3>No info found for this media</h3>
                 <Button color="red" text="Back" onClick={() => onCloseClick()} />
@@ -201,9 +232,9 @@ export default function MediaFullPresentation({ mediaId, onSimilarMediaClick, on
                                         : null}
 
                                     <div className="actions-container">
-                                        {mediaDetails?.seasonsCount ? <Button text={selectedEpisodeIndentifier} color="white" onClick={() => setShowEpisodeSelection(true)} /> : null}
-                                        <Button imgSrc={PlayIcon} disabled={!enablePlayButton} text={mediaProgression?.progression ? "Resume" : "Play"} color="red" onClick={() => setShowMediaPlayer(true)} />
-                                        {mediaProgression?.progression ? <Button imgSrc={RestartIcon} rounded color="white" /> : null}
+                                        {mediaDetails?.seasonsCount ? <Button text={selectedEpisodeIndentifier} color="white" onClick={() => { setShowEpisodeSelection(true) }} /> : null}
+                                        <Button imgSrc={PlayIcon} disabled={!enablePlayButton} text={mediaProgression?.progression ? "Resume" : "Play"} color="red" onClick={() => openMediaPlayer(false)} />
+                                        {mediaProgression?.progression ? <Button imgSrc={RestartIcon} disabled={!enablePlayButton} rounded color="white" onClick={() => openMediaPlayer(true)} /> : null}
                                         <Button imgSrc={TrailerVideoIcon} disabled={!enableTrailerButton} color="transparent" rounded onClick={() => setShowMediaTrailer(true)} />
                                         <Button imgSrc={mediaIsBookmarked ? MinusIcon : PlusIcon} disabled={changingBookmark} color="transparent" rounded onClick={() => toggleBookmark()} />
                                     </div>

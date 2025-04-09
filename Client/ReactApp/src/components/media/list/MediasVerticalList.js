@@ -13,13 +13,22 @@ function MediasVerticalList({ title, medias, loadingProgressVisible, moreButtonV
 
     useEffect(() => {
         if (mediaListContainer?.current) {
-            const mediaLitePresentationWidth = getMediaLitePresentationWidth();
-            const gap = getComputedStyleValue(mediaListContainer?.current.querySelector(".media-vertical-list"), "gap");
-            const scrollbarWidth = 5;
-            const numberOfItemsPerLine = Math.floor((mediaListContainer.current.offsetWidth + scrollbarWidth) / (mediaLitePresentationWidth + (gap / 2)));
-            setMediaListWidth((numberOfItemsPerLine * mediaLitePresentationWidth) + ((numberOfItemsPerLine - 1) * gap));
+            computeListWidth();
+            window.addEventListener("resize", computeListWidth);
+        }
+
+        return () => {
+            window.removeEventListener("resize", computeListWidth);
         }
     }, [mediaListContainer])
+
+    const computeListWidth = () => {
+        const mediaLitePresentationWidth = getMediaLitePresentationWidth();
+        const gap = getComputedStyleValue(mediaListContainer?.current.querySelector(".media-vertical-list"), "gap");
+        const scrollbarWidth = 5;
+        const numberOfItemsPerLine = Math.floor((mediaListContainer.current.offsetWidth + scrollbarWidth) / (mediaLitePresentationWidth + (gap / 2)));
+        setMediaListWidth((numberOfItemsPerLine * mediaLitePresentationWidth) + ((numberOfItemsPerLine - 1) * gap));
+    }
 
     const getMediaLitePresentationWidth = () => {
         const tempElement = document.createElement('div');

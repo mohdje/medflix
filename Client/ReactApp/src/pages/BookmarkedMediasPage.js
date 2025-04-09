@@ -2,6 +2,7 @@ import { bookmarkApi } from "../services/api";
 import AppMode from "../services/appMode.js";
 import MediasVerticalList from "../components/media/list/MediasVerticalList";
 import { useEffect, useState, useReducer } from 'react';
+import { addEvent, eventsNames, removeEvent } from "../helpers/eventHelper.js";
 
 export default function BookmarkedMediasPage({ onMediaClick }) {
 
@@ -18,6 +19,7 @@ export default function BookmarkedMediasPage({ onMediaClick }) {
     const [title, titleDispatch] = useReducer(titleReducer, '');
 
     useEffect(() => {
+
         const loadList = async () => {
             const medias = await bookmarkApi.getBookmarkedMedias();
             setLoadingVisible(false);
@@ -27,6 +29,11 @@ export default function BookmarkedMediasPage({ onMediaClick }) {
             titleDispatch(medias?.length);
         }
         loadList();
+        addEvent(eventsNames.bookmarkUpdated, loadList);
+
+        return () => {
+            removeEvent(eventsNames.bookmarkUpdated, loadList)
+        }
     }, []);
 
     return (
