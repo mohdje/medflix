@@ -35,14 +35,14 @@ namespace WebHostStreaming.Controllers
         public async Task<IActionResult> GetStream(string base64TorrentUrl)
         {
             var torrentUrl = base64TorrentUrl.DecodeBase64();
-            return await StreamData(torrentUrl, RequestFromVLC() ? new VideoTorrentFileSelector() : new Mp4TorrentFileSelector());
+            return await StreamData(torrentUrl, new VideoTorrentFileSelector());
         }
 
         [HttpGet("stream/series")]
         public async Task<IActionResult> GetStream(string base64TorrentUrl, int seasonNumber, int episodeNumber)
         {
             var torrentUrl = base64TorrentUrl.DecodeBase64();
-            return await StreamData(torrentUrl, RequestFromVLC() ? new SerieEpisodeTorrentFileSelector(seasonNumber, episodeNumber) : new SerieEpisodeMp4TorrentFileSelector(seasonNumber, episodeNumber));
+            return await StreamData(torrentUrl, new SerieEpisodeTorrentFileSelector(seasonNumber, episodeNumber));
         }
 
         [HttpGet("stream/file")]
@@ -100,6 +100,12 @@ namespace WebHostStreaming.Controllers
 
         private async Task<IActionResult> StreamData(string torrentUrl, ITorrentFileSelector torrentFileSelector)
         {
+            var userAgent = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "User-Agent").Value.FirstOrDefault();
+            var clientAppIdientifier = userAgent?.Contains("MEDFLIX_CLIENT");
+
+            if (!clientAppIdientifier.GetValueOrDefault(false))
+                return Forbid();
+
             var stream = await torrentClientProvider.GetTorrentStreamAsync(torrentUrl, torrentFileSelector);
 
             if (stream == null)
@@ -126,11 +132,6 @@ namespace WebHostStreaming.Controllers
             fileContentResult.EnableRangeProcessing = true;
 
             return fileContentResult;
-        }
-        private bool RequestFromVLC()
-        {
-            var userAgent = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "User-Agent").Value.FirstOrDefault();
-            return userAgent != null && userAgent.StartsWith("VLC");
         }
     }
 }
