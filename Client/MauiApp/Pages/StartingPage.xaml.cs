@@ -1,13 +1,5 @@
 ﻿using Medflix.Models;
 using Medflix.Services;
-using Medflix.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-
 
 namespace Medflix.Pages
 {
@@ -16,7 +8,6 @@ namespace Medflix.Pages
     {
         public event EventHandler OnReady;
 
-        AppConfig AppConfig;
         public StartingPage()
         {
             InitializeComponent();
@@ -26,70 +17,53 @@ namespace Medflix.Pages
         {
             base.OnAppearing();
 
-            Spinner.IsRunning = true;
-            AddressInputArea.IsVisible = false;
-
-            Task.Run(async () => await Init());
-        }
-
-        private async Task Init()
-        {
-            string hostServiceAdress = string.Empty;
-            try
+            if (!string.IsNullOrEmpty(AppConfig.Instance.MedflixServiceAddress))
             {
-                var filePath = Path.Combine(FileSystem.Current.AppDataDirectory, Consts.AppCongifFileName);
-                var text = File.ReadAllText(filePath);
-
-                if (!string.IsNullOrEmpty(text))
+                Task.Run(async () =>
                 {
-                    AppConfig = JsonSerializer.Deserialize<AppConfig>(text);
-                    hostServiceAdress = AppConfig.MedflixServiceAddress;
-                }
-
+                    var hostAdressValid = await TryHostServiceAddress(AppConfig.Instance.MedflixServiceAddress);
+                    if (hostAdressValid)
+                        OnReady?.Invoke(this, EventArgs.Empty);
+                });
             }
-            catch (Exception ex)
-            {
-            }
-
-            await TrySetHostServiceAddress(hostServiceAdress);
+            else
+                ShowLoading(false);
         }
 
-        private async Task TrySetHostServiceAddress(string serviceAddress)
+        private async Task<bool> TryHostServiceAddress(string serviceAddress)
         {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Spinner.IsRunning = true;
-                AddressInputArea.IsVisible = false;
-            });
+            ShowLoading(true);
 
             await Task.Delay(1500);
 
-            var isReady = await MedflixApiService.Instance.SetHostServiceAddressAsync(serviceAddress);
+            var isServiceAddressValid = await MedflixApiService.Instance.TrySetHostServiceAddressAsync(serviceAddress);
 
-            if (isReady)
-            {
-                if (AppConfig != null)
-                    AppConfig.MedflixServiceAddress = serviceAddress;
-                else
-                    AppConfig = new AppConfig { MedflixServiceAddress = serviceAddress };
+            if (!isServiceAddressValid)
+                ShowLoading(false);
 
-                var filePath = Path.Combine(FileSystem.Current.AppDataDirectory, Consts.AppCongifFileName);
-                var appConfigJson = JsonSerializer.Serialize(AppConfig);
-                File.WriteAllText(filePath, appConfigJson);
+            return isServiceAddressValid;
+        }
 
-                OnReady?.Invoke(this, EventArgs.Empty);
-            }
-
+        private void ShowLoading(bool showSpinner)
+        {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                Spinner.IsRunning = false;
-                AddressInputArea.IsVisible = true;
+                Spinner.IsRunning = showSpinner;
+                AddressInputArea.IsVisible = !showSpinner;
             });
         }
 
         private void EntryCompleted(object sender, EventArgs e)
         {
-            Task.Run(async () => await TrySetHostServiceAddress(AddressInput.Text));
+            Task.Run(async () => {
+                await TryHostServiceAddress(AddressInput.Text);
+                var hostAdressValid = await TryHostServiceAddress(AddressInput.Text);
+                if (hostAdressValid)
+                {
+                    AppConfig.Instance.UpdateHostServiceAddress(AddressInput.Text);
+                    OnReady?.Invoke(this, EventArgs.Empty);
+                }
+            });
         }
     }
 }

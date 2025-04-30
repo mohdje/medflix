@@ -1,5 +1,7 @@
 ﻿using Shared = LibVLCSharp.Shared;
 using System.ComponentModel;
+using Medflix.Models;
+using LibVLCSharp.Shared;
 
 namespace Medflix.ViewModels
 {
@@ -34,10 +36,16 @@ namespace Medflix.ViewModels
 
         public MediaPlayerViewModel()
         {
+          if(DeviceInfo.Current.Platform != DevicePlatform.WinUI) 
+               Initialize();
+        }
+
+        public void Initialize(string[] swapchainOptions = null)
+        {
             try
             {
-                LibVLC = new Shared.LibVLC(enableDebugLogs: true);
-               // LibVLC.SetUserAgent("your_id", "your_id");
+                LibVLC = swapchainOptions != null ? new LibVLC(enableDebugLogs: true, swapchainOptions) : new LibVLC(enableDebugLogs: true);
+                LibVLC.SetUserAgent(AppConfig.Instance.AppIdentifier, AppConfig.Instance.AppIdentifier);
             }
             catch (Exception ex)
             {
@@ -123,7 +131,5 @@ namespace Medflix.ViewModels
                 MediaPlayer.SetPause(false);
             }
         }
-
- 
     }
 }

@@ -1,21 +1,26 @@
 ﻿
+#if ANDROID 
 using Android.Views;
+#endif
 using LibVLCSharp.Shared;
 using Medflix.Controls;
 using Medflix.Models.Media;
 using Medflix.Models.VideoPlayer;
 using Medflix.Services;
 using Medflix.ViewModels;
+using Medflix.Views;
 using System;
 using System.Diagnostics;
 using System.Reflection.PortableExecutable;
 using System.Threading.Channels;
+using static Microsoft.Maui.ApplicationModel.Permissions;
 
 
 namespace Medflix.Pages
 {
     public partial class VideoPlayerPage : ContentPage
     {
+        public event EventHandler CloseVideoPlayerRequested;
         MediaPlayerViewModel MediaPlayerViewModel => ((MediaPlayerViewModel)BindingContext);
 
         DateTime LastUserActionDateTime;
@@ -28,41 +33,47 @@ namespace Medflix.Pages
         public VideoPlayerPage(VideoPlayerParameters videoPlayerParameters)
         {
             InitializeComponent();
+
+            #if ANDROID
+                if (DeviceInfo.Current.Idiom == DeviceIdiom.Phone)
+                    Microsoft.Maui.ApplicationModel.Platform.CurrentActivity.RequestedOrientation = Android.Content.PM.ScreenOrientation.Landscape;
+            #endif
+
             VideoPlayerParameters = videoPlayerParameters;
 
             InitVideoPlayerControls();
 
             var videoUrl = SelectDefaultVideoUrl(videoPlayerParameters);
-            PlayMedia(videoUrl, (long)(videoPlayerParameters.WatchMedia.CurrentTime * 1000));
+            if(DeviceInfo.Current.Platform != DevicePlatform.WinUI)
+                PlayMedia(videoUrl, (long)(videoPlayerParameters.WatchMedia.CurrentTime * 1000));
 
             VideoPlayerMenu.Init(videoPlayerParameters.SubtitlesSources, videoPlayerParameters.MediaSources, videoUrl);
         }
 
         private string SelectDefaultVideoUrl(VideoPlayerParameters videoPlayerParameters)
         {
-            if (!string.IsNullOrEmpty(videoPlayerParameters.WatchMedia.VideoSource))
+            var mediaSource = videoPlayerParameters.MediaSources.SelectMany(ms => ms.Sources).FirstOrDefault(s => !string.IsNullOrEmpty(s.FilePath));
+            if (mediaSource != null)
+                return mediaSource.FilePath;
+            else if(!string.IsNullOrEmpty(videoPlayerParameters.WatchMedia.VideoSource))
                 return videoPlayerParameters.WatchMedia.VideoSource;
             else
-            {
-                var mediaSource = videoPlayerParameters.MediaSources.SelectMany(ms => ms.Sources).FirstOrDefault(s => !string.IsNullOrEmpty(s.FilePath));
-                if (mediaSource != null)
-                    return mediaSource.FilePath;
-                else
-                    return videoPlayerParameters.MediaSources.First().Sources.First().TorrentUrl;
-            }
+                return videoPlayerParameters.MediaSources.First().Sources.First().TorrentUrl;
         }
         private void InitVideoPlayerControls()
         {
-            var episodeInfo =VideoPlayerParameters.WatchMedia.Media.SeasonsCount > 0 ? $" (Season {VideoPlayerParameters.WatchMedia.SeasonNumber} Ep. {VideoPlayerParameters.WatchMedia.EpisodeNumber})" : null;
+            var episodeInfo = VideoPlayerParameters.WatchMedia.Media.SeasonsCount > 0 ? $" (Season {VideoPlayerParameters.WatchMedia.SeasonNumber} Ep. {VideoPlayerParameters.WatchMedia.EpisodeNumber})" : null;
             MediaTitle.Text = VideoPlayerParameters.WatchMedia.Media.Title + episodeInfo;
 
-            PlayerControls.OnVisibilityChanged += (s, isVisible) => MediaTitle.IsVisible = isVisible;
+            PlayerControls.OnVisibilityChanged += (s, isVisible) => TopBar.IsVisible = isVisible;
 
             PlayerControls.SetSubtitlesButtonVisibility(VideoPlayerParameters.SubtitlesSources.Any());
 
             PlayerControls.OnPlayPauseButtonClick += (s, e) => MediaPlayerViewModel.TogglePlay();
             PlayerControls.OnSubtitlesButtonClick += (s, e) => VideoPlayerMenu.ShowSubtitlesMenu();
             PlayerControls.OnQualitiesButtonClick += (s, e) => VideoPlayerMenu.ShowVideoQualitiesMenu();
+            PlayerControls.OnEnterFullscreenButtonClick += (s, e) => SetFullscreen(true);
+            PlayerControls.OnExitFullscreenButtonClick += (s, e) => SetFullscreen(false);
 
             PlayerControls.OnTimeBarStartNavigating += (s, e) => MediaPlayerViewModel.MediaPlayer.SetPause(true);
             PlayerControls.OnTimeBarNavigated += (s, percentage) => MediaPlayerViewModel.Seek(percentage);
@@ -70,34 +81,123 @@ namespace Medflix.Pages
             VideoPlayerMenu.OnDisplaySubtitlesClick += async (s, url) => await Subtitles.DisplaySubtitles(url);
             VideoPlayerMenu.OnNoSubtitlesClick += (s, e) => Subtitles.HideSubtitles();
             VideoPlayerMenu.OnVideoQualityClick += (s, url) => PlayMedia(url, (long)(VideoPlayerParameters.WatchMedia.CurrentTime * 1000));
+
+            this.LeaveVideoPlayerConfirmationView.OnConfirm += (s, e) =>
+            {
+                SetFullscreen(false);
+                CloseVideoPlayerRequested?.Invoke(this, EventArgs.Empty);
+            };
+            this.LeaveVideoPlayerConfirmationView.OnCancel += (s, e) =>
+            {
+                this.MediaPlayerViewModel.MediaPlayer.Play();
+                LeaveVideoPlayerConfirmationView.Hide();
+            };
+
+            if(DeviceInfo.Current.Idiom == DeviceIdiom.Desktop)
+            {
+                var mouseRecognizer = new PointerGestureRecognizer();
+                mouseRecognizer.PointerMoved += OnUserAction;
+                Content.GestureRecognizers.Add(mouseRecognizer);
+            }
+            else if (DeviceInfo.Current.Idiom == DeviceIdiom.Phone)
+            {
+                var tapGestureRecognizer = new TapGestureRecognizer();
+                tapGestureRecognizer.Tapped += OnUserAction;
+                Content.GestureRecognizers.Add(tapGestureRecognizer);
+            }
+            else if (DeviceInfo.Current.Idiom == DeviceIdiom.TV)
+            {
+                ClosePlayerButton.IsVisible = false;
+            }
+        }
+
+        private void SetFullscreen(bool fullscreen)
+        {
+        #if WINDOWS
+
+            var window = GetParentWindow().Handler.PlatformView as MauiWinUIWindow;
+            var handle = WinRT.Interop.WindowNative.GetWindowHandle(window);
+            var id = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(handle);
+            var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(id);
+
+
+            switch (appWindow.Presenter)
+            {
+                case Microsoft.UI.Windowing.OverlappedPresenter overlappedPresenter:
+                    if (fullscreen)
+                    {
+                        overlappedPresenter.SetBorderAndTitleBar(false, false);
+                        overlappedPresenter.Maximize();
+                    }
+                    else
+                    {
+                        overlappedPresenter.SetBorderAndTitleBar(true, true);
+                        overlappedPresenter.Restore();
+                    }
+
+                    break;
+            }
+        #endif
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            MediaPlayerViewModel.OnAppearing();
-            RemoteCommandActionNotifier.Instance.OnButtonPressed += OnUserAction;
+          
+            if(DeviceInfo.Current.Platform != DevicePlatform.WinUI) 
+                MediaPlayerViewModel.OnAppearing();
 
-#if ANDROID
-                Microsoft.Maui.ApplicationModel.Platform.CurrentActivity.Window.AddFlags(WindowManagerFlags.KeepScreenOn |
+            if (DeviceInfo.Current.Idiom == DeviceIdiom.TV)
+            {
+                RemoteCommandActionNotifier.Instance.PreventBackButton = true;
+                RemoteCommandActionNotifier.Instance.OnBackButtonPressed += OnCloseButtonPressed;
+                RemoteCommandActionNotifier.Instance.OnButtonPressed += OnUserAction;
+            }
+          
+
+            #if ANDROID
+                Platform.CurrentActivity.Window.AddFlags(WindowManagerFlags.KeepScreenOn |
                             WindowManagerFlags.DismissKeyguard |
                             WindowManagerFlags.ShowWhenLocked |
-                            WindowManagerFlags.TurnScreenOn);
-#endif
-        }
+                            WindowManagerFlags.TurnScreenOn |
+                            WindowManagerFlags.Fullscreen);
 
+                Platform.CurrentActivity.Window.DecorView.SystemUiFlags = SystemUiFlags.ImmersiveSticky |
+                                        SystemUiFlags.HideNavigation |
+                                        SystemUiFlags.Fullscreen |
+                                        SystemUiFlags.Immersive;
+            #endif
+        }
 
         protected override async void OnDisappearing()
         {
-#if ANDROID
-                        Microsoft.Maui.ApplicationModel.Platform.CurrentActivity.Window.ClearFlags(WindowManagerFlags.KeepScreenOn |
-                                    WindowManagerFlags.DismissKeyguard |
-                                    WindowManagerFlags.ShowWhenLocked |
-                                    WindowManagerFlags.TurnScreenOn);
+            #if ANDROID
+                Platform.CurrentActivity.Window.ClearFlags(WindowManagerFlags.KeepScreenOn |
+                            WindowManagerFlags.DismissKeyguard |
+                            WindowManagerFlags.ShowWhenLocked |
+                            WindowManagerFlags.TurnScreenOn | 
+                            WindowManagerFlags.Fullscreen);
+
+                Platform.CurrentActivity.Window.DecorView.SystemUiFlags = SystemUiFlags.Visible;
 #endif
-            RemoteCommandActionNotifier.Instance.OnButtonPressed -= OnUserAction;
-            MediaPlayerViewModel.OnDisappearing();
+
+            if (DeviceInfo.Current.Idiom == DeviceIdiom.TV)
+            {
+                RemoteCommandActionNotifier.Instance.OnButtonPressed -= OnUserAction;
+                RemoteCommandActionNotifier.Instance.OnBackButtonPressed -= OnCloseButtonPressed;
+                RemoteCommandActionNotifier.Instance.PreventBackButton = false;
+            }
+          
             base.OnDisappearing();
+        }
+
+        protected override void OnSizeAllocated(double width, double height)
+        {
+            base.OnSizeAllocated(width, height);
+
+            shouldRedraw = true;
+
+            Subtitles.NotifyScreenSizeChanged(width);
         }
 
         private void VideoView_MediaPlayerChanged(object sender, MediaPlayerChangedEventArgs e)
@@ -129,6 +229,15 @@ namespace Medflix.Pages
             PlayerControls.Show();
         }
 
+        private void OnCloseButtonPressed(object? sender, EventArgs e)
+        {
+            if (!this.VideoPlayerMenu.IsVisible)
+            {
+                this.MediaPlayerViewModel.MediaPlayer.SetPause(true);
+                this.LeaveVideoPlayerConfirmationView.Show();
+            }
+        }
+
         private void PlayMedia(string mediaUrl, long startTime)
         {
             int? seasonNumber = VideoPlayerParameters.WatchMedia.SeasonNumber == 0 ? null : VideoPlayerParameters.WatchMedia.SeasonNumber;
@@ -138,6 +247,23 @@ namespace Medflix.Pages
             VideoPlayerParameters.WatchMedia.VideoSource = mediaUrl;
 
             MediaPlayerViewModel.PlayMedia(url, startTime);
+        }
+
+        private void VideoView_HandlerChanged(object sender, EventArgs e)
+        {
+            #if WINDOWS
+                var windowsView = ((LibVLCSharp.Platforms.Windows.VideoView)VideoView.Handler.PlatformView);
+
+                windowsView.Initialized += (s, e) =>
+                {
+                    MediaPlayerViewModel.Initialize(e.SwapChainOptions);
+
+                    var videoUrl = SelectDefaultVideoUrl(VideoPlayerParameters);
+                    PlayMedia(videoUrl, (long)(VideoPlayerParameters.WatchMedia.CurrentTime * 1000));
+
+                    MediaPlayerViewModel.OnAppearing();
+                };
+            #endif
         }
 
         #region MediaPlayer Events
@@ -211,5 +337,6 @@ namespace Medflix.Pages
         }
 
         #endregion
+
     }
 }

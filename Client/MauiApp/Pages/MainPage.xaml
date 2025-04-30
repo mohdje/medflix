@@ -3,12 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Medflix.Pages.MainPage"
              xmlns:views="clr-namespace:Medflix.Views"
-             Shell.NavBarIsVisible="False">
-
-    <views:MainPageView 
-        x:Name="MainPageWebView"
-        Source="WebViews/MainPage/index.html"
-        HorizontalOptions="Fill" 
+              NavigationPage.HasNavigationBar="False">
+    <WebView x:Name="AppWebView" 
+        BackgroundColor="Black"
+        HorizontalOptions="Fill"  
         VerticalOptions="Fill"/>
-
 </ContentPage>

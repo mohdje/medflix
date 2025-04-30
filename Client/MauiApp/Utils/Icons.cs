@@ -8,14 +8,17 @@ namespace Medflix.Utils
 {
     public static class Icons
     {
-        const string PLAY_SVG = "play.svg";
-        const string PAUSE_SVG = "pause.svg";
-        const string SUBTITLES_SVG = "subtitles.svg";
-        const string QUALITIES_SVG = "settings.svg";
+        public static ImageSource PlayIcon => GetImageSourceFromFile("play");
+        public static ImageSource PauseIcon => GetImageSourceFromFile("pause");
+        public static ImageSource SubtitlesIcon => GetImageSourceFromFile("subtitles");
+        public static ImageSource QualitiesIcon => GetImageSourceFromFile("settings");
+        public static ImageSource FullscreenIcon => GetImageSourceFromFile("fullscreen");
+        public static ImageSource FullscreenExitIcon => GetImageSourceFromFile("fullscreen_exit");
 
-        public static ImageSource PlayIcon => ImageSource.FromFile(PLAY_SVG);
-        public static ImageSource PauseIcon => ImageSource.FromFile(PAUSE_SVG);
-        public static ImageSource SubtitlesIcon => ImageSource.FromFile(SUBTITLES_SVG);
-        public static ImageSource QualitiesIcon => ImageSource.FromFile(QUALITIES_SVG);
+        private static ImageSource GetImageSourceFromFile(string filename)
+        {
+            string imgExtension = DeviceInfo.Current.Platform == DevicePlatform.WinUI ? "png" : "svg";
+            return ImageSource.FromFile($"{filename}.{imgExtension}");
+        }
     }
 }

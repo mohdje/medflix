@@ -16,10 +16,13 @@ namespace Medflix.Controls.VideoPlayer
         ImageButton PlayPauseButton;
         ImageButton SubtitlesButton;
         ImageButton QualitiesButton;
+        ImageButton ToggleFullscreenButton;
 
         public event EventHandler OnPlayPauseButtonClick;
         public event EventHandler OnSubtitlesButtonClick;
         public event EventHandler OnQualitiesButtonClick;
+        public event EventHandler OnEnterFullscreenButtonClick;
+        public event EventHandler OnExitFullscreenButtonClick;
         public event EventHandler OnTimeBarStartNavigating;
         public event EventHandler<double> OnTimeBarNavigated;
         public event EventHandler<bool> OnVisibilityChanged;
@@ -42,7 +45,7 @@ namespace Medflix.Controls.VideoPlayer
                 Children =
                 {
                      new StackLayout { PlayPauseButton },
-                     new HorizontalStackLayout { SubtitlesButton, QualitiesButton }
+                     new HorizontalStackLayout { SubtitlesButton, QualitiesButton, ToggleFullscreenButton }
                 }
             };
 
@@ -80,11 +83,31 @@ namespace Medflix.Controls.VideoPlayer
             PlayPauseButton.Clicked += (s, e) => OnPlayPauseButtonClick?.Invoke(this, EventArgs.Empty);
 
             SubtitlesButton = new VideoPlayerControlButton(Icons.SubtitlesIcon);
-            SubtitlesButton.Margin = new Thickness(0, 0, 30, 0);
             SubtitlesButton.Clicked += (s, e) => OnSubtitlesButtonClick?.Invoke(this, EventArgs.Empty);
 
             QualitiesButton = new VideoPlayerControlButton(Icons.QualitiesIcon);
+            QualitiesButton.Margin = new Thickness(30, 0, 0, 0);
             QualitiesButton.Clicked += (s, e) => OnQualitiesButtonClick?.Invoke(this, EventArgs.Empty);
+
+            if (DeviceInfo.Current.Platform == DevicePlatform.WinUI)
+            {
+                ToggleFullscreenButton = new VideoPlayerControlButton(Icons.FullscreenIcon);
+                ToggleFullscreenButton.Margin = new Thickness(30, 0, 0, 0);
+                ToggleFullscreenButton.Clicked += (s, e) =>
+                {
+                    if ((ToggleFullscreenButton.Source as FileImageSource)?.File == (Icons.FullscreenIcon as FileImageSource)?.File)
+                    {
+
+                        ToggleFullscreenButton.Source = Icons.FullscreenExitIcon;
+                        OnEnterFullscreenButtonClick?.Invoke(this, EventArgs.Empty);
+                    }
+                    else
+                    {
+                        ToggleFullscreenButton.Source = Icons.FullscreenIcon;
+                        OnExitFullscreenButtonClick?.Invoke(this, EventArgs.Empty);
+                    }
+                };
+            }
         }
 
         public void NotifyTimeUpdated(long timeInMs, long totalTimeInMs)
@@ -93,7 +116,8 @@ namespace Medflix.Controls.VideoPlayer
 
             TimeBar.UpdateProgress(timeInMs, totalTimeInMs);
 
-            PlayPauseButton.Source = Icons.PauseIcon;
+            if ((PlayPauseButton.Source as FileImageSource)?.File != (Icons.PauseIcon as FileImageSource)?.File)
+                PlayPauseButton.Source = Icons.PauseIcon;
         }
 
         public void NotifyPaused()

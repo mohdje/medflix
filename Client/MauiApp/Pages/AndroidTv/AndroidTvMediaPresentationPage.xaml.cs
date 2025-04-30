@@ -151,16 +151,12 @@ namespace Medflix.Pages.AndroidTv
 
         private async Task PlayMedia(bool forceRestart = false)
         {
-            var videoPlayerOptions = new VideoPlayerParameters();
-
             var subtitlesSources = new List<SubtitlesSources>();
             if (frenchSubtitlesUrls != null && frenchSubtitlesUrls.Any())
                 subtitlesSources.Add(new SubtitlesSources { Language = "French", Urls = frenchSubtitlesUrls.ToArray() });
 
             if (englishSubtitlesUrls != null && englishSubtitlesUrls.Any())
                 subtitlesSources.Add(new SubtitlesSources { Language = "English", Urls = englishSubtitlesUrls.ToArray() });
-
-            videoPlayerOptions.SubtitlesSources = subtitlesSources.ToArray();
 
             var mediaSources = new List<MediaSources>();
             if (voSources != null && voSources.Any())
@@ -169,31 +165,27 @@ namespace Medflix.Pages.AndroidTv
             if (vfSources != null && vfSources.Any())
                 mediaSources.Add(new MediaSources { Language = "French", Sources = vfSources.ToArray() });
 
-            videoPlayerOptions.MediaSources = mediaSources.ToArray();
-
-            var videoSource = string.Empty;
-            if (videoPlayerMediaWatched != null)
+            var videoPlayerParameters = new VideoPlayerParameters
             {
-                var files = mediaSources.SelectMany(s => s.Sources.Select(t => t.FilePath));
-                var torrents = mediaSources.SelectMany(s => s.Sources.Select(t => t.TorrentUrl));
-
-                if (files.Any(url => url == videoPlayerMediaWatched.VideoSource))
-                    videoSource = videoPlayerMediaWatched.VideoSource;
-
-                else if (torrents.Any(url => url == videoPlayerMediaWatched.VideoSource))
-                    videoSource = videoPlayerMediaWatched.VideoSource;
-            }
-
-            videoPlayerOptions.WatchMedia = new WatchMediaInfo
-            {
-                Media = mediaDetails,
-                CurrentTime = forceRestart ? 0 : videoPlayerMediaWatched?.CurrentTime ?? 0,
-                EpisodeNumber = episodeNumber.GetValueOrDefault(0),
-                SeasonNumber = seasonNumber.GetValueOrDefault(0),
-                VideoSource = videoSource
+                SubtitlesSources = subtitlesSources.ToArray(),
+                MediaSources = mediaSources.ToArray(),
+                WatchMedia = new WatchMediaInfo
+                {
+                    Media = mediaDetails,
+                    CurrentTime = forceRestart ? 0 : videoPlayerMediaWatched?.CurrentTime ?? 0,
+                    EpisodeNumber = episodeNumber.GetValueOrDefault(0),
+                    SeasonNumber = seasonNumber.GetValueOrDefault(0),
+                    VideoSource = videoPlayerMediaWatched?.VideoSource
+                }
             };
 
-            await Navigation.PushAsync(new VideoPlayerPage(videoPlayerOptions));
+            var videoPlayerPage = new VideoPlayerPage(videoPlayerParameters);
+            videoPlayerPage.CloseVideoPlayerRequested += async (s, e) =>
+            {
+                await Navigation.PopAsync();
+            };
+
+            await Navigation.PushAsync(videoPlayerPage);
         }
 
         #region Fetching Resources

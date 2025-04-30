@@ -8,15 +8,28 @@
           BackgroundColor="Black"
           HorizontalOptions="End"
           VerticalOptions="Fill"
-          WidthRequest="200">
-        <Label 
-            x:Name="MenuTitle"
-            TextColor="White"
-            VerticalTextAlignment="Center"
-            HorizontalTextAlignment="Center"
-            FontAttributes="Bold"
-            FontSize="22"
-            />
+          WidthRequest="230">
+        <Grid>
+            <Label 
+                x:Name="MenuTitle"
+                Grid.Column="0"
+                TextColor="White"
+                VerticalTextAlignment="Center"
+                HorizontalTextAlignment="Center"
+                FontAttributes="Bold"
+                FontSize="Subtitle"
+             />
+            <ImageButton 
+                x:Name="CloseButton"
+                Grid.Column="0"
+                HorizontalOptions="End"
+                Source="cross.png" 
+                BackgroundColor="Transparent"
+                WidthRequest="50"
+                Padding="5"
+                Margin="0,-2,0,0"/>
+        </Grid>
+       
         <ScrollView 
            Grid.Row="1"
            VerticalOptions="Fill"

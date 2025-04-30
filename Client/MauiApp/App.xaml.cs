@@ -20,8 +20,11 @@ namespace Medflix
                 handler.PlatformView.Settings.AllowUniversalAccessFromFileURLs = true;
                 handler.PlatformView.Settings.MediaPlaybackRequiresUserGesture = false;
                 handler.PlatformView.Settings.UserAgentString = "Mozilla/5.0";
+                handler.PlatformView.Settings.ForceDark = Android.Webkit.ForceDarkMode.Off;
 #endif
             });
+
+            this.UserAppTheme = AppTheme.Light;
 
             InitializeComponent();
 
@@ -30,8 +33,10 @@ namespace Medflix
             {
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    MainPage = new NavigationPage(new AndroidTvMainPage());
-
+                    if (DeviceInfo.Current.Idiom == DeviceIdiom.TV)
+                        MainPage = new NavigationPage(new AndroidTvMainPage());
+                    else
+                        MainPage = new NavigationPage(new MainPage());
                 });
             };
 

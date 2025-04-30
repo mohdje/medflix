@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0-ios;net8.0-android34.0</TargetFrameworks>
+		<TargetFrameworks>net8.0-ios;net8.0-android</TargetFrameworks>
 		<!--Uncomment to support android, ios, mac, windows-->
 		<!--<TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>-->
 		<!--<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>-->
@@ -23,7 +23,8 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		
+		<!--To fix build Release for Android -->
+		<!--<PublishTrimmed Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">true</PublishTrimmed>-->
 		<!-- Display name -->
 		<ApplicationTitle>Medflix</ApplicationTitle>
 
@@ -42,13 +43,25 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
+	<PropertyGroup>
+	  <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.26100.0</TargetFrameworks>
+	  <DefaultLanguage>en</DefaultLanguage>
+	  <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+	  <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+	  <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+	  <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+	  <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+	  <GenerateTestArtifacts>True</GenerateTestArtifacts>
+	  <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+	  <PackageCertificateThumbprint>5C24E9D466A2A9EAD6FECF354CD37D216BBEAD93</PackageCertificateThumbprint>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" />
-		<MauiIcon Include="Resources\AppIcon\appiconfg.svg" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+		<MauiSplashScreen Include="Resources\Splash\splash_screen_logo.svg" Color="#000000" BaseSize="256,256" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
@@ -62,7 +75,7 @@
 
 	<ItemGroup>
 	  <None Remove="Resources\AppIcon\appicon.svg" />
-	  <None Remove="Resources\AppIcon\appiconfg.svg" />
+	  <None Remove="Resources\AppIcon\appiconfg0.svg" />
 	  <None Remove="Resources\Images\bookmark.svg" />
 	  <None Remove="Resources\Images\categories.svg" />
 	  <None Remove="Resources\Images\default_cover.svg" />
@@ -84,14 +97,21 @@
 	  <None Remove="Resources\Images\tv.svg" />
 	  <None Remove="Resources\Raw\WebViews\index.html" />
 	  <None Remove="Resources\Raw\WebViews\VideoTrailerPage\index.html" />
+	  <None Remove="Resources\Splash\splash_screen_logo.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="LibVLCSharp.MAUI" Version="3.9.0" />
+	  <MauiSplashScreen Include="Resources\Splash\splash_screen_logo.svg" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="LibVLCSharp.MAUI" Version="3.9.3" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.71" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 		<PackageReference Include="VideoLAN.LibVLC.Android" Version="3.5.3" />
+		<PackageReference Include="VideoLAN.LibVLC.Mac" Version="3.1.3.1" />
+		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.21" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -150,6 +170,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\AndroidTv\WatchHistoryView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\LeaveVideoPlayerConfirmationView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\VideoPlayerSideMenuView.xaml">

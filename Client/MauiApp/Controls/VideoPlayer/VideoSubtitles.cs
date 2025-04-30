@@ -1,5 +1,7 @@
 ﻿using Medflix.Models.VideoPlayer;
 using Medflix.Services;
+using Medflix.Utils;
+using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,6 +68,11 @@ namespace Medflix.Controls.VideoPlayer
                 SubtitlesLabel.FontAttributes = FontAttributes.None;
                 SubtitlesLabel.Text = subtitles?.Text;
             }
+        }
+
+        public void NotifyScreenSizeChanged(double width)
+        {
+            SubtitlesLabel.FontSize = width / 35;
         }
     }
 }

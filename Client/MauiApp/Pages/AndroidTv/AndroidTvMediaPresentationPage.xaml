@@ -86,7 +86,7 @@
                     HorizontalOptions="Start"
                      WidthRequest="150"
                     Margin="0,30,0,0">
-                    <Label x:Name="RemainingTime" HorizontalTextAlignment="Center"/>
+                    <Label x:Name="RemainingTime" TextColor="Gray" HorizontalTextAlignment="Center"/>
                     <ProgressBar x:Name="WatchingProgress" ProgressColor="Red"/>
                 </VerticalStackLayout>
                 

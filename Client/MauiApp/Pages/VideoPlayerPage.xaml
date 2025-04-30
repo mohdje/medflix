@@ -7,36 +7,50 @@
              xmlns:controls="clr-namespace:Medflix.Controls.VideoPlayer"
              xmlns:views="clr-namespace:Medflix.Views"
              NavigationPage.HasNavigationBar="False"
-             BackgroundColor="Black"
->
+             NavigationPage.HasBackButton="False"
+             BackgroundColor="Black">
     <ContentPage.BindingContext>
         <local:MediaPlayerViewModel />
     </ContentPage.BindingContext>
     <Grid>
 
-        <controls:LoadingSpinner 
-            x:Name="LoadingSpinner"
-            Grid.Row="0" 
-            ZIndex="6" />
+        <views:LeaveVideoPlayerConfirmationView
+           x:Name="LeaveVideoPlayerConfirmationView"
+           IsVisible="False"
+           Grid.Row="0" 
+           ZIndex="7" />
 
         <views:VideoPlayerSideMenuView
             x:Name="VideoPlayerMenu"
             Grid.Row="0" 
-            ZIndex="5" />
+            ZIndex="6" />
 
-        <Label 
-            x:Name="MediaTitle"
-            Grid.Row="0" 
-            FontSize="Title" 
-            FontAttributes="Bold" 
-            ZIndex="4"
-            Margin="10,8,0,0"
-            TextColor="White"/>
-        
+        <Grid 
+            x:Name="TopBar"
+            VerticalOptions="Start"
+            Margin="10"
+            ZIndex="5"
+            MaximumHeightRequest="150" 
+            ColumnDefinitions="*,50">
+            <Label 
+                x:Name="MediaTitle"
+                Grid.Column="0" 
+                FontSize="Title" 
+                FontAttributes="Bold" 
+                TextColor="White"/>
+            <controls:VideoPlayerControlButton
+                x:Name="ClosePlayerButton"
+                Grid.Column="1"
+                Source="cross.png" 
+                Clicked="OnCloseButtonPressed"
+                />
+        </Grid>
+      
+
         <controls:VideoPlayerControls  
-            x:Name="PlayerControls"
-            Grid.Row="0" 
-            ZIndex="3">
+         x:Name="PlayerControls"
+         Grid.Row="0" 
+         ZIndex="4">    
             <controls:VideoPlayerControls.Background>
                 <LinearGradientBrush EndPoint="0,1">
                     <GradientStop Color="Black" Offset="0" />
@@ -45,6 +59,11 @@
                 </LinearGradientBrush>
             </controls:VideoPlayerControls.Background>
         </controls:VideoPlayerControls>
+
+        <controls:LoadingSpinner 
+             x:Name="LoadingSpinner"
+             Grid.Row="0" 
+             ZIndex="3" />
 
         <controls:VideoSubtitles   
             x:Name="Subtitles"
@@ -57,6 +76,7 @@
             ZIndex="1" 
             MediaPlayer="{Binding MediaPlayer}" 
             MediaPlayerChanged="VideoView_MediaPlayerChanged"  
+            HandlerChanged="VideoView_HandlerChanged"
             HorizontalOptions="FillAndExpand" 
             VerticalOptions="FillAndExpand"/>
     </Grid>

@@ -80,15 +80,35 @@ namespace Medflix.Controls.VideoPlayer
                 StrokeThickness = 0,
                 Content = new StackLayout
                 {
-                    Children = 
+                    Children =
                     {
                         HiddenButton,
                         ProgressBarContainer
                     }
                 }
             };
-
             Content = Border;
+
+            AddGestureEvent();
+        }
+
+        private void AddGestureEvent()
+        {
+            if (DeviceInfo.Idiom == DeviceIdiom.Phone || DeviceInfo.Current.Idiom == DeviceIdiom.Desktop)
+            {
+                var tapGestureRecognizer = new TapGestureRecognizer();
+                tapGestureRecognizer.NumberOfTapsRequired = 1;
+                tapGestureRecognizer.Tapped += async (s, e) =>
+                {
+                    var position = e.GetPosition(ProgressBarContainer);
+                    if (position.HasValue)
+                    {
+                        pourcentProgress = position.Value.X / ProgressBarContainer.Width;
+                        await StartNavigationAsync();
+                    }
+                };
+                Content.GestureRecognizers.Add(tapGestureRecognizer);
+            }
         }
 
         private void OnFocused(object? sender, FocusEventArgs e)
@@ -101,22 +121,26 @@ namespace Medflix.Controls.VideoPlayer
             RemoteCommandActionNotifier.Instance.OnRightButtonPressed += OnRightButtonPressed;
         }
 
-      
         private async void OnLeftButtonPressed(object? sender, EventArgs e)
         {
-            await StartNavigationAsync(-pourcentNavigation);
+            await SetNavigationOffsetAsync(-pourcentNavigation);
         }
 
         private async void OnRightButtonPressed(object? sender, EventArgs e)
         {
-            await StartNavigationAsync(pourcentNavigation);
+            await SetNavigationOffsetAsync(pourcentNavigation);
         }
-        private async Task StartNavigationAsync(double offset)
+        private async Task SetNavigationOffsetAsync(double offset)
+        {
+            if (pourcentProgress >= 0 && pourcentProgress <= 1)
+                pourcentProgress += offset;
+
+            await StartNavigationAsync();
+        }
+
+        private async Task StartNavigationAsync()
         {
             LastNavigationDateTime = DateTime.Now;
-
-            if(pourcentProgress >= 0 && pourcentProgress <= 100)
-                pourcentProgress += offset;
 
             var newTimeInMs = (long)(pourcentProgress * totalDurationInMs);
             OnNavigationStart?.Invoke(this, newTimeInMs);
@@ -131,6 +155,7 @@ namespace Medflix.Controls.VideoPlayer
                 }
             });
         }
+
         private void OnUnfocused(object? sender, FocusEventArgs e)
         {
             Border.Stroke = Brush.Transparent.Color;
@@ -145,7 +170,7 @@ namespace Medflix.Controls.VideoPlayer
         public void UpdateProgress(long timeInMs, long totalTimeInMs)
         {
             totalDurationInMs = totalTimeInMs;
-            MainThread.BeginInvokeOnMainThread(async () =>
+            MainThread.BeginInvokeOnMainThread(() =>
             {
                 pourcentProgress = timeInMs / (double)totalTimeInMs;
                 UpdateProgressBar();

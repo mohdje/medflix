@@ -48,8 +48,11 @@ namespace Medflix.Services
             }
         }
 
-        public async Task<bool> SetHostServiceAddressAsync(string serviceAddress)
+        public async Task<bool> TrySetHostServiceAddressAsync(string serviceAddress)
         {
+            if(string.IsNullOrEmpty(serviceAddress)) 
+                return false;
+
             try
             {
                 var url = $"http://{serviceAddress}";
@@ -87,6 +90,8 @@ namespace Medflix.Services
                 ContextChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
+        public string WebAppHomeUrl => $"{hostServiceUrl}/home/index.html";
 
 
         #region Media fetch operations
@@ -275,7 +280,7 @@ namespace Medflix.Services
         public string BuildStreamUrl(string mediaUrl, int? seasonNumber, int? episodeNumber)
         {
             // mediaUrl = TestData.TorrentUrl;
-            // return TestData.Mp4Url;
+             //return TestData.Mp4Url;
             if (mediaUrl.StartsWith("http") || mediaUrl.StartsWith("magnet"))
             {
                 var queryString = $"base64TorrentUrl={ToBase64(mediaUrl)}&";

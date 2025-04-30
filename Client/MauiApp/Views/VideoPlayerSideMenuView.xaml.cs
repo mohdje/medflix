@@ -18,6 +18,8 @@ namespace Medflix.Views
             InitializeComponent();
 
             IsVisible = false;
+
+            this.CloseButton.IsVisible = DeviceInfo.Current.Idiom == DeviceIdiom.Desktop || DeviceInfo.Current.Idiom == DeviceIdiom.Phone;
         }
 
         public void Init(SubtitlesSources[] subtitlesSources, MediaSources[] mediaSources, string defaultVideoUrl)
@@ -84,10 +86,10 @@ namespace Medflix.Views
 
         private void ShowMenus(VideoPlayerMenu playerMenusContainer)
         {
-            RemoteCommandActionNotifier.Instance.PreventBackButton = true;
             RemoteCommandActionNotifier.Instance.PreventLeftButton = true;
             RemoteCommandActionNotifier.Instance.PreventRightButton = true;
-            RemoteCommandActionNotifier.Instance.OnBackButtonPressed += OnBackButtonPressed;
+            RemoteCommandActionNotifier.Instance.OnBackButtonPressed += OnCloseClicked;
+            this.CloseButton.Clicked += OnCloseClicked;
 
             MenuContainer.Clear();
 
@@ -113,7 +115,7 @@ namespace Medflix.Views
             IsVisible = true;
         }
 
-        private void OnBackButtonPressed(object? sender, EventArgs e)
+        private void OnCloseClicked(object? sender, EventArgs e)
         {
             Hide();
         }
@@ -123,10 +125,11 @@ namespace Medflix.Views
             IsVisible = false;
             MenuContainer.Clear();
 
-            RemoteCommandActionNotifier.Instance.PreventBackButton = false;
             RemoteCommandActionNotifier.Instance.PreventLeftButton = false;
             RemoteCommandActionNotifier.Instance.PreventRightButton = false;
-            RemoteCommandActionNotifier.Instance.OnBackButtonPressed -= OnBackButtonPressed;
+            RemoteCommandActionNotifier.Instance.OnBackButtonPressed -= OnCloseClicked;
+
+            this.CloseButton.Clicked -= OnCloseClicked;
         }
     }
 }

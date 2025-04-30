@@ -15,7 +15,7 @@
             <Image
             HeightRequest="40"
             Aspect="AspectFit"
-            Source="medflix_full_logo.svg"/>
+            Source="medflix_full_logo.png"/>
             <ActivityIndicator 
             x:Name="Spinner"
             Color="White" 
@@ -23,15 +23,20 @@
             WidthRequest="50"
             HeightRequest="50"/>
             <VerticalStackLayout 
-            x:Name="AddressInputArea">
+            x:Name="AddressInputArea"
+            IsVisible="True">
                 <Label 
                 TextColor="White"
+                FontSize="Medium"
+                Padding="10"
+                HorizontalTextAlignment="Center"
                 Text="No response from service. Enter the correct IP and port to access Medflix service:"/>
             <Entry 
                   x:Name="AddressInput"
                   WidthRequest="300"
-                  FontSize="20"
+                  FontSize="Large"
                   Margin="0,15,0,0"
+                  TextColor="White"
                   Placeholder="0.0.0.0:1234"
                   Completed="EntryCompleted"/>
         </VerticalStackLayout>
