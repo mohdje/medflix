@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0-ios;net8.0-android</TargetFrameworks>
+		<TargetFrameworks>net8.0-ios;net8.0-android;net8.0-maccatalyst</TargetFrameworks>
 		<!--Uncomment to support android, ios, mac, windows-->
 		<!--<TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>-->
 		<!--<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>-->
@@ -29,7 +29,7 @@
 		<ApplicationTitle>Medflix</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.medflix</ApplicationId>
+		<ApplicationId>com.medflix.medflix</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -54,6 +54,10 @@
 	  <GenerateTestArtifacts>True</GenerateTestArtifacts>
 	  <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 	  <PackageCertificateThumbprint>5C24E9D466A2A9EAD6FECF354CD37D216BBEAD93</PackageCertificateThumbprint>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(TargetFramework)' == 'net8.0-maccatalyst'">
+    	<EnableAssemblyILStripping>false</EnableAssemblyILStripping>
 	</PropertyGroup>
 
 	<ItemGroup>
