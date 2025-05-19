@@ -47,7 +47,7 @@ namespace WebHostStreaming.Controllers
 
                 return File(stream, videoPath.GetContentType(), true);
             }
-            else return NoContent();
+            else return NotFound();
         }
 
         [HttpPost("upload")]
@@ -79,7 +79,7 @@ namespace WebHostStreaming.Controllers
 
             var success = await availableVideosListProvider.AddMediaSource(filePath);
 
-            if (success)
+            if (success.HasValue && success.Value)
             {
                 return CreatedAtAction(nameof(UploadFile), new
                 {

@@ -28,10 +28,10 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
                 return videoSourcesList.ToArray();
             } 
         }
-        public async Task<bool> AddMediaSource(string videoFilePath)
+        public async Task<bool?> AddMediaSource(string videoFilePath)
         {
-            if (VideosSourcesList.Contains(videoFilePath))
-                return false;
+            if (VideosSourcesList.Any(filePath => Path.GetFileName(filePath) == Path.GetFileName(videoFilePath)))
+                return null;
 
             if (!Directory.Exists(AppFolders.DataFolder))
                 Directory.CreateDirectory(AppFolders.DataFolder);

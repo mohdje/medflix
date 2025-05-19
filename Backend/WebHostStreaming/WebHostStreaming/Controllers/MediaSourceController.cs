@@ -97,14 +97,14 @@ namespace WebHostStreaming.Controllers
 
         private IEnumerable<MediaSource> ToMediaSources(string videoPath)
         {
-            return new MediaSource[]
-            {
+            return
+            [
                 new MediaSource
                 {
                     Quality = videoPath.GetVideoQuality(),
                     FilePath = videoPath
                 }
-            };
+            ];
         }
     }
 }
