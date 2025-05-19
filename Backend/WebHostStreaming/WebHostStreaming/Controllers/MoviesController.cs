@@ -132,7 +132,7 @@ namespace WebHostStreaming.Controllers
         public async Task<IEnumerable<WatchedMediaDto>> GetWatchedMovies()
         {
             var movies = await watchedMediaProvider.GetWatchedMoviesAsync();
-            return movies?.Reverse();
+            return movies?.Reverse().Take(30);
         }
 
         [HttpGet("watchedmedia/{id}")]

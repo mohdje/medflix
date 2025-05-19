@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebHostStreaming.Helpers;
 using WebHostStreaming.Models;
@@ -15,7 +12,7 @@ namespace WebHostStreaming.Providers
 
         protected override int MaxLimit()
         {
-            return 30;
+            return 1000;
         }
 
         public async Task<IEnumerable<WatchedMediaDto>> GetWatchedMoviesAsync()

@@ -128,7 +128,7 @@ namespace WebHostStreaming.Controllers
         public async Task<IEnumerable<WatchedMediaDto>> GetWatchedSeries()
         {
             var series = await watchedMediaProvider.GetWatchedSeriesAsync();
-            return series?.Reverse().DistinctBy(w => w.Media.Id);
+            return series?.Reverse().DistinctBy(w => w.Media.Id).Take(30);
         }
 
         [HttpGet("watchedmedia/{id}")]
