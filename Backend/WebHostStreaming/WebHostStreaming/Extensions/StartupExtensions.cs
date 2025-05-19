@@ -17,7 +17,7 @@ namespace WebHostStreaming.StartupExtensions
         {
             services.AddSingleton<ISearchersProvider, SearchersProvider>();
             services.AddSingleton<IAvailableVideosListProvider, AvailableVideosListProvider>();
-            services.AddSingleton<ITorrentClientProvider, TorrentClientProvider>();
+            services.AddSingleton<ITorrentContentProvider, TorrentContentProvider>();
             services.AddSingleton<ITorrentHistoryProvider, TorrentHistoryProvider>();
             services.AddSingleton<IBookmarkedMediaProvider, BookmarkedMediaProvider>();
             services.AddSingleton<IWatchedMediaProvider, WatchedMediaProvider>();

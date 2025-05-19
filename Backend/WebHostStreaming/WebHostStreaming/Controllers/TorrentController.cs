@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MoviesAPI.Services.Torrent.Dtos;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using WebHostStreaming.Extensions;
+using WebHostStreaming.Helpers;
 using WebHostStreaming.Models;
 using WebHostStreaming.Providers;
 using WebHostStreaming.Torrent;
@@ -19,11 +19,11 @@ namespace WebHostStreaming.Controllers
     public class TorrentController : ControllerBase
     {
         ISearchersProvider searchersProvider;
-        ITorrentClientProvider torrentClientProvider;
+        ITorrentContentProvider torrentClientProvider;
         ITorrentHistoryProvider torrentHistoryProvider;
         public TorrentController(
            ISearchersProvider searchersProvider,
-           ITorrentClientProvider torrentClientProvider,
+           ITorrentContentProvider torrentClientProvider,
            ITorrentHistoryProvider torrentHistoryProvider)
         {
             this.searchersProvider = searchersProvider;
@@ -54,14 +54,19 @@ namespace WebHostStreaming.Controllers
 
 
         [HttpGet("streamdownloadstate")]
-        public IActionResult GetStreamDownloadState(string base64TorrentUrl)
+        public async Task<IActionResult> GetStreamDownloadState(string base64TorrentUrl)
         {
+            var clientAppIdientifier = HttpContext.Request.GetClientAppIdentifier();
+
+            if (string.IsNullOrEmpty(clientAppIdientifier))
+                return Forbid();
+
             if (string.IsNullOrEmpty(base64TorrentUrl))
                 return BadRequest();
 
             var url = base64TorrentUrl.DecodeBase64();
-            var state = torrentClientProvider.GetStreamDownloadingState(url);
 
+            var state = await torrentClientProvider.GetDownloadingStateAsync(clientAppIdientifier, url);
             if (state == null)
                 return BadRequest();
             else
@@ -71,23 +76,24 @@ namespace WebHostStreaming.Controllers
         [HttpGet("files")]
         public async Task<TorrentInfoDto> GetTorrentFiles(string base64TorrentUrl)
         {
-            var url = base64TorrentUrl.DecodeBase64();
-            var files = await torrentClientProvider.GetTorrentFilesAsync(url);
+            return null;
+            //var url = base64TorrentUrl.DecodeBase64();
+            //var files = await torrentClientProvider.GetTorrentFilesAsync(url);
 
-            var torrentInfoDto = new TorrentInfoDto()
-            {
-                LastOpenedDateTime = DateTime.Now,
-                Link = url
-            };
+            //var torrentInfoDto = new TorrentInfoDto()
+            //{
+            //    LastOpenedDateTime = DateTime.Now,
+            //    Link = url
+            //};
 
-            if (files != null)
-            {
-                await torrentHistoryProvider.SaveTorrentFileHistoryAsync(new TorrentInfoDto() { LastOpenedDateTime = DateTime.Now, Link = url });
+            //if (files != null)
+            //{
+            //    await torrentHistoryProvider.SaveTorrentFileHistoryAsync(new TorrentInfoDto() { LastOpenedDateTime = DateTime.Now, Link = url });
 
-                torrentInfoDto.Files = files.ToArray();
-            }
+            //    torrentInfoDto.Files = files.ToArray();
+            //}
 
-            return torrentInfoDto;
+            //return torrentInfoDto;
         }
 
         [HttpGet("history")]
@@ -97,39 +103,38 @@ namespace WebHostStreaming.Controllers
             return torrentFiles?.OrderByDescending(f => f.LastOpenedDateTime);
         }
 
-
         private async Task<IActionResult> StreamData(string torrentUrl, ITorrentFileSelector torrentFileSelector)
         {
-            var userAgent = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "User-Agent").Value.FirstOrDefault();
-            var clientAppIdientifier = userAgent?.Contains("MEDFLIX_CLIENT");
+            var clientAppIdientifier = HttpContext.Request.GetClientAppIdentifier();
 
-            if (!clientAppIdientifier.GetValueOrDefault(false))
+            if (string.IsNullOrEmpty(clientAppIdientifier))
                 return Forbid();
 
-            var stream = await torrentClientProvider.GetTorrentStreamAsync(torrentUrl, torrentFileSelector);
+            var torrentStream = await torrentClientProvider.GetTorrentStreamAsync(clientAppIdientifier, torrentUrl, torrentFileSelector);
+            if (torrentStream == null)
+                return NotFound();
 
+            var stream = await torrentStream.GetStreamAsync();
             if (stream == null)
-                return NoContent();
+                return NotFound();
 
             long firstByte = 0;
-          
+
             var range = HttpContext.Request.Headers.SingleOrDefault(h => h.Key == "Range").Value.FirstOrDefault();
 
             if (range != null && range.StartsWith("bytes="))
             {
                 var parts = range.Substring("bytes=".Length).Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length > 0)
-                {
                     firstByte = long.Parse(parts[0]);
-                }
             }
 
             stream.Seek(firstByte, SeekOrigin.Begin);
 
-            var contentType = torrentClientProvider.GetContentType(torrentUrl);
-
-            var fileContentResult = File(stream, contentType);
+            var fileContentResult = File(stream, "video/mp4");
             fileContentResult.EnableRangeProcessing = true;
+
+            AppLogger.LogInfo(clientAppIdientifier, $"Stream retrieved for TorrentManager : {torrentStream.MediaFileName}");
 
             return fileContentResult;
         }

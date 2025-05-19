@@ -37,9 +37,9 @@ namespace WebHostStreaming.Extensions
             return Encoding.UTF8.GetString(Convert.FromBase64String(base64string));
         }
 
-        public static string ToTorrentFolderPath(this string url)
+        public static string ToTorrentFolderPath(this string url, string clientAppId)
         {
-            return Path.Combine(Helpers.AppFolders.TorrentsFolder, url.ToMD5Hash());
+            return Path.Combine(Helpers.AppFolders.TorrentsFolder, clientAppId.ToMD5Hash(), url.ToMD5Hash());
         }
 
         public static string GetContentType(this string filePath)
