@@ -1,11 +1,8 @@
 ﻿using MoviesAPI.Services.Content.Dtos;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WebHostStreaming.Helpers;
-using WebHostStreaming.Models;
 
 namespace WebHostStreaming.Providers
 {
@@ -26,7 +23,7 @@ namespace WebHostStreaming.Providers
             if (movieBookmarks != null)
             {
                 movieBookmarks = movieBookmarks.Where(m => m.Id != movieId);
-                JsonHelper.SerializeToFileAsync(BookmarkedMoviesFile, movieBookmarks);
+                JsonHelper.SerializeToFile(BookmarkedMoviesFile, movieBookmarks);
             }
         }
 
@@ -61,7 +58,7 @@ namespace WebHostStreaming.Providers
             if (serieBookmarks != null)
             {
                 serieBookmarks = serieBookmarks.Where(m => m.Id != serieId);
-                JsonHelper.SerializeToFileAsync(BookmarkedSeriesFile, serieBookmarks);
+                JsonHelper.SerializeToFile(BookmarkedSeriesFile, serieBookmarks);
             }
         }
 

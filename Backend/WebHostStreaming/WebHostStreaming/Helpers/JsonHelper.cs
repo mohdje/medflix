@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
+using System;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace WebHostStreaming.Helpers
 {
@@ -12,15 +11,9 @@ namespace WebHostStreaming.Helpers
         {
             try
             {
-                T deserializedObject = null;
+                var json = File.ReadAllText(filePath);
 
-                using (StreamReader sw = new StreamReader(filePath))
-                {
-                    var jsonSerializer = new Newtonsoft.Json.JsonSerializer();
-                    deserializedObject = jsonSerializer.Deserialize(sw, typeof(T)) as T;
-                }
-
-                return deserializedObject;
+                return JsonSerializer.Deserialize<T>(json);
             }
             catch (Exception)
             {
@@ -28,33 +21,10 @@ namespace WebHostStreaming.Helpers
             }
         }
 
-        public static async Task<T> DeserializeFromFileAsync<T>(string filePath) where T : class
+        public static void SerializeToFile(string filePath, object obj)
         {
-            return await Task.Run(() =>
-            {
-                T deserializedObject = null;
-
-                using (StreamReader sw = new StreamReader(filePath))
-                {
-                    var jsonSerializer = new Newtonsoft.Json.JsonSerializer();
-                    deserializedObject = jsonSerializer.Deserialize(sw, typeof(T)) as T;
-                }
-
-                return deserializedObject;
-            });
-          
-        }
-
-        public static async void SerializeToFileAsync(string filePath, object obj)
-        {
-            await Task.Run(() =>
-            {
-                using (StreamWriter sw = new StreamWriter(filePath))
-                {
-                    var jsonSerializer = new Newtonsoft.Json.JsonSerializer();
-                    jsonSerializer.Serialize(sw, obj);
-                }
-            });
+            string jsonString = JsonSerializer.Serialize(obj);
+            File.WriteAllText(filePath, jsonString);
         }
     }
 }
