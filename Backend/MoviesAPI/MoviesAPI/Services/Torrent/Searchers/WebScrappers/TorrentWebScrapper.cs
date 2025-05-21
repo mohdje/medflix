@@ -21,7 +21,7 @@ namespace MoviesAPI.Services.Torrent
         protected abstract bool FrenchVersion { get; }
         protected abstract bool CheckQuality { get; }
         protected abstract string[] GetSearchUrls(TorrentSearchRequest torrentSearchRequest);
-        protected abstract string GetTorrentTitle(HtmlDocument torrentHtmlPage);
+        protected abstract string GetTorrentTitle(HtmlDocument torrentResultNode);
         protected abstract bool TorrentHasSeeders(HtmlDocument torrentHtmlPage);
 
         public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string movieName, int year)
@@ -100,9 +100,9 @@ namespace MoviesAPI.Services.Torrent
             return doc.DocumentNode.SelectNodes(SearchResultListIdentifier);
         }
   
-        protected async Task<IEnumerable<MediaTorrent>> GetMediaTorrentsAsync(string moviePageUrl)
+        protected async Task<IEnumerable<MediaTorrent>> GetMediaTorrentsAsync(string mediaTorrentPageUrl)
         {
-            var doc = await HttpRequester.GetHtmlDocumentAsync(moviePageUrl);
+            var doc = await HttpRequester.GetHtmlDocumentAsync(mediaTorrentPageUrl);
 
             if (doc == null)
                 return Array.Empty<MediaTorrent>();
