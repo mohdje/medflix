@@ -1,9 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace MoviesAPI.Services.Tmdb.Dtos
 {
@@ -14,16 +11,14 @@ namespace MoviesAPI.Services.Tmdb.Dtos
 
     internal class TmdbEpisode
     {
-        [JsonProperty("episode_number")]
         public int EpisodeNumber { get; set; }
         public string Name { get; set; }
         public string Overview { get; set; }
-        public int? RunTime { get; set; }
+        public int? Runtime { get; set; }
 
-        [JsonProperty("still_path")]
+        [JsonPropertyName("still_path")]
         public string ImagePath { get; set; }
 
-        [JsonProperty("air_date")]
         public DateTime AirDate { get; set; }
 
     }

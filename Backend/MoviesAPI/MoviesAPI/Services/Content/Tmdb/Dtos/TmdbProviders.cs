@@ -1,19 +1,20 @@
-﻿using Newtonsoft.Json;
+﻿
+using System.Text.Json.Serialization;
 
 namespace MoviesAPI.Services.Tmdb.Dtos
 {
     internal class TmdbProviders
     {
-        [JsonProperty("results")]
+        [JsonPropertyName("results")]
         public TmdbProvider[] Providers { get; set; }
     }
 
     internal class TmdbProvider
     {
-        [JsonProperty("provider_id")]
+        [JsonPropertyName("provider_id")]
         public int Id { get; set; }
 
-        [JsonProperty("provider_name")]
+        [JsonPropertyName("provider_name")]
         public string Name { get; set; }
     }
 }

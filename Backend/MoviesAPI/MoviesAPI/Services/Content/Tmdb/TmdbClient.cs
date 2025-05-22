@@ -28,7 +28,7 @@ namespace MoviesAPI.Services.Tmdb
         {
             var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildTrendingOfTodayUrl());
 
-            var liteContentDtos = ToLiteContentDtos(results).ToList();//ToList() is needed to update LogoImageUrl on each element
+            var liteContentDtos = ToLiteContentDtos(results)?.ToList();//ToList() is needed to update LogoImageUrl on each element
 
             var tasks = new List<Task>();
             var mediaLogos = new List<Tuple<string, string>>();
@@ -100,7 +100,7 @@ namespace MoviesAPI.Services.Tmdb
         {
             var tmdbResults = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildSearchUrl(originalTitle));
 
-            return tmdbResults?.Results?.FirstOrDefault(r => r.Title.Equals(originalTitle, StringComparison.OrdinalIgnoreCase) && r.Year == year)?.Id;
+            return tmdbResults?.Results?.FirstOrDefault(r => r.Title.Equals(originalTitle, StringComparison.OrdinalIgnoreCase) && r.Year == year)?.Id.ToString();
         }
 
         protected async Task<string> GetLogoImageUrlAsync(string tmdbContentId)
@@ -127,7 +127,7 @@ namespace MoviesAPI.Services.Tmdb
                 BackgroundImageUrl = tmdbUrlBuilder.BuildBackgroundImageUrl(tmdbSearchResult.BackdropPath),
                 LogoImageUrl = logoImgUrl,
                 Rating = Math.Round(tmdbSearchResult.VoteAverage, 1),
-                Id = tmdbSearchResult.Id,
+                Id = tmdbSearchResult.Id.ToString(),
                 Synopsis = tmdbSearchResult.Overview,
                 Genres = tmdbSearchResult.Genres,
                 Duration = tmdbSearchResult.Runtime.GetValueOrDefault(0),
@@ -241,7 +241,7 @@ namespace MoviesAPI.Services.Tmdb
                 CoverImageUrl = tmdbUrlBuilder.BuildCoverImageUrl(tmdbSearchResult.PosterPath),
                 BackgroundImageUrl = tmdbUrlBuilder.BuildBackgroundImageUrl(tmdbSearchResult.BackdropPath),
                 Rating = Math.Round(tmdbSearchResult.VoteAverage, 1),
-                Id = tmdbSearchResult.Id,
+                Id = tmdbSearchResult.Id.ToString(),
                 Synopsis = tmdbSearchResult.Overview
             };          
         }

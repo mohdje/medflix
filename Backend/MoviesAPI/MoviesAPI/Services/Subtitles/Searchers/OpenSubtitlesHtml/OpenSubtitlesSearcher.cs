@@ -8,6 +8,7 @@ using MoviesAPI.Helpers;
 using System.Collections.Specialized;
 using MoviesAPI.Services.Subtitles.DTOs;
 using MoviesAPI.Services.Subtitles.Searchers;
+using System.Text.Json;
 
 namespace MoviesAPI.Services.Subtitles
 {
@@ -25,10 +26,10 @@ namespace MoviesAPI.Services.Subtitles
         public async Task<IEnumerable<string>> GetAvailableMovieSubtitlesUrlsAsync(string imdbCode, SubtitlesLanguage subtitlesLanguage)
         {
             var openSubtitleMovieId = await GetOpenSubtitleMovieId(imdbCode);
-            if (string.IsNullOrEmpty(openSubtitleMovieId))
+            if (!openSubtitleMovieId.HasValue)
                 return Array.Empty<string>();
 
-            var doc = await HttpRequester.GetHtmlDocumentAsync(BuildSubtitlesListPageUrl(openSubtitleMovieId, subtitlesLanguage));
+            var doc = await HttpRequester.GetHtmlDocumentAsync(BuildSubtitlesListPageUrl(openSubtitleMovieId.Value.ToString(), subtitlesLanguage));
             if (doc == null)
                 return Array.Empty<string>();
 
@@ -59,10 +60,10 @@ namespace MoviesAPI.Services.Subtitles
         public async Task<IEnumerable<string>> GetAvailableSerieSubtitlesUrlsAsync(int seasonNumber, int episodeNumber, string imdbCode, SubtitlesLanguage subtitlesLanguage)
         {
             var openSubtitleMovieId = await GetOpenSubtitleMovieId(imdbCode);
-            if (string.IsNullOrEmpty(openSubtitleMovieId))
+            if (!openSubtitleMovieId.HasValue)
                 return Array.Empty<string>();
 
-            var doc = await HttpRequester.GetHtmlDocumentAsync(BuildSubtitlesListPageUrl(openSubtitleMovieId, subtitlesLanguage));
+            var doc = await HttpRequester.GetHtmlDocumentAsync(BuildSubtitlesListPageUrl(openSubtitleMovieId.Value.ToString(), subtitlesLanguage));
             if (doc == null)
                 return Array.Empty<string>();
 
@@ -105,7 +106,7 @@ namespace MoviesAPI.Services.Subtitles
             return Array.Empty<string>();
         }
 
-        private async Task<string> GetOpenSubtitleMovieId(string imdbCode)
+        private async Task<int?> GetOpenSubtitleMovieId(string imdbCode)
         {
             var url = "https://www.opensubtitles.org/libs/suggest.php";
 

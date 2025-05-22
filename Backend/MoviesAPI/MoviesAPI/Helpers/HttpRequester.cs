@@ -1,13 +1,11 @@
 ﻿
-using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Security.Authentication;
-using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -15,70 +13,43 @@ namespace MoviesAPI.Helpers
 {
     internal static class HttpRequester
     {
-        static HttpClient client;
-        const string userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.115 Safari/537.36";
-        private static void InitHttpClient()
+        static HttpClient _httpClient;
+        static HttpClient HttpClient
         {
-            if (client == null)
+            get
             {
-                client = new HttpClient();
-                client.DefaultRequestHeaders.Add("User-Agent", userAgent);
-                client.Timeout = TimeSpan.FromSeconds(7);
+                if (_httpClient == null)
+                {
+                    _httpClient = new HttpClient();
+                    _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.115 Safari/537.36");
+                    _httpClient.Timeout = TimeSpan.FromSeconds(7);
+                }
+                return _httpClient;
             }
         }
-        #region Get
-    
+
         public static async Task<string> GetAsync(Uri url)
         {
             return await PerformGetStringCallAsync(url);
         }
 
-        public static async Task<T> GetAsync<T>(Uri url) where T : class
+        public static async Task<T> GetAsync<T>(string url, NameValueCollection parameters = null, JsonNamingPolicy jsonNamingPolicy = null) where T : class
         {
-            var result = await PerformGetStringCallAsync(url);
+            var uri = parameters == null ? new Uri(url) : BuildUri(url, parameters);
+            var json = await PerformGetStringCallAsync(uri);
 
-            return JsonHelper.ToObject<T>(result);
-        }
-
-        public static async Task<T> GetAsync<T>(string url) where T : class
-        {
-            return await GetAsync<T>(new Uri(url));
-        }
-
-        public static async Task<T> GetAsync<T>(string url, IEnumerable<KeyValuePair<string, string>> httpRequestHeaders) where T : class
-        {
-            if (httpRequestHeaders != null)
+            try
             {
-                foreach (var header in httpRequestHeaders)
-                    client.DefaultRequestHeaders.Add(header.Key, header.Value);
+                return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = jsonNamingPolicy ?? JsonNamingPolicy.SnakeCaseLower,
+                    PropertyNameCaseInsensitive = true
+                });
             }
-
-            var result = await PerformGetStringCallAsync(new Uri(url));
-
-            if (httpRequestHeaders != null)
+            catch (Exception ex)
             {
-                foreach (var header in httpRequestHeaders)
-                    client.DefaultRequestHeaders.Remove(header.Key);
+                return null;
             }
-
-            return JsonHelper.ToObject<T>(result);
-        }
-
-        public static Task<string> GetAsync(string baseUrl, NameValueCollection parameters)
-        {
-            return PerformGetStringCallAsync(BuildUri(baseUrl, parameters));
-        }
-
-        public static async Task<T> GetAsync<T>(string baseUrl, NameValueCollection parameters) where T : class
-        {
-            var result = await PerformGetStringCallAsync(BuildUri(baseUrl, parameters));
-
-            return JsonHelper.ToObject<T>(result);
-        }
-
-        public static async Task<string> PostAsync(string url, object payloadObject)
-        {
-            return await PerformPostCallAsync(new Uri(url), JsonHelper.ToJson(payloadObject));
         }
 
         public static async Task<byte[]> DownloadAsync(Uri url, IEnumerable<KeyValuePair<string, string>> httpRequestHeaders)
@@ -86,18 +57,18 @@ namespace MoviesAPI.Helpers
             if(httpRequestHeaders != null)
             {
                 foreach (var header in httpRequestHeaders)
-                    client.DefaultRequestHeaders.Add(header.Key, header.Value);
+                    HttpClient.DefaultRequestHeaders.Add(header.Key, header.Value);
             }
           
-            var result = await DownloadFile(url);
+            var bytes = await HttpClient.GetByteArrayAsync(url);
 
             if (httpRequestHeaders != null)
             {
                 foreach (var header in httpRequestHeaders)
-                    client.DefaultRequestHeaders.Remove(header.Key);
+                    HttpClient.DefaultRequestHeaders.Remove(header.Key);
             }
 
-            return result;
+            return bytes;
         }
 
         public static async Task<HtmlAgilityPack.HtmlDocument> GetHtmlDocumentAsync(string url)
@@ -131,11 +102,9 @@ namespace MoviesAPI.Helpers
 
         private static async Task<string> PerformGetStringCallAsync(Uri url)
         {
-            InitHttpClient();
-
             try
             {
-                var response = await client.GetAsync(url);
+                var response = await HttpClient.GetAsync(url);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                     return await response.Content.ReadAsStringAsync();
@@ -148,37 +117,6 @@ namespace MoviesAPI.Helpers
             {
                 return null;
             }
-           
         }
-
-        private static async Task<string> PerformPostCallAsync(Uri url, string payload)
-        {
-            try
-            {
-                InitHttpClient();
-                var response = await client.PostAsync(url, new StringContent(payload));
-
-                return await response.Content.ReadAsStringAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        private static async Task<byte[]> DownloadFile(Uri url)
-        {
-            InitHttpClient();
-            var response = await client.GetAsync(url);
-
-            var responseStream = response.Content.ReadAsStream();
-            var data = new byte[responseStream.Length];
-
-            responseStream.Read(data, 0, data.Length);
-            return data;
-            
-        }
-        #endregion
-
     }
 }

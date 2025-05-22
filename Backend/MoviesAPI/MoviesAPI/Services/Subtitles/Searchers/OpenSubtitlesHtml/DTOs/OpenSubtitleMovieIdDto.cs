@@ -1,13 +1,11 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+using System.Text.Json.Serialization;
 
 namespace MoviesAPI.Services.Subtitles.OpenSubtitlesHtml.DTOs
 {
     public class OpenSubtitleMovieIdDto
     {
-        [JsonProperty("id")]
-        public string OpenSubtitleMovieId { get; set; }
+        [JsonPropertyName("id")]
+        public int OpenSubtitleMovieId { get; set; }
     }
 }

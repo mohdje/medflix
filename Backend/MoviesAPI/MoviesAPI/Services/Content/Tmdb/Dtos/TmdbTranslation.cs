@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace MoviesAPI.Services.Tmdb.Dtos
@@ -14,7 +14,7 @@ namespace MoviesAPI.Services.Tmdb.Dtos
 
     public class TmdbTranslation
     {
-        [JsonProperty("iso_3166_1")]
+        [JsonPropertyName("iso_3166_1")]
         public string CountryCode { get; set; }
         public Data Data { get; set; }
     }
