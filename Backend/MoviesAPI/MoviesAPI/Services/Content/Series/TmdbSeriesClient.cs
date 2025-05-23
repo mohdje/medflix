@@ -95,7 +95,7 @@ namespace MoviesAPI.Services.Content
                     EpisodeNumber = episode.EpisodeNumber,
                     Name = episode.Name,
                     Overview = episode.Overview,
-                    RunTime = episode.RunTime.GetValueOrDefault(0),
+                    RunTime = episode.Runtime.GetValueOrDefault(0),
                     ImagePath = tmdbUrlBuilder.BuildLogoImageUrl(episode.ImagePath),
                     AirDate = episode.AirDate
                 });
