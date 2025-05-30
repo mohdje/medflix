@@ -3,7 +3,7 @@
 
 Medflix is a streaming platform I made with React and .Net. With this application you can watch movies and series for free. 
 Architecture of this project :
-* Client: it is made with React and MAUI (desktop and phone applications embed a webview disaplaying React app).
+* Client: it is made with React and MAUI (desktop and phone applications embed a webview disaplaying React app). Client app is available for Android (phone and tv), Windows and macOS soon.
 * Backend: 
     - WebHostStreaming: made with .Net. It provides APIs so the Client can get information about movies, doing search operations and to get a stream to watch movies and series. It uses a home-made library (MoviesAPI) to do searches and MonoTorrent to download medias and get stream from torrents without waiting for it to be fully downloaded to watch it.
     - MoviesAPI:  A library I made to search for movies, series, subtitles and torrents on the web. More info about it in the MoviesAPI folder.
