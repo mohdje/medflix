@@ -1,4 +1,4 @@
-![Home page](/Screenshots/home_page.PNG)
+![Logo](/Screenshots/logo.PNG)
 # MEDFLIX
 
 Medflix is a streaming platform I made with React and .Net. With this application you can watch movies and series for free. 
