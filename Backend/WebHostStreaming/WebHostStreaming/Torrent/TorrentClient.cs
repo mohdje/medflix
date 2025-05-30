@@ -33,6 +33,7 @@ namespace WebHostStreaming.Torrent
             ClientAppIdentifier = clientAppIdentifier;
         }
 
+        #region Public
         public void Dispose()
         {
             ReleaseCurrentStream();
@@ -50,6 +51,7 @@ namespace WebHostStreaming.Torrent
                 currentTorrentUrl = torrentUrl;
                 currentDownloadingState = DownloadingState.Loading;
 
+                ReleaseCurrentStream();
                 ReleaseTorrentManager();
 
                 var torrentManager = await CreateTorrentManagerAsync(torrentUrl);
@@ -58,12 +60,13 @@ namespace WebHostStreaming.Torrent
                     currentTorrentManager = torrentManager;
                     currentTorrentManager.PeersFound += OnPeersFound;
                     currentTorrentManager.PieceHashed += OnPieceHashed;
+
+                    await SetFileToDownload(torrentFileSelector);
                 }
                 else
                     return null;
             }
-
-            if (FileToDownloadChanged(torrentFileSelector))
+            else if (FileToDownloadChanged(torrentFileSelector))
             {
                 ReleaseCurrentStream();
 
@@ -76,7 +79,6 @@ namespace WebHostStreaming.Torrent
                 AppLogger.LogInfo(ClientAppIdentifier, $"No video file found to download for TorrentManager : {currentTorrentManager.Name}");
                 return null;
             }
-
 
             await StartTorrentManagerIfNeededAsync();
 
@@ -122,6 +124,16 @@ namespace WebHostStreaming.Torrent
 
             return currentTorrentUrl == torrentUrl ? currentDownloadingState : DownloadingState.NotFound;
         }
+        #endregion
+
+        #region Private
+        private ClientEngine BuildClientEngine()
+        {
+            EngineSettingsBuilder settingsBuilder = new EngineSettingsBuilder();
+            settingsBuilder.AllowedEncryption.Add(EncryptionType.PlainText | EncryptionType.RC4Full | EncryptionType.RC4Header);
+
+            return new ClientEngine(settingsBuilder.ToSettings());
+        }
 
         private void OnPieceHashed(object sender, PieceHashedEventArgs e)
         {
@@ -141,14 +153,6 @@ namespace WebHostStreaming.Torrent
         {
             if (currentTorrentManager?.PartialProgress == 0)
                 currentDownloadingState = DownloadingState.MediaDownloadAboutToStart;
-        }
-
-        private ClientEngine BuildClientEngine()
-        {
-            EngineSettingsBuilder settingsBuilder = new EngineSettingsBuilder();
-            settingsBuilder.AllowedEncryption.Add(EncryptionType.PlainText | EncryptionType.RC4Full | EncryptionType.RC4Header);
-
-            return new ClientEngine(settingsBuilder.ToSettings());
         }
 
         private async Task StartTorrentManagerIfNeededAsync()
@@ -257,6 +261,6 @@ namespace WebHostStreaming.Torrent
                 currentTorrentStream = null;
             }
         }
-
+        #endregion
     }
 }
