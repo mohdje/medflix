@@ -18,8 +18,7 @@ namespace Medflix.Services
     public class MedflixApiService
     {
         static HttpClient httpClient;
-        const string userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.115 Safari/537.36";
-
+      
         private static MedflixApiService _instance;
         public static MedflixApiService Instance
         {
@@ -44,7 +43,7 @@ namespace Medflix.Services
             if (httpClient == null)
             {
                 httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Add("User-Agent", userAgent);
+                httpClient.DefaultRequestHeaders.Add("User-Agent", AppConfig.Instance.AppIdentifier);
             }
         }
 
@@ -279,8 +278,6 @@ namespace Medflix.Services
 
         public string BuildStreamUrl(string mediaUrl, int? seasonNumber, int? episodeNumber)
         {
-            // mediaUrl = TestData.TorrentUrl;
-             //return TestData.Mp4Url;
             if (mediaUrl.StartsWith("http") || mediaUrl.StartsWith("magnet"))
             {
                 var queryString = $"base64TorrentUrl={ToBase64(mediaUrl)}&";
