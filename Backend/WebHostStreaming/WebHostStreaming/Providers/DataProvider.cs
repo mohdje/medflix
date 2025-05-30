@@ -22,7 +22,7 @@ namespace WebHostStreaming.Providers
 
             try
             {
-                return await Task.FromResult(JsonHelper.DeserializeFromFile<IEnumerable<T>>(filePath));
+                return ReadDataFromFile<T>(filePath);
             }
             catch (Exception)
             {
@@ -40,7 +40,7 @@ namespace WebHostStreaming.Providers
 
             try
             {
-                var data = await GetDataAsync<T>(filePath);
+                var data = ReadDataFromFile<T>(filePath);
 
                 var dataList = data?.ToList();
 
@@ -72,6 +72,11 @@ namespace WebHostStreaming.Providers
             {
                 fileLocker.Release();
             }
+        }
+
+        private static IEnumerable<T> ReadDataFromFile<T>(string filePath) where T : class
+        {
+            return JsonHelper.DeserializeFromFile<IEnumerable<T>>(filePath);
         }
     }
 }

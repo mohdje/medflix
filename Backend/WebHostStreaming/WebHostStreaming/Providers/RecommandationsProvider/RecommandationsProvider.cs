@@ -22,7 +22,7 @@ namespace WebHostStreaming.Providers
             var recommandationsRequest = BuildRecommandationsRequest(watchedMovies);
 
             if (recommandationsRequest == null)
-                return new LiteContentDto[0];
+                return Array.Empty<LiteContentDto>();
 
             return await searchersProvider.MovieSearcher.GetRecommandationsAsync(
                 recommandationsRequest.GenreIds,
