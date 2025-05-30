@@ -100,11 +100,14 @@ namespace Medflix.Controls.VideoPlayer
                 tapGestureRecognizer.NumberOfTapsRequired = 1;
                 tapGestureRecognizer.Tapped += async (s, e) =>
                 {
-                    var position = e.GetPosition(ProgressBarContainer);
-                    if (position.HasValue)
+                    if (IsEnabled)
                     {
-                        pourcentProgress = position.Value.X / ProgressBarContainer.Width;
-                        await StartNavigationAsync();
+                        var position = e.GetPosition(ProgressBarContainer);
+                        if (position.HasValue)
+                        {
+                            pourcentProgress = position.Value.X / ProgressBarContainer.Width;
+                            await StartNavigationAsync();
+                        }
                     }
                 };
                 Content.GestureRecognizers.Add(tapGestureRecognizer);
