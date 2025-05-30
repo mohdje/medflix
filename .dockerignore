@@ -1,3 +1,6 @@
-./WebHostStreaming/WebHostStreaming/bin
-./WebHostStreaming/WebHostStreaming/cache
-./WebHostStreaming/WebHostStreaming/obj
+./Backend/WebHostStreaming/WebHostStreaming/bin
+./Backend/WebHostStreaming/WebHostStreaming/cache
+./Backend/WebHostStreaming/WebHostStreaming/obj
+./Backend/MovieAPI/MoviesApiSample
+./Client/MauiApp
+./Screenshots
