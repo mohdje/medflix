@@ -25,11 +25,17 @@
             Grid.Row="0" 
             ZIndex="6" />
 
+        <controls:LoadingSpinner 
+           x:Name="LoadingSpinner"
+           Grid.Row="0" 
+           HeightRequest="150"
+           ZIndex="5" />
+
         <Grid 
             x:Name="TopBar"
             VerticalOptions="Start"
             Margin="10"
-            ZIndex="5"
+            ZIndex="4"
             MaximumHeightRequest="150" 
             ColumnDefinitions="*,50">
             <Label 
@@ -45,12 +51,12 @@
                 Clicked="OnCloseButtonPressed"
                 />
         </Grid>
-      
+
 
         <controls:VideoPlayerControls  
          x:Name="PlayerControls"
          Grid.Row="0" 
-         ZIndex="4">    
+         ZIndex="3">
             <controls:VideoPlayerControls.Background>
                 <LinearGradientBrush EndPoint="0,1">
                     <GradientStop Color="Black" Offset="0" />
@@ -59,11 +65,6 @@
                 </LinearGradientBrush>
             </controls:VideoPlayerControls.Background>
         </controls:VideoPlayerControls>
-
-        <controls:LoadingSpinner 
-             x:Name="LoadingSpinner"
-             Grid.Row="0" 
-             ZIndex="3" />
 
         <controls:VideoSubtitles   
             x:Name="Subtitles"
@@ -77,6 +78,7 @@
             MediaPlayer="{Binding MediaPlayer}" 
             MediaPlayerChanged="VideoView_MediaPlayerChanged"  
             HandlerChanged="VideoView_HandlerChanged"
+            Opacity="0"
             HorizontalOptions="FillAndExpand" 
             VerticalOptions="FillAndExpand"/>
     </Grid>

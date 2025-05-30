@@ -215,11 +215,6 @@ namespace Medflix.Pages
                 MediaPlayerViewModel.MediaPlayer.EncounteredError += MediaPlayer_EncounteredError;
                 MediaPlayerViewModel.MediaPlayer.Buffering += MediaPlayer_Buffering;
                 MediaPlayerViewModel.MediaPlayer.Paused += MediaPlayer_Paused;
-
-                Task.Run(async () =>
-                {
-                    await LoadingSpinner.StartListenningDownloadState(MediaPlayerViewModel.MediaUrl);
-                });
             }
         }
 
@@ -247,6 +242,11 @@ namespace Medflix.Pages
             VideoPlayerParameters.WatchMedia.VideoSource = mediaUrl;
 
             MediaPlayerViewModel.PlayMedia(url, startTime);
+
+            Task.Run(async () =>
+            {
+                await LoadingSpinner.StartListenningDownloadState(MediaPlayerViewModel.MediaUrl);
+            });
         }
 
         private void VideoView_HandlerChanged(object sender, EventArgs e)
@@ -302,17 +302,7 @@ namespace Medflix.Pages
 
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                if (shouldRedraw)
-                {
-                    VideoView.WidthRequest = 0;
-                    VideoView.HeightRequest = 0;
-                    shouldRedraw = false;
-                }
-                else if (VideoView.WidthRequest == 0)
-                {
-                    VideoView.WidthRequest = Width;
-                    VideoView.HeightRequest = Height;
-                }
+                ManageVideoViewDisplay();
 
                 if (PlayerControls.IsShown)
                     PlayerControls.NotifyTimeUpdated(e.Time, MediaPlayerViewModel.MediaPlayer.Media.Duration);
@@ -334,6 +324,24 @@ namespace Medflix.Pages
                     await MedflixApiService.Instance.SaveProgressionAsync(VideoPlayerParameters.WatchMedia);
                 }
             });
+        }
+
+        private void ManageVideoViewDisplay()
+        {
+            if (shouldRedraw)
+            {
+                VideoView.WidthRequest = 0;
+                VideoView.HeightRequest = 0;
+                shouldRedraw = false;
+            }
+            else if (VideoView.WidthRequest == 0)
+            {
+                VideoView.WidthRequest = Width;
+                VideoView.HeightRequest = Height;
+            }
+
+            if (VideoView.Opacity == 0)
+                VideoView.Opacity = 1;
         }
 
         #endregion
