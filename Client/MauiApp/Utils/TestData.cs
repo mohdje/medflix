@@ -178,8 +178,8 @@ namespace Medflix.Utils
                         Language = "French",
                         Sources = new Models.Media.MediaSource[]
                         {
-                            new Models.Media.MediaSource{ TorrentUrl= "aaaa", Quality = "1080p"},
-                            new Models.Media.MediaSource{ TorrentUrl= "bbbb", Quality = "1080p"},
+                            new Models.Media.MediaSource{ TorrentUrl= "https://archive.org/download/sahara-colorized/sahara-colorized_archive.torrent", Quality = "1080p"},
+                            new Models.Media.MediaSource{ TorrentUrl= "https://archive.org/download/CC_1916_09_04_TheCount/CC_1916_09_04_TheCount_archive.torrent", Quality = "1080p"},
                             new Models.Media.MediaSource{ TorrentUrl= "cccc", Quality = "1080p"},
                             new Models.Media.MediaSource{ TorrentUrl= "ddd", Quality = "1080p"},
                             new Models.Media.MediaSource{ TorrentUrl= "eeeee", Quality = "1080p"},
@@ -199,11 +199,12 @@ namespace Medflix.Utils
             WatchMedia = new Models.Media.WatchMediaInfo
             {
                 Media = TestData.Media,
-                VideoSource = "cccc",
+                VideoSource = null,
                 SeasonNumber = 2,
                 EpisodeNumber = 3,  
             }
         };
+        public static string ClientAppId => $"MEDFLIX_CLIENT_e6ecddce-ca6b-44dc-aa10-14362692b84d";
     }
 }
 
