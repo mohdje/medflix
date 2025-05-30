@@ -9,11 +9,21 @@ Architecture of this project :
     - MoviesAPI:  A library I made to search for movies, series, subtitles and torrents on the web. More info about it in the MoviesAPI folder.
 
 ## How it looks
-![Movies genre page](/Screenshots/movies_of_genre.PNG)
-![Movies search](/Screenshots/movie_search.PNG)
-![Movie presentation](/Screenshots/media_presentation.PNG)
-![Movie presentation](/Screenshots/serie_presentation.PNG)
-![Movie player](/Screenshots/video_player.PNG)
+# Desktop:
+![Home desktop](/Screenshots/home_desktop.PNG)
+![Search desktop](/Screenshots/search_desktop.PNG)
+![List desktop](/Screenshots/list_desktop.PNG)
+![Movie Desktop](/Screenshots/movie_desktop.PNG)
+![Serie Desktop](/Screenshots/serie_desktop.PNG)
+
+# Phone:
+![Home phone](/Screenshots/home_phone.jpg)
+![List phone](/Screenshots/list_phone.jpg)
+![Movie phone](/Screenshots/movie_phone.jpg)
+![Serie phone](/Screenshots/serie_phone.jpg)
+
+# Video Player:
+![Video Player](/Screenshots/video_player.PNG)
 
 ## How to use it
 The backend web server should be run on a machine using docker. Then donwload client application (for Andoird, Windows or Macos) from the Releases section and launch it. The first time the client application is launched the user will be asked to enter IP adress of the machine running the web server and the port (5000 by default).
