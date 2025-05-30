@@ -4,7 +4,13 @@
              x:Class="Medflix.Pages.AndroidTv.AndroidTvMediaPresentationPage"
              xmlns:controls="clr-namespace:Medflix.Controls.AndroidTv"
              NavigationPage.HasNavigationBar="False">
-    <Grid
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
+            <GradientStop Color="Black" Offset="-1.0" />
+            <GradientStop Color="DimGrey" Offset="1.0" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
+            <Grid
         VerticalOptions="Fill"
         HorizontalOptions="Fill">
         <VerticalStackLayout

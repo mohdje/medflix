@@ -12,6 +12,7 @@
          FontSize="20"
          Margin="0,70,0,0"
          Placeholder="Enter the title..."
+         TextColor="White"
          Completed="SearchCompleted"/>
         <ActivityIndicator 
            x:Name="SearchSpinner" 
