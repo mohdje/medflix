@@ -17,7 +17,7 @@ namespace Medflix.Models
             }
         }
         private static AppConfig _instance;
-        private static string AppConfigFilePath => Path.Combine(FileSystem.Current.AppDataDirectory, Consts.AppCongifFileName);
+        private static string AppConfigFilePath => Path.Combine(FileSystem.Current.AppDataDirectory, Consts.AppConfigFileName);
 
         private AppConfigData Data;
         private class AppConfigData
@@ -51,7 +51,7 @@ namespace Medflix.Models
                         data = JsonSerializer.Deserialize<AppConfigData>(text);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
             }
