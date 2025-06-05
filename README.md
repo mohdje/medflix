@@ -8,21 +8,26 @@ Architecture of this project :
     - WebHostStreaming: made with .Net. It provides APIs so the Client can get information about movies, doing search operations and to get a stream to watch movies and series. It uses a home-made library (MoviesAPI) to do searches and MonoTorrent to download medias and get stream from torrents without waiting for it to be fully downloaded to watch it.
     - MoviesAPI:  A library I made to search for movies, series, subtitles and torrents on the web. More info about it in the MoviesAPI folder.
 
-## How it looks
-# Desktop:
+# How it looks
+## Desktop:
 ![Home desktop](/Screenshots/home_desktop.PNG)
 ![Search desktop](/Screenshots/search_desktop.PNG)
 ![List desktop](/Screenshots/list_desktop.PNG)
 ![Movie Desktop](/Screenshots/movie_desktop.PNG)
 ![Serie Desktop](/Screenshots/serie_desktop.PNG)
 
-# Phone:
+## Phone:
 ![Home phone](/Screenshots/home_phone.jpg)
 ![List phone](/Screenshots/list_phone.jpg)
 ![Movie phone](/Screenshots/movie_phone.jpg)
 ![Serie phone](/Screenshots/serie_phone.jpg)
 
-# Video Player:
+## Tv:
+![Home tv](/Screenshots/home_tv.jpg)
+![List tv](/Screenshots/list_tv.jpg)
+![Movie tv](/Screenshots/movie_tv.jpg)
+
+## Video Player:
 ![Video Player](/Screenshots/video_player.PNG)
 
 ## How to use it
