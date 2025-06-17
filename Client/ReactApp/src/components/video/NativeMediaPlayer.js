@@ -22,7 +22,8 @@ export default function NativeMediaPlayer({
                     watchMedia: {
                         media: mediaDetails,
                         currentTime: shouldRestart ? 0 : currentTime,
-                        episodeNumber,
+                        episodeNumber: mediaDetails?.seasonsCount > 0 ? episodeNumber : 0,
+                        seasonNumber: mediaDetails?.seasonsCount > 0 ? seasonNumber : 0,
                         seasonNumber,
                         videoSource,
                     },
