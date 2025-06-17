@@ -73,7 +73,7 @@ export default function ModalEpisodeSelector({ visible, serieId, numberOfSeasons
                 <div className="season-selector-container">
                     <DropDown
                         values={seasonNumberList}
-                        defaultSelectedValue={`Season ${defaultSeasonNumber}`}
+                        defaultSelectedValue={`Season ${selectedSeasonNumberRef.current}`}
                         width="120px"
                         textAlignement={"center"}
                         onValueChanged={(selectedIndex) => loadEpisodes(selectedIndex + 1)} />
