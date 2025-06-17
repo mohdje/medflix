@@ -29,7 +29,7 @@ namespace MoviesAPI.Services.Subtitles
         {
             var subtitlesFile = await GetSubtitlesFileAsync(subtitlesSourceUrl, httpRequestHeaders);
 
-            if (!string.IsNullOrEmpty(subtitlesSourceUrl))
+            if (!string.IsNullOrEmpty(subtitlesFile))
             {
                 var subtitles = GetSubtitles(subtitlesFile);
 
@@ -51,7 +51,8 @@ namespace MoviesAPI.Services.Subtitles
             {
                 var result = await HttpRequester.DownloadAsync(new Uri(subtitlesSourceUrl), httpRequestHeaders);
 
-                File.WriteAllBytes(subtitlesZipFile, result);
+                if(result != null && result.Any())
+                    File.WriteAllBytes(subtitlesZipFile, result);
 
                 if (!File.Exists(subtitlesZipFile))
                     throw new FileNotFoundException($"{subtitlesZipFile} not found");
