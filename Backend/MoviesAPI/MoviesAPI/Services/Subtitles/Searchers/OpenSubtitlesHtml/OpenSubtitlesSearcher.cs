@@ -8,7 +8,6 @@ using MoviesAPI.Helpers;
 using System.Collections.Specialized;
 using MoviesAPI.Services.Subtitles.DTOs;
 using MoviesAPI.Services.Subtitles.Searchers;
-using System.Text.Json;
 
 namespace MoviesAPI.Services.Subtitles
 {
@@ -25,11 +24,7 @@ namespace MoviesAPI.Services.Subtitles
         }
         public async Task<IEnumerable<string>> GetAvailableMovieSubtitlesUrlsAsync(string imdbCode, SubtitlesLanguage subtitlesLanguage)
         {
-            var openSubtitleMovieId = await GetOpenSubtitleMovieId(imdbCode);
-            if (!openSubtitleMovieId.HasValue)
-                return Array.Empty<string>();
-
-            var doc = await HttpRequester.GetHtmlDocumentAsync(BuildSubtitlesListPageUrl(openSubtitleMovieId.Value.ToString(), subtitlesLanguage));
+            var doc = await GetSearchResultPageAsync(imdbCode, subtitlesLanguage);
             if (doc == null)
                 return Array.Empty<string>();
 
@@ -49,9 +44,9 @@ namespace MoviesAPI.Services.Subtitles
             }
             else
             {
-                var singleResult = doc.DocumentNode.SelectSingleNode("//a[@id='bt-dwl-bt']")?.Attributes["href"]?.Value;
+                var singleResult = doc.DocumentNode.SelectSingleNode($"//a[contains(@href, '{subtitlesDownloadBaseUrl}')]")?.Attributes["href"]?.Value;
                 if (!string.IsNullOrEmpty(singleResult))
-                    return [baseUrl + singleResult];
+                    return [singleResult];
             }
 
             return Array.Empty<string>();
@@ -59,11 +54,7 @@ namespace MoviesAPI.Services.Subtitles
 
         public async Task<IEnumerable<string>> GetAvailableSerieSubtitlesUrlsAsync(int seasonNumber, int episodeNumber, string imdbCode, SubtitlesLanguage subtitlesLanguage)
         {
-            var openSubtitleMovieId = await GetOpenSubtitleMovieId(imdbCode);
-            if (!openSubtitleMovieId.HasValue)
-                return Array.Empty<string>();
-
-            var doc = await HttpRequester.GetHtmlDocumentAsync(BuildSubtitlesListPageUrl(openSubtitleMovieId.Value.ToString(), subtitlesLanguage));
+            var doc = await GetSearchResultPageAsync(imdbCode, subtitlesLanguage);
             if (doc == null)
                 return Array.Empty<string>();
 
@@ -106,7 +97,7 @@ namespace MoviesAPI.Services.Subtitles
             return Array.Empty<string>();
         }
 
-        private async Task<int?> GetOpenSubtitleMovieId(string imdbCode)
+        private async Task<int?> GetOpenSubtitleMediaId(string imdbCode)
         {
             var url = "https://www.opensubtitles.org/libs/suggest.php";
 
@@ -125,6 +116,15 @@ namespace MoviesAPI.Services.Subtitles
             {
                 return null;
             }
+        }
+
+        private async Task<HtmlDocument> GetSearchResultPageAsync(string imdbCode, SubtitlesLanguage subtitlesLanguage)
+        {
+            var openSubtitleMovieId = await GetOpenSubtitleMediaId(imdbCode);
+            if (!openSubtitleMovieId.HasValue)
+                return null;
+
+            return await HttpRequester.GetHtmlDocumentAsync(BuildSubtitlesListPageUrl(openSubtitleMovieId.Value.ToString(), subtitlesLanguage));
         }
 
         public async Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitleSourceUrl)

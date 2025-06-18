@@ -79,8 +79,10 @@ namespace MoviesAPI.Services.Subtitles
 
                 return null;
             }
-            catch
+            catch(Exception ex)
             {
+                var errMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                Console.WriteLine($"Error downloading subtitles from {subtitlesSourceUrl}: {errMessage}");
                 return null;
             }
             finally
@@ -95,7 +97,7 @@ namespace MoviesAPI.Services.Subtitles
             if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
                 return Array.Empty<SubtitlesDto>();
 
-            using (var srtReader = new StreamReader(filePath, Encoding.GetEncoding("iso-8859-1")))
+            using (var srtReader = new StreamReader(filePath, Encoding.UTF8))
             {
                 var subtitlesDtos = new List<SubtitlesDto>();
 

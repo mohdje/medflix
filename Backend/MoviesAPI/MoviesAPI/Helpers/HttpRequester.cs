@@ -59,8 +59,13 @@ namespace MoviesAPI.Helpers
                 foreach (var header in httpRequestHeaders)
                     HttpClient.DefaultRequestHeaders.Add(header.Key, header.Value);
             }
-          
-            var bytes = await HttpClient.GetByteArrayAsync(url);
+
+            var response = await PerformGetCallAsync(url);
+
+            var bytes = new byte[0];
+
+            if (response != null)
+                bytes = await response.ReadAsByteArrayAsync();
 
             if (httpRequestHeaders != null)
             {
@@ -102,14 +107,24 @@ namespace MoviesAPI.Helpers
 
         private static async Task<string> PerformGetStringCallAsync(Uri url)
         {
+            var response = await PerformGetCallAsync(url);
+
+            if(response == null)
+                return null;
+
+            return await response.ReadAsStringAsync();
+        }
+
+        private static async Task<HttpContent> PerformGetCallAsync(Uri url)
+        {
             try
             {
                 var response = await HttpClient.GetAsync(url);
 
                 if (response.StatusCode == HttpStatusCode.OK)
-                    return await response.Content.ReadAsStringAsync();
+                    return response.Content;
                 else if (response.StatusCode == HttpStatusCode.Found || response.StatusCode == HttpStatusCode.Moved)
-                    return await PerformGetStringCallAsync(response.Headers.Location);
+                    return await PerformGetCallAsync(response.Headers.Location);
                 else
                     return null;
             }
