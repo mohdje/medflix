@@ -8,6 +8,7 @@ using WebHostStreaming.Properties;
 using WebHostStreaming.Providers;
 using WebHostStreaming.Providers.AvailableVideosListProvider;
 using WebHostStreaming.Providers.TorrentContentProvider;
+using WebHostStreaming.Torrent;
 
 namespace WebHostStreaming.StartupExtensions
 {
@@ -22,6 +23,7 @@ namespace WebHostStreaming.StartupExtensions
             services.AddSingleton<IBookmarkedMediaProvider, BookmarkedMediaProvider>();
             services.AddSingleton<IWatchedMediaProvider, WatchedMediaProvider>();
             services.AddSingleton<IRecommandationsProvider, RecommandationsProvider>();
+            services.AddSingleton<ITorrentAutoDownloader, TorrentAutoDownloader>();
         }
 
         public static void SetupUI(this IApplicationBuilder applicationBuilder)

@@ -18,5 +18,7 @@ namespace WebHostStreaming.Providers
         Task SaveSerieBookmarkAsync(LiteContentDto serieToBookmark);
         Task DeleteSerieBookmarkAsync(string serieId);
         Task<bool> SerieBookmarkExistsAsync(string serieId);
+
+        Task InitDownloadBookmarkedMoviesAsync();
     }
 }

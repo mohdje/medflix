@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebHostStreaming.Helpers;
+using WebHostStreaming.Torrent;
 
 namespace WebHostStreaming.Providers
 {
@@ -11,9 +12,26 @@ namespace WebHostStreaming.Providers
         private readonly string BookmarkedMoviesFile = AppFiles.BookmarkedMovies;
         private readonly string BookmarkedSeriesFile = AppFiles.BookmarkedSeries;
 
+        ITorrentAutoDownloader torrentAutoDownloader;
+        public BookmarkedMediaProvider(ITorrentAutoDownloader torrentAutoDownloader)
+        {
+            this.torrentAutoDownloader = torrentAutoDownloader;
+        }
+
         protected override int MaxLimit()
         {
             return 30;
+        }
+
+        public async Task InitDownloadBookmarkedMoviesAsync()
+        {
+            var bookmarkedMovies = await GetBookmarkedMoviesAsync();
+
+            if (bookmarkedMovies == null || !bookmarkedMovies.Any())
+                return;
+
+            foreach (var movie in bookmarkedMovies)
+                torrentAutoDownloader.AddToDownloadList(movie);
         }
 
         public async Task DeleteMovieBookmarkAsync(string movieId)
@@ -24,6 +42,8 @@ namespace WebHostStreaming.Providers
             {
                 movieBookmarks = movieBookmarks.Where(m => m.Id != movieId);
                 JsonHelper.SerializeToFile(BookmarkedMoviesFile, movieBookmarks);
+
+                torrentAutoDownloader.RemoveFromDownloadList(movieBookmarks.FirstOrDefault(m => m.Id == movieId));
             }
         }
 
@@ -44,8 +64,10 @@ namespace WebHostStreaming.Providers
 
         public async Task SaveMovieBookmarkAsync(LiteContentDto movieToBookmark)
         {
+            torrentAutoDownloader.AddToDownloadList(movieToBookmark);
             await SaveDataAsync(BookmarkedMoviesFile, movieToBookmark, (m1, m2) => m1.Id == m2.Id);
         }
+
         public async Task SaveSerieBookmarkAsync(LiteContentDto serieToBookmark)
         {
             await SaveDataAsync(BookmarkedSeriesFile, serieToBookmark, (m1, m2) => m1.Id == m2.Id);

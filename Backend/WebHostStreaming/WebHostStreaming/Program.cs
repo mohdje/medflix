@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using WebHostStreaming.Helpers;
+using WebHostStreaming.Controllers;
+using WebHostStreaming.Providers;
 
 namespace WebHostStreaming
 {
@@ -9,7 +11,15 @@ namespace WebHostStreaming
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var app = CreateHostBuilder(args).Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var bookmarkedMediaProvider = scope.ServiceProvider.GetRequiredService<IBookmarkedMediaProvider>();
+                bookmarkedMediaProvider.InitDownloadBookmarkedMoviesAsync();
+            }
+
+            app.Run();
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args)

@@ -18,17 +18,17 @@ namespace WebHostStreaming.Controllers
     [ApiController]
     public class TorrentController : ControllerBase
     {
-        ISearchersProvider searchersProvider;
         ITorrentContentProvider torrentClientProvider;
         ITorrentHistoryProvider torrentHistoryProvider;
+        ITorrentAutoDownloader torrentAutoDownloader;
         public TorrentController(
-           ISearchersProvider searchersProvider,
            ITorrentContentProvider torrentClientProvider,
-           ITorrentHistoryProvider torrentHistoryProvider)
+           ITorrentHistoryProvider torrentHistoryProvider,
+           ITorrentAutoDownloader torrentAutoDownloader)
         {
-            this.searchersProvider = searchersProvider;
             this.torrentClientProvider = torrentClientProvider;
             this.torrentHistoryProvider = torrentHistoryProvider;
+            this.torrentAutoDownloader = torrentAutoDownloader;
         }
 
         [HttpGet("stream/movies")]
@@ -105,6 +105,8 @@ namespace WebHostStreaming.Controllers
 
         private async Task<IActionResult> StreamData(string torrentUrl, ITorrentFileSelector torrentFileSelector)
         {
+            torrentAutoDownloader.StopDownload();// stop auto downloader to prioritize the current request for streaming
+
             var clientAppIdientifier = HttpContext.Request.GetClientAppIdentifier();
 
             if (string.IsNullOrEmpty(clientAppIdientifier))
