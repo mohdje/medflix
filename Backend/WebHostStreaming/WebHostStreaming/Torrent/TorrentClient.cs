@@ -23,6 +23,7 @@ namespace WebHostStreaming.Torrent
         private ITorrentManagerFile currentDownloadingFile;
         private TorrentStream currentTorrentStream;
         private DownloadingState currentDownloadingState;
+        private bool fileDownloadCompleteEventFired;
 
         private CancellationTokenSource torrentStreamCancellationTokenSource;
         private CancellationTokenSource downloadTorrentCancellationTokenSource;
@@ -136,6 +137,7 @@ namespace WebHostStreaming.Torrent
         {
             if (currentTorrentUrl != torrentUrl)
             {
+                fileDownloadCompleteEventFired = false;
                 currentTorrentUrl = torrentUrl;
                 currentDownloadingState = DownloadingState.Loading;
 
@@ -156,6 +158,8 @@ namespace WebHostStreaming.Torrent
             }
             else if (FileToDownloadChanged(torrentFileSelector))
             {
+                fileDownloadCompleteEventFired = false;
+
                 ReleaseCurrentStream();
 
                 await SetFileToDownload(torrentFileSelector);
@@ -177,8 +181,11 @@ namespace WebHostStreaming.Torrent
         {
             if (currentDownloadingFile != null)
             {
-                if (currentTorrentManager.PartialProgress >= 97)
+                if (currentTorrentManager.PartialProgress >= 97 && !fileDownloadCompleteEventFired)
+                {
+                    fileDownloadCompleteEventFired = true;
                     OnFileDownloadComplete?.Invoke(this, currentDownloadingFile.FullPath);
+                }
                 else if (currentTorrentManager.PartialProgress > 0)
                 {
                     AppLogger.LogInfo(ClientAppIdentifier, $"Download progress for {currentDownloadingFile.Path}: {currentTorrentManager.PartialProgress}");

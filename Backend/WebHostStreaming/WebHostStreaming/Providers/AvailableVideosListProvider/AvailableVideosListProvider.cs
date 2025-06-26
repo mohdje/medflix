@@ -30,6 +30,8 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
         }
         public async Task<bool?> AddMediaSource(string videoFilePath)
         {
+            await Locker.WaitAsync();
+
             if (VideosSourcesList.Any(filePath => Path.GetFileName(filePath) == Path.GetFileName(videoFilePath)))
                 return null;
 
@@ -38,7 +40,6 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
 
             try
             {
-                await Locker.WaitAsync();
                 File.AppendAllLines(AppFiles.AvailableMediaSources, new string[] { videoFilePath });
               
                 videoSourcesList.Add(videoFilePath);

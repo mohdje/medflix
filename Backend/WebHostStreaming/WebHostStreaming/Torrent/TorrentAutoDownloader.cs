@@ -59,10 +59,10 @@ namespace WebHostStreaming.Torrent
 
         private async Task DownloadMoviesAsync()
         {
-            AppLogger.LogInfo("TorrentAutoDownloader.DownloadMoviesAsync(): Starts");
-
             if (running)
                 return;
+
+            AppLogger.LogInfo("TorrentAutoDownloader.DownloadMoviesAsync(): Starts");
 
             running = true;
 
