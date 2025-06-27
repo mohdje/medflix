@@ -73,16 +73,10 @@ namespace WebHostStreaming.Torrent
             while (moviesToDownload.Any() && !downloadCancellationTokenSource.IsCancellationRequested)
             {
                 var movieToDownload = moviesToDownload.First();
-                var voDownloadSuccess = await DownloadOriginalVersion(movieToDownload);
-                var vfDownloadSuccess = await DownloadFrenchVersion(movieToDownload);
+                var voDownloadSuccess = await DownloadOriginalVersionAsync(movieToDownload);
+                var vfDownloadSuccess = await DownloadFrenchVersionAsync(movieToDownload);
 
                 moviesToDownload.Remove(movieToDownload);
-
-                if (voDownloadSuccess)
-                    AppLogger.LogInfo($"TorrentAutoDownloader: VO ready for {movieToDownload.Title} {movieToDownload.Year}");
-
-                if (vfDownloadSuccess)
-                    AppLogger.LogInfo($"TorrentAutoDownloader: VF ready for {movieToDownload.Title} {movieToDownload.Year}");
 
                 if (!voDownloadSuccess || !vfDownloadSuccess)
                     failedDownloadMovies.Add(movieToDownload);
@@ -104,7 +98,7 @@ namespace WebHostStreaming.Torrent
             AppLogger.LogInfo("TorrentAutoDownloader.DownloadMoviesAsync(): Ends");
         }
 
-        private async Task<bool> DownloadOriginalVersion(LiteContentDto movie)
+        private async Task<bool> DownloadOriginalVersionAsync(LiteContentDto movie)
         {
             if (downloadCancellationTokenSource.IsCancellationRequested)
                 return false;
@@ -119,10 +113,15 @@ namespace WebHostStreaming.Torrent
 
             AppLogger.LogInfo($"TorrentAutoDownloader: found {torrents.Count()} VO torrents for {movie.Title} {movie.Year}");
 
-            return await DownloadBestQuality(torrents);
+            var downloadSuccess = await DownloadBestQualityAsync(torrents);
+
+            if (downloadSuccess)
+                AppLogger.LogInfo($"TorrentAutoDownloader: VO successfully downloaded for {movie.Title} {movie.Year}");
+
+            return downloadSuccess;
         }
 
-        private async Task<bool> DownloadFrenchVersion(LiteContentDto movie)
+        private async Task<bool> DownloadFrenchVersionAsync(LiteContentDto movie)
         {
             if (downloadCancellationTokenSource.IsCancellationRequested)
                 return false;
@@ -141,10 +140,15 @@ namespace WebHostStreaming.Torrent
 
             AppLogger.LogInfo($"TorrentAutoDownloader: found {torrents.Count()} VF torrents for {movie.Title} {movie.Year}");
 
-            return await DownloadBestQuality(torrents);
+            var downloadSuccess = await DownloadBestQualityAsync(torrents);
+
+            if(downloadSuccess)
+                AppLogger.LogInfo($"TorrentAutoDownloader: VF successfully downloaded for {movie.Title} {movie.Year}");
+
+            return downloadSuccess;
         }
 
-        private async Task<bool> DownloadBestQuality(IEnumerable<MediaTorrent> torrents)
+        private async Task<bool> DownloadBestQualityAsync(IEnumerable<MediaTorrent> torrents)
         {
             if (torrents == null || !torrents.Any())
                 return false;
