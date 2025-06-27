@@ -40,9 +40,7 @@ namespace WebHostStreaming.Providers
 
             if (movieBookmarks != null)
             {
-                movieBookmarks = movieBookmarks.Where(m => m.Id != movieId);
-                JsonHelper.SerializeToFile(BookmarkedMoviesFile, movieBookmarks);
-
+                JsonHelper.SerializeToFile(BookmarkedMoviesFile, movieBookmarks.Where(m => m.Id != movieId));
                 torrentAutoDownloader.RemoveFromDownloadList(movieBookmarks.FirstOrDefault(m => m.Id == movieId));
             }
         }
