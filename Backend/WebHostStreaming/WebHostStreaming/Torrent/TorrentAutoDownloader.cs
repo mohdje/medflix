@@ -35,16 +35,30 @@ namespace WebHostStreaming.Torrent
             torrentContentProvider.OnNoActiveTorrentClient += (s, e) => DownloadMoviesAsync();
         }
 
-        public void AddToDownloadList(LiteContentDto movieToDownload)
+        public void AddToDownloadList(LiteContentDto mediaToDownload)
         {
-            AppLogger.LogInfo($"TorrentAutoDownloader: Add to the list {movieToDownload.Title} {movieToDownload.Year}");
+            AppLogger.LogInfo($"TorrentAutoDownloader: Add to the list {mediaToDownload.Title} {mediaToDownload.Year}");
 
             lock (moviesToDownload)
             {
-                if (!moviesToDownload.Any(movie => movie.Id == movieToDownload.Id))
-                    moviesToDownload.Add(movieToDownload);
+                if (!moviesToDownload.Any(movie => movie.Id == mediaToDownload.Id))
+                    moviesToDownload.Add(mediaToDownload);
             }
-          
+
+            DownloadMoviesAsync();
+        }
+
+        public void AddToDownloadList(IEnumerable<LiteContentDto> mediasToDownload)
+        {
+            lock (moviesToDownload)
+            {
+                foreach (var movieToDownload in mediasToDownload)
+                {
+                    AppLogger.LogInfo($"TorrentAutoDownloader: Add to the list {movieToDownload.Title} {movieToDownload.Year}");
+                    if (!moviesToDownload.Any(movie => movie.Id == movieToDownload.Id))
+                        moviesToDownload.Add(movieToDownload);
+                }
+            }
 
             DownloadMoviesAsync();
         }
@@ -100,7 +114,7 @@ namespace WebHostStreaming.Torrent
                 var timer = new Timer(_ =>
                 {
                     DownloadMoviesAsync();
-                }, null, TimeSpan.FromMinutes(1), Timeout.InfiniteTimeSpan);
+                }, null, TimeSpan.FromHours(1), Timeout.InfiniteTimeSpan);
             }
 
             running = false;

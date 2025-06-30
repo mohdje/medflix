@@ -30,8 +30,7 @@ namespace WebHostStreaming.Providers
             if (bookmarkedMovies == null || !bookmarkedMovies.Any())
                 return;
 
-            foreach (var movie in bookmarkedMovies)
-                torrentAutoDownloader.AddToDownloadList(movie);
+            torrentAutoDownloader.AddToDownloadList(bookmarkedMovies);
         }
 
         public async Task DeleteMovieBookmarkAsync(string movieId)
