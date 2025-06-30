@@ -39,8 +39,12 @@ namespace WebHostStreaming.Torrent
         {
             AppLogger.LogInfo($"TorrentAutoDownloader: Add to the list {movieToDownload.Title} {movieToDownload.Year}");
 
-            if (!moviesToDownload.Any(movie => movie.Id == movieToDownload.Id))
-                moviesToDownload.Add(movieToDownload);
+            lock (moviesToDownload)
+            {
+                if (!moviesToDownload.Any(movie => movie.Id == movieToDownload.Id))
+                    moviesToDownload.Add(movieToDownload);
+            }
+          
 
             DownloadMoviesAsync();
         }
@@ -49,7 +53,10 @@ namespace WebHostStreaming.Torrent
         {
             AppLogger.LogInfo($"TorrentAutoDownloader: Remove from the list {movieToDownload.Title} {movieToDownload.Year}");
 
-            moviesToDownload.Remove(movieToDownload);
+            lock (moviesToDownload)
+            {
+                moviesToDownload.RemoveAll(m => m.Id == movieToDownload.Id);
+            }
         }
 
         public void StopDownload()
@@ -70,27 +77,30 @@ namespace WebHostStreaming.Torrent
 
             downloadCancellationTokenSource = new CancellationTokenSource();
 
-            while (moviesToDownload.Any() && !downloadCancellationTokenSource.IsCancellationRequested)
+            var stackMoviesToDownload = new Stack<LiteContentDto>(moviesToDownload);
+
+            while (stackMoviesToDownload.Any() && !downloadCancellationTokenSource.IsCancellationRequested)
             {
-                var movieToDownload = moviesToDownload.First();
+                var movieToDownload = stackMoviesToDownload.Pop();
+
+                //if the movie is not in the list anymore, skip it
+                if (!moviesToDownload.Any(m => m.Id == movieToDownload.Id))
+                    continue;
+
                 var voDownloadSuccess = await DownloadOriginalVersionAsync(movieToDownload);
                 var vfDownloadSuccess = await DownloadFrenchVersionAsync(movieToDownload);
 
-                moviesToDownload.Remove(movieToDownload);
-
-                if (!voDownloadSuccess || !vfDownloadSuccess)
-                    failedDownloadMovies.Add(movieToDownload);
+                if (voDownloadSuccess && vfDownloadSuccess && moviesToDownload.Any(m => m.Id == movieToDownload.Id))
+                    moviesToDownload.RemoveAll(m => m.Id == movieToDownload.Id);
             }
-
-            moviesToDownload.AddRange(failedDownloadMovies.Where(fm => !moviesToDownload.Any(m => m.Id == fm.Id)));
 
             if (moviesToDownload.Any() && !downloadCancellationTokenSource.IsCancellationRequested)
             {
-                AppLogger.LogInfo($"TorrentAutoDownloader.DownloadMoviesAsync(): {failedDownloadMovies.Count} movies failed to download, retry in 1 hour");
+                AppLogger.LogInfo($"TorrentAutoDownloader.DownloadMoviesAsync(): {moviesToDownload.Count} movies still present in downloading list, retry in 1 hour");
                 var timer = new Timer(_ =>
                 {
                     DownloadMoviesAsync();
-                }, null, TimeSpan.FromHours(1), Timeout.InfiniteTimeSpan);
+                }, null, TimeSpan.FromMinutes(1), Timeout.InfiniteTimeSpan);
             }
 
             running = false;
@@ -99,7 +109,7 @@ namespace WebHostStreaming.Torrent
         }
 
         private async Task<bool> DownloadOriginalVersionAsync(LiteContentDto movie)
-        {
+        { 
             if (downloadCancellationTokenSource.IsCancellationRequested)
                 return false;
 
@@ -122,7 +132,7 @@ namespace WebHostStreaming.Torrent
         }
 
         private async Task<bool> DownloadFrenchVersionAsync(LiteContentDto movie)
-        {
+        { 
             if (downloadCancellationTokenSource.IsCancellationRequested)
                 return false;
 
@@ -142,7 +152,7 @@ namespace WebHostStreaming.Torrent
 
             var downloadSuccess = await DownloadBestQualityAsync(torrents);
 
-            if(downloadSuccess)
+            if (downloadSuccess)
                 AppLogger.LogInfo($"TorrentAutoDownloader: VF successfully downloaded for {movie.Title} {movie.Year}");
 
             return downloadSuccess;
