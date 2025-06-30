@@ -1,6 +1,5 @@
 ﻿using MonoTorrent;
 using MoviesAPI.Extensions;
-using WebHostStreaming.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +7,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WebHostStreaming.Helpers;
-using WebHostStreaming.Models;
 
 namespace WebHostStreaming.Providers.AvailableVideosListProvider
 {
@@ -28,18 +26,18 @@ namespace WebHostStreaming.Providers.AvailableVideosListProvider
                 return videoSourcesList.ToArray();
             } 
         }
-        public async Task<bool?> AddMediaSource(string videoFilePath)
+        public async Task<bool> AddMediaSource(string videoFilePath)
         {
-            await Locker.WaitAsync();
-
-            if (VideosSourcesList.Any(filePath => Path.GetFileName(filePath) == Path.GetFileName(videoFilePath)))
-                return null;
-
-            if (!Directory.Exists(AppFolders.DataFolder))
-                Directory.CreateDirectory(AppFolders.DataFolder);
-
             try
             {
+                await Locker.WaitAsync();
+
+                if (VideosSourcesList.Any(filePath => Path.GetFileName(filePath) == Path.GetFileName(videoFilePath)))
+                    return true;
+
+                if (!Directory.Exists(AppFolders.DataFolder))
+                    Directory.CreateDirectory(AppFolders.DataFolder);
+
                 File.AppendAllLines(AppFiles.AvailableMediaSources, new string[] { videoFilePath });
               
                 videoSourcesList.Add(videoFilePath);

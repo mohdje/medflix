@@ -50,17 +50,6 @@ namespace WebHostStreaming.Torrent
             return await StartDownloadingMediaAsync(torrentUrl, torrentFileSelector, false);
         }
 
-        public async Task PauseDownloadAsync()
-        {
-            if(currentTorrentManager != null)
-            {
-                await currentTorrentManager.PauseAsync().ContinueWith(t =>
-                {
-                    AppLogger.LogInfo(ClientAppIdentifier, $"TorrentManager paused : {currentTorrentManager.Name}");
-                });
-            }
-        }
-
         public async Task<TorrentStream> GetTorrentStreamAsync(string torrentUrl, ITorrentFileSelector torrentFileSelector)
         {
             var downloadStarted = await StartDownloadingMediaAsync(torrentUrl, torrentFileSelector, true);
@@ -137,7 +126,6 @@ namespace WebHostStreaming.Torrent
         {
             if (currentTorrentUrl != torrentUrl)
             {
-                fileDownloadCompleteEventFired = false;
                 currentTorrentUrl = torrentUrl;
                 currentDownloadingState = DownloadingState.Loading;
 
@@ -158,8 +146,6 @@ namespace WebHostStreaming.Torrent
             }
             else if (FileToDownloadChanged(torrentFileSelector))
             {
-                fileDownloadCompleteEventFired = false;
-
                 ReleaseCurrentStream();
 
                 await SetFileToDownload(torrentFileSelector);
@@ -181,16 +167,17 @@ namespace WebHostStreaming.Torrent
         {
             if (currentDownloadingFile != null)
             {
+                AppLogger.LogInfo(ClientAppIdentifier, $"Download progress for {currentDownloadingFile.Path}: {currentTorrentManager.PartialProgress}");
+
                 if (currentTorrentManager.PartialProgress >= 97 && !fileDownloadCompleteEventFired)
                 {
                     fileDownloadCompleteEventFired = true;
                     OnFileDownloadComplete?.Invoke(this, currentDownloadingFile.FullPath);
                 }
-                else if (currentTorrentManager.PartialProgress > 0)
-                {
-                    AppLogger.LogInfo(ClientAppIdentifier, $"Download progress for {currentDownloadingFile.Path}: {currentTorrentManager.PartialProgress}");
-                    currentDownloadingState = currentTorrentManager.PartialProgress >= 0.5 ? DownloadingState.ReadyToPlaySoon : DownloadingState.MediaDownloadStarted;
-                }
+                else if (currentTorrentManager.PartialProgress >= 0.5)
+                    currentDownloadingState = DownloadingState.ReadyToPlaySoon;
+                else
+                    currentDownloadingState = DownloadingState.MediaDownloadStarted;
             }
         }
 
@@ -258,7 +245,7 @@ namespace WebHostStreaming.Torrent
                     AppLogger.LogError(ClientAppIdentifier, "GetTorrentManagerAsync", ex);
                     currentDownloadingState = DownloadingState.TorrentFileOpeningFailed;
                 }
-                   
+
                 return null;
             }
         }
@@ -280,6 +267,7 @@ namespace WebHostStreaming.Torrent
 
                 await currentTorrentManager.SetFilePriorityAsync(fileToDownload, Priority.Highest);
                 this.currentDownloadingFile = fileToDownload;
+                fileDownloadCompleteEventFired = false;
 
                 AppLogger.LogInfo(ClientAppIdentifier, $"File to download selected : {this.currentDownloadingFile.Path}");
             }
