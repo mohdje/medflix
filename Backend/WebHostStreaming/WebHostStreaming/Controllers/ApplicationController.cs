@@ -79,7 +79,7 @@ namespace WebHostStreaming.Controllers
 
             var success = await availableVideosListProvider.AddMediaSource(filePath);
 
-            if (success.HasValue && success.Value)
+            if (success)
             {
                 return CreatedAtAction(nameof(UploadFile), new
                 {

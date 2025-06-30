@@ -113,13 +113,10 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
             {
                 var success = await availableVideosListProvider.AddMediaSource(fileFullPath);
 
-                if (success.HasValue)
-                {
-                    if (success.Value)
-                        AppLogger.LogInfo($"Register file as complete with success : {fileFullPath}");
-                    else
-                        AppLogger.LogInfo($"Fail to register file as complete : {fileFullPath}");
-                }
+                if (success)
+                    AppLogger.LogInfo($"Register file as complete with success : {fileFullPath}");
+                else
+                    AppLogger.LogInfo($"Fail to register file as complete : {fileFullPath}");
 
             };
             torrentClients.Add(torrentClient);
