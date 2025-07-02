@@ -165,7 +165,7 @@ namespace WebHostStreaming.Torrent
 
         private void OnPieceHashed(object sender, PieceHashedEventArgs e)
         {
-            if (currentDownloadingFile != null)
+            if (currentDownloadingFile != null && currentTorrentManager.PartialProgress > 0)
             {
                 AppLogger.LogInfo(ClientAppIdentifier, $"Download progress for {currentDownloadingFile.Path}: {currentTorrentManager.PartialProgress}");
 
