@@ -6,9 +6,9 @@ namespace WebHostStreaming.Providers
 {
     public interface ITorrentHistoryProvider
     {
-        Task<IEnumerable<TorrentInfoDto>> GetTorrentFilesHistoryAsync();
+        IEnumerable<TorrentInfoDto> GetTorrentFilesHistory();
 
-        Task SaveTorrentFileHistoryAsync(TorrentInfoDto torrentInfoDto);
+        void SaveTorrentFileHistory(TorrentInfoDto torrentInfoDto);
 
     }
 }

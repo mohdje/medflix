@@ -15,8 +15,8 @@ namespace WebHostStreaming
 
             using (var scope = app.Services.CreateScope())
             {
-                var bookmarkedMediaProvider = scope.ServiceProvider.GetRequiredService<IBookmarkedMediaProvider>();
-                bookmarkedMediaProvider.InitDownloadBookmarkedMoviesAsync();
+                var bookmarkedMediaProvider = scope.ServiceProvider.GetRequiredService<IBookmarkedMoviesProvider>();
+                bookmarkedMediaProvider.InitDownloadBookmarkedMovies();
             }
 
             app.Run();

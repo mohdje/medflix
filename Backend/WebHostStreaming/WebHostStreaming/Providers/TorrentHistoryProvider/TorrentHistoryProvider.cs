@@ -1,29 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebHostStreaming.Helpers;
 using WebHostStreaming.Models;
 
 namespace WebHostStreaming.Providers
 {
-    public class TorrentHistoryProvider : DataProvider, ITorrentHistoryProvider
+    public class TorrentHistoryProvider : DataStoreProvider<TorrentInfoDto>, ITorrentHistoryProvider
     {
-        private readonly string TorrentHistoryFile = AppFiles.TorrentHistory;
+        protected override int MaxLimit => 30;
 
-        protected override int MaxLimit()
+        protected override string FilePath => AppFiles.TorrentHistory;
+
+        public IEnumerable<TorrentInfoDto> GetTorrentFilesHistory()
         {
-            return 30;
-        }
-        public async Task<IEnumerable<TorrentInfoDto>> GetTorrentFilesHistoryAsync()
-        {
-            return await GetDataAsync<TorrentInfoDto>(TorrentHistoryFile);
+            return Data.OrderByDescending(f => f.LastOpenedDateTime).Take(MaxLimit);
         }
 
-        public async Task SaveTorrentFileHistoryAsync(TorrentInfoDto torrentInfoDto)
+        public void SaveTorrentFileHistory(TorrentInfoDto torrentInfoDto)
         {
-            await SaveDataAsync(TorrentHistoryFile, torrentInfoDto, null);
+            AddData(torrentInfoDto);
         }
-
-        
     }
 }

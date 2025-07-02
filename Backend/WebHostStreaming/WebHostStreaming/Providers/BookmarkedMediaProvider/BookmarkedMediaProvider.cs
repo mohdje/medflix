@@ -1,99 +1,39 @@
 ﻿using MoviesAPI.Services.Content.Dtos;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using WebHostStreaming.Helpers;
-using WebHostStreaming.Torrent;
 
 namespace WebHostStreaming.Providers
 {
-    public class BookmarkedMediaProvider : DataProvider, IBookmarkedMediaProvider 
+    public abstract class BookmarkedMediaProvider : DataStoreProvider<LiteContentDto> 
     {
-        private readonly string BookmarkedMoviesFile = AppFiles.BookmarkedMovies;
-        private readonly string BookmarkedSeriesFile = AppFiles.BookmarkedSeries;
+        protected override int MaxLimit => 30;
 
-        ITorrentAutoDownloader torrentAutoDownloader;
-        public BookmarkedMediaProvider(ITorrentAutoDownloader torrentAutoDownloader)
+        protected LiteContentDto DeleteBookmark(string mediaId)
         {
-            this.torrentAutoDownloader = torrentAutoDownloader;
+            var mediaToDelete = Data.FirstOrDefault(m => m.Id == mediaId);
+
+            if (mediaToDelete != null)
+                RemoveData(mediaToDelete);
+
+            return mediaToDelete;   
         }
 
-        protected override int MaxLimit()
+        protected IEnumerable<LiteContentDto> GetBookmarks()
         {
-            return 30;
+            return Data.Reverse().Take(MaxLimit);
         }
 
-        public async Task InitDownloadBookmarkedMoviesAsync()
+        protected bool BookmarkExists(string mediaId)
         {
-            var bookmarkedMovies = await GetBookmarkedMoviesAsync();
+            return Data.Any(m => m.Id == mediaId);
+        }
 
-            if (bookmarkedMovies == null || !bookmarkedMovies.Any())
+        protected void AddBookmark(LiteContentDto movieToBookmark)
+        {
+            if(Data.Any(m => m.Id == movieToBookmark.Id))
                 return;
 
-            torrentAutoDownloader.AddToDownloadList(bookmarkedMovies);
-        }
-
-        public async Task DeleteMovieBookmarkAsync(string movieId)
-        {
-            var movieBookmarks = await GetBookmarkedMoviesAsync();
-
-            if (movieBookmarks != null)
-            {
-                JsonHelper.SerializeToFile(BookmarkedMoviesFile, movieBookmarks.Where(m => m.Id != movieId));
-                torrentAutoDownloader.RemoveFromDownloadList(movieBookmarks.FirstOrDefault(m => m.Id == movieId));
-            }
-        }
-
-        public async Task<IEnumerable<LiteContentDto>> GetBookmarkedMoviesAsync()
-        {
-            return await GetDataAsync<LiteContentDto>(BookmarkedMoviesFile);
-        }
-
-        public async Task<bool> MovieBookmarkExistsAsync(string movieId)
-        {
-            var movieBookmarks = await GetBookmarkedMoviesAsync();
-
-            if (movieBookmarks != null)
-                return movieBookmarks.Any(m => m.Id == movieId);
-
-            return false;
-        }
-
-        public async Task SaveMovieBookmarkAsync(LiteContentDto movieToBookmark)
-        {
-            torrentAutoDownloader.AddToDownloadList(movieToBookmark);
-            await SaveDataAsync(BookmarkedMoviesFile, movieToBookmark, (m1, m2) => m1.Id == m2.Id);
-        }
-
-        public async Task SaveSerieBookmarkAsync(LiteContentDto serieToBookmark)
-        {
-            await SaveDataAsync(BookmarkedSeriesFile, serieToBookmark, (m1, m2) => m1.Id == m2.Id);
-        }
-
-        public async Task DeleteSerieBookmarkAsync(string serieId)
-        {
-            var serieBookmarks = await GetBookmarkedSeriesAsync();
-
-            if (serieBookmarks != null)
-            {
-                serieBookmarks = serieBookmarks.Where(m => m.Id != serieId);
-                JsonHelper.SerializeToFile(BookmarkedSeriesFile, serieBookmarks);
-            }
-        }
-
-        public async Task<bool> SerieBookmarkExistsAsync(string serieId)
-        {
-            var serieBookmarks = await GetBookmarkedSeriesAsync();
-
-            if (serieBookmarks != null)
-                return serieBookmarks.Any(m => m.Id == serieId);
-
-            return false;
-        }
-
-        public async Task<IEnumerable<LiteContentDto>> GetBookmarkedSeriesAsync()
-        {
-            return await GetDataAsync<LiteContentDto>(BookmarkedSeriesFile);
+            AddData(movieToBookmark);
         }
     }
 }

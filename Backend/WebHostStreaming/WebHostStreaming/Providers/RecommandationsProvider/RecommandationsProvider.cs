@@ -9,16 +9,18 @@ namespace WebHostStreaming.Providers
 {
     public class RecommandationsProvider : IRecommandationsProvider
     {
-        IWatchedMediaProvider watchedMediaProvider;
+        IWatchedMoviesProvider watchedMoviesProvider;
+        IWatchedSeriesProvider watchedSeriesProvider;
         ISearchersProvider searchersProvider;
-        public RecommandationsProvider(IWatchedMediaProvider watchedMediaProvider, ISearchersProvider searchersProvider)
+        public RecommandationsProvider(IWatchedMoviesProvider watchedMoviesProvider, IWatchedSeriesProvider watchedSeriesProvider, ISearchersProvider searchersProvider)
         {
-            this.watchedMediaProvider = watchedMediaProvider;
+            this.watchedMoviesProvider = watchedMoviesProvider;
+            this.watchedSeriesProvider = watchedSeriesProvider;
             this.searchersProvider = searchersProvider;
         }
         public async Task<IEnumerable<LiteContentDto>> GetMoviesRecommandationsAsync()
         {
-            var watchedMovies = await watchedMediaProvider.GetWatchedMoviesAsync();
+            var watchedMovies = watchedMoviesProvider.GetWatchedMovies();
             var recommandationsRequest = BuildRecommandationsRequest(watchedMovies);
 
             if (recommandationsRequest == null)
@@ -33,7 +35,7 @@ namespace WebHostStreaming.Providers
 
         public async Task<IEnumerable<LiteContentDto>> GetSeriesRecommandationsAsync()
         {
-            var watchedSeries = await watchedMediaProvider.GetWatchedSeriesAsync();
+            var watchedSeries = watchedSeriesProvider.GetWatchedSeries();
             var recommandationsRequest = BuildRecommandationsRequest(watchedSeries);
 
             if (recommandationsRequest == null)

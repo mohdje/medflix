@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using WebHostStreaming.Extensions;
 using WebHostStreaming.Helpers;
@@ -88,7 +87,7 @@ namespace WebHostStreaming.Controllers
 
             //if (files != null)
             //{
-            //    await torrentHistoryProvider.SaveTorrentFileHistoryAsync(new TorrentInfoDto() { LastOpenedDateTime = DateTime.Now, Link = url });
+            //    torrentHistoryProvider.SaveTorrentFileHistory(new TorrentInfoDto() { LastOpenedDateTime = DateTime.Now, Link = url });
 
             //    torrentInfoDto.Files = files.ToArray();
             //}
@@ -97,10 +96,9 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("history")]
-        public async Task<IEnumerable<TorrentInfoDto>> GetTorrentFilesHistory()
+        public IEnumerable<TorrentInfoDto> GetTorrentFilesHistory()
         {
-            var torrentFiles = await torrentHistoryProvider.GetTorrentFilesHistoryAsync();
-            return torrentFiles?.OrderByDescending(f => f.LastOpenedDateTime);
+            return torrentHistoryProvider.GetTorrentFilesHistory();
         }
 
         private async Task<IActionResult> StreamData(string torrentUrl, ITorrentFileSelector torrentFileSelector)

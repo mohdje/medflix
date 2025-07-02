@@ -3,15 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MoviesAPI.Services;
 using WebHostStreaming.Providers;
-using System.IO;
 using WebHostStreaming.Models;
-using WebHostStreaming.Helpers;
 using System.Net;
-using MoviesAPI.Services.Torrent.Dtos;
 using MoviesAPI.Services.Content.Dtos;
-using MoviesAPI.Services.Tmdb.Dtos;
 
 namespace WebHostStreaming.Controllers
 {
@@ -20,18 +15,18 @@ namespace WebHostStreaming.Controllers
     public class MoviesController : ControllerBase
     {
         ISearchersProvider searchersProvider;
-        IWatchedMediaProvider watchedMediaProvider;
-        IBookmarkedMediaProvider bookmarkedMediaProvider;
+        IWatchedMoviesProvider watchedMoviesProvider;
+        IBookmarkedMoviesProvider bookmarkedMoviesProvider;
         IRecommandationsProvider recommandationsProvider;
         public MoviesController(
             ISearchersProvider searchersProvider,
-            IWatchedMediaProvider watchedMediaProvider,
-            IBookmarkedMediaProvider bookmarkedMediaProvider,
+            IWatchedMoviesProvider watchedMoviesProvider,
+            IBookmarkedMoviesProvider bookmarkedMoviesProvider,
             IRecommandationsProvider recommandationsProvider)
         {
             this.searchersProvider = searchersProvider;
-            this.watchedMediaProvider = watchedMediaProvider;
-            this.bookmarkedMediaProvider = bookmarkedMediaProvider;
+            this.watchedMoviesProvider = watchedMoviesProvider;
+            this.bookmarkedMoviesProvider = bookmarkedMoviesProvider;
             this.recommandationsProvider = recommandationsProvider;
         }
 
@@ -129,25 +124,23 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("watchedmedia")]
-        public async Task<IEnumerable<WatchedMediaDto>> GetWatchedMovies()
+        public IEnumerable<WatchedMediaDto> GetWatchedMovies()
         {
-            var movies = await watchedMediaProvider.GetWatchedMoviesAsync();
-            return movies?.Reverse().Take(30);
+            return watchedMoviesProvider.GetWatchedMovies();
         }
 
         [HttpGet("watchedmedia/{id}")]
-        public async Task<WatchedMediaDto> GetWatchedMovie(int id)
+        public WatchedMediaDto GetWatchedMovie(int id)
         {
-            var movies = await watchedMediaProvider.GetWatchedMoviesAsync();
-            return movies?.SingleOrDefault(m => m.Media.Id == id.ToString());
+            return watchedMoviesProvider.GetWatchedMovie(id);
         }
 
         [HttpPut("watchedmedia")]
-        public async Task<IActionResult> SaveWatchedMovie([FromBody] WatchedMediaDto watchedMovie)
+        public ActionResult SaveWatchedMovie([FromBody] WatchedMediaDto watchedMovie)
         {
             try
             {
-                await watchedMediaProvider.SaveWatchedMovieAsync(watchedMovie);
+                watchedMoviesProvider.SaveWatchedMovie(watchedMovie);
             }
             catch (Exception)
             {
@@ -158,20 +151,17 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("bookmarks")]
-        public async Task<IEnumerable<LiteContentDto>> GetBookmarkedMovies()
+        public IEnumerable<LiteContentDto> GetBookmarkedMovies()
         {
-            var movies = await bookmarkedMediaProvider.GetBookmarkedMoviesAsync();
-            return movies?.Reverse();
+            return bookmarkedMoviesProvider.GetBookmarkedMovies();
         }
 
-
-
         [HttpPut("bookmarks")]
-        public async Task<IActionResult> BookmarkMovie([FromBody] LiteContentDto movieToBookmark)
+        public IActionResult BookmarkMovie([FromBody] LiteContentDto movieToBookmark)
         {
             try
             {
-                await bookmarkedMediaProvider.SaveMovieBookmarkAsync(movieToBookmark);
+                bookmarkedMoviesProvider.AddMovieBookmark(movieToBookmark);
             }
             catch (Exception)
             {
@@ -183,11 +173,11 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpDelete("bookmarks")]
-        public async Task<IActionResult> DeleteBookmarkMovie([FromQuery(Name = "id")] string movieId)
+        public IActionResult DeleteBookmarkMovie([FromQuery(Name = "id")] string movieId)
         {
             try
             {
-                await bookmarkedMediaProvider.DeleteMovieBookmarkAsync(movieId);
+                bookmarkedMoviesProvider.DeleteMovieBookmark(movieId);
             }
             catch (Exception)
             {
@@ -199,11 +189,11 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("bookmarks/exists")]
-        public async Task<IActionResult> BookmarkExists([FromQuery(Name = "id")] string movieId)
+        public IActionResult BookmarkExists([FromQuery(Name = "id")] string movieId)
         {
             if (!string.IsNullOrEmpty(movieId))
             {
-                return Ok(await bookmarkedMediaProvider.MovieBookmarkExistsAsync(movieId));
+                return Ok(bookmarkedMoviesProvider.MovieBookmarkExists(movieId));
             }
             else
                 return BadRequest();

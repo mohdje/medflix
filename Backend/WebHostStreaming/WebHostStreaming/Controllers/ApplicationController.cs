@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using System.Web;
 using WebHostStreaming.Extensions;
 using WebHostStreaming.Helpers;
-using WebHostStreaming.Models;
 using WebHostStreaming.Providers;
 using WebHostStreaming.Providers.AvailableVideosListProvider;
 using MediaTypeHeaderValue = Microsoft.Net.Http.Headers.MediaTypeHeaderValue;
@@ -23,13 +22,16 @@ namespace WebHostStreaming.Controllers
     public class ApplicationController : ControllerBase
     {
         IAvailableVideosListProvider availableVideosListProvider;
-        IWatchedMediaProvider watchedMediaProvider;
+        IWatchedMoviesProvider watchedMoviesProvider;
+        IWatchedSeriesProvider watchedSeriesProvider;
 
-        public ApplicationController(IAvailableVideosListProvider availableVideosListProvider, IWatchedMediaProvider watchedMediaProvider)
+        public ApplicationController(IAvailableVideosListProvider availableVideosListProvider, IWatchedMoviesProvider watchedMoviesProvider, IWatchedSeriesProvider watchedSeriesProvider)
         {
             this.availableVideosListProvider = availableVideosListProvider;
-            this.watchedMediaProvider = watchedMediaProvider;
+            this.watchedMoviesProvider = watchedMoviesProvider;
+            this.watchedSeriesProvider = watchedSeriesProvider;
         }
+
         [HttpGet("ping")]
         public IActionResult Ping()
         {
@@ -132,10 +134,10 @@ namespace WebHostStreaming.Controllers
 
 
         [HttpDelete("clean")]
-        public async Task<IActionResult> CleanUnusedResources()
+        public IActionResult CleanUnusedResources()
         {
-            var watchedMovies = await watchedMediaProvider.GetWatchedMoviesAsync();
-            var watchedSeries = await watchedMediaProvider.GetWatchedSeriesAsync();
+            var watchedMovies = watchedMoviesProvider.GetWatchedMovies();
+            var watchedSeries = watchedSeriesProvider.GetWatchedSeries();
             var counter = 0;
             var videoExtensions = new string[] { ".mp4", ".avi", ".mkv" };
 

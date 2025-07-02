@@ -17,18 +17,18 @@ namespace WebHostStreaming.Controllers
     public class SeriesController : ControllerBase
     {
         ISearchersProvider searchersProvider;
-        IWatchedMediaProvider watchedMediaProvider;
-        IBookmarkedMediaProvider bookmarkedMediaProvider;
+        IWatchedSeriesProvider watchedSeriesProvider;
+        IBookmarkedSeriesProvider bookmarkedSeriesProvider;
         IRecommandationsProvider recommandationsProvider;
         public SeriesController(
             ISearchersProvider searchersProvider,
-            IWatchedMediaProvider watchedMediaProvider,
-            IBookmarkedMediaProvider bookmarkedMediaProvider,
+            IWatchedSeriesProvider watchedSeriesProvider,
+            IBookmarkedSeriesProvider bookmarkedSeriesProvider,
              IRecommandationsProvider recommandationsProvider)
         {
             this.searchersProvider = searchersProvider;
-            this.watchedMediaProvider = watchedMediaProvider;
-            this.bookmarkedMediaProvider = bookmarkedMediaProvider;
+            this.watchedSeriesProvider = watchedSeriesProvider;
+            this.bookmarkedSeriesProvider = bookmarkedSeriesProvider;
             this.recommandationsProvider = recommandationsProvider;
         }
 
@@ -125,32 +125,29 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("watchedmedia")]
-        public async Task<IEnumerable<WatchedMediaDto>> GetWatchedSeries()
+        public IEnumerable<WatchedMediaDto> GetWatchedSeries()
         {
-            var series = await watchedMediaProvider.GetWatchedSeriesAsync();
-            return series?.Reverse().DistinctBy(w => w.Media.Id).Take(30);
+            return watchedSeriesProvider.GetWatchedSeries();
         }
 
         [HttpGet("watchedmedia/{id}")]
-        public async Task<WatchedMediaDto> GetWatchedSerie(int id, int seasonNumber, int episodeNumber)
+        public WatchedMediaDto GetWatchedEpisode(int id, int seasonNumber, int episodeNumber)
         {
-            var series = await watchedMediaProvider.GetWatchedSeriesAsync();
-            return series?.SingleOrDefault(s => s.Media.Id == id.ToString() && s.SeasonNumber == seasonNumber && s.EpisodeNumber == episodeNumber);
+            return watchedSeriesProvider.GetWatchedEpisode(id, seasonNumber, episodeNumber);
         }
 
         [HttpGet("watchedmedia/{id}/{seasonNumber}")]
-        public async Task<IEnumerable<WatchedMediaDto>> GetWatchedEpisodesBySeason(int id, int seasonNumber)
+        public IEnumerable<WatchedMediaDto> GetWatchedEpisodesBySeason(int id, int seasonNumber)
         {
-            var series = await watchedMediaProvider.GetWatchedSeriesAsync();
-            return series?.Where(s => s.Media.Id == id.ToString() && s.SeasonNumber == seasonNumber);
+            return watchedSeriesProvider.GetWatchedEpisodes(id, seasonNumber);
         }
 
         [HttpPut("watchedmedia")]
-        public async Task<IActionResult> SaveWatchedSerie([FromBody] WatchedMediaDto watchedSerie)
+        public IActionResult SaveWatchedEpisode([FromBody] WatchedMediaDto watchedEpisode)
         {
             try
             {
-                await watchedMediaProvider.SaveWatchedSerieAsync(watchedSerie);
+                watchedSeriesProvider.SaveWatchedEpisode(watchedEpisode);
             }
             catch (Exception)
             {
@@ -161,24 +158,20 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("bookmarks")]
-        public async Task<IEnumerable<LiteContentDto>> GetBookmarkedSeries()
+        public IEnumerable<LiteContentDto> GetBookmarkedSeries()
         {
-            var series = await bookmarkedMediaProvider.GetBookmarkedSeriesAsync();
-            return series?.Reverse();
+            return bookmarkedSeriesProvider.GetBookmarkedSeries();
         }
 
-
-
         [HttpPut("bookmarks")]
-        public async Task<IActionResult> BookmarkSerie([FromBody] LiteContentDto serieToBookmark)
+        public IActionResult BookmarkSerie([FromBody] LiteContentDto serieToBookmark)
         {
             try
             {
-                await bookmarkedMediaProvider.SaveSerieBookmarkAsync(serieToBookmark);
+                bookmarkedSeriesProvider.AddSerieBookmark(serieToBookmark);
             }
             catch (Exception)
             {
-
                 return StatusCode((int)HttpStatusCode.InternalServerError);
             }
 
@@ -186,15 +179,14 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpDelete("bookmarks")]
-        public async Task<IActionResult> DeleteBookmarkserie([FromQuery(Name = "id")] string serieId)
+        public IActionResult DeleteBookmarkserie([FromQuery(Name = "id")] string serieId)
         {
             try
             {
-                await bookmarkedMediaProvider.DeleteSerieBookmarkAsync(serieId);
+                bookmarkedSeriesProvider.DeleteSerieBookmark(serieId);
             }
             catch (Exception)
             {
-
                 return StatusCode((int)HttpStatusCode.InternalServerError);
             }
 
@@ -202,11 +194,11 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("bookmarks/exists")]
-        public async Task<IActionResult> BookmarkExists([FromQuery(Name = "id")] string serieId)
+        public IActionResult BookmarkExists([FromQuery(Name = "id")] string serieId)
         {
             if (!string.IsNullOrEmpty(serieId))
             {
-                return Ok(await bookmarkedMediaProvider.SerieBookmarkExistsAsync(serieId));
+                return Ok(bookmarkedSeriesProvider.SerieBookmarkExists(serieId));
             }
             else
                 return BadRequest();
