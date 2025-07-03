@@ -35,7 +35,7 @@ namespace WebHostStreaming.StartupExtensions
 
             applicationBuilder.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(AppFolders.ViewFolder),
+                FileProvider = new PhysicalFileProvider(AppFolders.HomeViewFolder),
                 RequestPath = "/home"
             });
 

@@ -27,7 +27,7 @@ RUN dotnet publish "./WebHostStreaming.csproj"  -c release -o /release --no-rest
 
 WORKDIR /release
 
-COPY --from=frontbuild /medflix-frontend/build /release/view
+COPY --from=frontbuild /medflix-frontend/build /release/view/home
 
 #Serve .Net App
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
