@@ -28,8 +28,14 @@ namespace WebHostStreaming.Providers
 
         public void SaveWatchedEpisode(WatchedMediaDto watchedEpisode)
         {
-            if(Data.Any(wm => wm.Media.Id == watchedEpisode.Media.Id && wm.SeasonNumber == watchedEpisode.SeasonNumber && wm.EpisodeNumber == watchedEpisode.EpisodeNumber))
-                UpdateData(watchedEpisode);
+            var watchedEpisodeToUpdate = Data.FirstOrDefault(wm => wm.Media.Id == watchedEpisode.Media.Id && wm.SeasonNumber == watchedEpisode.SeasonNumber && wm.EpisodeNumber == watchedEpisode.EpisodeNumber);
+            if (watchedEpisodeToUpdate != null)
+            {
+                watchedEpisodeToUpdate.CurrentTime = watchedEpisode.CurrentTime;
+                watchedEpisodeToUpdate.VideoSource = watchedEpisode.VideoSource;
+
+                UpdateData(watchedEpisodeToUpdate);
+            }
             else
                 AddData(watchedEpisode);
         }

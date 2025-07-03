@@ -23,8 +23,14 @@ namespace WebHostStreaming.Providers
 
         public void SaveWatchedMovie(WatchedMediaDto watchedMovie)
         {
-            if (Data.Any(wm => wm.Media.Id == watchedMovie.Media.Id))
-                UpdateData(watchedMovie);
+            var watchedMovieToUpdate = Data.FirstOrDefault(wm => wm.Media.Id == watchedMovie.Media.Id);
+            if (watchedMovieToUpdate != null)
+            {
+                watchedMovieToUpdate.CurrentTime = watchedMovie.CurrentTime;
+                watchedMovieToUpdate.VideoSource = watchedMovie.VideoSource;
+
+                UpdateData(watchedMovieToUpdate);
+            }
             else
                 AddData(watchedMovie);
         }
