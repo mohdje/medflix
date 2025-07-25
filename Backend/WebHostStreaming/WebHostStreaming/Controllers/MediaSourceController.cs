@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using MoviesAPI.Extensions;
+﻿using Microsoft.AspNetCore.Mvc;
 using MoviesAPI.Services.Torrent.Dtos;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebHostStreaming.Models;
 using WebHostStreaming.Providers;
-using WebHostStreaming.Providers.AvailableVideosListProvider;
 
 namespace WebHostStreaming.Controllers
 {
@@ -16,95 +13,99 @@ namespace WebHostStreaming.Controllers
     public class MediaSourceController : ControllerBase
     {
         ISearchersProvider searchersProvider;
-        IAvailableVideosListProvider availableVideosListProvider;
+        IVideoInfoProvider videoInfoProvider;
 
-        public MediaSourceController(ISearchersProvider searchersProvider, IAvailableVideosListProvider availableVideosListProvider)
+        public MediaSourceController(ISearchersProvider searchersProvider, IVideoInfoProvider videoInfoProvider)
         {
             this.searchersProvider = searchersProvider;
-            this.availableVideosListProvider = availableVideosListProvider;
+            this.videoInfoProvider = videoInfoProvider;
         }
 
         [HttpGet("movies/vf")]
         public async Task<IEnumerable<MediaSource>> SearchVFMovieSources(string mediaId, string title, int year)
         {
+            if (TryGetMediaSources(mediaId, LanguageVersion.French, out var mediaSources))
+                return mediaSources;
+
             var frenchTitle = await searchersProvider.MovieSearcher.GetMovieFrenchTitleAsync(mediaId);
             if (string.IsNullOrEmpty(frenchTitle))
                 frenchTitle = title;
 
-            var videoPath = availableVideosListProvider.GetVfMovieSource(title, frenchTitle, year);
-
-            if (!string.IsNullOrEmpty(videoPath))
-                return ToMediaSources(videoPath);
-
             var torrents = await searchersProvider.TorrentSearchManager.SearchVfTorrentsMovieAsync(frenchTitle, year);
 
-            return ToMediaSources(torrents);
+            return ToMediaSources(torrents, LanguageVersion.French);
         }
 
         [HttpGet("movies/vo")]
-        public async Task<IEnumerable<MediaSource>> SearchVOMovieSources(string title, int year)
+        public async Task<IEnumerable<MediaSource>> SearchVOMovieSources(string mediaId, string title, int year)
         {
-            var videoPath = availableVideosListProvider.GetVoMovieSource(title, year);
-
-            if (!string.IsNullOrEmpty(videoPath))
-                return ToMediaSources(videoPath);
+            if (TryGetMediaSources(mediaId, LanguageVersion.Original, out var mediaSources))
+                return mediaSources;
 
             var torrents = await searchersProvider.TorrentSearchManager.SearchVoTorrentsMovieAsync(title, year);
 
-            return ToMediaSources(torrents);
+            return ToMediaSources(torrents, LanguageVersion.Original);
         }
 
         [HttpGet("series/vo")]
-        public async Task<IEnumerable<MediaSource>> SearchSerieVOSources(string imdbId, string title, int seasonNumber, int episodeNumber)
+        public async Task<IEnumerable<MediaSource>> SearchSerieVOSources(string mediaId, string title, int seasonNumber, int episodeNumber)
         {
-            var videoPath = availableVideosListProvider.GetVoSerieSource(title, seasonNumber, episodeNumber);
-
-            if (!string.IsNullOrEmpty(videoPath))
-                return ToMediaSources(videoPath);
+            if (TryGetMediaSources(mediaId, LanguageVersion.Original, out var mediaSources, seasonNumber, episodeNumber))
+                return mediaSources;
 
             var torrents = await searchersProvider.TorrentSearchManager.SearchVoTorrentsSerieAsync(title, seasonNumber, episodeNumber);
 
-            return ToMediaSources(torrents);
+            return ToMediaSources(torrents, LanguageVersion.Original);
         }
 
         [HttpGet("series/vf")]
         public async Task<IEnumerable<MediaSource>> SearchSerieVFSources(string mediaId, string title, int seasonNumber, int episodeNumber)
         {
+            if (TryGetMediaSources(mediaId, LanguageVersion.French, out var mediaSources, seasonNumber, episodeNumber))
+                return mediaSources;
+
             var frenchTitle = await searchersProvider.SeriesSearcher.GetSerieFrenchTitleAsync(mediaId);
             if (string.IsNullOrEmpty(frenchTitle))
                 frenchTitle = title;
 
-            var videoPath = availableVideosListProvider.GetVfSerieSource(title, frenchTitle, seasonNumber, episodeNumber);
-            if (!string.IsNullOrEmpty(videoPath))
-                return ToMediaSources(videoPath);
-
             var torrents = await searchersProvider.TorrentSearchManager.SearchVfTorrentsSerieAsync(frenchTitle, seasonNumber, episodeNumber);
 
-            return ToMediaSources(torrents);
+            return ToMediaSources(torrents, LanguageVersion.French);
         }
 
-        private IEnumerable<MediaSource> ToMediaSources(IEnumerable<MediaTorrent> torrents)
+        private bool TryGetMediaSources(string mediaId, LanguageVersion language, out MediaSource[] mediaSources, int seasonNumber = 0, int episodeNumber = 0)
+        {
+            var videoInfo = videoInfoProvider.GetVideoInfo(mediaId, language, seasonNumber, episodeNumber);
+
+            if (videoInfo != null)
+            {
+                mediaSources = 
+                [
+                    new MediaSource
+                    {
+                        Quality = videoInfo.Quality,
+                        FilePath = videoInfo.FilePath,
+                        Language = language.ToString()
+                    }
+                ];
+            }
+            else
+                mediaSources = null;
+
+            return mediaSources != null;
+        }
+
+        private IEnumerable<MediaSource> ToMediaSources(IEnumerable<MediaTorrent> torrents, LanguageVersion languageVersion)
         {
             if (torrents != null && torrents.Any())
                 return torrents.Select(t => new MediaSource
                 {
                     Quality = t.Quality,
-                    TorrentUrl = t.DownloadUrl
+                    TorrentUrl = t.DownloadUrl,
+                    Language = languageVersion.ToString(),
                 });
 
             return System.Array.Empty<MediaSource>();
-        }
-
-        private IEnumerable<MediaSource> ToMediaSources(string videoPath)
-        {
-            return
-            [
-                new MediaSource
-                {
-                    Quality = videoPath.GetVideoQuality(),
-                    FilePath = videoPath
-                }
-            ];
         }
     }
 }

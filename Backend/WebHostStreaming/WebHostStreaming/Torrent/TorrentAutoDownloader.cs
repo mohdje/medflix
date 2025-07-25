@@ -1,35 +1,33 @@
 ﻿using System.Threading.Tasks;
 using WebHostStreaming.Providers;
-using WebHostStreaming.Providers.AvailableVideosListProvider;
 using MoviesAPI.Services.Content.Dtos;
 using System.Linq;
 using System;
 using WebHostStreaming.Helpers;
-using MoviesAPI.Services.Torrent.Dtos;
 using System.Collections.Generic;
 using System.Threading;
-
+using WebHostStreaming.Models;
 
 namespace WebHostStreaming.Torrent
 {
     public class TorrentAutoDownloader : ITorrentAutoDownloader
     {
-        IAvailableVideosListProvider availableVideosListProvider;
+        IVideoInfoProvider videoInfoProvider;
         ISearchersProvider searchersProvider;
         ITorrentContentProvider torrentContentProvider;
 
-        readonly string[] qualitiesRank = { "2160p", "1080p", "720p", "WEBRIP" };
+        readonly string[] qualitiesRank = { "1080p", "720p", "WEBRIP", "DVDRIP" };
         const string TorrentAutoDownloaderIdentifier = "Auto-Downloader";
         bool running;
         List<LiteContentDto> moviesToDownload = new List<LiteContentDto>();
         CancellationTokenSource downloadCancellationTokenSource;
 
         public TorrentAutoDownloader(
-            IAvailableVideosListProvider availableVideosListProvider,
+            IVideoInfoProvider videoInfoProvider,
             ISearchersProvider searchersProvider,
             ITorrentContentProvider torrentContentProvider)
         {
-            this.availableVideosListProvider = availableVideosListProvider;
+            this.videoInfoProvider = videoInfoProvider;
             this.searchersProvider = searchersProvider;
             this.torrentContentProvider = torrentContentProvider;
             torrentContentProvider.OnNoActiveTorrentClient += (s, e) => DownloadMoviesAsync();
@@ -127,8 +125,8 @@ namespace WebHostStreaming.Torrent
             if (downloadCancellationTokenSource.IsCancellationRequested)
                 return false;
 
-            var videoPath = availableVideosListProvider.GetVoMovieSource(movie.Title, movie.Year);
-            if (!string.IsNullOrEmpty(videoPath))
+            var videoInfo = videoInfoProvider.GetVideoInfo(movie.Id, LanguageVersion.Original);
+            if (videoInfo != null)
                 return true;
 
             AppLogger.LogInfo($"TorrentAutoDownloader: search VO torrents for {movie.Title} {movie.Year}");
@@ -137,7 +135,9 @@ namespace WebHostStreaming.Torrent
 
             AppLogger.LogInfo($"TorrentAutoDownloader: found {torrents.Count()} VO torrents for {movie.Title} {movie.Year}");
 
-            var downloadSuccess = await DownloadBestQualityAsync(torrents);
+            var torrentRequests = torrents.Select(t => new TorrentRequest(TorrentAutoDownloaderIdentifier, t.DownloadUrl, movie.Id, t.Quality, LanguageVersion.Original));
+ 
+            var downloadSuccess = await DownloadBestQualityAsync(torrentRequests);
 
             if (downloadSuccess)
                 AppLogger.LogInfo($"TorrentAutoDownloader: VO successfully downloaded for {movie.Title} {movie.Year}");
@@ -150,13 +150,13 @@ namespace WebHostStreaming.Torrent
             if (downloadCancellationTokenSource.IsCancellationRequested)
                 return false;
 
+            var videoInfo = videoInfoProvider.GetVideoInfo(movie.Id, LanguageVersion.French);
+            if (videoInfo != null)
+                return true;
+
             var frenchTitle = await searchersProvider.MovieSearcher.GetMovieFrenchTitleAsync(movie.Id);
             if (string.IsNullOrEmpty(frenchTitle))
                 frenchTitle = movie.Title;
-
-            var videoPath = availableVideosListProvider.GetVfMovieSource(movie.Title, frenchTitle, movie.Year);
-            if (!string.IsNullOrEmpty(videoPath))
-                return true;
 
             AppLogger.LogInfo($"TorrentAutoDownloader: search VF torrents for {movie.Title} {movie.Year}");
 
@@ -164,7 +164,9 @@ namespace WebHostStreaming.Torrent
 
             AppLogger.LogInfo($"TorrentAutoDownloader: found {torrents.Count()} VF torrents for {movie.Title} {movie.Year}");
 
-            var downloadSuccess = await DownloadBestQualityAsync(torrents);
+            var torrentRequests = torrents.Select(t => new TorrentRequest(TorrentAutoDownloaderIdentifier, t.DownloadUrl, movie.Id, t.Quality, LanguageVersion.French));
+
+            var downloadSuccess = await DownloadBestQualityAsync(torrentRequests);
 
             if (downloadSuccess)
                 AppLogger.LogInfo($"TorrentAutoDownloader: VF successfully downloaded for {movie.Title} {movie.Year}");
@@ -172,25 +174,25 @@ namespace WebHostStreaming.Torrent
             return downloadSuccess;
         }
 
-        private async Task<bool> DownloadBestQualityAsync(IEnumerable<MediaTorrent> torrents)
+        private async Task<bool> DownloadBestQualityAsync(IEnumerable<TorrentRequest> torrentRequests)
         {
-            if (torrents == null || !torrents.Any())
+            if (torrentRequests == null || !torrentRequests.Any())
                 return false;
 
-            var sortedTorrentsByQuality = torrents.OrderBy(t => Array.IndexOf(qualitiesRank, t.Quality));
+            var sortedRequestsByQuality = torrentRequests.OrderBy(request => Array.IndexOf(qualitiesRank, request.VideoInfo.Quality));
 
-            foreach (var torrent in sortedTorrentsByQuality)
+            foreach (var torrentRequest in sortedRequestsByQuality)
             {
                 if (downloadCancellationTokenSource.IsCancellationRequested)
                     return false;
 
-                AppLogger.LogInfo($"TorrentAutoDownloader: try to download {torrent.DownloadUrl} ({torrent.Quality})");
+                AppLogger.LogInfo($"TorrentAutoDownloader: try to download {torrentRequest.TorrentUrl} ({torrentRequest.VideoInfo.Quality})");
 
-                var downloadSuccess = await torrentContentProvider.DownloadTorrentMediaAsync(torrent.DownloadUrl, TorrentAutoDownloaderIdentifier, new VideoTorrentFileSelector(), downloadCancellationTokenSource.Token);
+                var downloadSuccess = await torrentContentProvider.DownloadTorrentMediaAsync(torrentRequest, downloadCancellationTokenSource.Token);
                 if (downloadSuccess)
                     return true;
                 else
-                    AppLogger.LogInfo($"TorrentAutoDownloader: download failed for {torrent.DownloadUrl}");
+                    AppLogger.LogInfo($"TorrentAutoDownloader: download failed for {torrentRequest.TorrentUrl}");
             }
 
             return false;

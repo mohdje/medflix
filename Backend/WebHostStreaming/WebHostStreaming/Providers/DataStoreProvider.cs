@@ -55,7 +55,6 @@ namespace WebHostStreaming.Providers
             }, "Add data to store");
         }
 
-       
         protected void RemoveData(T data)
         {
             ExecuteInLockedContext(async () =>
@@ -82,8 +81,6 @@ namespace WebHostStreaming.Providers
 
                     await SaveDataAsync();
                 }
-                else
-                    throw new InvalidOperationException("Old data not found in store.");
                 
             }, "Update data in store");
         }

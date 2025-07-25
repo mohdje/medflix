@@ -31,25 +31,39 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("stream/movies")]
-        public async Task<IActionResult> GetStream(string base64TorrentUrl)
+        public async Task<IActionResult> GetStream(string base64TorrentUrl, string mediaId, string language, string quality)
         {
+            if (!Enum.TryParse<LanguageVersion>(language, true, out var languageVersion))
+                return BadRequest("Invalid languageVersion value");
+
+            var clientAppIdientifier = HttpContext.Request.GetClientAppIdentifier();
+
+            if (string.IsNullOrEmpty(clientAppIdientifier))
+                return Forbid();
+
             var torrentUrl = base64TorrentUrl.DecodeBase64();
-            return await StreamData(torrentUrl, new VideoTorrentFileSelector());
+
+            return await StreamData(new TorrentRequest(clientAppIdientifier, torrentUrl, mediaId, quality, languageVersion));
         }
 
         [HttpGet("stream/series")]
-        public async Task<IActionResult> GetStream(string base64TorrentUrl, int seasonNumber, int episodeNumber)
+        public async Task<IActionResult> GetStream(string base64TorrentUrl, int seasonNumber, int episodeNumber, string mediaId, int languageVersion, string quality)
         {
+            var clientAppIdientifier = HttpContext.Request.GetClientAppIdentifier();
+
+            if (string.IsNullOrEmpty(clientAppIdientifier))
+                return Forbid();
+
             var torrentUrl = base64TorrentUrl.DecodeBase64();
-            return await StreamData(torrentUrl, new SerieEpisodeTorrentFileSelector(seasonNumber, episodeNumber));
+            return await StreamData(new TorrentRequest(clientAppIdientifier, torrentUrl, mediaId, quality, (LanguageVersion)languageVersion, seasonNumber, episodeNumber));
         }
 
-        [HttpGet("stream/file")]
-        public async Task<IActionResult> GetStream(string base64Url, string fileName)
-        {
-            var torrentUrl = base64Url.DecodeBase64();
-            return await StreamData(torrentUrl, new ByNameTorrentFileSelector(fileName));
-        }
+        //[HttpGet("stream/file")]
+        //public async Task<IActionResult> GetStream(string base64Url, string fileName)
+        //{
+        //    //var torrentUrl = base64Url.DecodeBase64();
+        //    //return await StreamData(torrentUrl, new ByNameTorrentFileSelector(fileName));
+        //}
 
 
         [HttpGet("streamdownloadstate")]
@@ -101,16 +115,11 @@ namespace WebHostStreaming.Controllers
             return torrentHistoryProvider.GetTorrentFilesHistory();
         }
 
-        private async Task<IActionResult> StreamData(string torrentUrl, ITorrentFileSelector torrentFileSelector)
+        private async Task<IActionResult> StreamData(TorrentRequest torrentRequest)
         {
             torrentAutoDownloader.StopDownload();// stop auto downloader to prioritize the current request for streaming
 
-            var clientAppIdientifier = HttpContext.Request.GetClientAppIdentifier();
-
-            if (string.IsNullOrEmpty(clientAppIdientifier))
-                return Forbid();
-
-            var torrentStream = await torrentClientProvider.GetTorrentStreamAsync(clientAppIdientifier, torrentUrl, torrentFileSelector);
+            var torrentStream = await torrentClientProvider.GetTorrentStreamAsync(torrentRequest);
             if (torrentStream == null)
                 return NotFound();
 
@@ -134,7 +143,7 @@ namespace WebHostStreaming.Controllers
             var fileContentResult = File(stream, "video/mp4");
             fileContentResult.EnableRangeProcessing = true;
 
-            AppLogger.LogInfo(clientAppIdientifier, $"Stream retrieved for TorrentManager : {torrentStream.MediaFileName}");
+            AppLogger.LogInfo(torrentRequest.ClientAppId, $"Stream retrieved for TorrentManager : {torrentStream.MediaFileName}");
 
             return fileContentResult;
         }

@@ -1,55 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using WebHostStreaming.Extensions;
 using WebHostStreaming.Helpers;
 using WebHostStreaming.Models;
-using WebHostStreaming.Providers.AvailableVideosListProvider;
 using WebHostStreaming.Torrent;
 
-namespace WebHostStreaming.Providers.TorrentContentProvider
+namespace WebHostStreaming.Providers
 {
     public class TorrentContentProvider : ITorrentContentProvider
     {
         private List<TorrentClient> torrentClients;
         private Dictionary<string, DateTime> lastAccessToTorrentClient;
         private Timer torrentClientsWatcher;
-        private IAvailableVideosListProvider availableVideosListProvider;
+        private IVideoInfoProvider videoInfoProvider;
+        private IWatchedMoviesProvider watchedMoviesProvider;
+        private IWatchedSeriesProvider watchedSeriesProvider;
+
         public event EventHandler OnNoActiveTorrentClient;
 
-        public TorrentContentProvider(IAvailableVideosListProvider availableVideosListProvider)
+        public TorrentContentProvider(IVideoInfoProvider videoInfoProvider, IWatchedMoviesProvider watchedMoviesProvider, IWatchedSeriesProvider watchedSeriesProvider)
         {
             torrentClients = new List<TorrentClient>();
             lastAccessToTorrentClient = new Dictionary<string, DateTime>();
-            this.availableVideosListProvider = availableVideosListProvider;
+            this.videoInfoProvider = videoInfoProvider;
+            this.watchedMoviesProvider = watchedMoviesProvider;
+            this.watchedSeriesProvider = watchedSeriesProvider;
         }
 
-        public async Task<TorrentStream> GetTorrentStreamAsync(string clientAppIdentifier, string torrentUri, ITorrentFileSelector torrentFileSelector)
+        public async Task<TorrentStream> GetTorrentStreamAsync(TorrentRequest torrentRequest)
         {
-            var torrentClient = GetOrCreateTorrentClient(clientAppIdentifier);
-            return await torrentClient.GetTorrentStreamAsync(torrentUri, torrentFileSelector);
+            var torrentClient = GetOrCreateTorrentClient(torrentRequest.ClientAppId);
+            return await torrentClient.GetTorrentStreamAsync(torrentRequest);
         }
 
-        public async Task<bool> DownloadTorrentMediaAsync(string torrentUri, string clientAppIdentifier, ITorrentFileSelector torrentFileSelector, CancellationToken cancellationToken)
+        public async Task<bool> DownloadTorrentMediaAsync(TorrentRequest torrentRequest, CancellationToken cancellationToken)
         {
-            AppLogger.LogInfo(clientAppIdentifier, $"Start download media from {torrentUri}");
+            AppLogger.LogInfo(torrentRequest.ClientAppId, $"Start download media from {torrentRequest.TorrentUrl}");
 
-            var torrentClient = GetOrCreateTorrentClient(clientAppIdentifier);
+            var torrentClient = GetOrCreateTorrentClient(torrentRequest.ClientAppId);
             cancellationToken.Register(() =>
             {
                 torrentClient.Dispose();
             });
 
-            var downloadStarted = await torrentClient.StartDownloadTorrentMediaAsync(torrentUri, torrentFileSelector);
+            var downloadStarted = await torrentClient.StartDownloadTorrentMediaAsync(torrentRequest);
 
             if (!downloadStarted)
             {
-                AppLogger.LogInfo(clientAppIdentifier, $"Start download media from {torrentUri} FAILED");
+                AppLogger.LogInfo(torrentRequest.ClientAppId, $"Start download media from {torrentRequest.TorrentUrl} FAILED");
                 return false;
             }
 
-            AppLogger.LogInfo(clientAppIdentifier, $"Start download media from {torrentUri} SUCCESS");
+            AppLogger.LogInfo(torrentRequest.ClientAppId, $"Start download media from {torrentRequest.TorrentUrl} SUCCESS");
 
             double? progress = null;
             double lastProgress = 0;
@@ -59,11 +65,11 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
                 {
                     lastProgress = progress.GetValueOrDefault(0);
 
-                    AppLogger.LogInfo(clientAppIdentifier, $"Waiting next progress for {torrentUri}");
+                    AppLogger.LogInfo(torrentRequest.ClientAppId, $"Waiting next progress for {torrentRequest.TorrentUrl}");
 
                     await Task.Delay(TimeSpan.FromMinutes(3), cancellationToken);//wait for the download to progress during 3 minutes
-                    torrentClient = GetOrCreateTorrentClient(clientAppIdentifier);//recall GetOrCreateTorrentClient to update last access datetime
-                    progress = await torrentClient.GetDownloadingProgressAync(torrentUri);
+                    torrentClient = GetOrCreateTorrentClient(torrentRequest.ClientAppId);//recall GetOrCreateTorrentClient to update last access datetime
+                    progress = await torrentClient.GetDownloadingProgressAync(torrentRequest.TorrentUrl);
                 }
                 while (progress.HasValue && progress.Value > lastProgress && progress.Value < 100);
 
@@ -72,7 +78,7 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
             catch (Exception ex)
             {
                 if(cancellationToken.IsCancellationRequested)
-                    AppLogger.LogInfo(clientAppIdentifier, $"Download aborted for {torrentUri}");
+                    AppLogger.LogInfo(torrentRequest.ClientAppId, $"Download aborted for {torrentRequest.TorrentUrl}");
 
                 return false;
             }
@@ -109,15 +115,17 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
             AppLogger.LogInfo(clientAppIdentifier, $"Create TorrentClient");
 
             TorrentClient torrentClient = new TorrentClient(clientAppIdentifier);
-            torrentClient.OnFileDownloadComplete += async (s, fileFullPath) =>
+            torrentClient.OnVideoDownloadCompleted += (s, videoInfo) =>
             {
-                var success = await availableVideosListProvider.AddMediaSource(fileFullPath);
-
-                if (success)
-                    AppLogger.LogInfo($"Register file as complete with success : {fileFullPath}");
-                else
-                    AppLogger.LogInfo($"Fail to register file as complete : {fileFullPath}");
-
+                try
+                {
+                    videoInfoProvider.AddVideoInfo(videoInfo);
+                    AppLogger.LogInfo($"Register file as complete with success : {videoInfo.FilePath}");
+                }
+                catch (Exception ex)
+                {
+                    AppLogger.LogError(clientAppIdentifier, $"Register file as complete : {videoInfo.FilePath}", ex);
+                }
             };
             torrentClients.Add(torrentClient);
             return torrentClient;
@@ -165,6 +173,7 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
                         torrentClients.Remove(torrentClient);
                         lastAccessToTorrentClient.Remove(clientAppId);
                         torrentClient = null;
+                        CleanUnusedResources(clientAppId);
                         AppLogger.LogInfo($"TorrentClientProvider: Torrent client disposed for {clientAppId}");
                     }
                 }, null, TimeSpan.FromMinutes(inactivePeriodInMinutes), TimeSpan.FromMinutes(inactivePeriodInMinutes));
@@ -194,6 +203,48 @@ namespace WebHostStreaming.Providers.TorrentContentProvider
             //return torrentManager?.Files.Select(f => f.Path);
         }
 
-      
+        private void CleanUnusedResources(string clientAppIdentifier)
+        {
+            var torrentFolderContainer = Path.Combine(AppFolders.TorrentsFolder, clientAppIdentifier.ToMD5Hash());
+
+            if (!Directory.Exists(torrentFolderContainer))
+                return;
+
+            var watchedMovies = watchedMoviesProvider.GetWatchedMovies();
+            var watchedSeries = watchedSeriesProvider.GetWatchedSeries();
+            var videoExtensions = new string[] { ".mp4", ".avi", ".mkv" };
+
+            foreach (var torrentFolder in Directory.GetDirectories(torrentFolderContainer))
+            {
+                var shouldDeleteFolder = true;
+                var torrentUrlMd5Hash = Path.GetFileName(torrentFolder);
+
+                var videoFiles = Directory.GetFiles(torrentFolder, "*.*", SearchOption.AllDirectories).Where(f => videoExtensions.Contains(Path.GetExtension(f)));
+
+                foreach (var videofilePath in videoFiles)
+                {
+                    if (videoInfoProvider.AllVideosInfos.Any(v => v.FilePath == videofilePath)
+                        || (watchedMovies != null && watchedMovies.Any(m => m.VideoSource.ToMD5Hash() == torrentUrlMd5Hash))
+                        || (watchedSeries != null && watchedSeries.Any(s => s.VideoSource.ToMD5Hash() == torrentUrlMd5Hash)))
+                    {
+                        shouldDeleteFolder = false;
+                    }
+                }
+
+                if (shouldDeleteFolder)
+                {
+                    try
+                    {
+                        Directory.Delete(torrentFolder, true);
+
+                        AppLogger.LogInfo($"Deleted folder {torrentFolder}");
+                    }
+                    catch (Exception ex)
+                    {
+                        AppLogger.LogInfo($"Error occured trying to delete folder {torrentFolder}: {ex.Message}");
+                    }
+                }
+            }
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace WebHostStreaming.Torrent
     public class TorrentClient : IDisposable
     {
         public string ClientAppIdentifier { get; }
-        public event EventHandler<string> OnFileDownloadComplete;
+        public event EventHandler<VideoInfo> OnVideoDownloadCompleted;
 
         private ClientEngine clientEngine;
         private TorrentManager currentTorrentManager;
@@ -22,6 +22,7 @@ namespace WebHostStreaming.Torrent
         private string currentTorrentUrl;
         private ITorrentManagerFile currentDownloadingFile;
         private TorrentStream currentTorrentStream;
+        private VideoInfo currentVideoInfo;
         private DownloadingState currentDownloadingState;
         private bool fileDownloadCompleteEventFired;
 
@@ -45,14 +46,14 @@ namespace WebHostStreaming.Torrent
             torrentFileDownloader = null;
         }
 
-        public async Task<bool> StartDownloadTorrentMediaAsync(string torrentUrl, ITorrentFileSelector torrentFileSelector)
+        public async Task<bool> StartDownloadTorrentMediaAsync(TorrentRequest torrentRequest)
         {
-            return await StartDownloadingMediaAsync(torrentUrl, torrentFileSelector, false);
+            return await StartDownloadingMediaAsync(torrentRequest, false);
         }
 
-        public async Task<TorrentStream> GetTorrentStreamAsync(string torrentUrl, ITorrentFileSelector torrentFileSelector)
+        public async Task<TorrentStream> GetTorrentStreamAsync(TorrentRequest torrentRequest)
         {
-            var downloadStarted = await StartDownloadingMediaAsync(torrentUrl, torrentFileSelector, true);
+            var downloadStarted = await StartDownloadingMediaAsync(torrentRequest, true);
 
             if (!downloadStarted)
                 return null;
@@ -122,33 +123,33 @@ namespace WebHostStreaming.Torrent
             return new ClientEngine(settingsBuilder.ToSettings());
         }
 
-        private async Task<bool> StartDownloadingMediaAsync(string torrentUrl, ITorrentFileSelector torrentFileSelector, bool streamingMode)
+        private async Task<bool> StartDownloadingMediaAsync(TorrentRequest torrentRequest, bool streamingMode)
         {
-            if (currentTorrentUrl != torrentUrl)
+            if (currentTorrentUrl != torrentRequest.TorrentUrl)
             {
-                currentTorrentUrl = torrentUrl;
+                currentTorrentUrl = torrentRequest.TorrentUrl;
                 currentDownloadingState = DownloadingState.Loading;
 
                 ReleaseCurrentStream();
                 ReleaseTorrentManager();
 
-                var torrentManager = await CreateTorrentManagerAsync(torrentUrl, streamingMode);
+                var torrentManager = await CreateTorrentManagerAsync(torrentRequest.TorrentUrl, streamingMode);
                 if (torrentManager != null)
                 {
                     currentTorrentManager = torrentManager;
                     currentTorrentManager.PeersFound += OnPeersFound;
                     currentTorrentManager.PieceHashed += OnPieceHashed;
 
-                    await SetFileToDownload(torrentFileSelector);
+                    await SetFileToDownload(torrentRequest);
                 }
                 else
                     return false;
             }
-            else if (FileToDownloadChanged(torrentFileSelector))
+            else if (FileToDownloadChanged(torrentRequest.TorrentFileSelector))
             {
                 ReleaseCurrentStream();
 
-                await SetFileToDownload(torrentFileSelector);
+                await SetFileToDownload(torrentRequest);
             }
 
             if (currentDownloadingFile == null)
@@ -172,14 +173,18 @@ namespace WebHostStreaming.Torrent
                 if (currentTorrentManager.PartialProgress >= 97 && !fileDownloadCompleteEventFired)
                 {
                     fileDownloadCompleteEventFired = true;
-                    OnFileDownloadComplete?.Invoke(this, currentDownloadingFile.FullPath);
+                    currentVideoInfo.FilePath = currentDownloadingFile.FullPath;
+                    OnVideoDownloadCompleted?.Invoke(this, currentVideoInfo);
+
                 }
                 else if (currentTorrentManager.PartialProgress >= 0.5)
                     currentDownloadingState = DownloadingState.ReadyToPlaySoon;
                 else
                     currentDownloadingState = DownloadingState.MediaDownloadStarted;
             }
+           
         }
+
 
         private void OnPeersFound(object sender, PeersAddedEventArgs e)
         {
@@ -256,9 +261,9 @@ namespace WebHostStreaming.Torrent
             return this.currentDownloadingFile != fileToDownload;
         }
 
-        private async Task SetFileToDownload(ITorrentFileSelector torrentFileSelector)
+        private async Task SetFileToDownload(TorrentRequest torrentRequest)
         {
-            var fileToDownload = torrentFileSelector.SelectTorrentFileInfo(currentTorrentManager.Files);
+            var fileToDownload = torrentRequest.TorrentFileSelector.SelectTorrentFileInfo(currentTorrentManager.Files);
 
             if (fileToDownload != null)
             {
@@ -266,7 +271,10 @@ namespace WebHostStreaming.Torrent
                     await currentTorrentManager.SetFilePriorityAsync(file, Priority.DoNotDownload);
 
                 await currentTorrentManager.SetFilePriorityAsync(fileToDownload, Priority.Highest);
+
                 this.currentDownloadingFile = fileToDownload;
+                this.currentVideoInfo = torrentRequest.VideoInfo;
+
                 fileDownloadCompleteEventFired = false;
 
                 AppLogger.LogInfo(ClientAppIdentifier, $"File to download selected : {this.currentDownloadingFile.Path}");

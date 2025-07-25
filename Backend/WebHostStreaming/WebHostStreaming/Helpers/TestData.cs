@@ -12,6 +12,7 @@ namespace WebHostStreaming.Helpers
         public static string ParadiseCanyonTorrentUrl => "https://archive.org/download/ParadiseCanyon/ParadiseCanyon_archive.torrent";
         public static string ParadiseCanyonMagnetLink => "magnet:?xt=urn:btih:UU4TU7WI7HGPACAR3JUA3FZXRCTGG2ZM&dn=ParadiseCanyon&tr=http%3A%2F%2Fbt1.archive.org%3A6969%2Fannounce";
         public static string JungleBookTorrentUrl => "https://archive.org/download/JungleBook/JungleBook_archive.torrent";
+        public static string TheCountTorrentUrl => "https://archive.org/download/CC_1916_09_04_TheCount/CC_1916_09_04_TheCount_archive.torrent";
         public static System.IO.Stream SunriseMexicoVideoStream => new System.IO.FileStream(@"D:\Projets\Streaming\R&D\data\park.mp4", System.IO.FileMode.Open);
     
         public static IEnumerable<SubtitlesDto> GetSubtitlesDto()

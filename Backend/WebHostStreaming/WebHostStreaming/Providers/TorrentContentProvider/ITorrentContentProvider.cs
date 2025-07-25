@@ -8,8 +8,8 @@ namespace WebHostStreaming.Providers
 {
     public interface ITorrentContentProvider
     {
-        Task<TorrentStream> GetTorrentStreamAsync(string torrentUri, string clientAppIdentifier, ITorrentFileSelector torrentFileSelector);
-        Task<bool> DownloadTorrentMediaAsync(string torrentUri, string clientAppIdentifier, ITorrentFileSelector torrentFileSelector, CancellationToken cancellationToken);
+        Task<TorrentStream> GetTorrentStreamAsync(TorrentRequest torrentRequest);
+        Task<bool> DownloadTorrentMediaAsync(TorrentRequest torrentRequest, CancellationToken cancellationToken);
         Task<DownloadingState> GetDownloadingStateAsync(string clientAppIdentifier, string torrentUrl);
         event EventHandler OnNoActiveTorrentClient;
     }            
