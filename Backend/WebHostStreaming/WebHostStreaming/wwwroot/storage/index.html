@@ -233,7 +233,7 @@
 
             var queryParameters = videoIdsToRemove.map(videoId => `videosIds=${videoId}`).join('&')
 
-            var response = await fetch(`/videos?${queryParametesr}`, {
+            var response = await fetch(`/videos?${queryParameters}`, {
                 method: 'DELETE'
             });
 
@@ -250,6 +250,7 @@
             deleteFileModal.style.visibility = "hidden";
 
             loadAvailableVideos();
+        }
 
         function showAddFileModal() {
             addFileModal.style.visibility = "visible";
