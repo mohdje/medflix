@@ -118,7 +118,6 @@
         <div style="display: flex;">
             <button id="addBtn" class="gray" onclick="showAddFileModal()">Add File</button>
             <button id="deleteBtn" class="red" disabled onclick="deleteVideos()">Delete File(s)</button>
-            <button id="cleanBtn" class="red" onclick="cleanUnusedRessources()">Clean unused ressources</button>
         </div>
 
         <h4 id="loadingListMessage" style="margin: 5px;visibility: hidden;">Loading videos list, please wait...</h4>
@@ -130,12 +129,21 @@
     <div id="addFileModal" class="modal-container" style="visibility: hidden;">
         <div class="modal">
             <input type="file" id="fileInput" accept=".mp4,.mkv,.avi">
-            <input type="text" id="mediaId" placeholder="Media id">
-            <input type="text" id="mediaQuality" placeholder="Quality (1080p, 720p...)">
-            <input type="number" step="1" id="seasonNumber" min="0" value="0" placeholder="Season number (0 if movie)">
-            <input type="number" step="1" id="episodeNumber" min="0" value="0" placeholder="Episode number (0 if movie)">
-            <label for="language">Language :</label>
-            <select id="language" name="language">
+
+            <label for="mediaId">TMDB Id :</label>
+            <input type="text" id="mediaId" name="mediaId" placeholder="123456">
+
+            <label for="mediaQuality">Quality :</label>
+            <input type="text" id="mediaQuality" name="mediaQuality" placeholder="1080p, 720p...">
+
+            <label for="seasonNumber">Season Number (0 if movie) :</label>
+            <input type="number" step="1" id="seasonNumber" name="seasonNumber" min="0" value="0">
+
+            <label for="episodeNumber">Episode Number (0 if movie) :</label>
+            <input type="number" step="1" id="episodeNumber" name="episodeNumber" min="0" value="0">
+
+            <label for="languageVersion">Version :</label>
+            <select id="languageVersion" name="languageVersion">
                 <option value="0">Original</option>
                 <option value="1">French</option>
             </select>
@@ -160,6 +168,11 @@
 
     <script>
         const fileInput = document.getElementById('fileInput');
+        const mediaIdInput = document.getElementById('mediaId');
+        const mediaQualityInput = document.getElementById('mediaQuality');
+        const seasonNumberInput = document.getElementById('seasonNumber');
+        const episodeNumberInput = document.getElementById('episodeNumber');
+        const languageVersionInput = document.getElementById('languageVersion');
         const progressLabel = document.getElementById('progress');
         const videosList = document.getElementById('videos');
         const deleteBtn = document.getElementById('deleteBtn');
@@ -172,32 +185,34 @@
         const loadingListMessage = document.getElementById('loadingListMessage');
 
 
-        let videoFilePathsToRemove = [];
+        let videoIdsToRemove = [];
+        let videosInfos = [];
 
         async function loadAvailableVideos() {
             videosList.innerHTML = "";
             loadingListMessage.style.visibility = "visible";
-            videoFilePathsToRemove = [];
+            videoIdsToRemove = [];
+            videosInfos = [];
 
-            var response = await fetch(`/application/availablevideos`);
+            var response = await fetch(`/videos`);
             if (response.ok) {
-                var list = await response.json();
-                list.forEach(videoFilePath => {
+                videosInfos = await response.json();
+                videosInfos.forEach(videoInfo => {
                     var videoNode = document.createElement('li');
                     var checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
 
                     checkbox.onchange = () => {
                         if (checkbox.checked)
-                            videoFilePathsToRemove.push(videoFilePath);
+                            videoIdsToRemove.push(videoInfo.id);
                         else
-                            videoFilePathsToRemove = videoFilePathsToRemove.filter(v => v !== videoFilePath);
+                            videoIdsToRemove = videoIdsToRemove.filter(v => v.id !== videoInfo.id);
 
-                        deleteBtn.disabled = videoFilePathsToRemove.length === 0;
+                        deleteBtn.disabled = videoIdsToRemove.length === 0;
                     };
 
                     var label = document.createElement('label');
-                    label.innerText = videoFilePath.replace(/^.*[\\/]/, '');
+                    label.innerText = getFileName(videoInfo.filePath);
 
                     videoNode.appendChild(checkbox);
                     videoNode.appendChild(label);
@@ -214,12 +229,11 @@
 
         async function deleteVideos() {
             deleteFileModal.style.visibility = 'visible';
-
-            var videoFilePathsBase64 = btoa(videoFilePathsToRemove.map(path => encodeURIComponent(path)).join('|'));
-
             deleteBtn.disabled = true;
 
-            var response = await fetch(`/application/availablevideos?videoFilePathsBase64=${videoFilePathsBase64}`, {
+            var queryParameters = videoIdsToRemove.map(videoId => `videosIds=${videoId}`).join('&')
+
+            var response = await fetch(`/videos?${queryParametesr}`, {
                 method: 'DELETE'
             });
 
@@ -236,24 +250,6 @@
             deleteFileModal.style.visibility = "hidden";
 
             loadAvailableVideos();
-        }
-
-        async function cleanUnusedRessources() {
-            deleteFileModal.style.visibility = 'visible';
-
-            var response = await fetch(`/application/clean`, {
-                method: 'DELETE'
-            });
-
-            if (response.ok) {
-                var result = await response.json();
-                alert(`Cleaning operation finished: ${result.foldersDeleted} folders have been deleted`);
-            } else {
-                alert("Cleaning operation failed");
-            }
-
-            deleteFileModal.style.visibility = "hidden";
-        }
 
         function showAddFileModal() {
             addFileModal.style.visibility = "visible";
@@ -266,47 +262,70 @@
         }
 
 
-        function uploadFile() {
+        async function uploadFile() {
             const file = fileInput.files[0];
-            if (!file) return;
+            const mediaId = mediaIdInput.value;
+            const mediaQuality = mediaQualityInput.value;
+            const seasonNumber = parseInt(seasonNumberInput.value);
+            const episodeNumber = parseInt(episodeNumberInput.value);
+            const languageVersion = parseInt(languageVersionInput.value);
+
+            if (!file || !mediaId || !mediaQuality) return;
 
             uploadBtn.disabled = true;
             closeBtn.disabled = true;
 
-            const formData = new FormData();
-            formData.append('file', file);
+            if (videosInfos.some(v =>
+                (v.mediaId === mediaId
+                    && v.language === languageVersion
+                    && v.quality === mediaQuality
+                    && v.seasonNumber === seasonNumber
+                    && v.episodeNumber === episodeNumber)
+                || getFileName(v.filePath) === file.name)
+            ) {
+                alert("Video already exists in the list");
+            }
+            else {
 
-            progressLabel.textContent = 'Upload starting...';
+                const formData = new FormData();
+                formData.append('mediaId', mediaId);
+                formData.append('languageVersion', languageVersion);
+                formData.append('mediaQuality', mediaQuality);
+                formData.append('seasonNumber', seasonNumber);
+                formData.append('episodeNumber', episodeNumber);
+                formData.append('file', file);
 
-            fetch('/application/upload', {
-                method: 'POST',
-                body: formData,
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success:', data.fileName);
-                    loadAvailableVideos();
-                    alert('File uploaded successfully');
-                    uploadBtn.disabled = false;
-                    closeBtn.disabled = false;
+                progressLabel.textContent = 'Upload starting...';
 
+                setTimeout(() => {
+                    checkUploadProgress();
+                }, 2000);
 
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    alert('Upload failed');
-                    uploadBtn.disabled = false;
-                    closeBtn.disabled = false;
+                var response = await fetch(`/videos`, {
+                    method: 'POST',
+                    body: formData,
                 });
 
-            setTimeout(() => {
-                checkUploadProgress();
-            }, 2000);
+                if (response.ok) {
+                    var data = await response.json();
+                    loadAvailableVideos();
+                    alert('File uploaded successfully');
+                }
+                else {
+                    var text = await response.text();
+                    alert(`Upload failed: ${text}`);
+                }
+
+            }
+          
+            uploadBtn.disabled = false;
+            closeBtn.disabled = false;
+            progressLabel.textContent = '';
         }
 
         async function checkUploadProgress() {
             const file = fileInput.files[0];
-            var response = await fetch(`/application/upload?fileName=${file.name}`);
+            var response = await fetch(`/videos/size?fileName=${file.name}`);
             if (response.ok) {
                 var uploadedLength = await response.json();
                 var progress = (uploadedLength / file.size) * 100;
@@ -322,6 +341,10 @@
                     progressLabel.textContent = "";
                 }
             }
+        }
+
+        function getFileName(filePath) {
+            return filePath.replace(/^.*[\\/]/, '');
         }
     </script>
 </body>
