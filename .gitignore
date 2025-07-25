@@ -11,6 +11,7 @@ Backend/WebHostStreaming/.vs
 Backend/WebHostStreaming/WebHostStreaming/cache/
 Backend/MoviesAPI/MoviesApiSample/Tokens.cs
 Backend/WebHostStreaming/WebHostStreaming/Helpers/Tokens.cs
+Backend/WebHostStreaming/WebHostStreaming/wwwroot/home
 
 Client/WebApp/node_modules/
 Client/WebApp/build/
@@ -21,18 +22,5 @@ Client/ReactApp/.eslintcache
 Client/MauiApp/.vs
 Client/MauiApp/bin
 Client/MauiApp/obj
-
-Desktop Application/extract-update-package-electron-app/out/
-Desktop Application/extract-update-package-electron-app/node_modules/
-Desktop Application/extract-update-package-electron-app/.DS_Store
-
-Front/.DS_Store
-Build/MacOS App bundle/Medflix.app/
-Build/MacOS App bundle/Medflix.dmg
-
-Desktop Application/WinFormsApp/MedflixWinForms/bin
-Desktop Application/WinFormsApp/MedflixWinForms/obj
-Desktop Application/WinFormsApp/.vs
-Desktop Application/Macos/Build
 
 .DS_Store
