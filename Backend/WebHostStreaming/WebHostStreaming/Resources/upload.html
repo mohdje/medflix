@@ -18,6 +18,7 @@
             font-family: "Host Grotesk", sans-serif;
             font-optical-sizing: auto;
             font-style: normal;
+            min-height: 100vh;
         }
 
         h1 {
@@ -129,6 +130,16 @@
     <div id="addFileModal" class="modal-container" style="visibility: hidden;">
         <div class="modal">
             <input type="file" id="fileInput" accept=".mp4,.mkv,.avi">
+            <input type="text" id="mediaId" placeholder="Media id">
+            <input type="text" id="mediaQuality" placeholder="Quality (1080p, 720p...)">
+            <input type="number" step="1" id="seasonNumber" min="0" value="0" placeholder="Season number (0 if movie)">
+            <input type="number" step="1" id="episodeNumber" min="0" value="0" placeholder="Episode number (0 if movie)">
+            <label for="language">Language :</label>
+            <select id="language" name="language">
+                <option value="0">Original</option>
+                <option value="1">French</option>
+            </select>
+
             <div style="display: flex;">
                 <button id="uploadBtn" class="red" onclick="uploadFile()">Upload File</button>
                 <button id="closeBtn" class="gray" onclick="closeAddFileModal()">Close</button>

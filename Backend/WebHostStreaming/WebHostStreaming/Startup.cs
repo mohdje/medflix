@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -41,8 +42,7 @@ namespace WebHostStreaming
                 app.UseDeveloperExceptionPage();
             }
 
-            app.SetupUI();
-            //app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseRouting();
 
@@ -57,6 +57,12 @@ namespace WebHostStreaming
                 endpoints.MapControllerRoute(
                  name: "default",
                  pattern: "{controller=Movies}/{action=Suggested}/{id?}");
+
+                endpoints.MapGet("/ping", async context =>
+                {
+                    context.Response.ContentType = "text/plain";
+                    await context.Response.WriteAsync("pong");
+                });
             });
         }
     }
