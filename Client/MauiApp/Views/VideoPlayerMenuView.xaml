@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Medflix.Views.VideoPlayerMenuView">
+
+    <Border
+        Padding="0"
+        BackgroundColor="Transparent"
+        StrokeThickness="0"
+        HeightRequest="400"
+        WidthRequest="500">
+        <Border.StrokeShape>
+            <RoundRectangle 
+              CornerRadius="10"/>
+        </Border.StrokeShape>
+        <Border.Background>
+            <LinearGradientBrush EndPoint="0,1">
+                <GradientStop Color="#090909" Offset="0.4" />
+                <GradientStop Color="#333232" Offset="1.0" />
+            </LinearGradientBrush>
+        </Border.Background>
+        <Grid RowDefinitions="60,340" 
+          HorizontalOptions="Center"
+          VerticalOptions="Center">
+            <Grid ColumnDefinitions="*,10">
+                <Label 
+                x:Name="MenuTitle"
+                Grid.Column="0"
+                TextColor="White"
+                VerticalTextAlignment="Center"
+                HorizontalTextAlignment="Center"
+                FontAttributes="Bold"
+                FontSize="Subtitle"
+             />
+                <ImageButton 
+                x:Name="CloseButton"
+                Grid.Column="0"
+                HorizontalOptions="End"
+                Source="cross.png" 
+                BackgroundColor="Transparent"
+                Padding="10"
+                Margin="0,-2,0,0"/>
+            </Grid>
+            <Grid 
+            Grid.Row="1"
+            VerticalOptions="Fill"
+            HorizontalOptions="Fill"
+            x:Name="MenuContainer">
+            </Grid>
+        </Grid>
+    </Border>
+
+</ContentView>

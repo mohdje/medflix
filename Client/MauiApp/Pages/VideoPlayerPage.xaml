@@ -20,7 +20,7 @@
            Grid.Row="0" 
            ZIndex="7" />
 
-        <views:VideoPlayerSideMenuView
+        <views:VideoPlayerMenuView
             x:Name="VideoPlayerMenu"
             Grid.Row="0" 
             ZIndex="6" />

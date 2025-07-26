@@ -1,16 +1,9 @@
 ﻿
+using Medflix.Models;
 using Medflix.Models.Media;
 using Medflix.Models.VideoPlayer;
 using Medflix.Utils;
-using System.Collections.Generic;
 using System.Net.Http.Json;
-using System.Text;
-using System.Web;
-using System.Text.Json.Serialization;
-using Medflix.Models;
-using System.Text.Json;
-using System.Diagnostics.Metrics;
-using System.Net.Http;
 
 
 namespace Medflix.Services
@@ -56,7 +49,7 @@ namespace Medflix.Services
             {
                 var url = $"http://{serviceAddress}";
 
-                var response = await httpClient.GetAsync($"{url}/application/ping");
+                var response = await httpClient.GetAsync($"{url}/ping");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -266,9 +259,9 @@ namespace Medflix.Services
             return await GetAsync<DownloadState>($"{hostServiceUrl}/torrent/streamdownloadstate?base64TorrentUrl={base64TorrentUrl}");
         }
 
-        public async Task SaveProgressionAsync(WatchMediaInfo videoPlayerMedia)
+        public async Task SaveProgressionAsync(WatchMediaInfo media)
         {
-            await PutAsync($"{hostServiceUrl}/{mediaType}/watchedmedia", videoPlayerMedia);
+           await PutAsync($"{hostServiceUrl}/{mediaType}/watchedmedia", media);
         }
 
         public async Task<IEnumerable<Subtitles>> GetSubtitlesAsync(string url)
@@ -276,19 +269,18 @@ namespace Medflix.Services
             return await GetAsync<IEnumerable<Subtitles>>($"{hostServiceUrl}/subtitles?sourceUrl={url}");
         }
 
-        public string BuildStreamUrl(string mediaUrl, int? seasonNumber, int? episodeNumber)
+        public string BuildStreamUrl(MediaSource mediaSource, string mediaId, int? seasonNumber, int? episodeNumber)
         {
-            if (mediaUrl.StartsWith("http") || mediaUrl.StartsWith("magnet"))
-            {
-                var queryString = $"base64TorrentUrl={ToBase64(mediaUrl)}&";
-                queryString += BuildQueryString(seasonNumber: seasonNumber, episodeNumber: episodeNumber);
-
-                return $"{hostServiceUrl}/torrent/stream/{mediaType}?{queryString}";
-            }
+            if (!string.IsNullOrEmpty(mediaSource.FilePath))
+                return $"{hostServiceUrl}/videos/stream?base64VideoPath={ToBase64(mediaSource.FilePath)}";
             else
             {
-                var queryString = $"base64VideoPath={ToBase64(mediaUrl)}";
-                return $"{hostServiceUrl}/application/video?{queryString}";
+                var queryString = $"base64TorrentUrl={ToBase64(mediaSource.TorrentUrl)}&mediaId={mediaId}&language={mediaSource.Language}&quality={mediaSource.Quality}";
+                
+                if(seasonNumber > 0 && episodeNumber > 0)
+                    queryString += $"&{BuildQueryString(seasonNumber: seasonNumber, episodeNumber: episodeNumber)}";
+
+                return $"{hostServiceUrl}/torrent/stream/{mediaType}?{queryString}";
             }
         }
 

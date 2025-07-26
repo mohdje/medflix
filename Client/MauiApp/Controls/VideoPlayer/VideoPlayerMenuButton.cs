@@ -24,9 +24,13 @@ namespace Medflix.Controls.VideoPlayer
         public VideoPlayerMenuButton(string text)
         {
             Text = text;
-            FontSize = 18;
-            Padding = 10;
+            FontSize = 16;
+            Padding = 5;
             HorizontalOptions = LayoutOptions.Fill;
+            CornerRadius = 15;
+            Margin = 5;
+            WidthRequest = 150;
+
             ApplyDefaultAttributes();
 
             this.Focused += OnFocused;
@@ -35,23 +39,23 @@ namespace Medflix.Controls.VideoPlayer
 
         private void ApplyDefaultAttributes()
         {
-            TextColor = Brush.Gray.Color;
+            TextColor = Brush.DarkGray.Color;
             FontAttributes = FontAttributes.None;
-            BackgroundColor = Brush.Transparent.Color;
+            BackgroundColor = Brush.Gray.Color;
         }
 
         private void ApplySelectedAttributes()
         {
             TextColor = Brush.White.Color;
             FontAttributes = FontAttributes.Bold;
-            BackgroundColor = Brush.Transparent.Color;
+            BackgroundColor = Brush.Red.Color;
         }
 
         private void OnFocused(object? sender, FocusEventArgs e)
         {
             TextColor = Brush.White.Color;
-            FontAttributes = FontAttributes.None;
-            BackgroundColor = Brush.Gray.Color;
+            FontAttributes = FontAttributes.Bold;
+            BackgroundColor = Brush.Black.Color;
         }
 
         private void OnUnfocused(object? sender, FocusEventArgs e)

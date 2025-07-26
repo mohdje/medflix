@@ -41,26 +41,25 @@ namespace Medflix.Pages
 
             VideoPlayerParameters = videoPlayerParameters;
 
-            InitVideoPlayerControls();
+            var defaultMediaSource = SelectDefaultMediaSource(videoPlayerParameters);
 
-            var videoUrl = SelectDefaultVideoUrl(videoPlayerParameters);
+            InitVideoPlayerControls(defaultMediaSource);
+
             if(DeviceInfo.Current.Platform != DevicePlatform.WinUI)
-                PlayMedia(videoUrl, (long)(videoPlayerParameters.WatchMedia.CurrentTime * 1000));
-
-            VideoPlayerMenu.Init(videoPlayerParameters.SubtitlesSources, videoPlayerParameters.MediaSources, videoUrl);
+                PlayMedia(defaultMediaSource, (long)(videoPlayerParameters.WatchMedia.CurrentTime * 1000));
         }
 
-        private string SelectDefaultVideoUrl(VideoPlayerParameters videoPlayerParameters)
+        private MediaSource SelectDefaultMediaSource(VideoPlayerParameters videoPlayerParameters)
         {
-            var mediaSource = videoPlayerParameters.MediaSources.SelectMany(ms => ms.Sources).FirstOrDefault(s => !string.IsNullOrEmpty(s.FilePath));
+            var mediaSource = videoPlayerParameters.MediaSources.FirstOrDefault(s => !string.IsNullOrEmpty(s.FilePath));
             if (mediaSource != null)
-                return mediaSource.FilePath;
+                return mediaSource;
             else if(!string.IsNullOrEmpty(videoPlayerParameters.WatchMedia.VideoSource))
-                return videoPlayerParameters.WatchMedia.VideoSource;
+                return videoPlayerParameters.MediaSources.FirstOrDefault(m => videoPlayerParameters.WatchMedia.VideoSource == m.TorrentUrl);
             else
-                return videoPlayerParameters.MediaSources.First().Sources.First().TorrentUrl;
+                return videoPlayerParameters.MediaSources.First();
         }
-        private void InitVideoPlayerControls()
+        private void InitVideoPlayerControls(MediaSource defaultMediaSource)
         {
             var episodeInfo = VideoPlayerParameters.WatchMedia.Media.SeasonsCount > 0 ? $" (Season {VideoPlayerParameters.WatchMedia.SeasonNumber} Ep. {VideoPlayerParameters.WatchMedia.EpisodeNumber})" : null;
             MediaTitle.Text = VideoPlayerParameters.WatchMedia.Media.Title + episodeInfo;
@@ -70,8 +69,8 @@ namespace Medflix.Pages
             PlayerControls.SetSubtitlesButtonVisibility(VideoPlayerParameters.SubtitlesSources.Any());
 
             PlayerControls.OnPlayPauseButtonClick += (s, e) => MediaPlayerViewModel.TogglePlay();
-            PlayerControls.OnSubtitlesButtonClick += (s, e) => VideoPlayerMenu.ShowSubtitlesMenu();
-            PlayerControls.OnQualitiesButtonClick += (s, e) => VideoPlayerMenu.ShowVideoQualitiesMenu();
+            PlayerControls.OnSubtitlesButtonClick += (s, e) => VideoPlayerMenu.ShowSubtitlesMenu(VideoPlayerParameters.SubtitlesSources);
+            PlayerControls.OnQualitiesButtonClick += (s, e) => VideoPlayerMenu.ShowVersionQualitiesMenu(VideoPlayerParameters.MediaSources, defaultMediaSource);
             PlayerControls.OnEnterFullscreenButtonClick += (s, e) => SetFullscreen(true);
             PlayerControls.OnExitFullscreenButtonClick += (s, e) => SetFullscreen(false);
 
@@ -80,7 +79,7 @@ namespace Medflix.Pages
 
             VideoPlayerMenu.OnDisplaySubtitlesClick += async (s, url) => await Subtitles.DisplaySubtitles(url);
             VideoPlayerMenu.OnNoSubtitlesClick += (s, e) => Subtitles.HideSubtitles();
-            VideoPlayerMenu.OnVideoQualityClick += (s, url) => PlayMedia(url, (long)(VideoPlayerParameters.WatchMedia.CurrentTime * 1000));
+            VideoPlayerMenu.OnVideoQualityClick += (s, mediaSource) => PlayMedia(mediaSource, (long)(VideoPlayerParameters.WatchMedia.CurrentTime * 1000));
 
             this.LeaveVideoPlayerConfirmationView.OnConfirm += (s, e) =>
             {
@@ -233,15 +232,20 @@ namespace Medflix.Pages
             }
         }
 
-        private void PlayMedia(string mediaUrl, long startTime)
+        private void PlayMedia(MediaSource mediaSource, long startTime)
         {
             int? seasonNumber = VideoPlayerParameters.WatchMedia.SeasonNumber == 0 ? null : VideoPlayerParameters.WatchMedia.SeasonNumber;
             int? episodeNumber = VideoPlayerParameters.WatchMedia.EpisodeNumber == 0 ? null : VideoPlayerParameters.WatchMedia.EpisodeNumber;
 
-            var url = MedflixApiService.Instance.BuildStreamUrl(mediaUrl, seasonNumber, episodeNumber);
-            VideoPlayerParameters.WatchMedia.VideoSource = mediaUrl;
+            var streamUrl = MedflixApiService.Instance.BuildStreamUrl(
+                mediaSource,
+                VideoPlayerParameters.WatchMedia.Media.Id, 
+                seasonNumber, 
+                episodeNumber);
+            
+            VideoPlayerParameters.WatchMedia.VideoSource = !string.IsNullOrEmpty(mediaSource.FilePath) ? mediaSource.FilePath : mediaSource.TorrentUrl;
 
-            MediaPlayerViewModel.PlayMedia(url, startTime);
+            MediaPlayerViewModel.PlayMedia(streamUrl, startTime);
 
             Task.Run(async () =>
             {
@@ -258,8 +262,8 @@ namespace Medflix.Pages
                 {
                     MediaPlayerViewModel.Initialize(e.SwapChainOptions);
 
-                    var videoUrl = SelectDefaultVideoUrl(VideoPlayerParameters);
-                    PlayMedia(videoUrl, (long)(VideoPlayerParameters.WatchMedia.CurrentTime * 1000));
+                    var mediaSource = SelectDefaultMediaSource(VideoPlayerParameters);
+                    PlayMedia(mediaSource, (long)(VideoPlayerParameters.WatchMedia.CurrentTime * 1000));
 
                     MediaPlayerViewModel.OnAppearing();
                 };

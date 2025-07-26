@@ -18,7 +18,7 @@ namespace Medflix.Utils
             CoverImageUrl = "https://image.tmdb.org/t/p/original/1Qb4L5L8UUWj9nRf6p779q27S9O.jpg",
             YoutubeTrailerUrl = "https://youtube.com/embed/",
             Duration = 7378,
-            Genres = new Category[] 
+            Genres = new Category[]
             {
                 new Category { Id = 12, Name ="Action"},
                 new Category { Id = 123, Name ="Thriller"},
@@ -168,40 +168,39 @@ namespace Medflix.Utils
                     new SubtitlesSources
                     {
                         Language = "French",
-                        Urls = new string []{"ffzezefz"}
+                        Urls = new string []{"ffzezefz", "ffzezefz8" , "ffzezefz7" , "ffzezefz6", "ffzezefz5", "ffzezefz4", "ffzezefz3", "ffzezefz2", "ffzezefz1", "ffzezefz0" }
+                    },
+                     new SubtitlesSources
+                    {
+                        Language = "English",
+                        Urls = new string []{"ffzezefz10"}
                     }
                 },
-            MediaSources = new MediaSources[]
-                {
-                    new MediaSources
-                    {
-                        Language = "French",
-                        Sources = new Models.Media.MediaSource[]
-                        {
-                            new Models.Media.MediaSource{ TorrentUrl= "https://archive.org/download/sahara-colorized/sahara-colorized_archive.torrent", Quality = "1080p"},
-                            new Models.Media.MediaSource{ TorrentUrl= "https://archive.org/download/CC_1916_09_04_TheCount/CC_1916_09_04_TheCount_archive.torrent", Quality = "1080p"},
-                            new Models.Media.MediaSource{ TorrentUrl= "cccc", Quality = "1080p"},
-                            new Models.Media.MediaSource{ TorrentUrl= "ddd", Quality = "1080p"},
-                            new Models.Media.MediaSource{ TorrentUrl= "eeeee", Quality = "1080p"},
-                            new Models.Media.MediaSource{ TorrentUrl= "fff", Quality = "1080p"},
-                            new Models.Media.MediaSource{ TorrentUrl= "ggg", Quality = "1080p"},
-                            new Models.Media.MediaSource{ TorrentUrl= "hhh", Quality = "1080p"},
-                            new Models.Media.MediaSource{ TorrentUrl= "iii", Quality = "1080p"},
-                            new Models.Media.MediaSource{ TorrentUrl= "jjjj", Quality = "1080p"},
-                            new Models.Media.MediaSource{ TorrentUrl= "kkkk", Quality = "1080p"},
-                            new Models.Media.MediaSource{ TorrentUrl= "lll", Quality = "1080p"},
-                            new Models.Media.MediaSource{ TorrentUrl= "mmmm", Quality = "1080p"},
-                            new Models.Media.MediaSource{ TorrentUrl= "nnnn", Quality = "1080p"},
-                            new Models.Media.MediaSource{ TorrentUrl= "oooo", Quality = "1080p"}
-                        }
-                     }
-                },
+            MediaSources = new Models.Media.MediaSource[]
+            {
+
+                new Models.Media.MediaSource{ Language = "French",  TorrentUrl= "https://archive.org/download/CC_1916_09_04_TheCount/CC_1916_09_04_TheCount_archive.torrent", Quality = "1080p"},
+                new Models.Media.MediaSource{ Language = "French",  TorrentUrl= "https://archive.org/download/sahara-colorized/sahara-colorized_archive.torrent", Quality = "1080p"},
+                new Models.Media.MediaSource{  Language = "French", TorrentUrl= "cccc", Quality = "1080p"},
+                new Models.Media.MediaSource{  Language = "French", TorrentUrl= "ddd", Quality = "1080p"},
+                new Models.Media.MediaSource{  Language = "French", TorrentUrl= "eeeee", Quality = "1080p"},
+                new Models.Media.MediaSource{   Language = "French",  TorrentUrl= "fff", Quality = "1080p"},
+                new Models.Media.MediaSource{  Language = "French", TorrentUrl= "ggg", Quality = "1080p"},
+                new Models.Media.MediaSource{  Language = "Original", TorrentUrl= "hhh", Quality = "2160p"},
+                new Models.Media.MediaSource{  Language = "French", TorrentUrl= "iii", Quality = "1080p"},
+                new Models.Media.MediaSource{  Language = "French", TorrentUrl= "jjjj", Quality = "1080p"},
+                new Models.Media.MediaSource{  Language = "Original", TorrentUrl= "kkkk", Quality = "720p"},
+                new Models.Media.MediaSource{  Language = "French", TorrentUrl= "lll", Quality = "1080p"},
+                new Models.Media.MediaSource{  Language = "Original", TorrentUrl= "mmmm", Quality = "480p"},
+                new Models.Media.MediaSource{  Language = "French", TorrentUrl= "nnnn", Quality = "1080p"},
+                new Models.Media.MediaSource{  Language = "Original", TorrentUrl= "oooo", Quality = "WEBRIP"}
+            },
             WatchMedia = new Models.Media.WatchMediaInfo
             {
                 Media = TestData.Media,
                 VideoSource = null,
                 SeasonNumber = 2,
-                EpisodeNumber = 3,  
+                EpisodeNumber = 3,
             }
         };
         public static string ClientAppId => $"MEDFLIX_CLIENT_e6ecddce-ca6b-44dc-aa10-14362692b84d";

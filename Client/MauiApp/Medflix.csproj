@@ -119,6 +119,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\VideoPlayerMenuView.xaml.cs">
+	    <DependentUpon>VideoPlayerMenuView.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="Pages\AndroidTv\AndroidTvMainPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -179,7 +185,7 @@
 	  <MauiXaml Update="Views\LeaveVideoPlayerConfirmationView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\VideoPlayerSideMenuView.xaml">
+	  <MauiXaml Update="Views\VideoPlayerMenuView.xaml">
 	    <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
 	  </MauiXaml>
 	</ItemGroup>

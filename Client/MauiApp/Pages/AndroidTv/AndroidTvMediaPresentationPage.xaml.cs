@@ -158,12 +158,12 @@ namespace Medflix.Pages.AndroidTv
             if (englishSubtitlesUrls != null && englishSubtitlesUrls.Any())
                 subtitlesSources.Add(new SubtitlesSources { Language = "English", Urls = englishSubtitlesUrls.ToArray() });
 
-            var mediaSources = new List<MediaSources>();
+            var mediaSources = new List<MediaSource>();
             if (voSources != null && voSources.Any())
-                mediaSources.Add(new MediaSources { Language = "Original", Sources = voSources.ToArray() });
+                mediaSources.AddRange(voSources);
 
             if (vfSources != null && vfSources.Any())
-                mediaSources.Add(new MediaSources { Language = "French", Sources = vfSources.ToArray() });
+                mediaSources.AddRange(vfSources);
 
             var videoPlayerParameters = new VideoPlayerParameters
             {
