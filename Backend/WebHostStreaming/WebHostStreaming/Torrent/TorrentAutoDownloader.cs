@@ -100,7 +100,7 @@ namespace WebHostStreaming.Torrent
                 if (!moviesToDownload.Any(m => m.Id == movieToDownload.Id))
                     continue;
 
-                var voDownloadSuccess = false; // await DownloadOriginalVersionAsync(movieToDownload);
+                var voDownloadSuccess = await DownloadOriginalVersionAsync(movieToDownload);
                 var vfDownloadSuccess = await DownloadFrenchVersionAsync(movieToDownload);
 
                 if (voDownloadSuccess && vfDownloadSuccess && moviesToDownload.Any(m => m.Id == movieToDownload.Id))
@@ -151,47 +151,18 @@ namespace WebHostStreaming.Torrent
             if (downloadCancellationTokenSource.IsCancellationRequested)
                 return false;
 
-            //var videoInfo = videoInfoProvider.GetVideoInfo(movie.Id, LanguageVersion.French);
-            //if (videoInfo != null)
-            //    return true;
+            var videoInfo = videoInfoProvider.GetVideoInfo(movie.Id, LanguageVersion.French);
+            if (videoInfo != null)
+               return true;
 
-            //var frenchTitle = await searchersProvider.MovieSearcher.GetMovieFrenchTitleAsync(movie.Id);
-            //if (string.IsNullOrEmpty(frenchTitle))
-            //    frenchTitle = movie.Title;
+            var frenchTitle = await searchersProvider.MovieSearcher.GetMovieFrenchTitleAsync(movie.Id);
+            if (string.IsNullOrEmpty(frenchTitle))
+               frenchTitle = movie.Title;
 
             AppLogger.LogInfo($"TorrentAutoDownloader: search VF torrents for {movie.Title} {movie.Year}");
 
-            // var torrents = await searchersProvider.TorrentSearchManager.SearchVfTorrentsMovieAsync(frenchTitle, movie.Year);
-            var torrents = new List<MediaTorrent>
-            {
-                new MediaTorrent
-                {
-                    DownloadUrl = "https://example.com/torrent.vf",
-                    Quality = "DVDRIP"
-                },
-                new MediaTorrent
-                {
-                    DownloadUrl = "https://example.com/torrent.vf",
-                    Quality = "4K"
-                },
-                 new MediaTorrent
-                {
-                    DownloadUrl = "https://example.com/torrent.vf",
-                    Quality = "720P"
-                },
-                new MediaTorrent
-                {
-                    DownloadUrl = "https://example.com/torrent.vf",
-                    Quality = "2160p"
-                },
-                new MediaTorrent
-                {
-                    DownloadUrl = "https://example.com/torrent.vf",
-                    Quality = "1080p"
-                }
-
-            };
-
+            var torrents = await searchersProvider.TorrentSearchManager.SearchVfTorrentsMovieAsync(frenchTitle, movie.Year);
+          
             AppLogger.LogInfo($"TorrentAutoDownloader: found {torrents.Count()} VF torrents for {movie.Title} {movie.Year}");
 
             var torrentRequests = torrents.Select(t => new TorrentRequest(TorrentAutoDownloaderIdentifier, t.DownloadUrl, movie.Id, t.Quality, LanguageVersion.French));
