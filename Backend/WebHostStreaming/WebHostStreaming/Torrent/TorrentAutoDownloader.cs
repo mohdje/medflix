@@ -7,6 +7,7 @@ using WebHostStreaming.Helpers;
 using System.Collections.Generic;
 using System.Threading;
 using WebHostStreaming.Models;
+using MoviesAPI.Services.Torrent.Dtos;
 
 namespace WebHostStreaming.Torrent
 {
@@ -99,7 +100,7 @@ namespace WebHostStreaming.Torrent
                 if (!moviesToDownload.Any(m => m.Id == movieToDownload.Id))
                     continue;
 
-                var voDownloadSuccess = await DownloadOriginalVersionAsync(movieToDownload);
+                var voDownloadSuccess = false; // await DownloadOriginalVersionAsync(movieToDownload);
                 var vfDownloadSuccess = await DownloadFrenchVersionAsync(movieToDownload);
 
                 if (voDownloadSuccess && vfDownloadSuccess && moviesToDownload.Any(m => m.Id == movieToDownload.Id))
@@ -150,17 +151,46 @@ namespace WebHostStreaming.Torrent
             if (downloadCancellationTokenSource.IsCancellationRequested)
                 return false;
 
-            var videoInfo = videoInfoProvider.GetVideoInfo(movie.Id, LanguageVersion.French);
-            if (videoInfo != null)
-                return true;
+            //var videoInfo = videoInfoProvider.GetVideoInfo(movie.Id, LanguageVersion.French);
+            //if (videoInfo != null)
+            //    return true;
 
-            var frenchTitle = await searchersProvider.MovieSearcher.GetMovieFrenchTitleAsync(movie.Id);
-            if (string.IsNullOrEmpty(frenchTitle))
-                frenchTitle = movie.Title;
+            //var frenchTitle = await searchersProvider.MovieSearcher.GetMovieFrenchTitleAsync(movie.Id);
+            //if (string.IsNullOrEmpty(frenchTitle))
+            //    frenchTitle = movie.Title;
 
             AppLogger.LogInfo($"TorrentAutoDownloader: search VF torrents for {movie.Title} {movie.Year}");
 
-            var torrents = await searchersProvider.TorrentSearchManager.SearchVfTorrentsMovieAsync(frenchTitle, movie.Year);
+            // var torrents = await searchersProvider.TorrentSearchManager.SearchVfTorrentsMovieAsync(frenchTitle, movie.Year);
+            var torrents = new List<MediaTorrent>
+            {
+                new MediaTorrent
+                {
+                    DownloadUrl = "https://example.com/torrent.vf",
+                    Quality = "DVDRIP"
+                },
+                new MediaTorrent
+                {
+                    DownloadUrl = "https://example.com/torrent.vf",
+                    Quality = "4K"
+                },
+                 new MediaTorrent
+                {
+                    DownloadUrl = "https://example.com/torrent.vf",
+                    Quality = "720P"
+                },
+                new MediaTorrent
+                {
+                    DownloadUrl = "https://example.com/torrent.vf",
+                    Quality = "2160p"
+                },
+                new MediaTorrent
+                {
+                    DownloadUrl = "https://example.com/torrent.vf",
+                    Quality = "1080p"
+                }
+
+            };
 
             AppLogger.LogInfo($"TorrentAutoDownloader: found {torrents.Count()} VF torrents for {movie.Title} {movie.Year}");
 
@@ -179,7 +209,8 @@ namespace WebHostStreaming.Torrent
             if (torrentRequests == null || !torrentRequests.Any())
                 return false;
 
-            var sortedRequestsByQuality = torrentRequests.OrderBy(request => Array.IndexOf(qualitiesRank, request.VideoInfo.Quality));
+            var sortedRequestsByQuality = torrentRequests.Where(tr => qualitiesRank.Contains(tr.VideoInfo.Quality, StringComparer.OrdinalIgnoreCase))
+                                        .OrderBy(request => Array.IndexOf(qualitiesRank.Select(q => q.ToLower()).ToArray(), request.VideoInfo.Quality.ToLower()));
 
             foreach (var torrentRequest in sortedRequestsByQuality)
             {
