@@ -17,7 +17,7 @@ namespace WebHostStreaming.Torrent
         ISearchersProvider searchersProvider;
         ITorrentContentProvider torrentContentProvider;
 
-        readonly string[] qualitiesRank = { "1080p", "720p", "WEBRIP", "DVDRIP" };
+        readonly string[] qualitiesRank = { "1080p", "720p", "BDRIP", "WEBRIP", "DVDRIP" };
         const string TorrentAutoDownloaderIdentifier = "Auto-Downloader";
         bool running;
         List<LiteContentDto> moviesToDownload = new List<LiteContentDto>();
