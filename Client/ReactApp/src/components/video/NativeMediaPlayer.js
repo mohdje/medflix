@@ -24,10 +24,9 @@ export default function NativeMediaPlayer({
                         currentTime: shouldRestart ? 0 : currentTime,
                         episodeNumber: mediaDetails?.seasonsCount > 0 ? episodeNumber : 0,
                         seasonNumber: mediaDetails?.seasonsCount > 0 ? seasonNumber : 0,
-                        seasonNumber,
-                        videoSource,
+                        videoSource
                     },
-                    mediaSources,
+                    mediaSources: mediaSources.flatMap(ms => ms.sources),
                     subtitlesSources
                 };
             }
