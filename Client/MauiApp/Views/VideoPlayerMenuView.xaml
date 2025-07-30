@@ -4,25 +4,18 @@
              x:Class="Medflix.Views.VideoPlayerMenuView">
 
     <Border
+        x:Name="MenuViewContainer"
         Padding="0"
-        BackgroundColor="Transparent"
-        StrokeThickness="0"
-        HeightRequest="400"
-        WidthRequest="500">
+        BackgroundColor="#CC111111"
+        StrokeThickness="0">
         <Border.StrokeShape>
             <RoundRectangle 
               CornerRadius="10"/>
         </Border.StrokeShape>
-        <Border.Background>
-            <LinearGradientBrush EndPoint="0,1">
-                <GradientStop Color="#090909" Offset="0.4" />
-                <GradientStop Color="#333232" Offset="1.0" />
-            </LinearGradientBrush>
-        </Border.Background>
-        <Grid RowDefinitions="60,340" 
+        <Grid RowDefinitions="60,*" 
           HorizontalOptions="Center"
           VerticalOptions="Center">
-            <Grid ColumnDefinitions="*,10">
+            <Grid>
                 <Label 
                 x:Name="MenuTitle"
                 Grid.Column="0"
@@ -30,15 +23,16 @@
                 VerticalTextAlignment="Center"
                 HorizontalTextAlignment="Center"
                 FontAttributes="Bold"
-                FontSize="Subtitle"
-             />
+                FontSize="Title"/>
                 <ImageButton 
                 x:Name="CloseButton"
                 Grid.Column="0"
                 HorizontalOptions="End"
                 Source="cross.png" 
                 BackgroundColor="Transparent"
-                Padding="10"
+                HeightRequest="50"
+                WidthRequest="50"
+                Padding="0"
                 Margin="0,-2,0,0"/>
             </Grid>
             <Grid 

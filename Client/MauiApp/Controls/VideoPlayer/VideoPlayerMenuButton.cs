@@ -27,7 +27,7 @@ namespace Medflix.Controls.VideoPlayer
             FontSize = 16;
             Padding = 5;
             HorizontalOptions = LayoutOptions.Fill;
-            CornerRadius = 15;
+            CornerRadius = 5;
             Margin = 5;
             WidthRequest = 150;
 
@@ -41,21 +41,21 @@ namespace Medflix.Controls.VideoPlayer
         {
             TextColor = Brush.DarkGray.Color;
             FontAttributes = FontAttributes.None;
-            BackgroundColor = Brush.Gray.Color;
+            BackgroundColor = Brush.Transparent.Color;
         }
 
         private void ApplySelectedAttributes()
         {
             TextColor = Brush.White.Color;
             FontAttributes = FontAttributes.Bold;
-            BackgroundColor = Brush.Red.Color;
+            BackgroundColor = Brush.DarkRed.Color;
         }
 
         private void OnFocused(object? sender, FocusEventArgs e)
         {
             TextColor = Brush.White.Color;
-            FontAttributes = FontAttributes.Bold;
-            BackgroundColor = Brush.Black.Color;
+            FontAttributes = FontAttributes.None;
+            BackgroundColor = Brush.Gray.Color;
         }
 
         private void OnUnfocused(object? sender, FocusEventArgs e)

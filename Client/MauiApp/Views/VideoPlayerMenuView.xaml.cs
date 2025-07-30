@@ -76,7 +76,7 @@ namespace Medflix.Views
             {
                 var qualitiesList = new List<VideoPlayerMenuButton>();
 
-                var mediaSourcesForLanguage = mediaSources.Where(m => m.Language == language);
+                var mediaSourcesForLanguage = mediaSources.Where(m => m.Language == language).OrderBy(m => m.Quality);
 
                 foreach (var mediaSource in mediaSourcesForLanguage)
                 {
@@ -110,9 +110,12 @@ namespace Medflix.Views
 
         private void ShowMenu(string title, Dictionary<string, VideoPlayerMenuButton[]> menuOptions)
         {
-            RemoteCommandActionNotifier.Instance.PreventLeftButton = true;
-            RemoteCommandActionNotifier.Instance.PreventRightButton = true;
-            RemoteCommandActionNotifier.Instance.OnBackButtonPressed += OnCloseClicked;
+            MenuViewContainer.WidthRequest = DeviceInfo.Current.Idiom == DeviceIdiom.Desktop ? 0.5 * Width : Width;
+            MenuViewContainer.HeightRequest = DeviceInfo.Current.Idiom == DeviceIdiom.Desktop ? 0.5 * Height : Height;
+
+            if (DeviceInfo.Current.Idiom == DeviceIdiom.TV)
+                RemoteCommandActionNotifier.Instance.OnBackButtonPressed += OnCloseClicked;
+
             this.CloseButton.Clicked += OnCloseClicked;
 
             MenuTitle.Text = title;
@@ -163,6 +166,16 @@ namespace Medflix.Views
                         Hide();
                     };
 
+                    if (DeviceInfo.Current.Idiom == DeviceIdiom.TV)
+                    { 
+                        button.Unfocused += async (s, e) =>
+                        {
+                            await Task.Delay(50);
+                            if (!menuOptions.SelectMany(m => m.Value).Any(btn => btn.IsFocused))
+                                button.Focus();
+                        };
+                    }
+
                     if (button.Selected)
                         selectedButton = button;
 
@@ -198,9 +211,8 @@ namespace Medflix.Views
             IsVisible = false;
             MenuContainer.Clear();
 
-            RemoteCommandActionNotifier.Instance.PreventLeftButton = false;
-            RemoteCommandActionNotifier.Instance.PreventRightButton = false;
-            RemoteCommandActionNotifier.Instance.OnBackButtonPressed -= OnCloseClicked;
+            if (DeviceInfo.Current.Idiom == DeviceIdiom.TV)
+                RemoteCommandActionNotifier.Instance.OnBackButtonPressed -= OnCloseClicked;
 
             this.CloseButton.Clicked -= OnCloseClicked;
         }

@@ -34,11 +34,6 @@ namespace Medflix.Pages
         {
             InitializeComponent();
 
-            #if ANDROID
-                if (DeviceInfo.Current.Idiom == DeviceIdiom.Phone)
-                    Microsoft.Maui.ApplicationModel.Platform.CurrentActivity.RequestedOrientation = Android.Content.PM.ScreenOrientation.Landscape;
-            #endif
-
             VideoPlayerParameters = videoPlayerParameters;
 
             var defaultMediaSource = SelectDefaultMediaSource(videoPlayerParameters);
@@ -152,19 +147,21 @@ namespace Medflix.Pages
                 RemoteCommandActionNotifier.Instance.OnBackButtonPressed += OnCloseButtonPressed;
                 RemoteCommandActionNotifier.Instance.OnButtonPressed += OnUserAction;
             }
-          
 
             #if ANDROID
-                Platform.CurrentActivity.Window.AddFlags(WindowManagerFlags.KeepScreenOn |
-                            WindowManagerFlags.DismissKeyguard |
-                            WindowManagerFlags.ShowWhenLocked |
-                            WindowManagerFlags.TurnScreenOn |
-                            WindowManagerFlags.Fullscreen);
+            if (DeviceInfo.Current.Idiom == DeviceIdiom.Phone)
+                            Microsoft.Maui.ApplicationModel.Platform.CurrentActivity.RequestedOrientation = Android.Content.PM.ScreenOrientation.Landscape;
+               
+            Platform.CurrentActivity.Window.AddFlags(WindowManagerFlags.KeepScreenOn |
+                        WindowManagerFlags.DismissKeyguard |
+                        WindowManagerFlags.ShowWhenLocked |
+                        WindowManagerFlags.TurnScreenOn |
+                        WindowManagerFlags.Fullscreen);
 
-                Platform.CurrentActivity.Window.DecorView.SystemUiFlags = SystemUiFlags.ImmersiveSticky |
-                                        SystemUiFlags.HideNavigation |
-                                        SystemUiFlags.Fullscreen |
-                                        SystemUiFlags.Immersive;
+            Platform.CurrentActivity.Window.DecorView.SystemUiFlags = SystemUiFlags.ImmersiveSticky |
+                                    SystemUiFlags.HideNavigation |
+                                    SystemUiFlags.Fullscreen |
+                                    SystemUiFlags.Immersive;
             #endif
         }
 
