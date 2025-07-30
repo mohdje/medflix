@@ -32,8 +32,8 @@
 		<ApplicationId>com.medflix.medflix</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>1</ApplicationVersion>
+		<ApplicationDisplayVersion>3.1</ApplicationDisplayVersion>
+		<ApplicationVersion>2</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
@@ -54,6 +54,7 @@
 	  <GenerateTestArtifacts>True</GenerateTestArtifacts>
 	  <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 	  <PackageCertificateThumbprint>5C24E9D466A2A9EAD6FECF354CD37D216BBEAD93</PackageCertificateThumbprint>
+	  <Title>Medflix</Title>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net8.0-maccatalyst'">
