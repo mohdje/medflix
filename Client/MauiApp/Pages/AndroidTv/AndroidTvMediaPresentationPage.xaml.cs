@@ -233,7 +233,7 @@ namespace Medflix.Pages.AndroidTv
                 MedflixApiService.Instance.GetAvailableVOSources(
                      title: mediaDetails.Title,
                      year: MediaIsMovie ? mediaDetails.Year : null,
-                     imdbId: MediaIsSerie ? mediaDetails.ImdbId : null,
+                     mediaId: mediaDetails.Id,
                      seasonNumber: seasonNumber,
                      episodeNumber: episodeNumber)
                     .ContinueWith(t => voSources = t.Result),
