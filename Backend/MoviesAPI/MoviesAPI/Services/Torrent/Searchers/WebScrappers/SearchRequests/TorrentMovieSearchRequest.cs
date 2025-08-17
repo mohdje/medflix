@@ -6,7 +6,7 @@ namespace MoviesAPI.Services.Torrent
     {
         public int Year { get; }
 
-        public override string[] MediaSearchIdentifiers => [MediaName.RemoveSpecialCharacters()];
+        public override string[] MediaSearchIdentifiers => [MediaName.RemoveDiacritics()];
 
         bool checkQuality;
 
@@ -18,7 +18,7 @@ namespace MoviesAPI.Services.Torrent
 
         public override bool MatchWithTorrentTitle(string torrentTitle)
         {
-            return torrentTitle.CustomStartsWith(MediaName)
+            return torrentTitle.StartsWithIgnoreDiactrics(MediaName)
                     && (!FrenchVersion || torrentTitle.Contains("FRENCH") || torrentTitle.Contains("TRUEFRENCH") || torrentTitle.Contains("MULTI"))
                     && torrentTitle.EndsWith(Year.ToString())
                     && !torrentTitle.Contains("MD")

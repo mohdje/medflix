@@ -6,7 +6,7 @@ namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
 {
     internal class OxTorrentScrapper : TorrentWebScrapper
     {
-        public override string Url => "https://www.oxtorrent.co";
+        public override string Url => "https://www.oxtorrent7.com";
         protected override string SearchResultListIdentifier => "//table[@class='table table-hover']//td[a]";
         protected override string TorrentLinkButtonsIdentifier => "//div[@class='btn-magnet']//a";
         protected override string MediaQualityIdentifier => "//div[@class='block-detail']//a";

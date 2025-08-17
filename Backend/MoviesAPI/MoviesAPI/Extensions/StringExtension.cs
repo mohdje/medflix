@@ -1,22 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MoviesAPI.Extensions
 {
     public static class StringExtension
     {
-        public static bool ContainsWords(this string str, string[] words)
-        {
-            foreach (var word in words)
-            {
-                if (!str.Contains(word, StringComparison.OrdinalIgnoreCase))
-                    return false;
-            }
-            return true;
-        }
-
         public static string GetVideoQuality(this string mediaTitle)
         {
             var qualities = new string[] { "480p", "720p", "1080p", "2160p", "DVDRIP", "WEBRIP", "HDTV" };
@@ -30,57 +24,34 @@ namespace MoviesAPI.Extensions
             return "Unknown";
         }
 
-        public static string RemoveSpecialCharacters(this string text, bool removeSpaces = false, bool toLower = false)
+        public static string RemoveDiacritics(this string text)
         {
-            if (!string.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text)) return string.Empty;
+            var normalized = text.Normalize(NormalizationForm.FormD);
+            var sb = new StringBuilder();
+            foreach (var c in normalized)
             {
-                var result = text.Replace(":", "")
-                            .Replace(",", "")
-                            .Replace("-", " ")
-                            .Replace("_", " ")
-                            .Replace(".", " ")
-                            .Replace("?", "")
-                            .Replace("/", "")
-                            .Replace("'", " ")
-                            .Replace("é", "e")
-                            .Replace("è", "e")
-                            .Replace("&", " ")
-                            .Replace("ê", "e")
-                            .Replace("à", "a")
-                            .Replace("î", "i")
-                            .Replace("ï", "i")
-                            .Replace("ù", "u");
-
-                if (removeSpaces)
-                    result = result.Replace(" ", "");
-
-                if (toLower)
-                    result = result.ToLower();
-
-                return result;
+                var uc = CharUnicodeInfo.GetUnicodeCategory(c);
+                if(Char.IsPunctuation(c))
+                    sb.Append(' ');
+                else if (uc != UnicodeCategory.NonSpacingMark)
+                    sb.Append(c);
             }
-
-            return string.Empty;
+            var result = sb.ToString().Normalize(NormalizationForm.FormC);
+            return Regex.Replace(result, " {2,}", " ");
         }
 
-        public static bool CustomStartsWith(this string text, string value)
+        public static bool StartsWithIgnoreDiactrics(this string text, string value)
         {
-            return text.RemoveSpecialCharacters(removeSpaces: true, toLower: true).StartsWith(value.RemoveSpecialCharacters(removeSpaces: true, toLower: true));
-        }
+            if (text == null && value == null)
+                return true;
+            if (text == null || value == null)
+                return false;
 
-        public static bool CustomContains(this string text, string value)
-        {
-            return text.RemoveSpecialCharacters(removeSpaces: true, toLower: true).Contains(value.RemoveSpecialCharacters(removeSpaces: true, toLower: true));
-        }
+            string cleanText = RemoveDiacritics(text);
+            string cleanValue = RemoveDiacritics(value);
 
-        public static bool CustomCompare(this string text, string value)
-        {
-            return text.RemoveSpecialCharacters(removeSpaces: true, toLower: true) == value.RemoveSpecialCharacters(removeSpaces: true, toLower: true);
-        }
-
-        public static string HtmlUnescape(this string text)
-        {
-            return HttpUtility.HtmlDecode(text);
+            return cleanText.StartsWith(cleanValue, StringComparison.OrdinalIgnoreCase);
         }
 
         public static int GetYear(this string date)
@@ -92,12 +63,6 @@ namespace MoviesAPI.Extensions
             int.TryParse(date.Split('-')[0], out year);
 
             return year;
-        }
-
-        public static int? toInt(this string value)
-        {
-            int number;
-            return int.TryParse(value, out number) ? number : null;
         }
     }
 }

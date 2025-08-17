@@ -69,20 +69,6 @@ namespace MoviesAPI.Services.Torrent
             return torrentLinks.DistinctBy(t => t.DownloadUrl);
         }
 
-        private async Task<IEnumerable<MediaTorrent>> SearchTorrentsMovie(IEnumerable<ITorrentSearcher> torrentSearchers, string movieName, int year)
-        {
-            var tasks = new List<Task<IEnumerable<MediaTorrent>>>();
-
-            foreach (var searcher in torrentSearchers)
-            {
-                tasks.Add(searcher.GetTorrentLinksAsync(movieName, year));
-            }
-
-            var movieTorrents = await Task.WhenAll(tasks);
-
-            return movieTorrents.Where(r => r != null).SelectMany(m => m);
-        }
-
         private async Task<IEnumerable<MediaTorrent>> SearchTorrentsSerie(IEnumerable<ITorrentSearcher> torrentSearchers, string serieName, int seasonNumber, int episodeNumber)
         {
             var tasks = new List<Task<IEnumerable<MediaTorrent>>>();

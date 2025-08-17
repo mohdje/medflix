@@ -6,7 +6,7 @@ namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
 {
     internal class Torrent9WebScrapper : TorrentWebScrapper
     {
-        public override string Url => "https://ww1.torrent9.fm";
+        public override string Url => "https://www.torrent9.diy";
 
         protected override string SearchResultListIdentifier => "//table[@class='table table-striped table-bordered cust-table -table']//td[a]";
 
@@ -22,7 +22,7 @@ namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
 
         protected override string[] GetSearchUrls(TorrentSearchRequest torrentSearchRequest)
         {
-            return torrentSearchRequest.MediaSearchIdentifiers.Select(mediaSearchId => $"{Url}/search_torrent/{mediaSearchId}").ToArray();
+            return torrentSearchRequest.MediaSearchIdentifiers.Select(mediaSearchId => $"{Url}/recherche/{mediaSearchId}").ToArray();
         }
 
         protected override string GetTorrentTitle(HtmlDocument torrentResultNode)

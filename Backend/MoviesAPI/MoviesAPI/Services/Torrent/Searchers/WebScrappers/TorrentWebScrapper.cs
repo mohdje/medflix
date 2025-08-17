@@ -6,6 +6,7 @@ using MoviesAPI.Services.Torrent.Searchers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -62,7 +63,7 @@ namespace MoviesAPI.Services.Torrent
                 var docResultListNode = new HtmlDocument();
                 docResultListNode.LoadHtml(resultListNode.InnerHtml);
 
-                var torrentTitle = GetTorrentTitle(docResultListNode);
+                var torrentTitle = WebUtility.HtmlDecode(GetTorrentTitle(docResultListNode));
 
                 if (!string.IsNullOrEmpty(torrentTitle) && torrentSearchRequest.MatchWithTorrentTitle(torrentTitle))
                 {

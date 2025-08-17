@@ -6,6 +6,7 @@ using System.Linq;
 using MoviesAPI.Helpers;
 using MoviesAPI.Services.Torrent.Dtos;
 using MoviesAPI.Services.Torrent.Searchers;
+using MoviesAPI.Extensions;
 
 namespace MoviesAPI.Services.Torrent
 {
@@ -27,7 +28,7 @@ namespace MoviesAPI.Services.Torrent
             var searchurl = $"{Url}{listMovies}";
             var requestResult = await HttpRequester.GetAsync<YtsResultDto>(searchurl, parameters);
 
-            var movie = requestResult?.Data?.Movies?.FirstOrDefault(m => m.Title.Replace("\'", String.Empty).Equals(movieName.Replace("\'", String.Empty), StringComparison.OrdinalIgnoreCase) && m.Year == year);
+            var movie = requestResult?.Data?.Movies?.FirstOrDefault(m => m.Title.StartsWithIgnoreDiactrics(movieName) && m.Year == year);
               
             return movie != null ? movie.Torrents.Select(t => new MediaTorrent() { DownloadUrl = t.Url, Quality = t.Quality }) : Array.Empty<MediaTorrent>();
         }

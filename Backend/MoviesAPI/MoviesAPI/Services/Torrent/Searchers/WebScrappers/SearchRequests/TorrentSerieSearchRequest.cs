@@ -8,7 +8,9 @@ namespace MoviesAPI.Services.Torrent
         public int EpisodeNumber { get; }
         public int SeasonNumber { get; }
 
-        public override string[] MediaSearchIdentifiers => [$"{MediaName} S{SeasonNumber.ToString("D2")}E{EpisodeNumber.ToString("D2")}", $"{MediaName} {(FrenchVersion ? "Saison" : "Season")} {SeasonNumber}"];
+        public string EpisodeIdentifier => $"S{SeasonNumber.ToString("D2")}E{EpisodeNumber.ToString("D2")}";
+        public string SeasonIdentifier => $"{(FrenchVersion ? "Saison" : "Season")} {SeasonNumber}";
+        public override string[] MediaSearchIdentifiers => [$"{MediaName} {EpisodeIdentifier}", $"{MediaName} {SeasonIdentifier}"];
 
         public TorrentSerieSearchRequest(string serieName, int episodeNumber, int seasonNumber, bool searchFrenchVersion) : base(serieName, searchFrenchVersion)
         {
@@ -17,7 +19,8 @@ namespace MoviesAPI.Services.Torrent
         }
         public override bool MatchWithTorrentTitle(string title)
         {
-            return MediaSearchIdentifiers.Any(mediaId => title.CustomStartsWith(mediaId))
+            return title.StartsWithIgnoreDiactrics(this.MediaName)
+                   && (title.Contains(EpisodeIdentifier) || title.Contains(SeasonIdentifier))
                    && (!FrenchVersion || title.Contains("FRENCH") || title.Contains("TRUEFRENCH"))
                    && !title.Contains("VOSTFR");
         }
