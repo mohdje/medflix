@@ -5,7 +5,6 @@ import HomePage from "./HomePage";
 import WatchedMediasPage from "./WatchedMediasPage";
 import BookmarkedMediasPage from "./BookmarkedMediasPage";
 import ResearchPage from "./ResearchPage";
-import TorrentLinkPage from "./TorrentLinkPage";
 
 import { useEffect, useState, useRef } from 'react';
 
@@ -83,10 +82,6 @@ export function AppPagesManager({ activePage, onHomeReady, onHomeFail }) {
                     onSimilarMediaClick={(media) => onMediaClick(media)}
                     onCloseClick={() => { backToPreviousComponent() }} />
             }
-        },
-        {
-            id: PageIds.torrentLinkPage,
-            component: () => { return <TorrentLinkPage /> }
         }];
 
 
@@ -106,6 +101,5 @@ export const PageIds = {
     mediaPresentationPage: 'mediaPresentationPage',
     watchedMediasListPage: 'watchedMediasListPage',
     bookmarkedMediasListPage: 'bookmarkedMediasListPage',
-    researchPage: 'researchPage',
-    torrentLinkPage: 'torrentLinkPage'
+    researchPage: 'researchPage'
 }

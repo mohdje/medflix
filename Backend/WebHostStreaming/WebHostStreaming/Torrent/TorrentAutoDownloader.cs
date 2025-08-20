@@ -7,7 +7,6 @@ using WebHostStreaming.Helpers;
 using System.Collections.Generic;
 using System.Threading;
 using WebHostStreaming.Models;
-using MoviesAPI.Services.Torrent.Dtos;
 
 namespace WebHostStreaming.Torrent
 {

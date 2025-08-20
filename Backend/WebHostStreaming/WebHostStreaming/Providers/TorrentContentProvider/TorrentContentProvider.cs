@@ -180,29 +180,6 @@ namespace WebHostStreaming.Providers
             }
         }
 
-        public Task<IEnumerable<string>> GetTorrentFilesAsync(string torrentUri)
-        {
-            throw new NotImplementedException();
-
-            ////var torrentDownloader = new TorrentDownloader(torrentUri);
-
-            ////await torrentDownloader.DownloadTorrentFileAsync(cancellationTokenSource.Token);
-
-            //if (torrentDownloader.Status != TorrentDownloaderStatus.DownloadCompleted)
-            //    return null;
-
-            //var c = new CancellationTokenSource();
-
-
-            //var torrentManager = await TorrentClientEngine.Instance.GetTorrentManagerAsync(torrentDownloader.TorrentFilePath, null, c.Token);
-            //var files = torrentManager?.Files.Select(f => f.Path);
-
-            //await torrentManager.StopAsync();
-            //await torrentManager.Engine.RemoveAsync(torrentManager);
-
-            //return torrentManager?.Files.Select(f => f.Path);
-        }
-
         private void CleanUnusedResources(string clientAppIdentifier)
         {
             var torrentFolderContainer = Path.Combine(AppFolders.TorrentsFolder, clientAppIdentifier.ToMD5Hash());

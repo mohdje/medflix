@@ -24,7 +24,6 @@ function App() {
           onGenreMenuClick={() => setModalListCategoriesVisible(true)}
           onWatchedMediasClick={() => setActivePage({ id: PageIds.watchedMediasListPage })}
           onBookmarkedMediasClick={() => setActivePage({ id: PageIds.bookmarkedMediasListPage })}
-          onTorrentLinkClick={() => setActivePage({ id: PageIds.torrentLinkPage })}
           onAppModeSwitch={() => setActivePage({ id: PageIds.homePage })} />
         <ModalCategories
           visible={modalListCategoriesVisible}

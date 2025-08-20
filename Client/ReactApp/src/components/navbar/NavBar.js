@@ -12,7 +12,7 @@ import { useOnClickOutside } from '../../helpers/customHooks';
 import { useState, useRef } from 'react';
 import AppMode from '../../services/appMode';
 
-function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onWatchedMediasClick, onBookmarkedMediasClick, onTorrentLinkClick, onAppModeSwitch }) {
+function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onWatchedMediasClick, onBookmarkedMediasClick, onAppModeSwitch }) {
     const [showSideMenu, setShowSideMenu] = useState(false);
     const [showDropDownModeMenu, setShowDropDownModeMenu] = useState(false);
     const dropdownRef = useRef(null);
@@ -45,12 +45,6 @@ function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onWatchedMediasC
             label: "Categories",
             icon: CategoriesIcon,
             onClick: () => onGenreMenuClick()
-        },
-        {
-            label: "Stream torrent",
-            icon: LinkIcon,
-            onClick: () => onTorrentLinkClick(),
-            desktopOnly: true
         }
     ]
 
@@ -96,7 +90,7 @@ function NavBar({ onSearchClick, onHomeClick, onGenreMenuClick, onWatchedMediasC
                     </div>
                     <div className={`slide-right-menu-container ${showSideMenu ? 'show' : 'hide'}`} onClick={() => setShowSideMenu(false)}>
                         <div className="slide-right-menu">
-                            {menus.filter(m => !m.desktopOnly).map(menu =>
+                            {menus.map(menu =>
                                 <MenuItem label={menu.label} key={menu.label} icon={menu.icon} onClick={() => menu.onClick()} />
                             )}
                         </div>

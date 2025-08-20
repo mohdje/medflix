@@ -18,15 +18,12 @@ namespace WebHostStreaming.Controllers
     public class TorrentController : ControllerBase
     {
         ITorrentContentProvider torrentClientProvider;
-        ITorrentHistoryProvider torrentHistoryProvider;
         ITorrentAutoDownloader torrentAutoDownloader;
         public TorrentController(
            ITorrentContentProvider torrentClientProvider,
-           ITorrentHistoryProvider torrentHistoryProvider,
            ITorrentAutoDownloader torrentAutoDownloader)
         {
             this.torrentClientProvider = torrentClientProvider;
-            this.torrentHistoryProvider = torrentHistoryProvider;
             this.torrentAutoDownloader = torrentAutoDownloader;
         }
 
@@ -58,14 +55,6 @@ namespace WebHostStreaming.Controllers
             return await StreamData(new TorrentRequest(clientAppIdientifier, torrentUrl, mediaId, quality, (LanguageVersion)languageVersion, seasonNumber, episodeNumber));
         }
 
-        //[HttpGet("stream/file")]
-        //public async Task<IActionResult> GetStream(string base64Url, string fileName)
-        //{
-        //    //var torrentUrl = base64Url.DecodeBase64();
-        //    //return await StreamData(torrentUrl, new ByNameTorrentFileSelector(fileName));
-        //}
-
-
         [HttpGet("streamdownloadstate")]
         public async Task<IActionResult> GetStreamDownloadState(string base64TorrentUrl)
         {
@@ -84,35 +73,6 @@ namespace WebHostStreaming.Controllers
                 return BadRequest();
             else
                 return Ok(state);
-        }
-
-        [HttpGet("files")]
-        public async Task<TorrentInfoDto> GetTorrentFiles(string base64TorrentUrl)
-        {
-            return null;
-            //var url = base64TorrentUrl.DecodeBase64();
-            //var files = await torrentClientProvider.GetTorrentFilesAsync(url);
-
-            //var torrentInfoDto = new TorrentInfoDto()
-            //{
-            //    LastOpenedDateTime = DateTime.Now,
-            //    Link = url
-            //};
-
-            //if (files != null)
-            //{
-            //    torrentHistoryProvider.SaveTorrentFileHistory(new TorrentInfoDto() { LastOpenedDateTime = DateTime.Now, Link = url });
-
-            //    torrentInfoDto.Files = files.ToArray();
-            //}
-
-            //return torrentInfoDto;
-        }
-
-        [HttpGet("history")]
-        public IEnumerable<TorrentInfoDto> GetTorrentFilesHistory()
-        {
-            return torrentHistoryProvider.GetTorrentFilesHistory();
         }
 
         private async Task<IActionResult> StreamData(TorrentRequest torrentRequest)
