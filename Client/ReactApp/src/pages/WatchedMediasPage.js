@@ -2,6 +2,7 @@ import { watchHistoryApi } from "../services/api";
 import MediasVerticalList from "../components/media/list/MediasVerticalList";
 import { useEffect, useState, useReducer } from 'react';
 import AppMode from "../services/appMode.js";
+import { addEvent, eventsNames, removeEvent } from "../helpers/eventHelper.js";
 
 export default function WatchedMediasPage({ onMediaClick }) {
     const [watchedMedias, setWatchedMedias] = useState([]);
@@ -17,7 +18,7 @@ export default function WatchedMediasPage({ onMediaClick }) {
     const [title, titleDispatch] = useReducer(titleReducer, '');
 
     useEffect(() => {
-        const loadWatchList = async () => {
+        const loadList = async () => {
             const watchedMedias = await watchHistoryApi.getWatchedMedias();
             setLoadingVisible(false);
             if (watchedMedias?.length > 0) {
@@ -28,7 +29,12 @@ export default function WatchedMediasPage({ onMediaClick }) {
             }
             titleDispatch(watchedMedias?.length);
         };
-        loadWatchList();
+        loadList();
+
+        addEvent(eventsNames.watchProgressUpdated, loadList);
+        return () => {
+            removeEvent(eventsNames.watchProgressUpdated, loadList)
+        }
     }, []);
 
     return (

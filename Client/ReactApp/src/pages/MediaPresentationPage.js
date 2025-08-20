@@ -128,7 +128,7 @@ export default function MediaFullPresentation({ mediaId, onSimilarMediaClick, on
         if (result) {
             displayToastMessage(mediaIsBookmarked ? "Removed from your list with success" : "Added to your list with success");
             setMediaIsBookmarked(!mediaIsBookmarked);
-            raiseEvent(eventsNames.bookmarkUpdated)
+            raiseEvent(eventsNames.bookmarkUpdated);
         }
         else {
             displayToastMessage("Failing to add/remove from your list");
@@ -161,6 +161,12 @@ export default function MediaFullPresentation({ mediaId, onSimilarMediaClick, on
         setShowMediaPlayer(true);
     };
 
+    const closeMediaPlayer = () => {
+        setShowMediaPlayer(false);
+        getWatchMediaInfo();
+        raiseEvent(eventsNames.watchProgressUpdated);
+    };
+
     const displayToastMessage = (message) => {
         setToastMessage(message);
         setShowToastMessage(true);
@@ -190,7 +196,7 @@ export default function MediaFullPresentation({ mediaId, onSimilarMediaClick, on
                 seasonNumber={selectedEpisode.current.seasonNumber}
                 mediaSources={mediaVersionsSources}
                 subtitlesSources={mediaSubtitlesSources}
-                onCloseClick={() => { setShowMediaPlayer(false); getWatchMediaInfo(); }} />
+                onCloseClick={() => closeMediaPlayer()} />
             <CircularProgressBar size="x-large" position="center" visible={loadingMediaDetails} />
             <ModalMediaTrailer visible={showMediaTrailer} youtubeTrailerUrl={mediaDetails?.youtubeTrailerUrl} onCloseClick={() => setShowMediaTrailer(false)} />
             {mediaDetails?.seasonsCount ? <ModalEpisodeSelector
