@@ -1,8 +1,6 @@
 
 import "../style/css/splashscreen.css";
 import logo from '../assets/logo_full.svg';
-import CircularProgressBar from "./common/CircularProgressBar";
-
 
 function SplashScreen({ visible, showErrorMessage }) {
     if (!visible)
@@ -10,9 +8,18 @@ function SplashScreen({ visible, showErrorMessage }) {
 
     return <div className="splash-screen-container">
         <img alt="logo" src={logo} />
-        {showErrorMessage ? <h2>The application failed to load, try to relaunch it</h2> : <CircularProgressBar size='medium' visible={!showErrorMessage} />}
+        {showErrorMessage ? <h2>The application failed to load, try to relaunch it</h2> : <HorizontalLoadingBar visible={!showErrorMessage} />}
     </div>
 
 }
 
 export default SplashScreen;
+
+function HorizontalLoadingBar({ visible }) {
+    if (!visible)
+        return null;
+
+    return <div className="horizontal-loading-bar">
+        <div className="loading-bar"></div>
+    </div>;
+}

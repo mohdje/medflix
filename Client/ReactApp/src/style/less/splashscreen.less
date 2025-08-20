@@ -12,9 +12,54 @@
     z-index: @z-index-fourth-layer;
     text-align: center;
 
+    @logo-width: 250px;
+
     img {
-        width: auto;
-        height: 40px;
+        width: @logo-width;
+        height: auto;
         margin-bottom: 20px;
+    }
+
+    .horizontal-loading-bar {
+        width: @logo-width;
+        height: 5px;
+        position: relative;
+
+        .loading-bar {
+            position: absolute;
+            height: 100%;
+            background-color: white;
+            animation: loadingAnimation 2s linear infinite;
+            border-radius: @medium-border-radius;
+            box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.7);
+        }
+
+        @keyframes loadingAnimation {
+            0% {
+                left: 0;
+                width: 0;
+            }
+
+            25% {
+                left: 0;
+                width: 100%;
+            }
+
+            50% {
+                left: 100%;
+                width: 0;
+            }
+
+            75% {
+                left: 0;
+                width: 100%;
+            }
+
+            100% {
+                left: 0;
+                width: 0;
+            }
+
+        }
     }
 }
