@@ -73,44 +73,8 @@
         width: 100%;
         display: flex;
         align-items: flex-end;
+        justify-content: center;
         z-index: @z-index-second-layer;
-
-        @media @desktop {
-            justify-content: flex-end;
-        }
-
-        @media @mobile {
-            justify-content: center;
-        }
-
-        .carousel-play-pause-btn {
-            border-radius: @border-round;
-            height: 35px;
-            width: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 5px 20px;
-
-            @media @mobile {
-                display: none;
-            }
-
-            img {
-                color: white;
-                width: @menu-size-img;
-                height: @menu-size-img;
-            }
-
-            &:hover {
-                background-color: @dark-gray;
-                cursor: pointer;
-            }
-
-            &:active {
-                background-color: @gray;
-            }
-        }
 
         .medias-pictures-nav {
             display: flex;

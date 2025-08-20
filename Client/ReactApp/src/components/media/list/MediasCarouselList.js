@@ -1,5 +1,3 @@
-import PlayIcon from '../../../assets/play.svg';
-import PauseIcon from '../../../assets/pause.svg';
 import { useEffect, useState } from 'react';
 import "../../../style/css/medias-carousel.css";
 
@@ -43,9 +41,6 @@ function MediasCarousel({ medias, onClick }) {
                     nbMedias={medias?.length}
                     selectedIndex={mediaIndexVisible}
                     onNavElementClick={(index) => setMediaIndexVisible(index)} />
-                <div className="carousel-play-pause-btn" onClick={() => setCarouselPlay(!carouselPlay)}>
-                    <img alt="play-pause" src={carouselPlay ? PauseIcon : PlayIcon}></img>
-                </div>
             </div>
         </div>
     );
