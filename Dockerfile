@@ -22,8 +22,8 @@ COPY ./Backend/WebHostStreaming /WebHostStreaming
 
 WORKDIR /WebHostStreaming/WebHostStreaming
 
-RUN rm -rf /wwwroot/home/*
-COPY --from=frontbuild /medflix-frontend/build /wwwroot/home
+RUN rm -rf ./wwwroot/home/*
+COPY --from=frontbuild /medflix-frontend/build ./wwwroot/home
 
 RUN dotnet restore "./WebHostStreaming.csproj" --disable-parallel 
 RUN dotnet publish "./WebHostStreaming.csproj"  -c release -o /release --no-restore
