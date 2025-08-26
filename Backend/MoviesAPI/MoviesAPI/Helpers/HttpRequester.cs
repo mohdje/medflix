@@ -1,10 +1,10 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
@@ -47,6 +47,34 @@ namespace MoviesAPI.Helpers
                 });
             }
             catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public static async Task<T> PostAsync<T>(string url, Dictionary<string, object> body) where T : class
+        {
+            var uri = new Uri(url);
+
+            var content = JsonContent.Create(body);
+            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+
+            var response = await HttpClient.PostAsync(uri, content);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+                return null;
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            try
+            {
+                return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            catch (Exception)
             {
                 return null;
             }
@@ -128,7 +156,7 @@ namespace MoviesAPI.Helpers
                 else
                     return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return null;
             }
