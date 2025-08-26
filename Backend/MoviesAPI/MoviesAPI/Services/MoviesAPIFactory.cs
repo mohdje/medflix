@@ -6,6 +6,7 @@ using MoviesAPI.Services.Content;
 using MoviesAPI.Services.Torrent.Searchers;
 using MoviesAPI.Services.Torrent.Searchers.WebScrappers;
 using System.IO;
+using MoviesAPI.Services.Subtitles.Searchers;
 
 namespace MoviesAPI.Services
 {
@@ -60,9 +61,10 @@ namespace MoviesAPI.Services
 
             var subtitlesDownloader = new SubtitlesDownloader(subtitlesFolder);
             var ytsSubsSearcher = new YtsSubsSearcher(subtitlesDownloader);
-            var openSubtitlesSearcher = new OpenSubtitlesSearcher(subtitlesDownloader);
+           // var openSubtitlesSearcher = new OpenSubtitlesSearcher(subtitlesDownloader);
+            var subSourceApi = new SubSourceApi(subtitlesDownloader);
 
-            return new SubtitlesSearchManager([openSubtitlesSearcher, ytsSubsSearcher], [openSubtitlesSearcher]);
+            return new SubtitlesSearchManager([subSourceApi, ytsSubsSearcher], [subSourceApi]);
         }
     }
 }

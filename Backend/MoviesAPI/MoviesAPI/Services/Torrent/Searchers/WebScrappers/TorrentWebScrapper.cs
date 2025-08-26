@@ -54,9 +54,8 @@ namespace MoviesAPI.Services.Torrent
             if (searchResultList == null)
                 return Array.Empty<MediaTorrent>();
 
-            var result = new List<MediaTorrent>();
 
-            var getTorrentTasks = new List<Task>();
+            var getTorrentTasks = new List<Task<IEnumerable<MediaTorrent>>>();
 
             foreach (var resultListNode in searchResultList)
             {
@@ -74,21 +73,14 @@ namespace MoviesAPI.Services.Torrent
                         var link = torrentLinkNode.Attributes["href"].Value;
                         var pageUrl = link.StartsWith("http") ? link : $"{Url}{link}";
 
-                        getTorrentTasks.Add(Task.Run(async () =>
-                        {
-                            var mediaTorrents = await GetMediaTorrentsAsync(pageUrl);
-                            if (mediaTorrents.Any())
-                                result.AddRange(mediaTorrents);
-
-                        }));
-                    }
-                    
+                        getTorrentTasks.Add(GetMediaTorrentsAsync(pageUrl));
+                    }               
                 }
             }
 
-            await Task.WhenAll(getTorrentTasks.ToArray());
+            var result = await Task.WhenAll(getTorrentTasks);
 
-            return result;
+            return result.Where(r => r!= null).SelectMany(mediaTorrents => mediaTorrents);
         }
 
         protected async Task<HtmlNodeCollection> GetSearchResults(string searchUrl)
