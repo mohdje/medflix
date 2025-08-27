@@ -118,9 +118,10 @@ namespace MoviesAPI.Services.Subtitles.Searchers
             if (!selelectedSubtitles.Any())
                 selelectedSubtitles = distinctSubtitles.Where(s => s.UploaderBadges != null && s.UploaderBadges.Any());
 
-            if (selelectedSubtitles.Count() < 5)
+            var subtitlesAmountToRetrieve = 5;
+            if (selelectedSubtitles.Count() < subtitlesAmountToRetrieve)
                 selelectedSubtitles = selelectedSubtitles.Concat(
-                    distinctSubtitles.Except(selelectedSubtitles).Take(5 - selelectedSubtitles.Count())
+                    distinctSubtitles.Except(selelectedSubtitles).Take(subtitlesAmountToRetrieve - selelectedSubtitles.Count())
                 );
 
             return selelectedSubtitles;
@@ -135,6 +136,7 @@ namespace MoviesAPI.Services.Subtitles.Searchers
                 {
                     var subtitleFileDetailsUrl = $"{BaseUrl}/subtitle/{subtitle.Link}";
                     var response = await HttpRequester.GetAsync<SubSourceSubtitleFileInfo>(subtitleFileDetailsUrl);
+
                     return response?.Subtitle?.DownloadToken;
                 }));
             }

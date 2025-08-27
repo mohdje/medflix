@@ -88,7 +88,7 @@ namespace MoviesAPI.Helpers
                     HttpClient.DefaultRequestHeaders.Add(header.Key, header.Value);
             }
 
-            var response = await PerformGetCallAsync(url);
+            var response = await PerformGetCallAsync(url, 3);
 
             var bytes = new byte[0];
 
@@ -135,7 +135,7 @@ namespace MoviesAPI.Helpers
 
         private static async Task<string> PerformGetStringCallAsync(Uri url)
         {
-            var response = await PerformGetCallAsync(url);
+            var response = await PerformGetCallAsync(url, 3);
 
             if(response == null)
                 return null;
@@ -143,18 +143,23 @@ namespace MoviesAPI.Helpers
             return await response.ReadAsStringAsync();
         }
 
-        private static async Task<HttpContent> PerformGetCallAsync(Uri url)
+        private static async Task<HttpContent> PerformGetCallAsync(Uri uri, int retryCount = 0)
         {
             try
             {
-                var response = await HttpClient.GetAsync(url);
+                var response = await HttpClient.GetAsync(uri);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                     return response.Content;
                 else if (response.StatusCode == HttpStatusCode.Found || response.StatusCode == HttpStatusCode.Moved)
                     return await PerformGetCallAsync(response.Headers.Location);
+                else if (response.StatusCode == HttpStatusCode.TooManyRequests && retryCount > 0)
+                {
+                    await Task.Delay(500);
+                    return await PerformGetCallAsync(uri, retryCount - 1);
+                }
                 else
-                    return null;
+                   return null;
             }
             catch (Exception ex)
             {
