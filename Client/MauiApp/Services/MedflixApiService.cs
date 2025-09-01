@@ -181,9 +181,9 @@ namespace Medflix.Services
             return await GetAsync<IEnumerable<string>>($"{hostServiceUrl}/subtitles/{mediaType}/en?{queyString}");
         }
 
-        public async Task<IEnumerable<MediaSource>> GetAvailableVOSources(string title, int? year = null, string? mediaId = null, int? seasonNumber = null, int? episodeNumber = null)
+        public async Task<IEnumerable<MediaSource>> GetAvailableVOSources(string title, int? year = null, string? mediaId = null, string? imdbId = null, int? seasonNumber = null, int? episodeNumber = null)
         {
-            var queyString = BuildQueryString(title: title, year: year, mediaId: mediaId, seasonNumber: seasonNumber, episodeNumber: episodeNumber);
+            var queyString = BuildQueryString(title: title, year: year, mediaId: mediaId, imdbId: imdbId, seasonNumber: seasonNumber, episodeNumber: episodeNumber);
 
             return await GetAsync<IEnumerable<MediaSource>>($"{hostServiceUrl}/mediasource/{mediaType}/vo?{queyString}");
         }

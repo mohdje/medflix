@@ -234,6 +234,7 @@ namespace Medflix.Pages.AndroidTv
                      title: mediaDetails.Title,
                      year: MediaIsMovie ? mediaDetails.Year : null,
                      mediaId: mediaDetails.Id,
+                     imdbId: mediaDetails.ImdbId,
                      seasonNumber: seasonNumber,
                      episodeNumber: episodeNumber)
                     .ContinueWith(t => voSources = t.Result),
