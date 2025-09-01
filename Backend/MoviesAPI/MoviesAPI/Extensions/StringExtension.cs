@@ -9,7 +9,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MoviesAPI.Extensions
 {
-    public static class StringExtension
+    internal static class StringExtension
     {
         public static string GetVideoQuality(this string mediaTitle)
         {
