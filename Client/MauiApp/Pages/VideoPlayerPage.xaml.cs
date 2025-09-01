@@ -29,6 +29,7 @@ namespace Medflix.Pages
         VideoPlayerParameters VideoPlayerParameters;
 
         bool shouldRedraw;
+        MediaSource defaultMediaSource;
 
         public VideoPlayerPage(VideoPlayerParameters videoPlayerParameters)
         {
@@ -36,7 +37,7 @@ namespace Medflix.Pages
 
             VideoPlayerParameters = videoPlayerParameters;
 
-            var defaultMediaSource = SelectDefaultMediaSource(videoPlayerParameters);
+            defaultMediaSource = SelectDefaultMediaSource(videoPlayerParameters);
 
             InitVideoPlayerControls(defaultMediaSource);
 
@@ -49,10 +50,12 @@ namespace Medflix.Pages
             var mediaSource = videoPlayerParameters.MediaSources.FirstOrDefault(s => !string.IsNullOrEmpty(s.FilePath));
             if (mediaSource != null)
                 return mediaSource;
-            else if(!string.IsNullOrEmpty(videoPlayerParameters.WatchMedia.VideoSource))
-                return videoPlayerParameters.MediaSources.FirstOrDefault(m => videoPlayerParameters.WatchMedia.VideoSource == m.TorrentUrl);
-            else
-                return videoPlayerParameters.MediaSources.First();
+
+            mediaSource = !string.IsNullOrEmpty(videoPlayerParameters.WatchMedia.VideoSource) ? videoPlayerParameters.MediaSources.FirstOrDefault(m => videoPlayerParameters.WatchMedia.VideoSource == m.TorrentUrl) : null;
+            if (mediaSource != null)
+                return mediaSource;
+            
+            return videoPlayerParameters.MediaSources.First();
         }
         private void InitVideoPlayerControls(MediaSource defaultMediaSource)
         {
@@ -258,9 +261,8 @@ namespace Medflix.Pages
                 windowsView.Initialized += (s, e) =>
                 {
                     MediaPlayerViewModel.Initialize(e.SwapChainOptions);
-
-                    var mediaSource = SelectDefaultMediaSource(VideoPlayerParameters);
-                    PlayMedia(mediaSource, (long)(VideoPlayerParameters.WatchMedia.CurrentTime * 1000));
+                    
+                    PlayMedia(defaultMediaSource, (long)(VideoPlayerParameters.WatchMedia.CurrentTime * 1000));
 
                     MediaPlayerViewModel.OnAppearing();
                 };
