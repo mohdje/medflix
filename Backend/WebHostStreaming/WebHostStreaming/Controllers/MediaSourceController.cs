@@ -48,12 +48,12 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("series/vo")]
-        public async Task<IEnumerable<MediaSource>> SearchSerieVOSources(string mediaId, string title, int seasonNumber, int episodeNumber)
+        public async Task<IEnumerable<MediaSource>> SearchSerieVOSources(string mediaId, string imdbId, string title, int seasonNumber, int episodeNumber)
         {
             if (TryGetMediaSources(mediaId, LanguageVersion.Original, out var mediaSources, seasonNumber, episodeNumber))
                 return mediaSources;
 
-            var torrents = await searchersProvider.TorrentSearchManager.SearchVoTorrentsSerieAsync(title, seasonNumber, episodeNumber);
+            var torrents = await searchersProvider.TorrentSearchManager.SearchVoTorrentsSerieAsync(title, imdbId, seasonNumber, episodeNumber);
 
             return ToMediaSources(torrents, LanguageVersion.Original);
         }
