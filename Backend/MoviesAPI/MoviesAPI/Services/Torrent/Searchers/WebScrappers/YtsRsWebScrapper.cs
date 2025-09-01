@@ -22,7 +22,7 @@ namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
 
         protected override string TorrentLinkPageIdentifier => "//a";
 
-        protected override string[] GetSearchUrls(TorrentSearchRequest torrentSearchRequest)
+        protected override string[] GetSearchUrls(TorrentWebScapperRequest torrentSearchRequest)
         {
             return torrentSearchRequest.MediaSearchIdentifiers.Select(mediaSearchId => $"{Url}/browse-movies/{mediaSearchId}/all/all/0/latest").ToArray();
         }

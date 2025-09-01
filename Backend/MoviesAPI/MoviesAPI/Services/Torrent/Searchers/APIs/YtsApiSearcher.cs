@@ -5,22 +5,21 @@ using System.Threading.Tasks;
 using System.Linq;
 using MoviesAPI.Helpers;
 using MoviesAPI.Services.Torrent.Dtos;
-using MoviesAPI.Services.Torrent.Searchers;
 using MoviesAPI.Extensions;
 
 namespace MoviesAPI.Services.Torrent
 {
-    public class YtsApiSearcher : ITorrentSearcher
+    internal class YtsApiSearcher : ITorrentSearcher
     {
         string listMovies = "list_movies.json";
 
         string Url => "https://yts.mx/api/v2/";
 
-        public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string movieName, int year)
+        public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(TorrentRequest torrentRequest)
         {
             var parameters = new NameValueCollection
             {
-                { "query_term", movieName },
+                { "query_term", torrentRequest.MediaName },
                 { "sort_by", "year" },
                 { "order_by", "desc" }
             };
@@ -28,14 +27,9 @@ namespace MoviesAPI.Services.Torrent
             var searchurl = $"{Url}{listMovies}";
             var requestResult = await HttpRequester.GetAsync<YtsResultDto>(searchurl, parameters);
 
-            var movie = requestResult?.Data?.Movies?.FirstOrDefault(m => m.Title.StartsWithIgnoreDiactrics(movieName) && m.Year == year);
+            var movie = requestResult?.Data?.Movies?.FirstOrDefault(m => m.Title.StartsWithIgnoreDiactrics(torrentRequest.MediaName) && m.Year == torrentRequest.Year);
               
             return movie != null ? movie.Torrents.Select(t => new MediaTorrent() { DownloadUrl = t.Url, Quality = t.Quality }) : Array.Empty<MediaTorrent>();
-        }
-
-        public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string serieName, int seasonNumber, int episodeNumber)
-        {
-            return await Task.FromResult(Array.Empty<MediaTorrent>());
         }
     }
 }

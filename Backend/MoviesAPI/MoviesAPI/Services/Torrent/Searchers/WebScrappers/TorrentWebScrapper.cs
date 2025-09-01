@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace MoviesAPI.Services.Torrent
 {
@@ -21,25 +20,28 @@ namespace MoviesAPI.Services.Torrent
         protected abstract string MediaQualityIdentifier { get; }
         protected abstract bool FrenchVersion { get; }
         protected abstract bool CheckQuality { get; }
-        protected abstract string[] GetSearchUrls(TorrentSearchRequest torrentSearchRequest);
+        protected abstract string[] GetSearchUrls(TorrentWebScapperRequest torrentSearchRequest);
         protected abstract string GetTorrentTitle(HtmlDocument torrentResultNode);
         protected abstract bool TorrentHasSeeders(HtmlDocument torrentHtmlPage);
 
-        public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string movieName, int year)
+        public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(TorrentRequest torrentRequest)
         {
-            var request = new TorrentMovieSearchRequest(movieName, year, FrenchVersion, CheckQuality);
+            if(torrentRequest == null)
+                throw new ArgumentNullException(nameof(torrentRequest));
 
-            return await SearchTorrentLinks(request);
+            if(torrentRequest.SeasonNumber.HasValue && torrentRequest.EpisodeNumber.HasValue)
+            {
+                var request = new TorrentSerieWebScrapperRequest(torrentRequest.MediaName, torrentRequest.EpisodeNumber.Value, torrentRequest.SeasonNumber.Value, FrenchVersion);
+                return await SearchTorrentLinks(request);
+            }
+            else
+            {
+                var request = new TorrentMovieWebScapperRequest(torrentRequest.MediaName, torrentRequest.Year, FrenchVersion, CheckQuality);
+                return await SearchTorrentLinks(request);
+            }
         }
 
-        public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string serieName, int seasonNumber, int episodeNumber)
-        {
-            var request = new TorrentSerieSearchRequest(serieName, episodeNumber, seasonNumber, FrenchVersion);
-
-            return await SearchTorrentLinks(request);
-        }
-
-        protected async Task<IEnumerable<MediaTorrent>> SearchTorrentLinks(TorrentSearchRequest torrentSearchRequest)
+        protected async Task<IEnumerable<MediaTorrent>> SearchTorrentLinks(TorrentWebScapperRequest torrentSearchRequest)
         {
             var searchUrls = GetSearchUrls(torrentSearchRequest);
 

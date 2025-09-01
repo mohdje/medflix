@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MoviesAPI.Services.Torrent.Searchers
+namespace MoviesAPI.Services.Torrent
 {
     internal interface ITorrentSearcher
     {
-        Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string movieName, int year);
-
-        Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(string serieName, int seasonNumber, int episodeNumber);
+        Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(TorrentRequest torrentRequest);
     }
 }

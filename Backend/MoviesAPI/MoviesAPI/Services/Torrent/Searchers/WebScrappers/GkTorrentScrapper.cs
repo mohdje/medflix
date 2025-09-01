@@ -19,7 +19,7 @@ namespace MoviesAPI.Services.Torrent
 
         protected override string TorrentLinkPageIdentifier => throw new NotImplementedException();
 
-        protected override string[] GetSearchUrls(TorrentSearchRequest torrentSearchRequest)
+        protected override string[] GetSearchUrls(TorrentWebScapperRequest torrentSearchRequest)
         {
             return torrentSearchRequest.MediaSearchIdentifiers.Select(mediaId => $"{Url}/recherche/{mediaId}").ToArray();
         }

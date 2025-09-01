@@ -13,7 +13,7 @@ namespace MoviesAPI.Services.Torrent
         protected override bool FrenchVersion => true;
         protected override bool CheckQuality => true;
 
-        protected override string[] GetSearchUrls(TorrentSearchRequest torrentSearchRequest)
+        protected override string[] GetSearchUrls(TorrentWebScapperRequest torrentSearchRequest)
         {
             return torrentSearchRequest.MediaSearchIdentifiers.Select(mediaId => $"{Url}/recherche/{mediaId}").ToArray();
         }

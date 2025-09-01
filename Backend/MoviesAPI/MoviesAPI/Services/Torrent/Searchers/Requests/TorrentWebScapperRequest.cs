@@ -1,11 +1,6 @@
-﻿using HtmlAgilityPack;
-using MoviesAPI.Extensions;
-using System.Linq;
-using System.Web;
-
-namespace MoviesAPI.Services.Torrent
+﻿namespace MoviesAPI.Services.Torrent
 {
-    internal abstract class TorrentSearchRequest
+    internal abstract class TorrentWebScapperRequest
     {
         public string MediaName { get; }
         public abstract string[] MediaSearchIdentifiers { get; }
@@ -14,7 +9,7 @@ namespace MoviesAPI.Services.Torrent
 
         public abstract bool MatchWithTorrentTitle(string title);
 
-        protected TorrentSearchRequest(string mediaName, bool searchFrenchVersion)
+        protected TorrentWebScapperRequest(string mediaName, bool searchFrenchVersion)
         {
             MediaName = mediaName;
             FrenchVersion = searchFrenchVersion;

@@ -2,7 +2,7 @@
 
 namespace MoviesAPI.Services.Torrent
 {
-    internal class TorrentMovieSearchRequest : TorrentSearchRequest
+    internal class TorrentMovieWebScapperRequest : TorrentWebScapperRequest
     {
         public int Year { get; }
 
@@ -10,7 +10,7 @@ namespace MoviesAPI.Services.Torrent
 
         bool checkQuality;
 
-        public TorrentMovieSearchRequest(string movieName, int year, bool checkQuality, bool searchFrenchVersion = false) : base(movieName, searchFrenchVersion)
+        public TorrentMovieWebScapperRequest(string movieName, int year, bool checkQuality, bool searchFrenchVersion = false) : base(movieName, searchFrenchVersion)
         {
             Year = year;
             this.checkQuality = checkQuality;

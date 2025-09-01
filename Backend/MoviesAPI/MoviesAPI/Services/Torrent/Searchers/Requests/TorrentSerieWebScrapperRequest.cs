@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace MoviesAPI.Services.Torrent
 {
-    internal class TorrentSerieSearchRequest : TorrentSearchRequest
+    internal class TorrentSerieWebScrapperRequest : TorrentWebScapperRequest
     {
         public int EpisodeNumber { get; }
         public int SeasonNumber { get; }
@@ -12,7 +12,7 @@ namespace MoviesAPI.Services.Torrent
         public string SeasonIdentifier => $"{(FrenchVersion ? "Saison" : "Season")} {SeasonNumber}";
         public override string[] MediaSearchIdentifiers => [$"{MediaName} {EpisodeIdentifier}", $"{MediaName} {SeasonIdentifier}"];
 
-        public TorrentSerieSearchRequest(string serieName, int episodeNumber, int seasonNumber, bool searchFrenchVersion) : base(serieName, searchFrenchVersion)
+        public TorrentSerieWebScrapperRequest(string serieName, int episodeNumber, int seasonNumber, bool searchFrenchVersion) : base(serieName, searchFrenchVersion)
         {
             EpisodeNumber = episodeNumber;
             SeasonNumber = seasonNumber;

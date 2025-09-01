@@ -13,7 +13,7 @@ namespace MoviesAPI.Services.Torrent
         protected override string MediaQualityIdentifier => "//div[@id='torrentsdesc']//div[@class='maximum']";
         protected override string TorrentLinkPageIdentifier => "//a";
 
-        protected override string[] GetSearchUrls(TorrentSearchRequest torrentSearchRequest)
+        protected override string[] GetSearchUrls(TorrentWebScapperRequest torrentSearchRequest)
         {
             return torrentSearchRequest.MediaSearchIdentifiers.Select(mediaSearchId => $"{Url}/recherche/{mediaSearchId}").ToArray();
         }
