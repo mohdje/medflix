@@ -245,6 +245,8 @@ namespace Medflix.Pages
             
             VideoPlayerParameters.WatchMedia.VideoSource = !string.IsNullOrEmpty(mediaSource.FilePath) ? mediaSource.FilePath : mediaSource.TorrentUrl;
 
+            VersionQuality.Text = $"{mediaSource.Language} - {mediaSource.Quality}";
+
             MediaPlayerViewModel.PlayMedia(streamUrl, startTime);
 
             Task.Run(async () =>

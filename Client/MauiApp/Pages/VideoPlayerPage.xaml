@@ -36,20 +36,30 @@
             VerticalOptions="Start"
             Margin="10"
             ZIndex="4"
-            MaximumHeightRequest="150" 
-            ColumnDefinitions="*,50">
+            MaximumHeightRequest="200" 
+            ColumnDefinitions="*,50"
+            RowDefinitions="*,*">
             <Label 
                 x:Name="MediaTitle"
+                Grid.Row="0"
                 Grid.Column="0" 
                 FontSize="Title" 
                 FontAttributes="Bold" 
                 TextColor="White"/>
             <controls:VideoPlayerControlButton
                 x:Name="ClosePlayerButton"
+                Grid.Row="0"
                 Grid.Column="1"
                 Source="cross.png" 
                 Clicked="OnCloseButtonPressed"
                 />
+            <Label 
+                x:Name="VersionQuality"
+                Grid.Row="1"
+                Grid.Column="0" 
+                FontSize="Subtitle" 
+                FontAttributes="Bold" 
+                TextColor="White"/> 
         </Grid>
 
 
