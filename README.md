@@ -31,7 +31,17 @@ Architecture of this project :
 ![Video Player](/Screenshots/video_player.PNG)
 
 ## How to use it
-The backend web server should be run on a machine using docker. Then donwload client application (for Andoird, Windows or Macos) from the Releases section and launch it. The first time the client application is launched the user will be asked to enter IP adress of the machine running the web server and the port (5000 by default).
+On a machine with docker pull latest Medflix image
+```bash
+docker image pull djemo/medflix:latest
+```
+
+Then run docker container
+```bash
+docker run -p 5000:5000 -e ASPNETCORE_HTTP_PORT=5000 -e ASPNETCORE_URLS="http://+:5000" --mount source=medflixVol,target=/medflix-app/storage djemo/medflix:latest
+```
+
+The web server is now running. Then donwload client application (for Andoird, Windows or Macos) from the Releases section and launch it. The first time the client application is launched the user will be asked to enter IP adress of the machine running the web server and the port (5000 by default).
 
 
 
