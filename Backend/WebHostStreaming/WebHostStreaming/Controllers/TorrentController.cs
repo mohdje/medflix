@@ -31,7 +31,7 @@ namespace WebHostStreaming.Controllers
         public async Task<IActionResult> GetStream(string base64TorrentUrl, string mediaId, string language, string quality)
         {
             if (!Enum.TryParse<LanguageVersion>(language, true, out var languageVersion))
-                return BadRequest("Invalid languageVersion value");
+                return BadRequest("Invalid language value");
 
             var clientAppIdientifier = HttpContext.Request.GetClientAppIdentifier();
 
@@ -44,15 +44,18 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("stream/series")]
-        public async Task<IActionResult> GetStream(string base64TorrentUrl, int seasonNumber, int episodeNumber, string mediaId, int languageVersion, string quality)
+        public async Task<IActionResult> GetStream(string base64TorrentUrl, int seasonNumber, int episodeNumber, string mediaId, string language, string quality)
         {
+            if (!Enum.TryParse<LanguageVersion>(language, true, out var languageVersion))
+                return BadRequest("Invalid languageVersion value");
+
             var clientAppIdientifier = HttpContext.Request.GetClientAppIdentifier();
 
             if (string.IsNullOrEmpty(clientAppIdientifier))
                 return Forbid();
 
             var torrentUrl = base64TorrentUrl.DecodeBase64();
-            return await StreamData(new TorrentRequest(clientAppIdientifier, torrentUrl, mediaId, quality, (LanguageVersion)languageVersion, seasonNumber, episodeNumber));
+            return await StreamData(new TorrentRequest(clientAppIdientifier, torrentUrl, mediaId, quality, languageVersion, seasonNumber, episodeNumber));
         }
 
         [HttpGet("streamdownloadstate")]
