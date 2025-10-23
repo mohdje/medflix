@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <Reference Include="MoviesAPI">
-      <HintPath>..\..\MoviesAPI\MoviesAPI\bin\Release\net8.0\MoviesAPI.dll</HintPath>
+      <HintPath>..\..\MoviesAPI\MoviesAPI\bin\release\net8.0\MoviesAPI.dll</HintPath>
     </Reference>
   </ItemGroup>
 

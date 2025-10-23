@@ -6,7 +6,7 @@ namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
 {
     internal class Torrent9WebScrapper : TorrentWebScrapper
     {
-        public override string Url => "https://www.torrent9.diy";
+        public override string Url => "https://www.torrent9.town";
 
         protected override string SearchResultListIdentifier => "//table[@class='table table-striped table-bordered cust-table -table']//td[a]";
 
@@ -14,7 +14,7 @@ namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
 
         protected override string TorrentLinkButtonsIdentifier => "//div[@class='download-btn']/a[starts-with(@href, 'magnet')]";
 
-        protected override string MediaQualityIdentifier => "//div[@class='movie-section']//h1";
+        protected override string MediaQualityIdentifier => "//div[@class='movie-section']//h5";
 
         protected override bool FrenchVersion => true;
 

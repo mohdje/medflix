@@ -24,7 +24,7 @@ namespace MoviesAPI.Services
                 return _instance;
             }
         }
-       
+
         public IMovieSearcher CreateMovieSearcher(string apiKey)
         {
             return new TmdbMovieClient(apiKey);
@@ -43,7 +43,7 @@ namespace MoviesAPI.Services
             var ytsDoWebScrapper = new YtsDoWebScrapper();
             var ytsRsWebScrapper = new YtsRsWebScrapper();
             var ytsApiSearcher = new YtsApiSearcher();
-           // var limeTorrentsScrapper = new LimeTorrentsScrapper();
+            var limeTorrentsScrapper = new LimeTorrentsScrapper();
             var eztvApiSearcher = new EztvApiSearcher();
 
             IEnumerable<ITorrentSearcher> vfTorrentSearchers = [zeTorrentsScrapper, ytsVfScrapper, torrent9Scrapper];
@@ -51,8 +51,8 @@ namespace MoviesAPI.Services
             return new TorrentSearchManager(
                 vfTorrentSearchers,
                 [ytsApiSearcher, ytsDoWebScrapper, ytsRsWebScrapper],
-                vfTorrentSearchers, 
-                [eztvApiSearcher]);
+                vfTorrentSearchers,
+                [eztvApiSearcher, limeTorrentsScrapper]);
         }
 
         public SubtitlesSearchManager CreateSubstitlesSearchManager(string subtitlesFolder)
@@ -62,10 +62,12 @@ namespace MoviesAPI.Services
 
             var subtitlesDownloader = new SubtitlesDownloader(subtitlesFolder);
             var ytsSubsSearcher = new YtsSubsSearcher(subtitlesDownloader);
-           // var openSubtitlesSearcher = new OpenSubtitlesSearcher(subtitlesDownloader);
+            var openSubtitlesSearcher = new OpenSubtitlesSearcher(subtitlesDownloader);
             var subSourceApi = new SubSourceApi(subtitlesDownloader);
 
-            return new SubtitlesSearchManager([subSourceApi, ytsSubsSearcher], [subSourceApi]);
+            //return new SubtitlesSearchManager([subSourceApi, ytsSubsSearcher], [subSourceApi]);
+            return new SubtitlesSearchManager([openSubtitlesSearcher], [openSubtitlesSearcher]);
+
         }
     }
 }

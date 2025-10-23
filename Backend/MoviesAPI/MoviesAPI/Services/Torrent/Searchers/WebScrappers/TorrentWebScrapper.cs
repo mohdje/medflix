@@ -2,7 +2,6 @@
 using MoviesAPI.Extensions;
 using MoviesAPI.Helpers;
 using MoviesAPI.Services.Torrent.Dtos;
-using MoviesAPI.Services.Torrent.Searchers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,10 +25,10 @@ namespace MoviesAPI.Services.Torrent
 
         public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(TorrentRequest torrentRequest)
         {
-            if(torrentRequest == null)
+            if (torrentRequest == null)
                 throw new ArgumentNullException(nameof(torrentRequest));
 
-            if(torrentRequest.SeasonNumber.HasValue && torrentRequest.EpisodeNumber.HasValue)
+            if (torrentRequest.SeasonNumber.HasValue && torrentRequest.EpisodeNumber.HasValue)
             {
                 var request = new TorrentSerieWebScrapperRequest(torrentRequest.MediaName, torrentRequest.EpisodeNumber.Value, torrentRequest.SeasonNumber.Value, FrenchVersion);
                 return await SearchTorrentLinks(request);
@@ -45,21 +44,21 @@ namespace MoviesAPI.Services.Torrent
         {
             var searchUrls = GetSearchUrls(torrentSearchRequest);
 
-            HtmlNodeCollection searchResultList = null;
+            List<HtmlNode> resultNodes = new List<HtmlNode>();
             foreach (var searchUrl in searchUrls)
             {
-                searchResultList = await GetSearchResults(searchUrl);
+                var searchResultList = await GetSearchResults(searchUrl);
                 if (searchResultList != null && searchResultList.Any())
-                    break;
+                    resultNodes.AddRange(searchResultList);
             }
 
-            if (searchResultList == null)
+            if (resultNodes == null)
                 return Array.Empty<MediaTorrent>();
 
 
             var getTorrentTasks = new List<Task<IEnumerable<MediaTorrent>>>();
 
-            foreach (var resultListNode in searchResultList)
+            foreach (var resultListNode in resultNodes)
             {
                 var docResultListNode = new HtmlDocument();
                 docResultListNode.LoadHtml(resultListNode.InnerHtml);
@@ -70,19 +69,19 @@ namespace MoviesAPI.Services.Torrent
                 {
                     var torrentLinkNode = docResultListNode.DocumentNode.SelectSingleNode(TorrentLinkPageIdentifier);
 
-                    if(torrentLinkNode != null)
+                    if (torrentLinkNode != null)
                     {
                         var link = torrentLinkNode.Attributes["href"].Value;
                         var pageUrl = link.StartsWith("http") ? link : $"{Url}{link}";
 
                         getTorrentTasks.Add(GetMediaTorrentsAsync(pageUrl));
-                    }               
+                    }
                 }
             }
 
             var result = await Task.WhenAll(getTorrentTasks);
 
-            return result.Where(r => r!= null).SelectMany(mediaTorrents => mediaTorrents);
+            return result.Where(r => r != null).SelectMany(mediaTorrents => mediaTorrents);
         }
 
         protected async Task<HtmlNodeCollection> GetSearchResults(string searchUrl)
@@ -94,7 +93,7 @@ namespace MoviesAPI.Services.Torrent
 
             return doc.DocumentNode.SelectNodes(SearchResultListIdentifier);
         }
-  
+
         protected async Task<IEnumerable<MediaTorrent>> GetMediaTorrentsAsync(string mediaTorrentPageUrl)
         {
             var doc = await HttpRequester.GetHtmlDocumentAsync(mediaTorrentPageUrl);
@@ -118,7 +117,7 @@ namespace MoviesAPI.Services.Torrent
                 if (!torrentLink.StartsWith("magnet") && !torrentLink.StartsWith("http"))
                     torrentLink = $"{Url}{torrentLink}";
 
-                var qualityNode = !string.IsNullOrEmpty(MediaQualityIdentifier) ? 
+                var qualityNode = !string.IsNullOrEmpty(MediaQualityIdentifier) ?
                     (doc.DocumentNode.SelectSingleNode(MediaQualityIdentifier) ?? torrentLinkNode)
                     : torrentLinkNode;
 
