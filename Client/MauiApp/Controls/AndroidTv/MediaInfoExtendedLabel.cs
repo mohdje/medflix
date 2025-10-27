@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-
-namespace Medflix.Controls.AndroidTv
+﻿namespace Medflix.Controls.AndroidTv
 {
-	public class MediaInfoExtendedLabel : ContentView
-	{
+    public class MediaInfoExtendedLabel : ContentView
+    {
         public string Title
         {
             get
@@ -17,8 +11,6 @@ namespace Medflix.Controls.AndroidTv
             set
             {
                 TitleLabel.Text = value;
-                if (!string.IsNullOrEmpty(value))
-                    TitleLabel.Margin = new Thickness(0, 0, 10, 0);
             }
         }
         public string Text
@@ -29,6 +21,7 @@ namespace Medflix.Controls.AndroidTv
             }
             set
             {
+                IsVisible = !string.IsNullOrEmpty(value);
                 TextLabel.Text = value;
             }
         }
@@ -47,22 +40,23 @@ namespace Medflix.Controls.AndroidTv
         }
 
         Label TitleLabel;
-		Label TextLabel;
+        Label TextLabel;
         ActivityIndicator Spinner;
 
-		public MediaInfoExtendedLabel ()
-		{
-			TitleLabel = new Label
-            { 
-                FontSize = 15, 
-                TextColor = Brush.White.Color 
+        public MediaInfoExtendedLabel()
+        {
+            TitleLabel = new Label
+            {
+                FontSize = 15,
+                TextColor = Brush.White.Color,
+                Margin = new Thickness(0, 0, 10, 0)
             };
-            TextLabel = new Label 
-            { 
-                FontSize = 15, 
-                TextColor = Color.FromArgb("#807f7f"), 
-                MaximumWidthRequest = 700, 
-                LineBreakMode = LineBreakMode.WordWrap 
+            TextLabel = new Label
+            {
+                FontSize = 15,
+                TextColor = Color.FromArgb("#807f7f"),
+                MaximumWidthRequest = 700,
+                LineBreakMode = LineBreakMode.WordWrap
             };
             Spinner = new ActivityIndicator
             {
@@ -74,13 +68,14 @@ namespace Medflix.Controls.AndroidTv
             };
 
 
-            Content = new HorizontalStackLayout {
-				Children = {
+            Content = new HorizontalStackLayout
+            {
+                Children = {
                     TitleLabel,
-					TextLabel,
+                    TextLabel,
                     Spinner
                 }
-			};
-		}
-	}
+            };
+        }
+    }
 }

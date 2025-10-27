@@ -11,9 +11,9 @@ namespace Medflix.Pages.AndroidTv
     {
         string mediaId;
         MediaDetails mediaDetails;
-        WatchMediaInfo videoPlayerMediaWatched;
-        int? seasonNumber;
-        int? episodeNumber;
+        WatchMediaInfo watchedMediaInfo;
+        int? selectedSeasonNumber;
+        int? selectedEpisodeNumber;
         bool MediaIsSerie => mediaDetails.SeasonsCount > 0;
         bool MediaIsMovie => mediaDetails.SeasonsCount == 0;
 
@@ -33,8 +33,11 @@ namespace Medflix.Pages.AndroidTv
         {
             if (PageContent.IsVisible) //When closing video player, PageContent is already set. Just update watchingProgress
             {
-                videoPlayerMediaWatched = await MedflixApiService.Instance.GetWatchMediaInfo(mediaId);
-                UpdateWatchingProgress();
+                var result = MediaIsSerie ? await MedflixApiService.Instance.GetEpisodeWatchMediaInfo(mediaId, selectedSeasonNumber!.Value, selectedEpisodeNumber!.Value)
+                                          : await MedflixApiService.Instance.GetWatchMediaInfo(mediaId);
+                if (result != null)
+                    UpdateWatchingProgress(result);
+
                 return;
             }
 
@@ -47,16 +50,16 @@ namespace Medflix.Pages.AndroidTv
                     return;
                 }
             });
-            
+
             bool isMediaBookmarked = false;
             await Task.WhenAll(
-              MedflixApiService.Instance.GetWatchMediaInfo(mediaId).ContinueWith(t => videoPlayerMediaWatched = t.Result),
+              MedflixApiService.Instance.GetWatchMediaInfo(mediaId).ContinueWith(t => UpdateWatchingProgress(t.Result)),
               MedflixApiService.Instance.IsMediaBookmarked(mediaId).ContinueWith(t => isMediaBookmarked = t.Result));
 
             if (MediaIsSerie)
             {
-                seasonNumber = videoPlayerMediaWatched?.SeasonNumber ?? 1;
-                episodeNumber = videoPlayerMediaWatched?.EpisodeNumber ?? 1;
+                selectedSeasonNumber = watchedMediaInfo?.SeasonNumber ?? 1;
+                selectedEpisodeNumber = watchedMediaInfo?.EpisodeNumber ?? 1;
             }
 
             await Task.WhenAll(
@@ -81,23 +84,14 @@ namespace Medflix.Pages.AndroidTv
                     BackgroundImage.Source = ImageSource.FromUri(new Uri(mediaDetails.BackgroundImageUrl));
 
                 Year.Text = mediaDetails.Year.ToString();
-
-                Duration.IsVisible = MediaIsMovie;
-                Duration.Text = TimeSpan.FromMinutes(mediaDetails.Duration).ToTimeFormat();
-
+                Duration.Text = MediaIsMovie ? TimeSpan.FromMinutes(mediaDetails.Duration).ToTimeFormat() : string.Empty;
                 Rating.Text = mediaDetails.Rating.ToString("0.0").Replace(",", ".");
-
-                Genres.IsVisible = mediaDetails.Genres != null;
                 Genres.Text = mediaDetails.Genres != null ? String.Join(" - ", mediaDetails.Genres.Select(genre => genre.Name)) : string.Empty;
 
                 EpisodeSelectionButton.IsVisible = MediaIsSerie;
 
-                Director.IsVisible = !string.IsNullOrEmpty(mediaDetails.Director);
                 Director.Text = mediaDetails.Director;
-
-                Cast.IsVisible = !string.IsNullOrEmpty(mediaDetails.Cast);
                 Cast.Text = mediaDetails.Cast;
-
                 Synopsis.Text = mediaDetails.Synopsis;
 
                 TrailerButton.IsVisible = !string.IsNullOrEmpty(mediaDetails.YoutubeTrailerUrl);
@@ -106,23 +100,23 @@ namespace Medflix.Pages.AndroidTv
                 PageContent.IsVisible = true;
 
                 UpdateSelectEpisodeButtonLabel();
-                UpdateWatchingProgress();
             });
         }
 
-        private void UpdateWatchingProgress()
+        private void UpdateWatchingProgress(WatchMediaInfo info)
         {
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                if (videoPlayerMediaWatched != null)
+                watchedMediaInfo = info;
+                if (watchedMediaInfo != null)
                 {
                     WatchingProgressSection.IsVisible = true;
                     PlayFromBeginningButton.IsVisible = true;
 
-                    var timeSpan = TimeSpan.FromSeconds(videoPlayerMediaWatched.TotalDuration).Subtract(TimeSpan.FromSeconds(videoPlayerMediaWatched.CurrentTime));
+                    var timeSpan = TimeSpan.FromSeconds(watchedMediaInfo.TotalDuration).Subtract(TimeSpan.FromSeconds(watchedMediaInfo.CurrentTime));
                     RemainingTime.Text = $"{timeSpan.ToTimeFormat()} remaining";
 
-                    var progress = (double)videoPlayerMediaWatched.CurrentTime / videoPlayerMediaWatched.TotalDuration;
+                    var progress = (double)watchedMediaInfo.CurrentTime / watchedMediaInfo.TotalDuration;
                     await WatchingProgress.ProgressTo(progress, 0, Easing.Default);
                 }
                 else
@@ -135,17 +129,17 @@ namespace Medflix.Pages.AndroidTv
 
         private void UpdateSelectEpisodeButtonLabel()
         {
-            EpisodeSelectionButton.Text = $"Season {seasonNumber.GetValueOrDefault(1)}   Episode {episodeNumber.GetValueOrDefault(1)}";
+            EpisodeSelectionButton.Text = $"Season {selectedSeasonNumber.GetValueOrDefault(1)}   Episode {selectedEpisodeNumber.GetValueOrDefault(1)}";
         }
 
-     
-        private async Task OnEpisodeSelected(int seasonNumber, int episodeNumber, WatchMediaInfo videoPlayerMedia)
+
+        private async Task OnEpisodeSelected(int seasonNumber, int episodeNumber, WatchMediaInfo watchMediaInfo)
         {
-            this.seasonNumber = seasonNumber;
-            this.episodeNumber = episodeNumber;
-            this.videoPlayerMediaWatched = videoPlayerMedia;
+            this.selectedSeasonNumber = seasonNumber;
+            this.selectedEpisodeNumber = episodeNumber;
+
             UpdateSelectEpisodeButtonLabel();
-            UpdateWatchingProgress();
+            UpdateWatchingProgress(watchMediaInfo);
             await GetMediaResourcesAsync();
         }
 
@@ -167,15 +161,15 @@ namespace Medflix.Pages.AndroidTv
 
             var videoPlayerParameters = new VideoPlayerParameters
             {
-                SubtitlesSources = subtitlesSources.ToArray(),
-                MediaSources = mediaSources.ToArray(),
+                SubtitlesSources = [.. subtitlesSources],
+                MediaSources = [.. mediaSources],
                 WatchMedia = new WatchMediaInfo
                 {
                     Media = mediaDetails,
-                    CurrentTime = forceRestart ? 0 : videoPlayerMediaWatched?.CurrentTime ?? 0,
-                    EpisodeNumber = episodeNumber.GetValueOrDefault(0),
-                    SeasonNumber = seasonNumber.GetValueOrDefault(0),
-                    VideoSource = videoPlayerMediaWatched?.VideoSource
+                    CurrentTime = forceRestart ? 0 : watchedMediaInfo?.CurrentTime ?? 0,
+                    EpisodeNumber = selectedEpisodeNumber.GetValueOrDefault(0),
+                    SeasonNumber = selectedSeasonNumber.GetValueOrDefault(0),
+                    VideoSource = watchedMediaInfo?.VideoSource
                 }
             };
 
@@ -189,7 +183,7 @@ namespace Medflix.Pages.AndroidTv
         }
 
         #region Fetching Resources
-        
+
         private async Task GetMediaResourcesAsync()
         {
             await Task.WhenAll(GetAvailableSubtitlesAsync(), GetAvailableVideoSourcesAsync());
@@ -202,8 +196,8 @@ namespace Medflix.Pages.AndroidTv
             });
 
             await Task.WhenAll(
-                MedflixApiService.Instance.GetAvailableEnglishSubtitlesAsync(mediaDetails.ImdbId, seasonNumber, episodeNumber).ContinueWith(t => englishSubtitlesUrls = t.Result),
-                MedflixApiService.Instance.GetAvailableFrenchSubtitlesAsync(mediaDetails.ImdbId, seasonNumber, episodeNumber).ContinueWith(t => frenchSubtitlesUrls = t.Result)
+                MedflixApiService.Instance.GetAvailableEnglishSubtitlesAsync(mediaDetails.ImdbId, selectedSeasonNumber, selectedEpisodeNumber).ContinueWith(t => englishSubtitlesUrls = t.Result),
+                MedflixApiService.Instance.GetAvailableFrenchSubtitlesAsync(mediaDetails.ImdbId, selectedSeasonNumber, selectedEpisodeNumber).ContinueWith(t => frenchSubtitlesUrls = t.Result)
                 );
 
             var availableSubtitles = new List<string>();
@@ -235,15 +229,15 @@ namespace Medflix.Pages.AndroidTv
                      year: MediaIsMovie ? mediaDetails.Year : null,
                      mediaId: mediaDetails.Id,
                      imdbId: mediaDetails.ImdbId,
-                     seasonNumber: seasonNumber,
-                     episodeNumber: episodeNumber)
+                     seasonNumber: selectedSeasonNumber,
+                     episodeNumber: selectedEpisodeNumber)
                     .ContinueWith(t => voSources = t.Result),
                  MedflixApiService.Instance.GetAvailableVFSources(
                      title: mediaDetails.Title,
                      mediaId: mediaDetails.Id,
                      year: MediaIsMovie ? mediaDetails.Year : null,
-                     seasonNumber: seasonNumber,
-                     episodeNumber: episodeNumber)
+                     seasonNumber: selectedSeasonNumber,
+                     episodeNumber: selectedEpisodeNumber)
                     .ContinueWith(t => vfSources = t.Result)
             };
 
@@ -292,7 +286,7 @@ namespace Medflix.Pages.AndroidTv
         {
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                var page = new SeasonEpisodeSelectionModalPage(mediaId, mediaDetails.SeasonsCount, seasonNumber.GetValueOrDefault(1));
+                var page = new SeasonEpisodeSelectionModalPage(mediaId, mediaDetails.SeasonsCount, selectedSeasonNumber.GetValueOrDefault(1));
                 page.OnEpisodeSelected += async (s, e) =>
                 {
                     await Navigation.PopModalAsync();
