@@ -1,4 +1,5 @@
 Backend/MoviesAPI/.vs
+Backend/MoviesAPI/.vscode
 Backend/MoviesAPI/MoviesAPI/obj
 Backend/MoviesAPI/MoviesAPI/bin
 
@@ -8,6 +9,7 @@ Backend/WebHostStreaming/WebHostStreaming/bin
 Backend/WebHostStreaming/WebHostStreaming/obj
 Backend/WebHostStreaming/WebHostStreaming/GPUcache
 Backend/WebHostStreaming/.vs
+Backend/WebHostStreaming/.vscode
 Backend/WebHostStreaming/WebHostStreaming/cache/
 Backend/MoviesAPI/MoviesApiSample/Tokens.cs
 Backend/WebHostStreaming/WebHostStreaming/Helpers/Tokens.cs
@@ -20,6 +22,7 @@ Client/ReactApp/node_modules/
 Client/ReactApp/build/
 Client/ReactApp/.eslintcache
 Client/MauiApp/.vs
+Client/MauiApp/.vscode
 Client/MauiApp/bin
 Client/MauiApp/obj
 
