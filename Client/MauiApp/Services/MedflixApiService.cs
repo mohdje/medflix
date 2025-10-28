@@ -11,7 +11,7 @@ namespace Medflix.Services
     public class MedflixApiService
     {
         static HttpClient httpClient;
-      
+
         private static MedflixApiService _instance;
         public static MedflixApiService Instance
         {
@@ -42,7 +42,7 @@ namespace Medflix.Services
 
         public async Task<bool> TrySetHostServiceAddressAsync(string serviceAddress)
         {
-            if(string.IsNullOrEmpty(serviceAddress)) 
+            if (string.IsNullOrEmpty(serviceAddress))
                 return false;
 
             try
@@ -167,6 +167,14 @@ namespace Medflix.Services
             return await GetAsync<IEnumerable<Episode>>($"{hostServiceUrl}/{mediaType}/episodes/{mediaId}/{seasonNumber}");
         }
 
+        public async Task<bool> IsLastEpisodeOfSeason(string mediaId, int seasonNumber, int episodeNumber)
+        {
+            var episodes = await GetEpisodesAsync(mediaId, seasonNumber);
+            var lastEpisodeNumber = episodes?.Max(e => e.EpisodeNumber);
+
+            return lastEpisodeNumber.HasValue ? lastEpisodeNumber.Value == episodeNumber : true;
+        }
+
         public async Task<IEnumerable<string>> GetAvailableFrenchSubtitlesAsync(string imdbId, int? seasonNumber = null, int? episodeNumber = null)
         {
             var queyString = BuildQueryString(imdbId: imdbId, seasonNumber: seasonNumber, episodeNumber: episodeNumber);
@@ -204,9 +212,7 @@ namespace Medflix.Services
         {
             var watchMediaHistory = await GetWatchMediaHistory();
 
-            var lastEpisodeWatched = watchMediaHistory.FirstOrDefault(w => w.Media.Id == mediaId);
-
-            return lastEpisodeWatched;
+            return watchMediaHistory?.FirstOrDefault(w => w.Media.Id == mediaId);
         }
 
         public async Task<WatchMediaInfo> GetEpisodeWatchMediaInfo(string mediaId, int seasonNumber, int episodeNumber)
@@ -261,7 +267,7 @@ namespace Medflix.Services
 
         public async Task SaveProgressionAsync(WatchMediaInfo media)
         {
-           await PutAsync($"{hostServiceUrl}/{mediaType}/watchedmedia", media);
+            await PutAsync($"{hostServiceUrl}/{mediaType}/watchedmedia", media);
         }
 
         public async Task<IEnumerable<Subtitles>> GetSubtitlesAsync(string url)
@@ -276,8 +282,8 @@ namespace Medflix.Services
             else
             {
                 var queryString = $"base64TorrentUrl={ToBase64(mediaSource.TorrentUrl)}&mediaId={mediaId}&language={mediaSource.Language}&quality={mediaSource.Quality}";
-                
-                if(seasonNumber > 0 && episodeNumber > 0)
+
+                if (seasonNumber > 0 && episodeNumber > 0)
                     queryString += $"&{BuildQueryString(seasonNumber: seasonNumber, episodeNumber: episodeNumber)}";
 
                 return $"{hostServiceUrl}/torrent/stream/{mediaType}?{queryString}";

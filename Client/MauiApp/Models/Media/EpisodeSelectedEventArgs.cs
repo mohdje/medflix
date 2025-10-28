@@ -11,6 +11,7 @@ namespace Medflix.Models.Media
     {
         public int SeasonNumber { get; set; }
         public int EpisodeNumber { get; set; }
+        public bool IsLastEpisodeOfSeason { get; set; }
         public WatchMediaInfo WatchMedia { get; set; }
     }
 }

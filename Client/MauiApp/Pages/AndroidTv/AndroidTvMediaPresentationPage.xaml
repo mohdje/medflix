@@ -5,167 +5,216 @@
              xmlns:controls="clr-namespace:Medflix.Controls.AndroidTv"
              NavigationPage.HasNavigationBar="False">
     <ContentPage.Background>
-        <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
-            <GradientStop Color="Black" Offset="-1.0" />
-            <GradientStop Color="DimGrey" Offset="1.0" />
+        <LinearGradientBrush StartPoint="0,1"
+                             EndPoint="1,0">
+            <GradientStop Color="Black"
+                          Offset="-1.0"/>
+            <GradientStop Color="DimGrey"
+                          Offset="1.0"/>
         </LinearGradientBrush>
     </ContentPage.Background>
-            <Grid
+    <Grid
         VerticalOptions="Fill"
         HorizontalOptions="Fill">
         <VerticalStackLayout
-            Grid.Row="0" 
+            Grid.Row="0"
             ZIndex="1"
             VerticalOptions="Fill"
             HorizontalOptions="Fill">
-            <Image 
+            <Image
                 x:Name="BackgroundImage"
                 HorizontalOptions="Fill"
                 Aspect="AspectFit"/>
         </VerticalStackLayout>
         <VerticalStackLayout
-             Grid.Row="0" 
-             ZIndex="2"
-             VerticalOptions="Fill"
-             HorizontalOptions="Fill">
+            Grid.Row="0"
+            ZIndex="2"
+            VerticalOptions="Fill"
+            HorizontalOptions="Fill">
             <VerticalStackLayout.Background>
-                <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
-                    <GradientStop Color="Black" Offset="-1.0" />
-                    <GradientStop Color="Transparent" Offset="1.0" />
+                <LinearGradientBrush StartPoint="0,1"
+                                     EndPoint="1,0">
+                    <GradientStop Color="Black"
+                                  Offset="-1.0"/>
+                    <GradientStop Color="Transparent"
+                                  Offset="1.0"/>
                 </LinearGradientBrush>
             </VerticalStackLayout.Background>
         </VerticalStackLayout>
         <VerticalStackLayout
-          Grid.Row="0" 
-          ZIndex="3"
-          VerticalOptions="Fill"
-          HorizontalOptions="Fill">
+            Grid.Row="0"
+            ZIndex="3"
+            VerticalOptions="Fill"
+            HorizontalOptions="Fill">
             <VerticalStackLayout.Background>
                 <LinearGradientBrush EndPoint="0,1">
-                    <GradientStop Color="Transparent" Offset="0.1" />
-                    <GradientStop Color="Black" Offset="0.8" />
+                    <GradientStop Color="Transparent"
+                                  Offset="0.1"/>
+                    <GradientStop Color="Black"
+                                  Offset="0.8"/>
                 </LinearGradientBrush>
             </VerticalStackLayout.Background>
         </VerticalStackLayout>
         <FlexLayout
             x:Name="LoadingView"
-            Grid.Row="0" 
+            Grid.Row="0"
             ZIndex="4"
             AlignItems="Center"
             JustifyContent="Center">
-            <ActivityIndicator Color="White" IsRunning="True" HeightRequest="100" WidthRequest="100"/>
+            <ActivityIndicator Color="White"
+                               IsRunning="True"
+                               HeightRequest="100"
+                               WidthRequest="100"/>
         </FlexLayout>
-        <ScrollView    
-           x:Name="PageContent"
-           IsVisible="False"
-           Grid.Row="0" 
-           ZIndex="4"
-           VerticalOptions="Fill"
-           HorizontalOptions="Fill">
+        <ScrollView
+            x:Name="PageContent"
+            IsVisible="False"
+            Grid.Row="0"
+            ZIndex="4"
+            VerticalOptions="Fill"
+            HorizontalOptions="Fill">
             <VerticalStackLayout
                 VerticalOptions="FillAndExpand"
                 HorizontalOptions="Fill"
                 Padding="50, 50, 0, 50">
-                <Image 
+                <Image
                     x:Name="LogoTitle"
                     HorizontalOptions="Start"
                     Margin="0,0,0,50"
                     HeightRequest="100"
                     MaximumWidthRequest="500"
                     Aspect="AspectFit"/>
-                <Label 
-                    x:Name="TextTitle" 
+                <Label
+                    x:Name="TextTitle"
                     IsVisible="False"
-                    TextColor="White" 
-                    FontSize="30" 
+                    TextColor="White"
+                    FontSize="30"
                     FontAttributes="Bold"
                     Margin="0,0,0,50"/>
-                <HorizontalStackLayout>
-                    <controls:MediaInfoLabel x:Name="Year" Margin="0,0,8,0" />
-                    <controls:MediaInfoLabel x:Name="Duration" Margin="0,0,8,0" />
-                    <controls:MediaInfoLabel x:Name="Rating" Margin="0,0,8,0" />
-                    <controls:MediaInfoLabel x:Name="Genres" Margin="0,0,8,0" />
+                <HorizontalStackLayout Margin="0,0,0,30">
+                    <controls:MediaInfoLabel x:Name="Year"
+                                             Margin="0,0,8,0"/>
+                    <controls:MediaInfoLabel x:Name="Duration"
+                                             Margin="0,0,8,0"/>
+                    <controls:MediaInfoLabel x:Name="Rating"
+                                             Margin="0,0,8,0"/>
+                    <controls:MediaInfoLabel x:Name="Genres"
+                                             Margin="0,0,8,0"/>
                 </HorizontalStackLayout>
 
-                <VerticalStackLayout 
+                <VerticalStackLayout
                     x:Name="WatchingProgressSection"
                     HorizontalOptions="Start"
-                     WidthRequest="150"
-                    Margin="0,30,0,0">
-                    <Label x:Name="RemainingTime" TextColor="Gray" HorizontalTextAlignment="Center"/>
-                    <ProgressBar x:Name="WatchingProgress" ProgressColor="Red"/>
+                    WidthRequest="150"
+                    Margin="0,0,0,30">
+                    <Label x:Name="RemainingTime"
+                           TextColor="Gray"
+                           HorizontalTextAlignment="Center"/>
+                    <ProgressBar x:Name="WatchingProgress"
+                                 ProgressColor="Red"/>
                 </VerticalStackLayout>
-                
-                <HorizontalStackLayout Margin="0,15,0,0">
-                    <controls:BorderedButton
-                        x:Name="EpisodeSelectionButton">
-                        <controls:BorderedButton.Button>
-                            <Button 
-                               Text="Season 1   Episode 1" 
-                               FontSize="11"
-                               FontAttributes="Bold"
-                               BackgroundColor="#4f4f4f"
-                               TextColor="White" 
-                               Padding="6" 
-                               LineBreakMode="WordWrap"                            
-                               WidthRequest="100"
-                               Clicked="OnEpisodeSelectionButtonClicked"/>
-                        </controls:BorderedButton.Button>
-                    </controls:BorderedButton>
-                    <controls:BorderedButton 
-                            x:Name="PlayButton"
-                            Margin="3,0,0,0">
-                        <controls:BorderedButton.Button>
-                            <Button 
-                              Text="Play" 
-                              FontSize="14"
-                              FontAttributes="Bold"
-                              BackgroundColor="Red"
-                              TextColor="White" 
-                              Padding="13"
-                              ImageSource="play.svg"
-                              ContentLayout="Left,8"
-                              WidthRequest="100"
-                              Clicked="OnPlayButtonClicked"/>
-                        </controls:BorderedButton.Button>
-                    </controls:BorderedButton>
-                    <controls:BorderedButton 
-                         x:Name="PlayFromBeginningButton"
-                         Margin="3,0,0,0">
-                        <controls:BorderedButton.Button>
-                            <Button 
-                           Text="Restart" 
-                           FontSize="11"
-                           FontAttributes="Bold"
-                           BackgroundColor="White"
-                           TextColor="Black" 
-                           Padding="11"
-                           ImageSource="restart.svg"
-                           ContentLayout="Left,8"
-                           WidthRequest="100"
-                           Clicked="OnPlayFromBeginningButtonClicked"/>
-                        </controls:BorderedButton.Button>
-                    </controls:BorderedButton>
 
-                    <controls:TransparentImageButton Margin="10,0,0,0" x:Name="TrailerButton" ImgSource="trailer_video.svg" Clicked="OnTrailerButtonClicked"/>
-                    <controls:TransparentImageButton x:Name="AddBookmarkButton" ImgSource="plus.svg" Clicked="OnAddBookmarkButtonClicked"/>
-                    <controls:TransparentImageButton x:Name="RemoveBookmarkButton" ImgSource="minus.svg" Clicked="OnRemoveBookmarkButtonClicked"/>
+                <HorizontalStackLayout Margin="-10,0,0,30">
+                    <HorizontalStackLayout Margin="0,0,15,0">
+                        <controls:BorderedButton
+                            x:Name="EpisodeSelectionButton">
+                            <controls:BorderedButton.Button>
+                                <Button
+                                    Text="Season 1   Episode 1"
+                                    FontSize="11"
+                                    FontAttributes="Bold"
+                                    BackgroundColor="#4f4f4f"
+                                    TextColor="White"
+                                    Padding="6"
+                                    LineBreakMode="WordWrap"
+                                    WidthRequest="100"
+                                    Clicked="OnEpisodeSelectionButtonClicked"/>
+                            </controls:BorderedButton.Button>
+                        </controls:BorderedButton>
+                        <controls:BorderedButton
+                            x:Name="NextEpisodeButton">
+                            <controls:BorderedButton.Button>
+                                <Button
+                                    Text="Next Episode"
+                                    FontSize="11"
+                                    FontAttributes="Bold"
+                                    BackgroundColor="White"
+                                    TextColor="Black"
+                                    Padding="6"
+                                    WidthRequest="100"
+                                    Clicked="OnNextEpisodeButtonClicked"/>
+                            </controls:BorderedButton.Button>
+                        </controls:BorderedButton>
+                    </HorizontalStackLayout>
 
+                    <HorizontalStackLayout Margin="0,0,15,0">
+                        <controls:BorderedButton
+                            x:Name="PlayButton">
+                            <controls:BorderedButton.Button>
+                                <Button
+                                    Text="Play"
+                                    FontSize="14"
+                                    FontAttributes="Bold"
+                                    BackgroundColor="Red"
+                                    TextColor="White"
+                                    Padding="13"
+                                    ImageSource="play.svg"
+                                    ContentLayout="Left,8"
+                                    WidthRequest="100"
+                                    Clicked="OnPlayButtonClicked"/>
+                            </controls:BorderedButton.Button>
+                        </controls:BorderedButton>
+                        <controls:BorderedButton
+                            x:Name="PlayFromBeginningButton">
+                            <controls:BorderedButton.Button>
+                                <Button
+                                    Text="Restart"
+                                    FontSize="11"
+                                    FontAttributes="Bold"
+                                    BackgroundColor="White"
+                                    TextColor="Black"
+                                    Padding="11"
+                                    ImageSource="restart.svg"
+                                    ContentLayout="Left,8"
+                                    WidthRequest="100"
+                                    Clicked="OnPlayFromBeginningButtonClicked"/>
+                            </controls:BorderedButton.Button>
+                        </controls:BorderedButton>
+                    </HorizontalStackLayout>
+
+                    <HorizontalStackLayout>
+                        <controls:TransparentImageButton x:Name="TrailerButton"
+                                                         ImgSource="trailer_video.svg"
+                                                         Clicked="OnTrailerButtonClicked"/>
+                        <controls:TransparentImageButton x:Name="AddBookmarkButton"
+                                                         ImgSource="plus.svg"
+                                                         Clicked="OnAddBookmarkButtonClicked"/>
+                        <controls:TransparentImageButton x:Name="RemoveBookmarkButton"
+                                                         ImgSource="minus.svg"
+                                                         Clicked="OnRemoveBookmarkButtonClicked"/>
+                    </HorizontalStackLayout>
                 </HorizontalStackLayout>
 
-                <HorizontalStackLayout Margin="0,30,0,0">
-                    <controls:MediaInfoExtendedLabel x:Name="Versions" Title="Versions"  WidthRequest="250"  Margin="0,0,30,0"/>
-                    <controls:MediaInfoExtendedLabel x:Name="Subtitles" Title="Subtitles"/>
+                <HorizontalStackLayout Margin="0,0,0,30">
+                    <controls:MediaInfoExtendedLabel x:Name="Versions"
+                                                     Title="Versions"
+                                                     WidthRequest="250"
+                                                     Margin="0,0,30,0"/>
+                    <controls:MediaInfoExtendedLabel x:Name="Subtitles"
+                                                     Title="Subtitles"/>
                 </HorizontalStackLayout>
 
-                <VerticalStackLayout Margin="0,30,0,0">
-                    <controls:MediaInfoExtendedLabel x:Name="Director" Title="Director" Margin="0,0,0,10"/>
-                    <controls:MediaInfoExtendedLabel x:Name="Cast"  Title="Cast"/>
+                <VerticalStackLayout Margin="0,0,0,20">
+                    <controls:MediaInfoExtendedLabel x:Name="Director"
+                                                     Title="Director"
+                                                     Margin="0,0,0,10"/>
+                    <controls:MediaInfoExtendedLabel x:Name="Cast"
+                                                     Title="Cast"/>
                 </VerticalStackLayout>
-                <controls:MediaInfoExtendedLabel x:Name="Synopsis" Margin="0,30,0,0" />
+                <controls:MediaInfoExtendedLabel x:Name="Synopsis"
+                                                 Margin="0,0,0,40"/>
 
-
-                <StackLayout Margin="0,30,0,0" x:Name="Recommandations"/>
+                <StackLayout x:Name="Recommandations"/>
             </VerticalStackLayout>
 
 

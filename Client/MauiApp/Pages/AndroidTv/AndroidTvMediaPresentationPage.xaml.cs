@@ -42,103 +42,52 @@ namespace Medflix.Pages.AndroidTv
             }
 
             mediaDetails = await MedflixApiService.Instance.GetMediaDetailsAsync(mediaId);
-            MainThread.BeginInvokeOnMainThread(() =>
+            if (mediaDetails == null)
             {
-                if (mediaDetails == null)
+                MainThread.BeginInvokeOnMainThread(() =>
                 {
+                    ShowMessage("Error loading media information");
                     LoadingView.IsVisible = false;
-                    return;
-                }
-            });
-
-            bool isMediaBookmarked = false;
-            await Task.WhenAll(
-              MedflixApiService.Instance.GetWatchMediaInfo(mediaId).ContinueWith(t => UpdateWatchingProgress(t.Result)),
-              MedflixApiService.Instance.IsMediaBookmarked(mediaId).ContinueWith(t => isMediaBookmarked = t.Result));
-
-            if (MediaIsSerie)
-            {
-                selectedSeasonNumber = watchedMediaInfo?.SeasonNumber ?? 1;
-                selectedEpisodeNumber = watchedMediaInfo?.EpisodeNumber ?? 1;
+                });
+                return;
             }
 
+            UpdateMediaInfo();
+
             await Task.WhenAll(
-                GetMediaResourcesAsync(),
-                GetRecommandationsAsync());
+              MedflixApiService.Instance.GetWatchMediaInfo(mediaId).ContinueWith(async t =>
+              {
+                  UpdateWatchingProgress(t.Result);
+
+                  if (MediaIsSerie)
+                  {
+                      selectedSeasonNumber = t.Result?.SeasonNumber ?? 1;
+                      selectedEpisodeNumber = t.Result?.EpisodeNumber ?? 1;
+                  }
+
+                  UpdateSelectEpisodeButton();
+                  UpdateNextEpisodeButtonVisibility();
+
+                  await GetMediaResourcesAsync();
+              }),
+              MedflixApiService.Instance.IsMediaBookmarked(mediaId).ContinueWith(t => UpdateBookmarkButtons(t.Result)),
+              GetRecommandationsAsync()
+            );
 
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                AddBookmarkButton.IsVisible = !isMediaBookmarked;
-                RemoveBookmarkButton.IsVisible = isMediaBookmarked;
-
-                if (!string.IsNullOrEmpty(mediaDetails.LogoImageUrl))
-                    LogoTitle.Source = ImageSource.FromUri(new Uri(mediaDetails.LogoImageUrl));
-                else
-                {
-                    LogoTitle.IsVisible = false;
-                    TextTitle.IsVisible = true;
-                    TextTitle.Text = mediaDetails.Title;
-                }
-
-                if (!string.IsNullOrEmpty(mediaDetails.BackgroundImageUrl))
-                    BackgroundImage.Source = ImageSource.FromUri(new Uri(mediaDetails.BackgroundImageUrl));
-
-                Year.Text = mediaDetails.Year.ToString();
-                Duration.Text = MediaIsMovie ? TimeSpan.FromMinutes(mediaDetails.Duration).ToTimeFormat() : string.Empty;
-                Rating.Text = mediaDetails.Rating.ToString("0.0").Replace(",", ".");
-                Genres.Text = mediaDetails.Genres != null ? String.Join(" - ", mediaDetails.Genres.Select(genre => genre.Name)) : string.Empty;
-
-                EpisodeSelectionButton.IsVisible = MediaIsSerie;
-
-                Director.Text = mediaDetails.Director;
-                Cast.Text = mediaDetails.Cast;
-                Synopsis.Text = mediaDetails.Synopsis;
-
-                TrailerButton.IsVisible = !string.IsNullOrEmpty(mediaDetails.YoutubeTrailerUrl);
-
                 LoadingView.IsVisible = false;
                 PageContent.IsVisible = true;
-
-                UpdateSelectEpisodeButtonLabel();
             });
         }
 
-        private void UpdateWatchingProgress(WatchMediaInfo info)
-        {
-            MainThread.BeginInvokeOnMainThread(async () =>
-            {
-                watchedMediaInfo = info;
-                if (watchedMediaInfo != null)
-                {
-                    WatchingProgressSection.IsVisible = true;
-                    PlayFromBeginningButton.IsVisible = true;
-
-                    var timeSpan = TimeSpan.FromSeconds(watchedMediaInfo.TotalDuration).Subtract(TimeSpan.FromSeconds(watchedMediaInfo.CurrentTime));
-                    RemainingTime.Text = $"{timeSpan.ToTimeFormat()} remaining";
-
-                    var progress = (double)watchedMediaInfo.CurrentTime / watchedMediaInfo.TotalDuration;
-                    await WatchingProgress.ProgressTo(progress, 0, Easing.Default);
-                }
-                else
-                {
-                    WatchingProgressSection.IsVisible = false;
-                    PlayFromBeginningButton.IsVisible = false;
-                }
-            });
-        }
-
-        private void UpdateSelectEpisodeButtonLabel()
-        {
-            EpisodeSelectionButton.Text = $"Season {selectedSeasonNumber.GetValueOrDefault(1)}   Episode {selectedEpisodeNumber.GetValueOrDefault(1)}";
-        }
-
-
-        private async Task OnEpisodeSelected(int seasonNumber, int episodeNumber, WatchMediaInfo watchMediaInfo)
+        private async Task OnEpisodeSelected(int seasonNumber, int episodeNumber, WatchMediaInfo watchMediaInfo, bool? isLastEpisodeOfSeason = null)
         {
             this.selectedSeasonNumber = seasonNumber;
             this.selectedEpisodeNumber = episodeNumber;
 
-            UpdateSelectEpisodeButtonLabel();
+            UpdateSelectEpisodeButton();
+            UpdateNextEpisodeButtonVisibility(isLastEpisodeOfSeason);
             UpdateWatchingProgress(watchMediaInfo);
             await GetMediaResourcesAsync();
         }
@@ -181,6 +130,121 @@ namespace Medflix.Pages.AndroidTv
 
             await Navigation.PushAsync(videoPlayerPage);
         }
+
+        private static void ShowMessage(string message)
+        {
+#if ANDROID
+            Android.Widget.Toast.MakeText(Microsoft.Maui.ApplicationModel.Platform.CurrentActivity, message, Android.Widget.ToastLength.Long).Show();
+#endif
+        }
+
+        #region UI Updates
+
+        private void UpdateMediaInfo()
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                if (!string.IsNullOrEmpty(mediaDetails.LogoImageUrl))
+                    LogoTitle.Source = ImageSource.FromUri(new Uri(mediaDetails.LogoImageUrl));
+                else
+                {
+                    LogoTitle.IsVisible = false;
+                    TextTitle.IsVisible = true;
+                    TextTitle.Text = mediaDetails.Title;
+                }
+
+                if (!string.IsNullOrEmpty(mediaDetails.BackgroundImageUrl))
+                    BackgroundImage.Source = ImageSource.FromUri(new Uri(mediaDetails.BackgroundImageUrl));
+
+                Year.Text = mediaDetails.Year.ToString();
+                Duration.Text = MediaIsMovie ? TimeSpan.FromMinutes(mediaDetails.Duration).ToTimeFormat() : string.Empty;
+                Rating.Text = mediaDetails.Rating.ToString("0.0").Replace(",", ".");
+                Genres.Text = mediaDetails.Genres != null ? String.Join(" - ", mediaDetails.Genres.Select(genre => genre.Name)) : string.Empty;
+
+                Director.Text = mediaDetails.Director;
+                Cast.Text = mediaDetails.Cast;
+                Synopsis.Text = mediaDetails.Synopsis;
+
+                TrailerButton.IsVisible = !string.IsNullOrEmpty(mediaDetails.YoutubeTrailerUrl);
+            });
+        }
+
+        private void UpdateWatchingProgress(WatchMediaInfo info)
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                watchedMediaInfo = info;
+                if (watchedMediaInfo != null)
+                {
+                    WatchingProgressSection.IsVisible = true;
+                    PlayFromBeginningButton.IsVisible = true;
+
+                    var timeSpan = TimeSpan.FromSeconds(watchedMediaInfo.TotalDuration).Subtract(TimeSpan.FromSeconds(watchedMediaInfo.CurrentTime));
+                    RemainingTime.Text = $"{timeSpan.ToTimeFormat()} remaining";
+
+                    var progress = (double)watchedMediaInfo.CurrentTime / watchedMediaInfo.TotalDuration;
+                    await WatchingProgress.ProgressTo(progress, 0, Easing.Default);
+                }
+                else
+                {
+                    WatchingProgressSection.IsVisible = false;
+                    PlayFromBeginningButton.IsVisible = false;
+                }
+            });
+        }
+
+        private void UpdateSelectEpisodeButton()
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+           {
+               EpisodeSelectionButton.IsVisible = MediaIsSerie;
+               EpisodeSelectionButton.Text = $"Season {selectedSeasonNumber.GetValueOrDefault(1)}   Episode {selectedEpisodeNumber.GetValueOrDefault(1)}";
+           });
+        }
+
+        private void UpdateBookmarkButtons(bool isBookmarked)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                AddBookmarkButton.IsVisible = !isBookmarked;
+                RemoveBookmarkButton.IsVisible = isBookmarked;
+            });
+        }
+
+        private void UpdateNextEpisodeButtonVisibility(bool? isLastEpisodeOfSeason = null)
+        {
+            if (!MediaIsSerie)
+            {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    NextEpisodeButton.IsVisible = false;
+                });
+                return;
+            }
+
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                isLastEpisodeOfSeason ??= await MedflixApiService.Instance.IsLastEpisodeOfSeason(mediaId, selectedSeasonNumber!.Value, selectedEpisodeNumber!.Value);
+                var isLastSeason = selectedSeasonNumber!.Value >= mediaDetails.SeasonsCount;
+
+                if (isLastEpisodeOfSeason!.Value && isLastSeason)
+                {
+                    NextEpisodeButton.IsVisible = false;
+                }
+                else if (isLastEpisodeOfSeason!.Value)
+                {
+                    NextEpisodeButton.IsVisible = true;
+                    NextEpisodeButton.Text = $"Next Season";
+                }
+                else
+                {
+                    NextEpisodeButton.IsVisible = true;
+                    NextEpisodeButton.Text = $"Next Episode";
+                }
+            });
+        }
+
+        #endregion
 
         #region Fetching Resources
 
@@ -290,11 +354,31 @@ namespace Medflix.Pages.AndroidTv
                 page.OnEpisodeSelected += async (s, e) =>
                 {
                     await Navigation.PopModalAsync();
-                    await OnEpisodeSelected(e.SeasonNumber, e.EpisodeNumber, e.WatchMedia);
+                    await OnEpisodeSelected(e.SeasonNumber, e.EpisodeNumber, e.WatchMedia, e.IsLastEpisodeOfSeason);
                 };
 
                 await Navigation.PushModalAsync(page);
             });
+        }
+
+        private async void OnNextEpisodeButtonClicked(object sender, EventArgs e)
+        {
+            int episodeNumber;
+            int seasonNumber;
+
+            if (NextEpisodeButton.Text == "Next Season")
+            {
+                seasonNumber = selectedSeasonNumber!.Value + 1;
+                episodeNumber = 1;
+            }
+            else
+            {
+                seasonNumber = selectedSeasonNumber!.Value;
+                episodeNumber = selectedEpisodeNumber!.Value + 1;
+            }
+
+            var watchMediaInfo = await MedflixApiService.Instance.GetEpisodeWatchMediaInfo(mediaId, seasonNumber, episodeNumber);
+            await OnEpisodeSelected(seasonNumber, episodeNumber, watchMediaInfo);
         }
 
         private async void OnPlayButtonClicked(object sender, EventArgs e)
@@ -311,28 +395,18 @@ namespace Medflix.Pages.AndroidTv
         {
             var isSuccess = await MedflixApiService.Instance.BookmarkMedia(mediaDetails);
 
-            AddBookmarkButton.IsVisible = !isSuccess;
-            RemoveBookmarkButton.IsVisible = isSuccess;
+            UpdateBookmarkButtons(isSuccess);
 
-            var message = isSuccess ? "Added to your list with success" : "Error trying to add to your list";
-
-#if ANDROID
-            Android.Widget.Toast.MakeText(Microsoft.Maui.ApplicationModel.Platform.CurrentActivity, message, Android.Widget.ToastLength.Long).Show();
-#endif
+            ShowMessage(isSuccess ? "Added to your list with success" : "Error trying to add to your list");
         }
 
         private async void OnRemoveBookmarkButtonClicked(object sender, EventArgs e)
         {
             var isSuccess = await MedflixApiService.Instance.RemoveBookmarkMedia(mediaDetails.Id);
 
-            AddBookmarkButton.IsVisible = isSuccess;
-            RemoveBookmarkButton.IsVisible = !isSuccess;
+            UpdateBookmarkButtons(!isSuccess);
 
-            var message = isSuccess ? "Removed from your list with success" : "Error trying to remove from your list";
-
-#if ANDROID
-            Android.Widget.Toast.MakeText(Microsoft.Maui.ApplicationModel.Platform.CurrentActivity, message, Android.Widget.ToastLength.Long).Show();
-#endif
+            ShowMessage(isSuccess ? "Removed from your list with success" : "Error trying to remove from your list");
         }
 
         #endregion

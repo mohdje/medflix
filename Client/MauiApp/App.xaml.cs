@@ -20,7 +20,6 @@ namespace Medflix
                 handler.PlatformView.Settings.AllowUniversalAccessFromFileURLs = true;
                 handler.PlatformView.Settings.MediaPlaybackRequiresUserGesture = false;
                 handler.PlatformView.Settings.UserAgentString = "Mozilla/5.0";
-                handler.PlatformView.Settings.ForceDark = Android.Webkit.ForceDarkMode.Off;
 #endif
             });
 

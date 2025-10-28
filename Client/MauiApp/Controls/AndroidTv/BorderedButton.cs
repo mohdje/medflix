@@ -1,8 +1,4 @@
 ﻿using Microsoft.Maui.Controls.Shapes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Medflix.Controls.AndroidTv
 {
@@ -10,11 +6,11 @@ namespace Medflix.Controls.AndroidTv
     {
         private Button button;
         private const int CornerRadius = 30;
-        public Button Button 
+        public Button Button
         {
             get
             {
-                return button; 
+                return button;
             }
             set
             {
@@ -73,7 +69,5 @@ namespace Medflix.Controls.AndroidTv
             await Task.Delay(200);
             Border.Stroke = Brush.Transparent.Color;
         }
-
-
     }
 }

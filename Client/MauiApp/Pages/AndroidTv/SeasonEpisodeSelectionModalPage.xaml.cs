@@ -2,12 +2,6 @@
 using Medflix.Models.Media;
 using Medflix.Services;
 using Medflix.Views.AndroidTv;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Medflix.Pages
 {
@@ -47,6 +41,7 @@ namespace Medflix.Pages
             {
                 Spinner.IsVisible = true;
                 NoEpisodesMessage.IsVisible = false;
+                PlusButton.IsVisible = false;
                 EpisodesList.Children.Clear();
             });
 
@@ -82,7 +77,18 @@ namespace Medflix.Pages
                     var progress = watchMediaInfo?.Progress ?? 0;
 
                     var episodePresentationView = new EpisodePresentationView(episode, progress);
-                    episodePresentationView.OnClick += (s, e) => OnEpisodeSelected?.Invoke(this, new EpisodeSelectedEventArgs { SeasonNumber = seasonNumber, EpisodeNumber = episode.EpisodeNumber, WatchMedia = watchMediaInfo });
+                    episodePresentationView.OnClick += (s, e) =>
+                    {
+                        OnEpisodeSelected?.Invoke(
+                            this,
+                            new EpisodeSelectedEventArgs
+                            {
+                                SeasonNumber = seasonNumber,
+                                EpisodeNumber = episode.EpisodeNumber,
+                                IsLastEpisodeOfSeason = episode.EpisodeNumber == episodes.Max(ep => ep.EpisodeNumber),
+                                WatchMedia = watchMediaInfo
+                            });
+                    };
                     EpisodesList.Children.Add(episodePresentationView);
                 }
 

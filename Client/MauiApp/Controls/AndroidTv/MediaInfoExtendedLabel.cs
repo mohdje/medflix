@@ -10,6 +10,7 @@
             }
             set
             {
+                IsVisible = !string.IsNullOrEmpty(value);
                 TitleLabel.Text = value;
             }
         }
