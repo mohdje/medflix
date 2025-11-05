@@ -21,6 +21,7 @@ namespace WebHostStreaming.Torrent
         bool running;
         List<LiteContentDto> moviesToDownload = new List<LiteContentDto>();
         CancellationTokenSource downloadCancellationTokenSource;
+        Timer timer;
 
         public TorrentAutoDownloader(
             IVideoInfoProvider videoInfoProvider,
@@ -108,11 +109,12 @@ namespace WebHostStreaming.Torrent
 
             if (moviesToDownload.Any() && !downloadCancellationTokenSource.IsCancellationRequested)
             {
-                AppLogger.LogInfo($"TorrentAutoDownloader.DownloadMoviesAsync(): {moviesToDownload.Count} movies still present in downloading list, retry in 1 hour");
-                var timer = new Timer(_ =>
+                var timeSpanBeforeRetry = TimeSpan.FromHours(1);
+                AppLogger.LogInfo($"TorrentAutoDownloader.DownloadMoviesAsync(): {moviesToDownload.Count} movies still present in downloading list, retry in {timeSpanBeforeRetry.Hours} hour");
+                timer = new Timer(_ =>
                 {
                     DownloadMoviesAsync();
-                }, null, TimeSpan.FromHours(1), Timeout.InfiniteTimeSpan);
+                }, null, timeSpanBeforeRetry, Timeout.InfiniteTimeSpan);
             }
 
             running = false;
@@ -121,7 +123,7 @@ namespace WebHostStreaming.Torrent
         }
 
         private async Task<bool> DownloadOriginalVersionAsync(LiteContentDto movie)
-        { 
+        {
             if (downloadCancellationTokenSource.IsCancellationRequested)
                 return false;
 
@@ -136,7 +138,7 @@ namespace WebHostStreaming.Torrent
             AppLogger.LogInfo($"TorrentAutoDownloader: found {torrents.Count()} VO torrents for {movie.Title} {movie.Year}");
 
             var torrentRequests = torrents.Select(t => new TorrentRequest(TorrentAutoDownloaderIdentifier, t.DownloadUrl, movie.Id, t.Quality, LanguageVersion.Original));
- 
+
             var downloadSuccess = await DownloadBestQualityAsync(torrentRequests);
 
             if (downloadSuccess)
@@ -146,22 +148,22 @@ namespace WebHostStreaming.Torrent
         }
 
         private async Task<bool> DownloadFrenchVersionAsync(LiteContentDto movie)
-        { 
+        {
             if (downloadCancellationTokenSource.IsCancellationRequested)
                 return false;
 
             var videoInfo = videoInfoProvider.GetVideoInfo(movie.Id, LanguageVersion.French);
             if (videoInfo != null)
-               return true;
+                return true;
 
             var frenchTitle = await searchersProvider.MovieSearcher.GetMovieFrenchTitleAsync(movie.Id);
             if (string.IsNullOrEmpty(frenchTitle))
-               frenchTitle = movie.Title;
+                frenchTitle = movie.Title;
 
             AppLogger.LogInfo($"TorrentAutoDownloader: search VF torrents for {movie.Title} {movie.Year}");
 
             var torrents = await searchersProvider.TorrentSearchManager.SearchVfTorrentsMovieAsync(frenchTitle, movie.Year);
-          
+
             AppLogger.LogInfo($"TorrentAutoDownloader: found {torrents.Count()} VF torrents for {movie.Title} {movie.Year}");
 
             var torrentRequests = torrents.Select(t => new TorrentRequest(TorrentAutoDownloaderIdentifier, t.DownloadUrl, movie.Id, t.Quality, LanguageVersion.French));
