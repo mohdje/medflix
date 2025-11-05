@@ -10,5 +10,6 @@ namespace WebHostStreaming.Models
         public int SeasonNumber { get; set; }
         public int EpisodeNumber { get; set; }
         public string Id => $"{MediaId}_{Language}_{SeasonNumber}_{EpisodeNumber}_{Quality}";
+        public bool IsSerie => SeasonNumber > 0 && EpisodeNumber > 0;
     }
 }
