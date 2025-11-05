@@ -15,10 +15,13 @@ namespace WebHostStreaming.Torrent
     {
         public string ClientAppIdentifier { get; }
         public event EventHandler<VideoInfo> OnVideoDownloadCompleted;
+        public DateTime LastDownloadProgressDateTime { get; private set; }
+        public bool IsDownloadComplete => currentDownloadingFile?.BitField.PercentComplete >= 99;
+
 
         private ClientEngine clientEngine;
         private TorrentManager currentTorrentManager;
-        private TorrentFileDownloader torrentFileDownloader;
+        private TorrentMetadataDownloader torrentFileDownloader;
         private string currentTorrentUrl;
         private ITorrentManagerFile currentDownloadingFile;
         private TorrentStream currentTorrentStream;
@@ -28,6 +31,9 @@ namespace WebHostStreaming.Torrent
 
         private CancellationTokenSource torrentStreamCancellationTokenSource;
         private CancellationTokenSource downloadTorrentCancellationTokenSource;
+        private readonly SemaphoreSlim torrentManagerCreationLocker = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim streamCreationLocker = new SemaphoreSlim(1, 1);
+
 
         public TorrentClient(string clientAppIdentifier)
         {
@@ -38,7 +44,6 @@ namespace WebHostStreaming.Torrent
         #region Public
         public void Dispose()
         {
-            ReleaseCurrentStream();
             ReleaseTorrentManager();
             clientEngine.Dispose();
 
@@ -48,23 +53,29 @@ namespace WebHostStreaming.Torrent
 
         public async Task<bool> StartDownloadTorrentMediaAsync(TorrentRequest torrentRequest)
         {
-            return await StartDownloadingMediaAsync(torrentRequest, false);
+            return await StartDownloadingMediaAsync(torrentRequest.TorrentUrl, torrentRequest.VideoInfo, false);
         }
 
         public async Task<TorrentStream> GetTorrentStreamAsync(TorrentRequest torrentRequest)
         {
-            var downloadStarted = await StartDownloadingMediaAsync(torrentRequest, true);
+            var downloadStarted = await StartDownloadingMediaAsync(torrentRequest.TorrentUrl, torrentRequest.VideoInfo, true);
 
             if (!downloadStarted)
                 return null;
 
             try
             {
-                if (currentTorrentStream == null)
-                {
-                    AppLogger.LogInfo(ClientAppIdentifier, $"Create stream for TorrentManager : {currentTorrentManager.Name}");
+                var fileToStream = GetFileFromTorrent(torrentRequest.VideoInfo);
 
-                    currentTorrentStream = new TorrentStream(currentTorrentManager, currentDownloadingFile);
+                if (currentTorrentStream?.MediaFullPath != fileToStream.FullPath)
+                {
+                    ReleaseCurrentStream();
+
+                    await streamCreationLocker.WaitAsync();
+
+                    AppLogger.LogInfo(ClientAppIdentifier, $"Create stream for file : {fileToStream.Path}");
+
+                    currentTorrentStream = new TorrentStream(currentTorrentManager, fileToStream);
                     torrentStreamCancellationTokenSource = new CancellationTokenSource();
                     await currentTorrentStream.StartAsync(torrentStreamCancellationTokenSource.Token);
                 }
@@ -72,18 +83,20 @@ namespace WebHostStreaming.Torrent
             catch (Exception ex)
             {
                 if (torrentStreamCancellationTokenSource.IsCancellationRequested)
-                    AppLogger.LogInfo(ClientAppIdentifier, $"Stream creation aborted for TorrentManager : {currentTorrentManager.Name}");
+                    AppLogger.LogInfo(ClientAppIdentifier, $"Stream creation aborted for TorrentManager : {currentTorrentStream.MediaFileName}");
                 else
                 {
-                    AppLogger.LogInfo(ClientAppIdentifier, $"Stream creation failed for TorrentManager : {currentTorrentManager.Name}");
+                    AppLogger.LogInfo(ClientAppIdentifier, $"Stream creation failed for TorrentManager : {currentTorrentStream.MediaFileName}");
                     AppLogger.LogError(ClientAppIdentifier, "GetTorrentStreamAsync", ex);
 
-                    currentTorrentManager.PeersFound -= OnPeersFound;
-                    currentTorrentManager.PieceHashed -= OnPieceHashed;
                     currentDownloadingState = DownloadingState.TorrentFileOpeningFailed;
                 }
 
                 return null;
+            }
+            finally
+            {
+                streamCreationLocker.Release();
             }
 
             return currentTorrentStream;
@@ -101,20 +114,9 @@ namespace WebHostStreaming.Torrent
             return currentTorrentUrl == torrentUrl ? currentDownloadingState : DownloadingState.NotFound;
         }
 
-        public async Task<double?> GetDownloadingProgressAync(string torrentUrl)
-        {
-            var tryCounter = 0;
-            while (currentTorrentUrl != torrentUrl && tryCounter < 3)
-            {
-                await Task.Delay(2000);
-                tryCounter++;
-            }
-
-            return currentTorrentUrl == torrentUrl ? currentTorrentManager.PartialProgress : null;
-        }
         #endregion
 
-        #region Private
+        #region Core Functions
         private ClientEngine BuildClientEngine()
         {
             EngineSettingsBuilder settingsBuilder = new EngineSettingsBuilder();
@@ -123,40 +125,23 @@ namespace WebHostStreaming.Torrent
             return new ClientEngine(settingsBuilder.ToSettings());
         }
 
-        private async Task<bool> StartDownloadingMediaAsync(TorrentRequest torrentRequest, bool streamingMode)
+        private async Task<bool> StartDownloadingMediaAsync(string torrentUrl, VideoInfo videoFileToDownload, bool streamingMode)
         {
-            if (currentTorrentUrl != torrentRequest.TorrentUrl)
-            {
-                currentTorrentUrl = torrentRequest.TorrentUrl;
-                currentDownloadingState = DownloadingState.Loading;
-
-                ReleaseCurrentStream();
-                ReleaseTorrentManager();
-
-                var torrentManager = await CreateTorrentManagerAsync(torrentRequest.TorrentUrl, streamingMode);
-                if (torrentManager != null)
-                {
-                    currentTorrentManager = torrentManager;
-                    currentTorrentManager.PeersFound += OnPeersFound;
-                    currentTorrentManager.PieceHashed += OnPieceHashed;
-
-                    await SetFileToDownload(torrentRequest);
-                }
-                else
-                    return false;
-            }
-            else if (FileToDownloadChanged(torrentRequest.TorrentFileSelector))
-            {
-                ReleaseCurrentStream();
-
-                await SetFileToDownload(torrentRequest);
-            }
-
-            if (currentDownloadingFile == null)
-            {
-                currentDownloadingState = DownloadingState.NoMediaFileFoundInTorrent;
-                AppLogger.LogInfo(ClientAppIdentifier, $"No video file found to download for TorrentManager : {currentTorrentManager.Name}");
+            await CreateTorrentManagerIfNeededAsync(torrentUrl, streamingMode);
+            if (currentTorrentManager == null)
                 return false;
+
+            var fileToDownload = GetFileFromTorrent(videoFileToDownload);
+            if (fileToDownload.BitField.PercentComplete < 99)
+            {
+                await SetFileToDownload(videoFileToDownload);
+
+                if (currentDownloadingFile == null)
+                {
+                    currentDownloadingState = DownloadingState.NoMediaFileFoundInTorrent;
+                    AppLogger.LogInfo(ClientAppIdentifier, $"No video file found to download for TorrentManager : {currentTorrentManager.Name}");
+                    return false;
+                }
             }
 
             await StartTorrentManagerIfNeededAsync();
@@ -164,32 +149,74 @@ namespace WebHostStreaming.Torrent
             return true;
         }
 
-        private void OnPieceHashed(object sender, PieceHashedEventArgs e)
+        private async Task CreateTorrentManagerIfNeededAsync(string torrentUrl, bool streamingMode)
         {
-            if (currentDownloadingFile != null && currentTorrentManager.PartialProgress > 0)
+            if (currentTorrentUrl != torrentUrl)
             {
-                AppLogger.LogInfo(ClientAppIdentifier, $"Download progress for {currentDownloadingFile.Path}: {currentTorrentManager.PartialProgress}");
-
-                if (currentTorrentManager.PartialProgress >= 97 && !fileDownloadCompleteEventFired)
-                {
-                    fileDownloadCompleteEventFired = true;
-                    currentVideoInfo.FilePath = currentDownloadingFile.FullPath;
-                    OnVideoDownloadCompleted?.Invoke(this, currentVideoInfo);
-
-                }
-                else if (currentTorrentManager.PartialProgress >= 0.5)
-                    currentDownloadingState = DownloadingState.ReadyToPlaySoon;
-                else
-                    currentDownloadingState = DownloadingState.MediaDownloadStarted;
+                ReleaseTorrentManager();
+                currentTorrentUrl = torrentUrl;
+                currentDownloadingState = DownloadingState.Loading;
+                LastDownloadProgressDateTime = DateTime.UtcNow;
             }
-           
-        }
 
+            await torrentManagerCreationLocker.WaitAsync();
 
-        private void OnPeersFound(object sender, PeersAddedEventArgs e)
-        {
-            if (currentTorrentManager?.PartialProgress == 0)
-                currentDownloadingState = DownloadingState.MediaDownloadAboutToStart;
+            try
+            {
+                if (currentTorrentManager != null && currentTorrentUrl == torrentUrl)
+                    return;
+
+                torrentFileDownloader = new TorrentMetadataDownloader(ClientAppIdentifier, torrentUrl, clientEngine);
+                currentDownloadingState = DownloadingState.DownloadingTorrentFile;
+
+                this.downloadTorrentCancellationTokenSource = new CancellationTokenSource();
+                var torrentFilePath = await torrentFileDownloader.DownloadAsync(downloadTorrentCancellationTokenSource.Token);
+
+                if (torrentFileDownloader.Status == TorrentDownloaderStatus.DownloadAborted)
+                    return;
+                else if (torrentFileDownloader.Status != TorrentDownloaderStatus.DownloadCompleted)
+                {
+                    currentDownloadingState = DownloadingState.TorrentFileDownloadFailed;
+                    return;
+                }
+
+                currentDownloadingState = DownloadingState.TorrentFileDownloaded;
+
+                //if torrent manager for this torrentFilePath already registered in ClientEngine, we need to wait for it to stop and to be removed before creating a new one
+                while (clientEngine.Torrents.Any(tm => tm.SavePath == torrentFilePath))
+                {
+                    AppLogger.LogInfo(ClientAppIdentifier, $"Waiting for existing TorrentManager to be removed for torrent file : {torrentFilePath}");
+                    await Task.Delay(1000);
+                }
+
+                AppLogger.LogInfo(ClientAppIdentifier, $"Create TorrentManager from torrent file : {torrentFilePath}");
+
+                currentTorrentManager = streamingMode ?
+                    await clientEngine.AddStreamingAsync(torrentFilePath, Path.GetDirectoryName(torrentFilePath)) :
+                    await clientEngine.AddAsync(torrentFilePath, Path.GetDirectoryName(torrentFilePath));
+
+                if (currentTorrentManager != null)
+                {
+                    currentTorrentManager.PeersFound += OnPeersFound;
+                    currentTorrentManager.PieceHashed += OnPieceHashed;
+                }
+            }
+            catch (Exception ex)
+            {
+                if (downloadTorrentCancellationTokenSource.IsCancellationRequested)
+                    AppLogger.LogInfo(ClientAppIdentifier, $"Create TorrentManager aborted for Torrent url : {torrentUrl}");
+                else
+                {
+                    AppLogger.LogError(ClientAppIdentifier, "GetTorrentManagerAsync", ex);
+                    currentDownloadingState = DownloadingState.TorrentFileOpeningFailed;
+                }
+
+                return;
+            }
+            finally
+            {
+                torrentManagerCreationLocker.Release();
+            }
         }
 
         private async Task StartTorrentManagerIfNeededAsync()
@@ -209,89 +236,107 @@ namespace WebHostStreaming.Torrent
             }
         }
 
-        private async Task<TorrentManager> CreateTorrentManagerAsync(string torrentUrl, bool streamingMode)
+        #endregion
+
+        #region Torrent Events
+        private async void OnPieceHashed(object sender, PieceHashedEventArgs e)
         {
-            try
+            var percentComplete = currentDownloadingFile?.BitField.PercentComplete;
+            if (percentComplete.GetValueOrDefault(0) > 0 && percentComplete < 100)
             {
-                currentDownloadingState = DownloadingState.DownloadingTorrentFile;
+                LastDownloadProgressDateTime = DateTime.UtcNow;
+                AppLogger.LogInfo(ClientAppIdentifier, $"Download progress for {currentDownloadingFile.Path}: {percentComplete:0.00}%");
 
-                this.downloadTorrentCancellationTokenSource?.Cancel();
-                this.downloadTorrentCancellationTokenSource = new CancellationTokenSource();
-
-                torrentFileDownloader = new TorrentFileDownloader(ClientAppIdentifier, torrentUrl, clientEngine);
-                var torrentFilePath = await torrentFileDownloader.DownloadAsync(downloadTorrentCancellationTokenSource.Token);
-
-                if (string.IsNullOrEmpty(torrentFilePath))
+                if (percentComplete >= 99 && !fileDownloadCompleteEventFired)
                 {
-                    currentDownloadingState = DownloadingState.TorrentFileDownloadFailed;
-                    return null;
+                    fileDownloadCompleteEventFired = true;
+                    OnVideoDownloadCompleted?.Invoke(this, currentVideoInfo);
+
+                    //If serie, set next episode to download if available in same torrent
+                    if (currentVideoInfo.IsSerie)
+                    {
+                        await SetFileToDownload(new VideoInfo
+                        {
+                            MediaId = currentVideoInfo.MediaId,
+                            Language = currentVideoInfo.Language,
+                            SeasonNumber = currentVideoInfo.SeasonNumber,
+                            EpisodeNumber = currentVideoInfo.EpisodeNumber + 1,
+                            Quality = currentVideoInfo.Quality
+                        });
+                    }
                 }
-
-                currentDownloadingState = DownloadingState.TorrentFileDownloaded;
-
-                var existingTorrentManager = clientEngine.Torrents.FirstOrDefault(tm => tm.SavePath == torrentFilePath);
-
-                //if torrent manager for this torrentFilePath already registered in ClientEngine, we need to wait for it to stop and to be removed before creating a new one
-                while (existingTorrentManager?.State == TorrentState.Stopping)
-                    await Task.Delay(1000);
-
-                AppLogger.LogInfo(ClientAppIdentifier, $"Create TorrentManager from torrent file : {torrentFilePath}");
-
-                return streamingMode ?
-                    await clientEngine.AddStreamingAsync(torrentFilePath, Path.GetDirectoryName(torrentFilePath)) :
-                    await clientEngine.AddAsync(torrentFilePath, Path.GetDirectoryName(torrentFilePath));
-            }
-            catch (Exception ex)
-            {
-                if (downloadTorrentCancellationTokenSource.IsCancellationRequested)
-                    AppLogger.LogInfo(ClientAppIdentifier, $"Create TorrentManager aborted for TorrentManager : {currentTorrentManager.Name}");
+                else if (percentComplete >= 0.5)
+                    currentDownloadingState = DownloadingState.ReadyToPlaySoon;
                 else
-                {
-                    AppLogger.LogError(ClientAppIdentifier, "GetTorrentManagerAsync", ex);
-                    currentDownloadingState = DownloadingState.TorrentFileOpeningFailed;
-                }
-
-                return null;
+                    currentDownloadingState = DownloadingState.MediaDownloadStarted;
             }
         }
 
-        private bool FileToDownloadChanged(ITorrentFileSelector torrentFileSelector)
+
+        private void OnPeersFound(object sender, PeersAddedEventArgs e)
         {
-            var fileToDownload = torrentFileSelector.SelectTorrentFileInfo(currentTorrentManager.Files);
-            return this.currentDownloadingFile != fileToDownload;
+            if (currentTorrentManager?.PartialProgress == 0)
+                currentDownloadingState = DownloadingState.MediaDownloadAboutToStart;
         }
+        #endregion
 
-        private async Task SetFileToDownload(TorrentRequest torrentRequest)
+        #region File Utils
+
+        private async Task SetFileToDownload(VideoInfo videoFileToDownload)
         {
-            var fileToDownload = torrentRequest.TorrentFileSelector.SelectTorrentFileInfo(currentTorrentManager.Files);
+            var mediaFile = GetFileFromTorrent(videoFileToDownload);
 
-            if (fileToDownload != null)
+            if (mediaFile != null && this.currentDownloadingFile != mediaFile)
             {
-                foreach (var file in currentTorrentManager.Files.Where(f => fileToDownload.FullPath != f.FullPath))
-                    await currentTorrentManager.SetFilePriorityAsync(file, Priority.DoNotDownload);
+                this.currentDownloadingFile = mediaFile;
 
-                await currentTorrentManager.SetFilePriorityAsync(fileToDownload, Priority.Highest);
-
-                this.currentDownloadingFile = fileToDownload;
-                this.currentVideoInfo = torrentRequest.VideoInfo;
+                this.currentVideoInfo = videoFileToDownload;
+                this.currentVideoInfo.FilePath = mediaFile.FullPath;
 
                 fileDownloadCompleteEventFired = false;
+                LastDownloadProgressDateTime = DateTime.UtcNow;
+
+                foreach (var file in currentTorrentManager.Files.Where(f => mediaFile.FullPath != f.FullPath))
+                    await currentTorrentManager.SetFilePriorityAsync(file, Priority.DoNotDownload);
+
+                await currentTorrentManager.SetFilePriorityAsync(mediaFile, Priority.Highest);
 
                 AppLogger.LogInfo(ClientAppIdentifier, $"File to download selected : {this.currentDownloadingFile.Path}");
             }
         }
 
+        private ITorrentManagerFile GetFileFromTorrent(VideoInfo videoFileToSelect)
+        {
+            var videoFiles = currentTorrentManager.Files
+                .Where(f => f.FullPath.EndsWith(".mp4") || f.FullPath.EndsWith(".avi") || f.FullPath.EndsWith(".mkv"));
+
+            if (videoFileToSelect.IsSerie)
+            {
+                var episodeId = $"S{videoFileToSelect.SeasonNumber.ToString("00")}E{videoFileToSelect.EpisodeNumber.ToString("00")}";
+                return videoFiles.FirstOrDefault(f => Path.GetFileName(f.FullPath).Contains(episodeId, System.StringComparison.OrdinalIgnoreCase));
+            }
+            else
+                return videoFiles.FirstOrDefault();
+        }
+
+        #endregion
+
+        #region Release Resources
         private void ReleaseTorrentManager()
         {
+            ReleaseCurrentStream();
+
             downloadTorrentCancellationTokenSource?.Cancel();
 
             if (currentTorrentManager != null)
             {
-                var torrentManagerToRelease = currentTorrentManager;
-                AppLogger.LogInfo(ClientAppIdentifier, $"Stop TorrentManager : {torrentManagerToRelease.Name}");
-
                 currentTorrentManager.PeersFound -= OnPeersFound;
                 currentTorrentManager.PieceHashed -= OnPieceHashed;
+
+                var torrentManagerToRelease = clientEngine.Torrents.FirstOrDefault(tm => tm.Name == currentTorrentManager.Name);
+                currentTorrentManager = null;
+
+                AppLogger.LogInfo(ClientAppIdentifier, $"Stop TorrentManager : {torrentManagerToRelease.Name}");
 
                 //stop can be a long operation, so we do it in a separate thread
                 torrentManagerToRelease.StopAsync().ContinueWith(async t =>
@@ -305,12 +350,8 @@ namespace WebHostStreaming.Torrent
         private void ReleaseCurrentStream()
         {
             torrentStreamCancellationTokenSource?.Cancel();
-
-            if (currentTorrentStream != null)
-            {
-                currentTorrentStream.Dispose();
-                currentTorrentStream = null;
-            }
+            currentTorrentStream?.Dispose();
+            currentTorrentStream = null;
         }
         #endregion
     }

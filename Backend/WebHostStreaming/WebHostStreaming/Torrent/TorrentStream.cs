@@ -17,6 +17,8 @@ namespace WebHostStreaming.Torrent
         private bool streamCreationOnGoing;
         public string MediaFileContentType => mediaFileToStream.FullPath.GetContentType();
         public string MediaFileName => Path.GetFileName(mediaFileToStream.FullPath);
+        public string MediaFullPath => mediaFileToStream.FullPath;
+
         public TorrentStream(TorrentManager torrentManager, ITorrentManagerFile mediaFileToStream)
         {
             this.torrentManager = torrentManager;
@@ -26,6 +28,7 @@ namespace WebHostStreaming.Torrent
         {
             stream?.Close();
             stream?.Dispose();
+            stream = null;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -46,7 +49,7 @@ namespace WebHostStreaming.Torrent
             if (stream == null && !streamCreationOnGoing)
                 throw new Exception("TorrentStream not started");
 
-            while(streamCreationOnGoing)
+            while (streamCreationOnGoing)
                 await Task.Delay(1000);
 
             //try to seek because ObjectDisposedException is thwrown sometimes 
@@ -64,5 +67,5 @@ namespace WebHostStreaming.Torrent
         }
     }
 }
-       
+
 

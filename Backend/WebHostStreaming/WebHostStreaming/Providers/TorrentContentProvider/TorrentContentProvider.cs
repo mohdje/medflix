@@ -22,7 +22,10 @@ namespace WebHostStreaming.Providers
 
         public event EventHandler OnNoActiveTorrentClient;
 
-        public TorrentContentProvider(IVideoInfoProvider videoInfoProvider, IWatchedMoviesProvider watchedMoviesProvider, IWatchedSeriesProvider watchedSeriesProvider)
+        public TorrentContentProvider(
+            IVideoInfoProvider videoInfoProvider,
+            IWatchedMoviesProvider watchedMoviesProvider,
+            IWatchedSeriesProvider watchedSeriesProvider)
         {
             torrentClients = new List<TorrentClient>();
             lastAccessToTorrentClient = new Dictionary<string, DateTime>();
@@ -57,27 +60,23 @@ namespace WebHostStreaming.Providers
 
             AppLogger.LogInfo(torrentRequest.ClientAppId, $"Start download media from {torrentRequest.TorrentUrl} SUCCESS");
 
-            double? progress = null;
-            double lastProgress = 0;
+            DateTime lastDownloadProgressDateTime;
             try
             {
                 do
                 {
-                    lastProgress = progress.GetValueOrDefault(0);
-
-                    AppLogger.LogInfo(torrentRequest.ClientAppId, $"Waiting next progress for {torrentRequest.TorrentUrl}");
+                    lastDownloadProgressDateTime = torrentClient.LastDownloadProgressDateTime;
+                    AppLogger.LogInfo(torrentRequest.ClientAppId, $"Waiting downloading progresss for {torrentRequest.TorrentUrl}");
 
                     await Task.Delay(TimeSpan.FromMinutes(3), cancellationToken);//wait for the download to progress during 3 minutes
-                    torrentClient = GetOrCreateTorrentClient(torrentRequest.ClientAppId);//recall GetOrCreateTorrentClient to update last access datetime
-                    progress = await torrentClient.GetDownloadingProgressAync(torrentRequest.TorrentUrl);
                 }
-                while (progress.HasValue && progress.Value > lastProgress && progress.Value < 100);
+                while (!torrentClient.IsDownloadComplete && lastDownloadProgressDateTime < torrentClient.LastDownloadProgressDateTime);
 
-                return progress.HasValue && progress.Value >= 100;
+                return torrentClient.IsDownloadComplete;
             }
             catch (Exception ex)
             {
-                if(cancellationToken.IsCancellationRequested)
+                if (cancellationToken.IsCancellationRequested)
                     AppLogger.LogInfo(torrentRequest.ClientAppId, $"Download aborted for {torrentRequest.TorrentUrl}");
 
                 return false;
@@ -150,6 +149,9 @@ namespace WebHostStreaming.Providers
                         torrentClientsWatcher = null;
                         OnNoActiveTorrentClient?.Invoke(this, EventArgs.Empty);
                     }
+                    //if only one torrent client and it's active, do not dispose it
+                    else if (torrentClients.Count == 1 && torrentClients[0].LastDownloadProgressDateTime > now.AddMinutes(-5))
+                        return;
 
                     var clientAppIdsToRemove = new List<string>();
 

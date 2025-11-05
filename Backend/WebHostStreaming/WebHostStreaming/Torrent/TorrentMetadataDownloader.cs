@@ -1,8 +1,6 @@
 ﻿using MonoTorrent;
 using MonoTorrent.Client;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -22,22 +20,22 @@ namespace WebHostStreaming.Torrent
         DownloadCompleted,
         DownloadAborted
     }
-    public class TorrentFileDownloader
+    public class TorrentMetadataDownloader
     {
         private readonly ClientEngine clientEngine;
         private readonly string clientAppIdentifier;
 
-        public string TorrentUri { get; }
+        private readonly string TorrentUri;
 
         private const string TORRENT_HEXA_SIGNATURE = "64383a616e6e6f756e6365";
         private bool IsMagnetLink => TorrentUri.StartsWith("magnet:?xt=urn:btih");
         private string TorrentFilePath => Path.Combine(TorrentDownloadDirectory, "torrent");
 
-        public string TorrentDownloadDirectory => TorrentUri?.ToTorrentFolderPath(clientAppIdentifier);
+        private string TorrentDownloadDirectory => TorrentUri?.ToTorrentFolderPath(clientAppIdentifier);
 
         public TorrentDownloaderStatus Status { get; private set; }
 
-        public TorrentFileDownloader(string clientAppIdentifier, string torrentUri, ClientEngine clientEngine)
+        public TorrentMetadataDownloader(string clientAppIdentifier, string torrentUri, ClientEngine clientEngine)
         {
             TorrentUri = torrentUri;
             this.clientEngine = clientEngine;
@@ -102,7 +100,10 @@ namespace WebHostStreaming.Torrent
             catch (Exception ex)
             {
                 if (cancellationToken.IsCancellationRequested)
+                {
                     AppLogger.LogInfo(clientAppIdentifier, $"Torrent download aborted: {TorrentUri}");
+                    Status = TorrentDownloaderStatus.DownloadAborted;
+                }
                 else
                 {
                     AppLogger.LogInfo(clientAppIdentifier, $"Torrent download failed: {TorrentUri}");
