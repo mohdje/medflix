@@ -3,7 +3,6 @@ using MoviesAPI.Services.Torrent;
 using System;
 using System.Collections.Generic;
 using MoviesAPI.Services.Content;
-using MoviesAPI.Services.Torrent.Searchers;
 using MoviesAPI.Services.Torrent.Searchers.WebScrappers;
 using System.IO;
 using MoviesAPI.Services.Subtitles.Searchers;
@@ -67,11 +66,6 @@ namespace MoviesAPI.Services
 
             //return new SubtitlesSearchManager([subSourceApi, ytsSubsSearcher], [subSourceApi]);
             return new SubtitlesSearchManager([openSubtitlesSearcher], [openSubtitlesSearcher]);
-        }
-
-        public AIRecommendationEngine CreateAIRecommandationEngine(string token, IMovieSearcher moviesSearcher, ISeriesSearcher seriesSearcher)
-        {
-            return new AIRecommendationEngine(token, moviesSearcher, seriesSearcher);
         }
     }
 }
