@@ -24,7 +24,7 @@ namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
 
         protected override string[] GetSearchUrls(TorrentWebScapperRequest torrentSearchRequest)
         {
-            return torrentSearchRequest.MediaSearchIdentifiers.Select(mediaSearchId => $"{Url}/browse-movies/{mediaSearchId}/all/all/0/0/latest").ToArray();
+            return [$"{Url}/browse-movies/{torrentSearchRequest.MediaName}/all/all/0/0/latest"];
         }
 
         protected override string GetTorrentTitle(HtmlDocument htmlNode)

@@ -19,7 +19,7 @@ namespace MoviesAPI.Services.Content
         public async Task<ContentDto> GetSerieDetailsAsync(string serieId)
         {
             var details = await GetContentDetailsAsync(serieId);
-            if (string.IsNullOrEmpty(details.ImdbId))
+            if (string.IsNullOrEmpty(details?.ImdbId))
                 details.ImdbId = await GetImdbId(serieId);
 
             return details;

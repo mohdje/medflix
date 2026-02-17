@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Net.Sockets;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
@@ -20,9 +21,25 @@ namespace MoviesAPI.Helpers
             {
                 if (_httpClient == null)
                 {
-                    _httpClient = new HttpClient();
+                    // Create a custom handler that forces IPv4
+                    var handler = new SocketsHttpHandler();
+                    handler.ConnectCallback = async (context, cancellationToken) =>
+                    {
+                        var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp); // InterNetwork = IPv4
+                        try
+                        {
+                            await socket.ConnectAsync(context.DnsEndPoint, cancellationToken);
+                            return new NetworkStream(socket, ownsSocket: true);
+                        }
+                        catch
+                        {
+                            socket.Dispose();
+                            throw;
+                        }
+                    };
+                    handler.ConnectTimeout = TimeSpan.FromSeconds(10);
+                    _httpClient = new HttpClient(handler);
                     _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.115 Safari/537.36");
-                    _httpClient.Timeout = TimeSpan.FromSeconds(7);
                 }
                 return _httpClient;
             }
@@ -52,6 +69,17 @@ namespace MoviesAPI.Helpers
             }
         }
 
+        public static async Task<T> PostAsync<T>(string url, Dictionary<string, object> body, IEnumerable<KeyValuePair<string, string>> httpRequestHeaders) where T : class
+        {
+            AddHeaders(httpRequestHeaders);
+
+            var response = await PostAsync<T>(url, body);
+
+            RemoveHeaders(httpRequestHeaders);
+
+            return response;
+        }
+
         public static async Task<T> PostAsync<T>(string url, Dictionary<string, object> body) where T : class
         {
             var uri = new Uri(url);
@@ -59,15 +87,15 @@ namespace MoviesAPI.Helpers
             var content = JsonContent.Create(body);
             content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
 
-            var response = await HttpClient.PostAsync(uri, content);
-
-            if (response.StatusCode != HttpStatusCode.OK)
-                return null;
-
-            var json = await response.Content.ReadAsStringAsync();
-
             try
             {
+                var response = await HttpClient.PostAsync(uri, content);
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return null;
+
+                var json = await response.Content.ReadAsStringAsync();
+
                 return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -82,11 +110,7 @@ namespace MoviesAPI.Helpers
 
         public static async Task<byte[]> DownloadAsync(Uri url, IEnumerable<KeyValuePair<string, string>> httpRequestHeaders)
         {
-            if(httpRequestHeaders != null)
-            {
-                foreach (var header in httpRequestHeaders)
-                    HttpClient.DefaultRequestHeaders.Add(header.Key, header.Value);
-            }
+            AddHeaders(httpRequestHeaders);
 
             var response = await PerformGetCallAsync(url, 3);
 
@@ -95,18 +119,14 @@ namespace MoviesAPI.Helpers
             if (response != null)
                 bytes = await response.ReadAsByteArrayAsync();
 
-            if (httpRequestHeaders != null)
-            {
-                foreach (var header in httpRequestHeaders)
-                    HttpClient.DefaultRequestHeaders.Remove(header.Key);
-            }
+            RemoveHeaders(httpRequestHeaders);
 
             return bytes;
         }
 
         public static async Task<HtmlAgilityPack.HtmlDocument> GetHtmlDocumentAsync(string url)
         {
-           
+
             var htmlResult = await GetAsync(new Uri(url));
 
             if (string.IsNullOrEmpty(htmlResult))
@@ -116,6 +136,24 @@ namespace MoviesAPI.Helpers
             htmlDocument.LoadHtml(htmlResult);
 
             return htmlDocument;
+        }
+
+        private static void AddHeaders(IEnumerable<KeyValuePair<string, string>> httpRequestHeaders)
+        {
+            if (httpRequestHeaders != null)
+            {
+                foreach (var header in httpRequestHeaders)
+                    HttpClient.DefaultRequestHeaders.Add(header.Key, header.Value);
+            }
+        }
+
+        private static void RemoveHeaders(IEnumerable<KeyValuePair<string, string>> httpRequestHeaders)
+        {
+            if (httpRequestHeaders != null)
+            {
+                foreach (var header in httpRequestHeaders)
+                    HttpClient.DefaultRequestHeaders.Remove(header.Key);
+            }
         }
 
         private static Uri BuildUri(string url, NameValueCollection parameters)
@@ -137,7 +175,7 @@ namespace MoviesAPI.Helpers
         {
             var response = await PerformGetCallAsync(url, 3);
 
-            if(response == null)
+            if (response == null)
                 return null;
 
             return await response.ReadAsStringAsync();
@@ -159,7 +197,7 @@ namespace MoviesAPI.Helpers
                     return await PerformGetCallAsync(uri, retryCount - 1);
                 }
                 else
-                   return null;
+                    return null;
             }
             catch (Exception ex)
             {

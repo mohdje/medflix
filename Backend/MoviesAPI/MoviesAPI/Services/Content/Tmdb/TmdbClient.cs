@@ -40,7 +40,7 @@ namespace MoviesAPI.Services.Tmdb
                     var logoImgUrl = await GetLogoImageUrlAsync(liteContentDto.Id);
                     mediaLogos.Add(new Tuple<string, string>(liteContentDto.Id, logoImgUrl));
                 }));
-                 
+
             }
 
             await Task.WhenAll(tasks);
@@ -116,6 +116,10 @@ namespace MoviesAPI.Services.Tmdb
         protected async Task<ContentDto> GetContentDetailsAsync(string tmdbContentId)
         {
             var tmdbSearchResult = await HttpRequester.GetAsync<TmdbSearchResult>(tmdbUrlBuilder.BuildContentDetailsUrl(tmdbContentId));
+
+            if (tmdbSearchResult == null)
+                return null;
+
             var logoImgUrl = await GetLogoImageUrlAsync(tmdbContentId);
             var tmdbCredits = await GetCredits(tmdbContentId);
 
@@ -178,7 +182,7 @@ namespace MoviesAPI.Services.Tmdb
         protected async Task<IEnumerable<LiteContentDto>> GetPopularNetflixContentAsync()
         {
             var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildPopularContentByPlatformUrl(8));
-         //   results.Results = results.Results.OrderByDescending(r => r.VoteCount).ToArray();
+            //   results.Results = results.Results.OrderByDescending(r => r.VoteCount).ToArray();
 
             return ToLiteContentDtos(results);
         }
@@ -186,7 +190,7 @@ namespace MoviesAPI.Services.Tmdb
         protected async Task<IEnumerable<LiteContentDto>> GetPopularDisneyPlusContentAsync()
         {
             var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildPopularContentByPlatformUrl(337));
-           // results.Results = results.Results.OrderByDescending(r => r.VoteCount).ToArray();
+            // results.Results = results.Results.OrderByDescending(r => r.VoteCount).ToArray();
 
             return ToLiteContentDtos(results);
         }
@@ -194,7 +198,7 @@ namespace MoviesAPI.Services.Tmdb
         protected async Task<IEnumerable<LiteContentDto>> GetPopularAmazonPrimeContentAsync()
         {
             var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildPopularContentByPlatformUrl(9));
-           // results.Results = results.Results.OrderByDescending(r => r.VoteCount).ToArray();
+            // results.Results = results.Results.OrderByDescending(r => r.VoteCount).ToArray();
 
             return ToLiteContentDtos(results);
         }
@@ -202,7 +206,7 @@ namespace MoviesAPI.Services.Tmdb
         protected async Task<IEnumerable<LiteContentDto>> GetPopularAppleTvContentAsync()
         {
             var results = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildPopularContentByPlatformUrl(2));
-           // results.Results = results.Results.OrderByDescending(r => r.VoteCount).ToArray();
+            // results.Results = results.Results.OrderByDescending(r => r.VoteCount).ToArray();
 
             return ToLiteContentDtos(results);
         }
@@ -243,10 +247,10 @@ namespace MoviesAPI.Services.Tmdb
                 Rating = Math.Round(tmdbSearchResult.VoteAverage, 1),
                 Id = tmdbSearchResult.Id.ToString(),
                 Synopsis = tmdbSearchResult.Overview
-            };          
+            };
         }
 
-        
+
 
     }
 }

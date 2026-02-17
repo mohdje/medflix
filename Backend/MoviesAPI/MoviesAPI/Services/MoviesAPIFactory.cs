@@ -38,15 +38,15 @@ namespace MoviesAPI.Services
         public TorrentSearchManager CreateTorrentSearchManager()
         {
             var torrent9Scrapper = new Torrent9WebScrapper();
-            var ytsVfScrapper = new YtsVfTorrentScrapper();
-            var zeTorrentsScrapper = new ZeTorrentsScrapper();
+            var zoneTorrentScrapper = new ZoneTorrentScrapper();
+            var oxTorrentScrapper = new OxTorrentScrapper();
             var ytsDoWebScrapper = new YtsDoWebScrapper();
             var ytsRsWebScrapper = new YtsRsWebScrapper();
             var ytsApiSearcher = new YtsApiSearcher();
             var limeTorrentsScrapper = new LimeTorrentsScrapper();
             var eztvApiSearcher = new EztvApiSearcher();
 
-            IEnumerable<ITorrentSearcher> vfTorrentSearchers = [zeTorrentsScrapper, ytsVfScrapper, torrent9Scrapper];
+            IEnumerable<ITorrentSearcher> vfTorrentSearchers = [oxTorrentScrapper, zoneTorrentScrapper, torrent9Scrapper];
 
             return new TorrentSearchManager(
                 vfTorrentSearchers,
@@ -67,7 +67,11 @@ namespace MoviesAPI.Services
 
             //return new SubtitlesSearchManager([subSourceApi, ytsSubsSearcher], [subSourceApi]);
             return new SubtitlesSearchManager([openSubtitlesSearcher], [openSubtitlesSearcher]);
+        }
 
+        public AIRecommendationEngine CreateAIRecommandationEngine(string token, IMovieSearcher moviesSearcher, ISeriesSearcher seriesSearcher)
+        {
+            return new AIRecommendationEngine(token, moviesSearcher, seriesSearcher);
         }
     }
 }

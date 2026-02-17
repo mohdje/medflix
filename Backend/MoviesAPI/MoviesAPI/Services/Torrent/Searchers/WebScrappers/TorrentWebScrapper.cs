@@ -44,7 +44,7 @@ namespace MoviesAPI.Services.Torrent
         {
             var searchUrls = GetSearchUrls(torrentSearchRequest);
 
-            List<HtmlNode> resultNodes = new List<HtmlNode>();
+            List<HtmlNode> resultNodes = [];
             foreach (var searchUrl in searchUrls)
             {
                 var searchResultList = await GetSearchResults(searchUrl);
@@ -53,8 +53,7 @@ namespace MoviesAPI.Services.Torrent
             }
 
             if (resultNodes == null)
-                return Array.Empty<MediaTorrent>();
-
+                return [];
 
             var getTorrentTasks = new List<Task<IEnumerable<MediaTorrent>>>();
 
@@ -99,17 +98,17 @@ namespace MoviesAPI.Services.Torrent
             var doc = await HttpRequester.GetHtmlDocumentAsync(mediaTorrentPageUrl);
 
             if (doc == null)
-                return Array.Empty<MediaTorrent>();
+                return [];
 
             var mediaTorrents = new List<MediaTorrent>();
 
             if (!TorrentHasSeeders(doc))
-                return Array.Empty<MediaTorrent>();
+                return [];
 
             var torrentLinkNodes = doc.DocumentNode.SelectNodes(TorrentLinkButtonsIdentifier);
 
             if (torrentLinkNodes == null || !torrentLinkNodes.Any())
-                return Array.Empty<MediaTorrent>();
+                return [];
 
             foreach (var torrentLinkNode in torrentLinkNodes)
             {
