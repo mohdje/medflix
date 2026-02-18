@@ -62,10 +62,8 @@ namespace MoviesAPI.Services
             var subtitlesDownloader = new SubtitlesDownloader(subtitlesFolder);
             var ytsSubsSearcher = new YtsSubsSearcher(subtitlesDownloader);
             var openSubtitlesSearcher = new OpenSubtitlesSearcher(subtitlesDownloader);
-            var subSourceApi = new SubSourceApi(subtitlesDownloader);
 
-            //return new SubtitlesSearchManager([subSourceApi, ytsSubsSearcher], [subSourceApi]);
-            return new SubtitlesSearchManager([openSubtitlesSearcher], [openSubtitlesSearcher]);
+            return new SubtitlesSearchManager([openSubtitlesSearcher, ytsSubsSearcher], [openSubtitlesSearcher]);
         }
     }
 }
