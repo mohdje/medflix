@@ -80,13 +80,14 @@ namespace WebHostStreaming.Torrent
                     await currentTorrentStream.StartAsync(torrentStreamCancellationTokenSource.Token);
                 }
             }
+            catch when (torrentStreamCancellationTokenSource?.IsCancellationRequested == true)
+            {
+                AppLogger.LogInfo(ClientAppIdentifier, $"Stream creation aborted for TorrentManager : {currentTorrentManager.Name}");
+            }
             catch (Exception ex)
             {
-                if (torrentStreamCancellationTokenSource.IsCancellationRequested)
-                    AppLogger.LogInfo(ClientAppIdentifier, $"Stream creation aborted for TorrentManager : {currentTorrentStream.MediaFileName}");
-                else
                 {
-                    AppLogger.LogInfo(ClientAppIdentifier, $"Stream creation failed for TorrentManager : {currentTorrentStream.MediaFileName}");
+                    AppLogger.LogInfo(ClientAppIdentifier, $"Stream creation failed for TorrentManager : {currentTorrentManager.Name} and file {currentTorrentStream.MediaFileName}");
                     AppLogger.LogError(ClientAppIdentifier, "GetTorrentStreamAsync", ex);
 
                     currentDownloadingState = DownloadingState.TorrentFileOpeningFailed;
@@ -96,7 +97,8 @@ namespace WebHostStreaming.Torrent
             }
             finally
             {
-                streamCreationLocker.Release();
+                if (streamCreationLocker.CurrentCount == 0)
+                    streamCreationLocker.Release();
             }
 
             return currentTorrentStream;
@@ -132,16 +134,19 @@ namespace WebHostStreaming.Torrent
                 return false;
 
             var fileToDownload = GetFileFromTorrent(videoFileToDownload);
-            if (fileToDownload.BitField.PercentComplete < 99)
+
+            if (fileToDownload == null)
+            {
+                currentDownloadingState = DownloadingState.NoMediaFileFoundInTorrent;
+                AppLogger.LogInfo(ClientAppIdentifier, $"No video file found to download for TorrentManager : {currentTorrentManager.Name}");
+                return false;
+            }
+            else if (fileToDownload.BitField.PercentComplete < 99)
             {
                 await SetFileToDownload(videoFileToDownload);
 
                 if (currentDownloadingFile == null)
-                {
-                    currentDownloadingState = DownloadingState.NoMediaFileFoundInTorrent;
-                    AppLogger.LogInfo(ClientAppIdentifier, $"No video file found to download for TorrentManager : {currentTorrentManager.Name}");
                     return false;
-                }
             }
 
             await StartTorrentManagerIfNeededAsync();

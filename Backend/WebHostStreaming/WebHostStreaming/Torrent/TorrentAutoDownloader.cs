@@ -80,46 +80,57 @@ namespace WebHostStreaming.Torrent
         private async Task DownloadMoviesAsync()
         {
             if (running)
+            {
+                AppLogger.LogInfo("TorrentAutoDownloader.DownloadMoviesAsync(): Already running, skip");
                 return;
+            }
 
             AppLogger.LogInfo("TorrentAutoDownloader.DownloadMoviesAsync(): Starts");
 
             running = true;
 
-            var failedDownloadMovies = new List<LiteContentDto>();
-
-            downloadCancellationTokenSource = new CancellationTokenSource();
-
-            var stackMoviesToDownload = new Stack<LiteContentDto>(moviesToDownload);
-
-            while (stackMoviesToDownload.Any() && !downloadCancellationTokenSource.IsCancellationRequested)
+            try
             {
-                var movieToDownload = stackMoviesToDownload.Pop();
+                var failedDownloadMovies = new List<LiteContentDto>();
 
-                //if the movie is not in the list anymore, skip it
-                if (!moviesToDownload.Any(m => m.Id == movieToDownload.Id))
-                    continue;
+                downloadCancellationTokenSource = new CancellationTokenSource();
 
-                var voDownloadSuccess = await DownloadOriginalVersionAsync(movieToDownload);
-                var vfDownloadSuccess = await DownloadFrenchVersionAsync(movieToDownload);
+                var stackMoviesToDownload = new Stack<LiteContentDto>(moviesToDownload);
 
-                if (voDownloadSuccess && vfDownloadSuccess && moviesToDownload.Any(m => m.Id == movieToDownload.Id))
-                    moviesToDownload.RemoveAll(m => m.Id == movieToDownload.Id);
-            }
-
-            if (moviesToDownload.Any() && !downloadCancellationTokenSource.IsCancellationRequested)
-            {
-                var timeSpanBeforeRetry = TimeSpan.FromHours(1);
-                AppLogger.LogInfo($"TorrentAutoDownloader.DownloadMoviesAsync(): {moviesToDownload.Count} movies still present in downloading list, retry in {timeSpanBeforeRetry.Hours} hour");
-                timer = new Timer(_ =>
+                while (stackMoviesToDownload.Count != 0 && !downloadCancellationTokenSource.IsCancellationRequested)
                 {
-                    DownloadMoviesAsync();
-                }, null, timeSpanBeforeRetry, Timeout.InfiniteTimeSpan);
+                    var movieToDownload = stackMoviesToDownload.Pop();
+
+                    //if the movie is not in the list anymore, skip it
+                    if (!moviesToDownload.Any(m => m.Id == movieToDownload.Id))
+                        continue;
+
+                    var voDownloadSuccess = await DownloadOriginalVersionAsync(movieToDownload);
+                    var vfDownloadSuccess = await DownloadFrenchVersionAsync(movieToDownload);
+
+                    if (voDownloadSuccess && vfDownloadSuccess && moviesToDownload.Any(m => m.Id == movieToDownload.Id))
+                        moviesToDownload.RemoveAll(m => m.Id == movieToDownload.Id);
+                }
+
+                if (moviesToDownload.Count != 0 && !downloadCancellationTokenSource.IsCancellationRequested)
+                {
+                    var timeSpanBeforeRetry = TimeSpan.FromHours(3);
+                    AppLogger.LogInfo($"TorrentAutoDownloader.DownloadMoviesAsync(): {moviesToDownload.Count} movies still present in downloading list, retry in {timeSpanBeforeRetry.Hours} hour");
+                    timer = new Timer(_ =>
+                    {
+                        DownloadMoviesAsync();
+                    }, null, timeSpanBeforeRetry, Timeout.InfiniteTimeSpan);
+                }
             }
-
-            running = false;
-
-            AppLogger.LogInfo("TorrentAutoDownloader.DownloadMoviesAsync(): Ends");
+            catch (Exception ex)
+            {
+                AppLogger.LogError("TorrentAutoDownloader.DownloadMoviesAsync", ex);
+            }
+            finally
+            {
+                running = false;
+                AppLogger.LogInfo("TorrentAutoDownloader.DownloadMoviesAsync(): Ends");
+            }
         }
 
         private async Task<bool> DownloadOriginalVersionAsync(LiteContentDto movie)

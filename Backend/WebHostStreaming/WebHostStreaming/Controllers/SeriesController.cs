@@ -4,11 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebHostStreaming.Providers;
-using System.IO;
 using WebHostStreaming.Models;
 using System.Net;
 using MoviesAPI.Services.Content.Dtos;
-using MoviesAPI.Services.Tmdb.Dtos;
 
 namespace WebHostStreaming.Controllers
 {

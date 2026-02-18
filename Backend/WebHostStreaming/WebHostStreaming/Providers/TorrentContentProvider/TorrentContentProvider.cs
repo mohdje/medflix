@@ -141,7 +141,7 @@ namespace WebHostStreaming.Providers
                     var now = DateTime.Now;
                     AppLogger.LogInfo("TorrentClientProvider: Check torrent clients to dispose");
 
-                    if (!torrentClients.Any())
+                    if (torrentClients.Count == 0)
                     {
                         AppLogger.LogInfo("TorrentClientProvider: Stop torrent clients watcher");
                         torrentClientsWatcher.Change(Timeout.Infinite, Timeout.Infinite);
@@ -157,10 +157,8 @@ namespace WebHostStreaming.Providers
 
                     foreach (var torrentClient in torrentClients)
                     {
-                        if (lastAccessToTorrentClient.ContainsKey(torrentClient.ClientAppIdentifier))
+                        if (lastAccessToTorrentClient.TryGetValue(torrentClient.ClientAppIdentifier, out DateTime lastAccess))
                         {
-                            var lastAccess = lastAccessToTorrentClient[torrentClient.ClientAppIdentifier];
-
                             if ((now - lastAccess).TotalMinutes >= inactivePeriodInMinutes)
                             {
                                 torrentClient.Dispose();

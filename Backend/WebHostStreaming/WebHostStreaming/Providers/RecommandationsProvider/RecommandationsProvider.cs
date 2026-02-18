@@ -39,7 +39,7 @@ namespace WebHostStreaming.Providers
             var recommandationsRequest = BuildRecommandationsRequest(watchedSeries);
 
             if (recommandationsRequest == null)
-                return new LiteContentDto[0];
+                return [];
 
             return await searchersProvider.SeriesSearcher.GetRecommandationsAsync(
                 recommandationsRequest.GenreIds,
