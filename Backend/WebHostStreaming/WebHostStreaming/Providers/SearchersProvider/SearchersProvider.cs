@@ -19,11 +19,11 @@ namespace WebHostStreaming.Providers
             if (!Directory.Exists(AppFolders.SubtitlesFolder))
                 Directory.CreateDirectory(AppFolders.SubtitlesFolder);
 
-            SubtitlesSearchManager = MoviesAPIFactory.Instance.CreateSubstitlesSearchManager(AppFolders.SubtitlesFolder);
-            TorrentSearchManager = MoviesAPIFactory.Instance.CreateTorrentSearchManager();
+            SubtitlesSearchManager = MoviesAPIFactory.CreateSubstitlesSearchManager(AppFolders.SubtitlesFolder);
+            TorrentSearchManager = MoviesAPIFactory.CreateTorrentSearchManager();
 
-            MovieSearcher = MoviesAPIFactory.Instance.CreateMovieSearcher(Tokens.TmdbApiKey);
-            SeriesSearcher = MoviesAPIFactory.Instance.CreateSeriesSearcher(Tokens.TmdbApiKey);
-        }     
+            MovieSearcher = MoviesAPIFactory.CreateMovieSearcher(Tokens.TmdbApiKey);
+            SeriesSearcher = MoviesAPIFactory.CreateSeriesSearcher(Tokens.TmdbApiKey);
+        }
     }
 }
