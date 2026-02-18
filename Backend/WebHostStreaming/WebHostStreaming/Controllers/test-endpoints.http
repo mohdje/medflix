@@ -1,0 +1,311 @@
+### Base URL for local development
+@baseUrl = http://localhost:5000
+@contentType = application/json
+
+###############################################################################
+### MOVIES CONTROLLER TESTS
+###############################################################################
+
+### Test 9: Get Movies Genres
+### GET /Movies/genres
+GET {{baseUrl}}/Movies/genres
+Accept: application/json
+
+### Test 10: Get Movies Platforms
+### GET /Movies/platforms
+GET {{baseUrl}}/Movies/platforms
+Accept: application/json
+
+### Test 11: Get Movies Of Today
+### GET /Movies/mediasoftoday
+GET {{baseUrl}}/Movies/mediasoftoday
+Accept: application/json
+
+### Test 12: Get Popular Netflix Movies
+### GET /Movies/netflix
+GET {{baseUrl}}/Movies/netflix
+Accept: application/json
+
+### Test 13: Get Popular Disney+ Movies
+### GET /Movies/disneyplus
+GET {{baseUrl}}/Movies/disneyplus
+Accept: application/json
+
+### Test 14: Get Popular Amazon Prime Movies
+### GET /Movies/amazonprime
+GET {{baseUrl}}/Movies/amazonprime
+Accept: application/json
+
+### Test 15: Get Popular Apple TV Movies
+### GET /Movies/appletv
+GET {{baseUrl}}/Movies/appletv
+Accept: application/json
+
+### Test 16: Get Popular Movies
+### GET /Movies/popular
+GET {{baseUrl}}/Movies/popular
+Accept: application/json
+
+### Test 17: Get Similar Movies
+### GET /Movies/similar/{id}
+GET {{baseUrl}}/Movies/similar/1084242
+Accept: application/json
+
+### Test 18: Get Movies Recommendations
+### GET /Movies/recommandations
+GET {{baseUrl}}/Movies/recommandations
+Accept: application/json
+
+### Test 19: Get Popular Movies By Genre
+### GET /Movies/genre/{genreId}
+GET {{baseUrl}}/Movies/genre/28
+Accept: application/json
+
+### Test 20: Get Movies By Genre With Pagination
+### GET /Movies/genre/{genreId}/{page}
+GET {{baseUrl}}/Movies/genre/28/1
+Accept: application/json
+
+### Test 21: Get Movies By Platform With Pagination
+### GET /Movies/platform/{platformId}/{page}
+GET {{baseUrl}}/Movies/platform/8/1
+Accept: application/json
+
+### Test 22: Search Movies
+### GET /Movies/search?t=text
+GET {{baseUrl}}/Movies/search?t=Inception
+Accept: application/json
+
+### Test 23: Get Movie Details
+### GET /Movies/details/{id}
+GET {{baseUrl}}/Movies/details/movie123
+Accept: application/json
+
+### Test 24: Get Watched Movies
+### GET /Movies/watchedmedia
+GET {{baseUrl}}/Movies/watchedmedia
+Accept: application/json
+
+### Test 25: Get Watched Movie By ID
+### GET /Movies/watchedmedia/{id}
+GET {{baseUrl}}/Movies/watchedmedia/1
+Accept: application/json
+
+### Test 26: Save Watched Movie
+### PUT /Movies/watchedmedia
+PUT {{baseUrl}}/Movies/watchedmedia
+Content-Type: application/json
+
+{
+  "id": 1,
+  "mediaId": "movie123",
+  "watchedPercentage": 75.5,
+  "lastWatchedDate": "2026-02-18T10:30:00"
+}
+
+### Test 27: Get Bookmarked Movies
+### GET /Movies/bookmarks
+GET {{baseUrl}}/Movies/bookmarks
+Accept: application/json
+
+### Test 28: Add Movie Bookmark
+### PUT /Movies/bookmarks
+PUT {{baseUrl}}/Movies/bookmarks
+Content-Type: application/json
+
+{
+  "id": "movie123",
+  "title": "Inception",
+  "posterImageUrl": "https://example.com/poster.jpg",
+  "logoImageUrl": "https://example.com/logo.jpg"
+}
+
+### Test 29: Delete Movie Bookmark
+### DELETE /Movies/bookmarks?id=movieId
+DELETE {{baseUrl}}/Movies/bookmarks?id=1084242
+Accept: application/json
+
+### Test 30: Check If Movie Bookmark Exists
+### GET /Movies/bookmarks/exists?id=movieId
+GET {{baseUrl}}/Movies/bookmarks/exists?id=1084242
+Accept: application/json
+
+###############################################################################
+### SERIES CONTROLLER TESTS
+###############################################################################
+
+### Test 31: Get Series Genres
+### GET /Series/genres
+GET {{baseUrl}}/Series/genres
+Accept: application/json
+
+### Test 32: Get Series Platforms
+### GET /Series/platforms
+GET {{baseUrl}}/Series/platforms
+Accept: application/json
+
+### Test 33: Get Series Of Today
+### GET /Series/mediasoftoday
+GET {{baseUrl}}/Series/mediasoftoday
+Accept: application/json
+
+### Test 34: Get Popular Netflix Series
+### GET /Series/netflix
+GET {{baseUrl}}/Series/netflix
+Accept: application/json
+
+### Test 35: Get Popular Disney+ Series
+### GET /Series/disneyplus
+GET {{baseUrl}}/Series/disneyplus
+Accept: application/json
+
+### Test 36: Get Popular Amazon Prime Series
+### GET /Series/amazonprime
+GET {{baseUrl}}/Series/amazonprime
+Accept: application/json
+
+### Test 37: Get Popular Apple TV Series
+### GET /Series/appletv
+GET {{baseUrl}}/Series/appletv
+Accept: application/json
+
+### Test 38: Get Popular Series
+### GET /Series/popular
+GET {{baseUrl}}/Series/popular
+Accept: application/json
+
+### Test 39: Get Similar Series
+### GET /Series/similar/{id}
+GET {{baseUrl}}/Series/similar/1416
+Accept: application/json
+
+### Test 40: Get Series Recommendations
+### GET /Series/recommandations
+GET {{baseUrl}}/Series/recommandations
+Accept: application/json
+
+### Test 41: Get Popular Series By Genre
+### GET /Series/genre/{genreId}
+GET {{baseUrl}}/Series/genre/18
+Accept: application/json
+
+### Test 42: Get Series By Genre With Pagination
+### GET /Series/genre/{genreId}/{page}
+GET {{baseUrl}}/Series/genre/18/1
+Accept: application/json
+
+### Test 43: Get Series By Platform With Pagination
+### GET /Series/platform/{platformId}/{page}
+GET {{baseUrl}}/Series/platform/8/1
+Accept: application/json
+
+### Test 44: Search Series
+### GET /Series/search?t=text
+GET {{baseUrl}}/Series/search?t=Breaking%20Bad
+Accept: application/json
+
+### Test 45: Get Series Details
+### GET /Series/details/{id}
+GET {{baseUrl}}/Series/details/1399
+Accept: application/json
+
+### Test 46: Get Watched Series
+### GET /Series/watchedmedia
+GET {{baseUrl}}/Series/watchedmedia
+Accept: application/json
+
+### Test 47: Get Watched Episode
+### GET /Series/watchedmedia/{id}?seasonNumber=1&episodeNumber=1
+GET {{baseUrl}}/Series/watchedmedia/1?seasonNumber=1&episodeNumber=1
+Accept: application/json
+
+### Test 48: Get Watched Episodes By Season
+### GET /Series/watchedmedia/{id}/{seasonNumber}
+GET {{baseUrl}}/Series/watchedmedia/1/1
+Accept: application/json
+
+### Test 49: Save Watched Episode
+### PUT /Series/watchedmedia
+PUT {{baseUrl}}/Series/watchedmedia
+Content-Type: application/json
+
+{
+  "id": 1,
+  "mediaId": "series123",
+  "seasonNumber": 1,
+  "episodeNumber": 5,
+  "watchedPercentage": 100.0,
+  "lastWatchedDate": "2026-02-18T10:30:00"
+}
+
+### Test 50: Get Bookmarked Series
+### GET /Series/bookmarks
+GET {{baseUrl}}/Series/bookmarks
+Accept: application/json
+
+### Test 51: Add Series Bookmark
+### PUT /Series/bookmarks
+PUT {{baseUrl}}/Series/bookmarks
+Content-Type: application/json
+
+{
+  "id": "1399",
+  "title": "Breaking Bad",
+  "posterImageUrl": "https://example.com/poster.jpg",
+  "logoImageUrl": "https://example.com/logo.jpg"
+}
+
+### Test 52: Delete Series Bookmark
+### DELETE /Series/bookmarks?id=serieId
+DELETE {{baseUrl}}/Series/bookmarks?id=1399
+Accept: application/json
+
+### Test 53: Check If Series Bookmark Exists
+### GET /Series/bookmarks/exists?id=serieId
+GET {{baseUrl}}/Series/bookmarks/exists?id=1399
+Accept: application/json
+
+### Test 54: Get Episodes By Season
+### GET /Series/episodes/{serieId}/{seasonNumber}
+GET {{baseUrl}}/Series/episodes/1399/1
+Accept: application/json
+
+###############################################################################
+### MEDIA SOURCE CONTROLLER TESTS
+###############################################################################
+
+### Test 55: Search VF Movie Sources
+### GET /MediaSource/movies/vf
+### Parameters: mediaId, title, year
+GET {{baseUrl}}/MediaSource/movies/vf?mediaId=550&title=Fight%20Club&year=1999
+Accept: application/json
+
+### Test 56: Search VO Movie Sources
+### GET /MediaSource/movies/vo
+### Parameters: mediaId, title, year
+GET {{baseUrl}}/MediaSource/movies/vo?mediaId=550&title=Fight%20Club&year=1999
+Accept: application/json
+
+### Test 59: Search Series VO Sources
+### GET /MediaSource/series/vo
+### Parameters: mediaId, imdbId, title, seasonNumber, episodeNumber
+GET {{baseUrl}}/MediaSource/series/vo?mediaId=1399&imdbId=tt0903747&title=Breaking%20Bad&seasonNumber=1&episodeNumber=1
+Accept: application/json
+
+### Test 60: Search Series VF Sources
+### GET /MediaSource/series/vf
+### Parameters: mediaId, title, seasonNumber, episodeNumber
+GET {{baseUrl}}/MediaSource/series/vf?mediaId=1399&title=Breaking%20Bad&seasonNumber=1&episodeNumber=1
+Accept: application/json
+
+
+### Notes for MediaSource Controller:
+### - VF = French version (Version Française)
+### - VO = Original version (Version Originale)
+### - mediaId: The internal media identifier
+### - imdbId: IMDB identifier (only for VO series searches)
+### - title: Movie or series title
+### - year: Release year (only for movies)
+### - seasonNumber: Season number (only for series)
+### - episodeNumber: Episode number (only for series)
+
