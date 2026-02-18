@@ -11,13 +11,13 @@ namespace MoviesApiSample.Samples
         SubtitlesSearchManager subtitlesSearchManager;
         public SubtitlesSample()
         {
-            subtitlesSearchManager = MoviesAPIFactory.Instance.CreateSubstitlesSearchManager(AppContext.BaseDirectory);
+            subtitlesSearchManager = MoviesAPIFactory.CreateSubstitlesSearchManager(AppContext.BaseDirectory);
         }
 
         public async Task Test()
         {
             //await GetMovieSubtitlesAsync("tt1431045", SubtitlesLanguage.French);
-            await GetSerieSubtitlesAsync(1, 5, "tt11280740", SubtitlesLanguage.English);
+            await GetSerieSubtitlesAsync(1, 5, "tt19854762", SubtitlesLanguage.French);
             //await DisplaySubtitles("https://yts-subs.com/subtitles/deadpool-2016-english-yify-280634");
         }
 
@@ -58,7 +58,7 @@ namespace MoviesApiSample.Samples
         {
             var subtitles = await subtitlesSearchManager.GetSubtitlesAsync(subtitlesSourceUrl);
 
-            if(subtitles == null || !subtitles.Any())
+            if (subtitles == null || !subtitles.Any())
                 Console.WriteLine($"Enable to get subtitles from {subtitlesSourceUrl}");
 
             foreach (var sub in subtitles.Take(15))

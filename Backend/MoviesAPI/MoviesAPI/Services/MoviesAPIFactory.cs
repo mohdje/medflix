@@ -5,36 +5,23 @@ using System.Collections.Generic;
 using MoviesAPI.Services.Content;
 using MoviesAPI.Services.Torrent.Searchers.WebScrappers;
 using System.IO;
-using MoviesAPI.Services.Subtitles.Searchers;
 
 namespace MoviesAPI.Services
 {
-    public class MoviesAPIFactory
+    public static class MoviesAPIFactory
     {
-        private static MoviesAPIFactory _instance;
 
-        public static MoviesAPIFactory Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new MoviesAPIFactory();
-
-                return _instance;
-            }
-        }
-
-        public IMovieSearcher CreateMovieSearcher(string apiKey)
+        public static IMovieSearcher CreateMovieSearcher(string apiKey)
         {
             return new TmdbMovieClient(apiKey);
         }
 
-        public ISeriesSearcher CreateSeriesSearcher(string apiKey)
+        public static ISeriesSearcher CreateSeriesSearcher(string apiKey)
         {
             return new TmdbSeriesClient(apiKey);
         }
 
-        public TorrentSearchManager CreateTorrentSearchManager()
+        public static TorrentSearchManager CreateTorrentSearchManager()
         {
             var torrent9Scrapper = new Torrent9WebScrapper();
             var zoneTorrentScrapper = new ZoneTorrentScrapper();
@@ -54,7 +41,7 @@ namespace MoviesAPI.Services
                 [eztvApiSearcher, limeTorrentsScrapper]);
         }
 
-        public SubtitlesSearchManager CreateSubstitlesSearchManager(string subtitlesFolder)
+        public static SubtitlesSearchManager CreateSubstitlesSearchManager(string subtitlesFolder)
         {
             if (string.IsNullOrEmpty(subtitlesFolder) || !Directory.Exists(subtitlesFolder))
                 throw new Exception("subtitlesFolder null or does not exist");

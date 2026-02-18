@@ -14,12 +14,12 @@ namespace MoviesApiSample.Samples
         IMovieSearcher movieSearcher;
         public MoviesSample(string apiKey)
         {
-            movieSearcher = MoviesAPIFactory.Instance.CreateMovieSearcher(apiKey);
+            movieSearcher = MoviesAPIFactory.CreateMovieSearcher(apiKey);
         }
 
         public async Task Test()
         {
-          //  await SearchMovies("Encanto");
+            await SearchMovies("Encanto");
             //await GetMoviesOfToday();
 
             //await GetPopularMovies();
@@ -27,10 +27,10 @@ namespace MoviesApiSample.Samples
             //await GetMoviesByGenre(10751);
             // await GetMovieDetails("436270");
             //await GetPopularNetflixMovies();
-           // await GetPopularDisneyPlusMovies();
+            // await GetPopularDisneyPlusMovies();
             //await GetPopularAmazonPrimeMovies();
             //await GetRecommandedMovies();
-         //   await GetFrenchTitle("568124");
+            //   await GetFrenchTitle("568124");
             //await GetGenres();
             // await GetPlatforms();
             // await GetMoviesByPlatform(2);
@@ -50,7 +50,7 @@ namespace MoviesApiSample.Samples
             var genres = new string[] { "16", "12", "28" };
             var minDate = "2015-01-01";
             var maxDate = "2022-12-31";
-            var exludedMovies = new string[] { "436270", "1033219" }; 
+            var exludedMovies = new string[] { "436270", "1033219" };
             ShowMoviesList(await movieSearcher.GetRecommandationsAsync(genres, minDate, maxDate, exludedMovies), "Recommanded movies");
         }
 
@@ -129,7 +129,7 @@ namespace MoviesApiSample.Samples
             var movie = await movieSearcher.GetMovieDetailsAsync(movieId);
 
             Console.WriteLine($"{movie.Id}. {movie.Title}  ({movie.Year}), {movie.Rating}, background:{movie.BackgroundImageUrl}, cover:{movie.CoverImageUrl}, synopsis: {movie.Synopsis}");
-            Console.WriteLine($"Genre: {movie.Genres.Select(genre => genre.Name).Aggregate((a,b) => $"{a}, {b}")}");
+            Console.WriteLine($"Genre: {movie.Genres.Select(genre => genre.Name).Aggregate((a, b) => $"{a}, {b}")}");
             Console.WriteLine($"Director: {movie.Director}");
             Console.WriteLine($"Cast: {movie.Cast}");
             Console.WriteLine($"Duration: {movie.Duration}");

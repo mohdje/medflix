@@ -14,31 +14,31 @@ namespace MoviesApiSample.Samples
         ISeriesSearcher seriesSearcher;
         public SeriesSample(string apiKey)
         {
-            seriesSearcher = MoviesAPIFactory.Instance.CreateSeriesSearcher(apiKey);
+            seriesSearcher = MoviesAPIFactory.CreateSeriesSearcher(apiKey);
         }
 
         public async Task Test()
         {
-            //await SearchSeries("patriot act");
+            await SearchSeries("patriot act");
             //await GetSeriesOfToday();
 
             //await GetPopularSeries();
             //await GetPopularSeriesByGenre(16);
             //await GetSeriesByGenre(10767);
-             await GetSerieDetails("42009");
-          // await GetPopularNetflixSeries();
+            // await GetSerieDetails("42009");
+            // await GetPopularNetflixSeries();
             //await GetPopularDisneyPlusSeries();
-           // await GetPopularAmazonPrimeSeries();
+            // await GetPopularAmazonPrimeSeries();
 
             // await GetRecommandedSeries();
 
             // await GetFrenchTitle("119051");
             // await GetGenres();
 
-          //  await GetSerieEpisodesBySeason("124364", 3);
+            //  await GetSerieEpisodesBySeason("124364", 3);
 
             //await GetPlatforms();
-          //  await GetSeriesByPlatform(37);
+            //  await GetSeriesByPlatform(37);
         }
         private async Task GetSeriesOfToday()
         {

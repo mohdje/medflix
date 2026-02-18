@@ -14,15 +14,15 @@ namespace MoviesApiSample.Samples
         TorrentSearchManager torrentSearchManager;
         public TorrentSample()
         {
-            torrentSearchManager = MoviesAPIFactory.Instance.CreateTorrentSearchManager();
+            torrentSearchManager = MoviesAPIFactory.CreateTorrentSearchManager();
         }
 
         public async Task Test()
         {
-           // await SearchVfMovieTorrents("Le Robot Sauvage", 2024);
-           // await SearchVfSerieTorrents("Severance", 2, 3);
-           //await SearchVoMovieTorrents("Deadpool", 2016);
-             await SearchVoSerieTorrents("Years and years", 1, 2);
+            await SearchVfMovieTorrents("Wake Up Dead Man : Une histoire à couteaux tirés", 2025);
+            //await SearchVfSerieTorrents("Severance", 2, 3);
+            //await SearchVoMovieTorrents("Wake Up Dead Man: A Knives Out Mystery", 2025);
+            //await SearchVoSerieTorrents("Desperate Housewives", "tt0410975", 3, 2);
         }
         private async Task SearchVfMovieTorrents(string frenchMovieName, int year)
         {
@@ -51,9 +51,9 @@ namespace MoviesApiSample.Samples
             PrintResult(voTorrents);
         }
 
-        private async Task SearchVoSerieTorrents(string serieName, int seasonNumber, int episodeNumber)
+        private async Task SearchVoSerieTorrents(string serieName, string imdbID, int seasonNumber, int episodeNumber)
         {
-            var voTorrents = await torrentSearchManager.SearchVoTorrentsSerieAsync(serieName, seasonNumber, episodeNumber);
+            var voTorrents = await torrentSearchManager.SearchVoTorrentsSerieAsync(serieName, imdbID, seasonNumber, episodeNumber);
 
             PrintResult(voTorrents);
         }
