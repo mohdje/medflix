@@ -5,6 +5,6 @@ namespace WebHostStreaming.Torrent
     public interface ITorrentAutoDownloader
     {
         Task StartAsync();
-        void Stop();
+        void RetryLater();
     }
 }

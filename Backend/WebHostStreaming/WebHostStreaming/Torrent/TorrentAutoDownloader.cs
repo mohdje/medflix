@@ -21,7 +21,7 @@ namespace WebHostStreaming.Torrent
 
         readonly string[] qualitiesRank = ["1080p", "720p", "BDRIP", "WEBRIP", "DVDRIP"];
         const string TorrentAutoDownloaderIdentifier = "Auto-Downloader";
-        readonly TimeSpan timeSpanBeforeRetry = TimeSpan.FromSeconds(40);
+        readonly TimeSpan timeSpanBeforeRetry = TimeSpan.FromHours(3);
 
         readonly List<LiteContentDto> voMoviesToDownload = [];
         readonly List<LiteContentDto> vfMoviesToDownload = [];
@@ -79,10 +79,10 @@ namespace WebHostStreaming.Torrent
             started = false;
         }
 
-        public void Stop()
+        public void RetryLater()
         {
             downloadCancellationTokenSource?.Cancel();
-            AppLogger.LogInfo("TorrentAutoDownloader.Stop(): Stopped");
+            AppLogger.LogInfo("TorrentAutoDownloader.RetryLater()");
         }
 
         private async Task<bool> DownloadMediasAsync()
