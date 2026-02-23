@@ -147,7 +147,6 @@ namespace WebHostStreaming.Providers
                         torrentClientsWatcher.Change(Timeout.Infinite, Timeout.Infinite);
                         torrentClientsWatcher.Dispose();
                         torrentClientsWatcher = null;
-                        OnNoActiveTorrentClient?.Invoke(this, EventArgs.Empty);
                     }
                     //if only one torrent client and it's active, do not dispose it
                     else if (torrentClients.Count == 1 && torrentClients[0].LastDownloadProgressDateTime > now.AddMinutes(-5))

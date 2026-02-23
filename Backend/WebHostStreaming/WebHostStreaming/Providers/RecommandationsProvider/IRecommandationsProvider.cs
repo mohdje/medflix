@@ -8,6 +8,5 @@ namespace WebHostStreaming.Providers
     {
         Task<IEnumerable<LiteContentDto>> GetMoviesRecommandationsAsync();
         Task<IEnumerable<LiteContentDto>> GetSeriesRecommandationsAsync();
-
     }
 }

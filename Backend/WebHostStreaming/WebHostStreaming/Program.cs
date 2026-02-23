@@ -2,8 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using WebHostStreaming.Controllers;
-using WebHostStreaming.Providers;
+using WebHostStreaming.Torrent;
 
 namespace WebHostStreaming
 {
@@ -15,8 +14,8 @@ namespace WebHostStreaming
 
             using (var scope = app.Services.CreateScope())
             {
-                var bookmarkedMediaProvider = scope.ServiceProvider.GetRequiredService<IBookmarkedMoviesProvider>();
-                bookmarkedMediaProvider.InitDownloadBookmarkedMovies();
+                var torrentAutoDownloader = scope.ServiceProvider.GetRequiredService<ITorrentAutoDownloader>();
+                torrentAutoDownloader.StartAsync();
             }
 
             app.Run();

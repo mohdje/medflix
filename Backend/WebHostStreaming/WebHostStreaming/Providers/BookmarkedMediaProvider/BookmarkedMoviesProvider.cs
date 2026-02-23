@@ -1,4 +1,5 @@
 ﻿using MoviesAPI.Services.Content.Dtos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using WebHostStreaming.Helpers;
@@ -8,22 +9,10 @@ namespace WebHostStreaming.Providers
 {
     public class BookmarkedMoviesProvider : BookmarkedMediaProvider, IBookmarkedMoviesProvider
     {
-        ITorrentAutoDownloader torrentAutoDownloader;
-
         protected override string FilePath => AppFiles.BookmarkedMovies;
 
-        public BookmarkedMoviesProvider(ITorrentAutoDownloader torrentAutoDownloader)
-        {
-            this.torrentAutoDownloader = torrentAutoDownloader;
-        }
-
-        public void InitDownloadBookmarkedMovies()
-        {
-            if (!Data.Any())
-                return;
-
-            torrentAutoDownloader.AddToDownloadList(Data);
-        }
+        public event EventHandler MovieBookmarkAdded;
+        public event EventHandler MovieBookmarkDeleted;
 
         public IEnumerable<LiteContentDto> GetBookmarkedMovies()
         {
@@ -33,14 +22,13 @@ namespace WebHostStreaming.Providers
         public void AddMovieBookmark(LiteContentDto movieToBookmark)
         {
             AddBookmark(movieToBookmark);
-            torrentAutoDownloader.AddToDownloadList(movieToBookmark);
+            MovieBookmarkAdded?.Invoke(this, EventArgs.Empty);
         }
 
         public void DeleteMovieBookmark(string movieId)
         {
-            var deletedMovieBookmark = DeleteBookmark(movieId);
-            if (deletedMovieBookmark != null)
-                torrentAutoDownloader.RemoveFromDownloadList(deletedMovieBookmark);
+            DeleteBookmark(movieId);
+            MovieBookmarkDeleted?.Invoke(this, EventArgs.Empty);
         }
 
         public bool MovieBookmarkExists(string movieId)

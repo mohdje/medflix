@@ -75,11 +75,11 @@ namespace WebHostStreaming.Controllers
 
         private bool TryGetMediaSources(string mediaId, LanguageVersion language, out MediaSource[] mediaSources, int seasonNumber = 0, int episodeNumber = 0)
         {
-            var videoInfo = videoInfoProvider.GetVideoInfo(mediaId, language, seasonNumber, episodeNumber);
+            var videoInfo = seasonNumber == 0 && episodeNumber == 0 ? videoInfoProvider.GetMovieVideoInfo(mediaId, language) : videoInfoProvider.GetEpisodeVideoInfo(mediaId, language, seasonNumber, episodeNumber);
 
             if (videoInfo != null)
             {
-                mediaSources = 
+                mediaSources =
                 [
                     new MediaSource
                     {

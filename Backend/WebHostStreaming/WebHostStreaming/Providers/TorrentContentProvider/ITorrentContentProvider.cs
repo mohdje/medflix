@@ -11,6 +11,5 @@ namespace WebHostStreaming.Providers
         Task<TorrentStream> GetTorrentStreamAsync(TorrentRequest torrentRequest);
         Task<bool> DownloadTorrentMediaAsync(TorrentRequest torrentRequest, CancellationToken cancellationToken);
         Task<DownloadingState> GetDownloadingStateAsync(string clientAppIdentifier, string torrentUrl);
-        event EventHandler OnNoActiveTorrentClient;
-    }            
+    }
 }

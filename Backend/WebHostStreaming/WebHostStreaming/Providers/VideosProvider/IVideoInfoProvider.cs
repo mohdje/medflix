@@ -8,7 +8,9 @@ namespace WebHostStreaming.Providers
     {
         void AddVideoInfo(VideoInfo videoInfo);
         bool RemoveVideoInfo(string videoInfoId);
-        VideoInfo GetVideoInfo(string mediaId, LanguageVersion language, int seasonNumber = 0, int episodeNumber = 0);
+        VideoInfo GetMovieVideoInfo(string mediaId, LanguageVersion language);
+        VideoInfo GetEpisodeVideoInfo(string mediaId, LanguageVersion language, int seasonNumber, int episodeNumber);
+
         public IEnumerable<VideoInfo> AllVideosInfos { get; }
     }
 }

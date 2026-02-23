@@ -1,5 +1,6 @@
 ﻿
 using MoviesAPI.Services.Content.Dtos;
+using System;
 using System.Collections.Generic;
 
 namespace WebHostStreaming.Providers
@@ -10,6 +11,7 @@ namespace WebHostStreaming.Providers
         void AddMovieBookmark(LiteContentDto movieToBookmark);
         void DeleteMovieBookmark(string movieId);
         bool MovieBookmarkExists(string movieId);
-        void InitDownloadBookmarkedMovies();
+        event EventHandler MovieBookmarkAdded;
+        event EventHandler MovieBookmarkDeleted;
     }
 }

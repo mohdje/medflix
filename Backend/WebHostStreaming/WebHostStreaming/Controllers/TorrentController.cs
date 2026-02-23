@@ -80,7 +80,7 @@ namespace WebHostStreaming.Controllers
 
         private async Task<IActionResult> StreamData(TorrentRequest torrentRequest)
         {
-            torrentAutoDownloader.StopDownload();// stop auto downloader to prioritize the current request for streaming
+            torrentAutoDownloader.Stop();// stop auto downloader to prioritize the current request for streaming
 
             var torrentStream = await torrentClientProvider.GetTorrentStreamAsync(torrentRequest);
             if (torrentStream == null)

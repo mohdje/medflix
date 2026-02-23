@@ -41,7 +41,16 @@ namespace WebHostStreaming.Providers
             }
         }
 
-        public VideoInfo GetVideoInfo(string mediaId, LanguageVersion language, int seasonNumber = 0, int episodeNumber = 0)
+        public VideoInfo GetMovieVideoInfo(string mediaId, LanguageVersion language)
+        {
+            return Data.FirstOrDefault(v =>
+                v.MediaId == mediaId &&
+                v.Language == language &&
+                v.SeasonNumber == 0 &&
+                v.EpisodeNumber == 0);
+        }
+
+        public VideoInfo GetEpisodeVideoInfo(string mediaId, LanguageVersion language, int seasonNumber, int episodeNumber)
         {
             return Data.FirstOrDefault(v =>
                 v.MediaId == mediaId &&
