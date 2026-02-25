@@ -11,7 +11,7 @@ namespace WebHostStreaming.Providers
         void AddMovieBookmark(LiteContentDto movieToBookmark);
         void DeleteMovieBookmark(string movieId);
         bool MovieBookmarkExists(string movieId);
-        event EventHandler MovieBookmarkAdded;
-        event EventHandler MovieBookmarkDeleted;
+        event EventHandler<LiteContentDto> MovieBookmarkAdded;
+        event EventHandler<string> MovieBookmarkDeleted;
     }
 }

@@ -11,8 +11,8 @@ namespace WebHostStreaming.Providers
     {
         protected override string FilePath => AppFiles.BookmarkedMovies;
 
-        public event EventHandler MovieBookmarkAdded;
-        public event EventHandler MovieBookmarkDeleted;
+        public event EventHandler<LiteContentDto> MovieBookmarkAdded;
+        public event EventHandler<string> MovieBookmarkDeleted;
 
         public IEnumerable<LiteContentDto> GetBookmarkedMovies()
         {
@@ -22,13 +22,13 @@ namespace WebHostStreaming.Providers
         public void AddMovieBookmark(LiteContentDto movieToBookmark)
         {
             AddBookmark(movieToBookmark);
-            MovieBookmarkAdded?.Invoke(this, EventArgs.Empty);
+            MovieBookmarkAdded?.Invoke(this, movieToBookmark);
         }
 
         public void DeleteMovieBookmark(string movieId)
         {
             DeleteBookmark(movieId);
-            MovieBookmarkDeleted?.Invoke(this, EventArgs.Empty);
+            MovieBookmarkDeleted?.Invoke(this, movieId);
         }
 
         public bool MovieBookmarkExists(string movieId)

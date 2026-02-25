@@ -7,6 +7,7 @@ using WebHostStreaming.Helpers;
 using System.Collections.Generic;
 using System.Threading;
 using WebHostStreaming.Models;
+using System.Collections.Concurrent;
 
 namespace WebHostStreaming.Torrent
 {
@@ -16,18 +17,25 @@ namespace WebHostStreaming.Torrent
         readonly ISearchersProvider searchersProvider;
         readonly ITorrentContentProvider torrentContentProvider;
         readonly IBookmarkedMoviesProvider bookmarkedMoviesProvider;
-        readonly Timer retryTimer;
+        Timer retryTimer;
 
-
-        readonly string[] qualitiesRank = ["1080p", "720p", "BDRIP", "WEBRIP", "DVDRIP"];
         const string TorrentAutoDownloaderIdentifier = "Auto-Downloader";
+
+        readonly Dictionary<int, string> qualitiesRank = new()
+            {
+                { 0, "1080p" },
+                { 1, "720p" },
+                { 2, "BDRIP" },
+                { 3, "WEBRIP" },
+                { 4, "DVDRIP" }
+            };
         readonly TimeSpan timeSpanBeforeRetry = TimeSpan.FromHours(3);
 
-        readonly List<LiteContentDto> voMoviesToDownload = [];
-        readonly List<LiteContentDto> vfMoviesToDownload = [];
-
+        readonly ConcurrentDictionary<string, LiteContentDto> voMoviesToDownload = [];
+        readonly ConcurrentDictionary<string, LiteContentDto> vfMoviesToDownload = [];
 
         bool started;
+        SemaphoreSlim startSemaphore = new(1, 1);
         CancellationTokenSource downloadCancellationTokenSource;
 
         public TorrentAutoDownloader(
@@ -40,23 +48,24 @@ namespace WebHostStreaming.Torrent
             this.searchersProvider = searchersProvider;
             this.torrentContentProvider = torrentContentProvider;
             this.bookmarkedMoviesProvider = bookmarkedMoviesProvider;
-            this.bookmarkedMoviesProvider.MovieBookmarkAdded += async (s, e) =>
+            this.bookmarkedMoviesProvider.MovieBookmarkAdded += async (s, movieBookmark) =>
             {
                 if (started)
-                    UpdateMoviesToDownloadList();
+                    TryAddMovieToDownloadList(movieBookmark);
                 else
                     await StartAsync();
             };
-            this.bookmarkedMoviesProvider.MovieBookmarkDeleted += (s, e) =>
+            this.bookmarkedMoviesProvider.MovieBookmarkDeleted += (s, movieId) =>
             {
-                if (started)
-                    UpdateMoviesToDownloadList();
+                voMoviesToDownload.TryRemove(movieId, out _);
+                vfMoviesToDownload.TryRemove(movieId, out _);
             };
-            retryTimer = new Timer(async _ => await StartAsync(), null, Timeout.Infinite, Timeout.Infinite);
         }
 
         public async Task StartAsync()
         {
+            await startSemaphore.WaitAsync();
+
             if (started)
             {
                 AppLogger.LogInfo("TorrentAutoDownloader.StartAsync(): Already running, skip");
@@ -65,14 +74,18 @@ namespace WebHostStreaming.Torrent
 
             AppLogger.LogInfo("TorrentAutoDownloader.StartAsync(): Starts");
 
-            retryTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+            retryTimer?.Dispose();
 
             started = true;
-            var success = await DownloadMediasAsync();
+
+            startSemaphore.Release();
+
+            BuildMoviesToDownloadList();
+            var success = await DownloadMoviesAsync();
 
             if (!success)
             {
-                retryTimer.Change(timeSpanBeforeRetry, Timeout.InfiniteTimeSpan);
+                retryTimer = new Timer(async _ => await StartAsync(), null, timeSpanBeforeRetry, Timeout.InfiniteTimeSpan);
                 AppLogger.LogInfo($"TorrentAutoDownloader.StartAsync(): movies still need to be downloaded, will retry in {timeSpanBeforeRetry.TotalHours} hours");
             }
 
@@ -81,53 +94,40 @@ namespace WebHostStreaming.Torrent
 
         public void RetryLater()
         {
-            downloadCancellationTokenSource?.Cancel();
+            if (downloadCancellationTokenSource != null)
+            {
+                downloadCancellationTokenSource.Cancel();
+                downloadCancellationTokenSource.Dispose();
+                downloadCancellationTokenSource = null;
+            }
+
             AppLogger.LogInfo("TorrentAutoDownloader.RetryLater()");
         }
 
-        private async Task<bool> DownloadMediasAsync()
-        {
-            UpdateMoviesToDownloadList();
-            return await DownloadMoviesAsync();
-        }
-
-        private void UpdateMoviesToDownloadList()
+        private void BuildMoviesToDownloadList()
         {
             var bookmarkedMovies = bookmarkedMoviesProvider.GetBookmarkedMovies();
+            voMoviesToDownload.Clear();
+            vfMoviesToDownload.Clear();
 
-            lock (voMoviesToDownload)
+            foreach (var movie in bookmarkedMovies)
+                TryAddMovieToDownloadList(movie);
+        }
+
+        private void TryAddMovieToDownloadList(LiteContentDto movie)
+        {
+            var originalVersion = videoInfoProvider.GetMovieVideoInfo(movie.Id, LanguageVersion.Original);
+            if (originalVersion == null && !voMoviesToDownload.ContainsKey(movie.Id))
             {
-                voMoviesToDownload.RemoveAll(m => !bookmarkedMovies.Any(bm => bm.Id == m.Id));
-                foreach (var movie in bookmarkedMovies)
-                {
-                    var orignalVersion = videoInfoProvider.GetMovieVideoInfo(movie.Id, LanguageVersion.Original);
-                    if (orignalVersion == null)
-                    {
-                        if (!voMoviesToDownload.Any(m => m.Id == movie.Id))
-                        {
-                            voMoviesToDownload.Add(movie);
-                            AppLogger.LogInfo($"TorrentAutoDownloader.UpdateMoviesToDownloadList(): {movie.Title} {movie.Year} added to VO download list");
-                        }
-                    }
-                }
+                voMoviesToDownload.TryAdd(movie.Id, movie);
+                AppLogger.LogInfo($"TorrentAutoDownloader.TryAddMovieToDownloadList(): {movie.Title} {movie.Year} added to VO download list");
             }
 
-            lock (vfMoviesToDownload)
+            var frenchVersion = videoInfoProvider.GetMovieVideoInfo(movie.Id, LanguageVersion.French);
+            if (frenchVersion == null && !vfMoviesToDownload.ContainsKey(movie.Id))
             {
-                vfMoviesToDownload.RemoveAll(m => !bookmarkedMovies.Any(bm => bm.Id == m.Id));
-                foreach (var movie in bookmarkedMovies)
-                {
-                    var frenchVersion = videoInfoProvider.GetMovieVideoInfo(movie.Id, LanguageVersion.French);
-
-                    if (frenchVersion == null)
-                    {
-                        if (!vfMoviesToDownload.Any(m => m.Id == movie.Id))
-                        {
-                            vfMoviesToDownload.Add(movie);
-                            AppLogger.LogInfo($"TorrentAutoDownloader.UpdateMoviesToDownloadList(): {movie.Title} {movie.Year} added to VF download list");
-                        }
-                    }
-                }
+                vfMoviesToDownload.TryAdd(movie.Id, movie);
+                AppLogger.LogInfo($"TorrentAutoDownloader.TryAddMovieToDownloadList(): {movie.Title} {movie.Year} added to VF download list");
             }
         }
 
@@ -141,34 +141,29 @@ namespace WebHostStreaming.Torrent
 
                 downloadCancellationTokenSource = new CancellationTokenSource();
 
-                while (voMoviesToDownload.Count > 0 || vfMoviesToDownload.Count > 0)
+                while (!voMoviesToDownload.IsEmpty || !vfMoviesToDownload.IsEmpty)
                 {
-                    if (voMoviesToDownload.Count > 0)
+                    if (!voMoviesToDownload.IsEmpty)
                     {
-                        var movie = voMoviesToDownload[0];
-                        var voDownloadSuccess = await DownloadOriginalVersionAsync(movie);
-
-                        if (!voDownloadSuccess)
-                            voFailed++;
-
-                        lock (voMoviesToDownload)
+                        if (voMoviesToDownload.TryGetValue(voMoviesToDownload.Keys.First(), out var movieVO))
                         {
-                            voMoviesToDownload.Remove(movie);
+                            var voDownloadSuccess = await DownloadOriginalVersionAsync(movieVO);
+
+                            if (!voDownloadSuccess)
+                                voFailed++;
+
+                            voMoviesToDownload.TryRemove(movieVO.Id, out _);
                         }
                     }
 
-                    if (vfMoviesToDownload.Count > 0)
+                    if (vfMoviesToDownload.TryGetValue(vfMoviesToDownload.Keys.First(), out var movieVF))
                     {
-                        var movie = vfMoviesToDownload[0];
-                        var vfDownloadSuccess = await DownloadFrenchVersionAsync(movie);
+                        var vfDownloadSuccess = await DownloadFrenchVersionAsync(movieVF);
 
                         if (!vfDownloadSuccess)
                             vfFailed++;
 
-                        lock (vfMoviesToDownload)
-                        {
-                            vfMoviesToDownload.Remove(movie);
-                        }
+                        vfMoviesToDownload.TryRemove(movieVF.Id, out _);
                     }
                 }
 
@@ -177,6 +172,8 @@ namespace WebHostStreaming.Torrent
                     ? "No movies left to download"
                     : $"{voMessage} {vfMessage}";
                 AppLogger.LogInfo($"TorrentAutoDownloader.DownloadMoviesAsync(): {logMessage}");
+
+                downloadCancellationTokenSource.Dispose();
 
                 return voFailed == 0 && vfFailed == 0;
             }
@@ -245,8 +242,8 @@ namespace WebHostStreaming.Torrent
             if (torrentRequests == null || !torrentRequests.Any())
                 return false;
 
-            var sortedRequestsByQuality = torrentRequests.Where(tr => qualitiesRank.Contains(tr.VideoInfo.Quality, StringComparer.OrdinalIgnoreCase))
-                                        .OrderBy(request => Array.IndexOf(qualitiesRank.Select(q => q.ToLower()).ToArray(), request.VideoInfo.Quality.ToLower()));
+            var sortedRequestsByQuality = torrentRequests.Where(tr => qualitiesRank.Values.Contains(tr.VideoInfo.Quality, StringComparer.OrdinalIgnoreCase))
+                                        .OrderBy(request => qualitiesRank.FirstOrDefault(q => string.Equals(q.Value, request.VideoInfo.Quality, StringComparison.OrdinalIgnoreCase)).Key);
 
             foreach (var torrentRequest in sortedRequestsByQuality)
             {
