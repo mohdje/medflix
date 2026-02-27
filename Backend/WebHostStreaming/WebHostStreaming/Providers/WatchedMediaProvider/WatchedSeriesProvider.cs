@@ -2,6 +2,7 @@
 using WebHostStreaming.Helpers;
 using WebHostStreaming.Models;
 using System.Linq;
+using System;
 
 namespace WebHostStreaming.Providers
 {
@@ -11,9 +12,11 @@ namespace WebHostStreaming.Providers
 
         protected override string FilePath => AppFiles.WatchedSeries;
 
+        public event EventHandler<WatchedMediaDto> SerieWatchedEpisodeAdded;
+
         public WatchedMediaDto GetWatchedEpisode(int serieId, int seasonNumber, int episodeNumber)
         {
-            return Data.FirstOrDefault(wm => wm.Media.Id == serieId.ToString() && wm.SeasonNumber == seasonNumber && wm.EpisodeNumber == episodeNumber);       
+            return Data.FirstOrDefault(wm => wm.Media.Id == serieId.ToString() && wm.SeasonNumber == seasonNumber && wm.EpisodeNumber == episodeNumber);
         }
 
         public IEnumerable<WatchedMediaDto> GetWatchedEpisodes(int serieId, int seasonNumber)
@@ -37,7 +40,10 @@ namespace WebHostStreaming.Providers
                 UpdateData(watchedEpisodeToUpdate);
             }
             else
+            {
                 AddData(watchedEpisode);
+                SerieWatchedEpisodeAdded?.Invoke(this, watchedEpisode);
+            }
         }
     }
 }

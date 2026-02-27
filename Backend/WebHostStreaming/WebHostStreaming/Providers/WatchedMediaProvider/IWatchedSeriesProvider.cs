@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebHostStreaming.Models;
 
@@ -10,6 +11,6 @@ namespace WebHostStreaming.Providers
         IEnumerable<WatchedMediaDto> GetWatchedSeries();
         WatchedMediaDto GetWatchedEpisode(int serieId, int seasonNumber, int episodeNumber);
         IEnumerable<WatchedMediaDto> GetWatchedEpisodes(int serieId, int seasonNumber);
-
+        event EventHandler<WatchedMediaDto> SerieWatchedEpisodeAdded;
     }
 }

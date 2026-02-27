@@ -19,7 +19,7 @@ namespace WebHostStreaming.Torrent
         public bool IsDownloadComplete => currentDownloadingFile?.BitField.PercentComplete >= 99;
 
 
-        private ClientEngine clientEngine;
+        private readonly ClientEngine clientEngine;
         private TorrentManager currentTorrentManager;
         private TorrentMetadataDownloader torrentFileDownloader;
         private string currentTorrentUrl;
@@ -28,11 +28,12 @@ namespace WebHostStreaming.Torrent
         private VideoInfo currentVideoInfo;
         private DownloadingState currentDownloadingState;
         private bool fileDownloadCompleteEventFired;
+        private bool isStreamingMode;
 
         private CancellationTokenSource torrentStreamCancellationTokenSource;
         private CancellationTokenSource downloadTorrentCancellationTokenSource;
         private readonly SemaphoreSlim torrentManagerCreationLocker = new SemaphoreSlim(1, 1);
-        private readonly SemaphoreSlim streamCreationLocker = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim streamCreationLocker = new(1, 1);
 
 
         public TorrentClient(string clientAppIdentifier)
@@ -164,6 +165,8 @@ namespace WebHostStreaming.Torrent
                 LastDownloadProgressDateTime = DateTime.UtcNow;
             }
 
+            isStreamingMode = streamingMode;
+
             await torrentManagerCreationLocker.WaitAsync();
 
             try
@@ -199,7 +202,6 @@ namespace WebHostStreaming.Torrent
                 currentTorrentManager = streamingMode ?
                     await clientEngine.AddStreamingAsync(torrentFilePath, Path.GetDirectoryName(torrentFilePath)) :
                     await clientEngine.AddAsync(torrentFilePath, Path.GetDirectoryName(torrentFilePath));
-
                 if (currentTorrentManager != null)
                 {
                     currentTorrentManager.PeersFound += OnPeersFound;
@@ -257,8 +259,8 @@ namespace WebHostStreaming.Torrent
                     fileDownloadCompleteEventFired = true;
                     OnVideoDownloadCompleted?.Invoke(this, currentVideoInfo);
 
-                    //If serie, set next episode to download if available in same torrent
-                    if (currentVideoInfo.IsSerie)
+                    //If serie and streaming mode, set next episode to download if available in same torrent
+                    if (currentVideoInfo.IsSerie && isStreamingMode)
                     {
                         await SetFileToDownload(new VideoInfo
                         {
