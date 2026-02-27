@@ -12,12 +12,12 @@ COPY ./Client/ReactApp .
 RUN npm run build
 
 #Build .Net App
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS backendbuild
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS backendbuild
 
 WORKDIR /medflix-build
 
 #Copy dll with same path inside image because csproj is using this relative path
-COPY ./Backend/MoviesAPI/MoviesAPI/bin/release/net8.0 /MoviesAPI/MoviesAPI/bin/release/net8.0
+COPY ./Backend/MoviesAPI/MoviesAPI/bin/Release/net10.0 /MoviesAPI/MoviesAPI/bin/Release/net10.0
 COPY ./Backend/WebHostStreaming /WebHostStreaming
 
 WORKDIR /WebHostStreaming/WebHostStreaming
@@ -29,7 +29,7 @@ RUN dotnet restore "./WebHostStreaming.csproj" --disable-parallel
 RUN dotnet publish "./WebHostStreaming.csproj"  -c release -o /release --no-restore
 
 #Serve .Net App
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 
 WORKDIR /medflix-app
 
