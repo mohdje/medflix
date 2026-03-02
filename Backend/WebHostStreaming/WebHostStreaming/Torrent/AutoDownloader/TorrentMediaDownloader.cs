@@ -120,15 +120,18 @@ namespace WebHostStreaming.Torrent
                         }
                     }
 
-                    if (vfDownloadList.TryGetValue(vfDownloadList.Keys.First(), out var mediaVF))
+                    if (!vfDownloadList.IsEmpty)
                     {
-                        var vfDownloadSuccess = await DownloadFrenchVersionAsync(clientId, mediaVF, cancellationToken);
+                        if (vfDownloadList.TryGetValue(vfDownloadList.Keys.First(), out var mediaVF))
+                        {
+                            var vfDownloadSuccess = await DownloadFrenchVersionAsync(clientId, mediaVF, cancellationToken);
 
-                        if (!vfDownloadSuccess)
-                            vfFailed++;
+                            if (!vfDownloadSuccess)
+                                vfFailed++;
 
-                        var id = GetMediaId(mediaVF);
-                        vfDownloadList.TryRemove(id, out _);
+                            var id = GetMediaId(mediaVF);
+                            vfDownloadList.TryRemove(id, out _);
+                        }
                     }
                 }
 

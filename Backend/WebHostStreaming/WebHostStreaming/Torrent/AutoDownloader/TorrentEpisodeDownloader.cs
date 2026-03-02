@@ -24,7 +24,12 @@ namespace WebHostStreaming.Torrent
             : base(torrentContentProvider, videoInfoProvider, searchersProvider)
         {
             this.watchedSeriesProvider = watchedSeriesProvider;
-            this.watchedSeriesProvider.SerieWatchedEpisodeAdded += async (s, watchedEpisode) => await TryAddEpisodeToDownloadListAsync(watchedEpisode.Media.Id);
+            this.watchedSeriesProvider.SerieWatchedEpisodeAdded += async (s, watchedEpisode) =>
+            {
+                var bookmarkedSeries = bookmarkedSeriesProvider.GetBookmarkedSeries();
+                if (bookmarkedSeries.Any(serie => serie.Id == watchedEpisode.Media.Id))
+                    await TryAddEpisodeToDownloadListAsync(watchedEpisode.Media.Id);
+            };
 
             this.bookmarkedSeriesProvider = bookmarkedSeriesProvider;
             this.bookmarkedSeriesProvider.SerieBookmarkAdded += async (s, serie) => await TryAddEpisodeToDownloadListAsync(serie.Id);
@@ -46,7 +51,6 @@ namespace WebHostStreaming.Torrent
                 var nextEpisode = await GetNextEpisodeToWatchAsync(serie.Id, watchedSeries);
                 if (nextEpisode != null)
                     episodesToDownload.Add(nextEpisode);
-
             }
 
             return episodesToDownload;

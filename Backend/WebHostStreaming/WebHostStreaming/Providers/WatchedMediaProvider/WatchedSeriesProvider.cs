@@ -26,7 +26,7 @@ namespace WebHostStreaming.Providers
 
         public IEnumerable<WatchedMediaDto> GetWatchedSeries()
         {
-            return Data.Reverse().DistinctBy(watchedMedia => watchedMedia.Media.Id).Take(30);
+            return Data.Reverse().DistinctBy(watchedMedia => watchedMedia.Media.Id);
         }
 
         public void SaveWatchedEpisode(WatchedMediaDto watchedEpisode)

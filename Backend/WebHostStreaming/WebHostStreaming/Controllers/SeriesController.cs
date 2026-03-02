@@ -125,7 +125,7 @@ namespace WebHostStreaming.Controllers
         [HttpGet("watchedmedia")]
         public IEnumerable<WatchedMediaDto> GetWatchedSeries()
         {
-            return watchedSeriesProvider.GetWatchedSeries();
+            return watchedSeriesProvider.GetWatchedSeries().Take(30);
         }
 
         [HttpGet("watchedmedia/{id}")]

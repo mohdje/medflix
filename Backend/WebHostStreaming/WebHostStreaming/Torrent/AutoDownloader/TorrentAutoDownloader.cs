@@ -54,11 +54,12 @@ namespace WebHostStreaming.Torrent
 
             downloadCancellationTokenSource = new CancellationTokenSource();
 
-            await torrentMovieDownloader.DownloadAsync(TorrentAutoDownloaderIdentifier, downloadCancellationTokenSource.Token);
+            var movieSuccess = await torrentMovieDownloader.DownloadAsync(TorrentAutoDownloaderIdentifier, downloadCancellationTokenSource.Token);
+            var episodeSuccess = false;
             if (downloadCancellationTokenSource?.Token.IsCancellationRequested == false)
-                await torrentEpisodeDownloader.DownloadAsync(TorrentAutoDownloaderIdentifier, downloadCancellationTokenSource.Token);
+                episodeSuccess = await torrentEpisodeDownloader.DownloadAsync(TorrentAutoDownloaderIdentifier, downloadCancellationTokenSource.Token);
 
-            if (torrentMovieDownloader.HasMediasToDownload || torrentEpisodeDownloader.HasMediasToDownload)
+            if (!movieSuccess || !episodeSuccess || torrentMovieDownloader.HasMediasToDownload || torrentEpisodeDownloader.HasMediasToDownload)
             {
                 retryTimer = new Timer(async _ => await StartAsync(), null, timeSpanBeforeRetry, Timeout.InfiniteTimeSpan);
                 var typesToDownloadList = new List<string>();
