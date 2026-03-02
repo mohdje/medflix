@@ -20,7 +20,6 @@ namespace WebHostStreaming.Providers
         private IWatchedMoviesProvider watchedMoviesProvider;
         private IWatchedSeriesProvider watchedSeriesProvider;
 
-        public event EventHandler OnNoActiveTorrentClient;
 
         public TorrentContentProvider(
             IVideoInfoProvider videoInfoProvider,
@@ -47,7 +46,7 @@ namespace WebHostStreaming.Providers
             var torrentClient = GetOrCreateTorrentClient(torrentRequest.ClientAppId);
             cancellationToken.Register(() =>
             {
-                torrentClient.Dispose();
+                DisposeTorrentClient(torrentRequest.ClientAppId);
             });
             var waitingTime = TimeSpan.FromMinutes(3);
             var downloadTask = torrentClient.StartDownloadTorrentMediaAsync(torrentRequest);
@@ -64,7 +63,7 @@ namespace WebHostStreaming.Providers
             {
                 downloadStarted = false;
                 AppLogger.LogInfo(torrentRequest.ClientAppId, $"Download timeout for {torrentRequest.TorrentUrl}");
-                torrentClient.Dispose();
+                DisposeTorrentClient(torrentRequest.ClientAppId);
             }
 
             if (!downloadStarted)
@@ -124,6 +123,19 @@ namespace WebHostStreaming.Providers
             return torrentClient;
         }
 
+        private void DisposeTorrentClient(string clientAppIdentifier)
+        {
+            var torrentClient = torrentClients.FirstOrDefault(torrentClient => torrentClient.ClientAppIdentifier == clientAppIdentifier);
+            if (torrentClient != null)
+            {
+                torrentClient.Dispose();
+                torrentClients.Remove(torrentClient);
+                lastAccessToTorrentClient.Remove(clientAppIdentifier);
+                torrentClient = null;
+                AppLogger.LogInfo($"Torrent client disposed for {clientAppIdentifier}");
+            }
+        }
+
         private TorrentClient CreateTorrentClient(string clientAppIdentifier)
         {
             AppLogger.LogInfo(clientAppIdentifier, $"Create TorrentClient");
@@ -174,19 +186,14 @@ namespace WebHostStreaming.Providers
                         if (lastAccessToTorrentClient.TryGetValue(torrentClient.ClientAppIdentifier, out DateTime lastAccess))
                         {
                             if ((now - lastAccess).TotalMinutes >= inactivePeriodInMinutes)
-                            {
-                                torrentClient.Dispose();
                                 clientAppIdsToRemove.Add(torrentClient.ClientAppIdentifier);
-                            }
+
                         }
                     }
 
                     foreach (var clientAppId in clientAppIdsToRemove)
                     {
-                        var torrentClient = torrentClients.FirstOrDefault(torrentClient => torrentClient.ClientAppIdentifier == clientAppId);
-                        torrentClients.Remove(torrentClient);
-                        lastAccessToTorrentClient.Remove(clientAppId);
-                        torrentClient = null;
+                        DisposeTorrentClient(clientAppId);
                         CleanUnusedResources(clientAppId);
                         AppLogger.LogInfo($"TorrentClientProvider: Torrent client disposed for {clientAppId}");
                     }
