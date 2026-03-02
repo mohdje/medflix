@@ -49,8 +49,23 @@ namespace WebHostStreaming.Providers
             {
                 torrentClient.Dispose();
             });
+            var waitingTime = TimeSpan.FromMinutes(3);
+            var downloadTask = torrentClient.StartDownloadTorrentMediaAsync(torrentRequest);
+            var timeoutTask = Task.Delay(waitingTime, cancellationToken);
 
-            var downloadStarted = await torrentClient.StartDownloadTorrentMediaAsync(torrentRequest);
+            var completedTask = await Task.WhenAny(downloadTask, timeoutTask);//wait for the download to start during 3 minutes
+
+            bool downloadStarted;
+            if (completedTask == downloadTask)
+            {
+                downloadStarted = await downloadTask;
+            }
+            else
+            {
+                downloadStarted = false;
+                AppLogger.LogInfo(torrentRequest.ClientAppId, $"Download timeout for {torrentRequest.TorrentUrl}");
+                torrentClient.Dispose();
+            }
 
             if (!downloadStarted)
             {
@@ -68,7 +83,7 @@ namespace WebHostStreaming.Providers
                     lastDownloadProgressDateTime = torrentClient.LastDownloadProgressDateTime;
                     AppLogger.LogInfo(torrentRequest.ClientAppId, $"Waiting downloading progresss for {torrentRequest.TorrentUrl}");
 
-                    await Task.Delay(TimeSpan.FromMinutes(3), cancellationToken);//wait for the download to progress during 3 minutes
+                    await Task.Delay(waitingTime, cancellationToken);//wait for the download to progress during 3 minutes
                 }
                 while (!torrentClient.IsDownloadComplete && lastDownloadProgressDateTime < torrentClient.LastDownloadProgressDateTime);
 
