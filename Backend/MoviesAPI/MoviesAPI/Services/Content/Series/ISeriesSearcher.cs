@@ -28,5 +28,6 @@ namespace MoviesAPI.Services.Content
         Task<IEnumerable<Genre>> GetSerieGenresAsync();
         Task<IEnumerable<Platform>> GetSeriePlatformsAsync();
         Task<IEnumerable<EpisodeDto>> GetEpisodes(string serieId, int seasonNumber);
+        Task<IEnumerable<LiteContentDto>> GetSeriesByThemeAsync(string theme, int page);
     }
 }

@@ -26,6 +26,6 @@ namespace MoviesAPI.Services.Content
         Task<IEnumerable<LiteContentDto>> GetPopularAppleTvMoviesAsync();
         Task<IEnumerable<Genre>> GetMovieGenresAsync();
         Task<IEnumerable<Platform>> GetMoviePlatformsAsync();
-
+        Task<IEnumerable<LiteContentDto>> GetMoviesByThemeAsync(string theme, int page);
     }
 }

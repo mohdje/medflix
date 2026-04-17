@@ -19,7 +19,8 @@ namespace MoviesApiSample.Samples
 
         public async Task Test()
         {
-            await SearchSeries("patriot act");
+            //await SearchSeries("patriot act");
+            await GetSeriesByTheme("heist");
             //await GetSeriesOfToday();
 
             //await GetPopularSeries();
@@ -40,6 +41,12 @@ namespace MoviesApiSample.Samples
             //await GetPlatforms();
             //  await GetSeriesByPlatform(37);
         }
+
+        private async Task GetSeriesByTheme(string theme)
+        {
+            ShowSeriesList(await seriesSearcher.GetSeriesByThemeAsync(theme, 1), "Search for theme " + theme);
+        }
+
         private async Task GetSeriesOfToday()
         {
             ShowSeriesList(await seriesSearcher.GetSeriesOfTodayAsync(), "Series of the day");

@@ -20,9 +20,17 @@ namespace MoviesAPI.Services.Tmdb
             this.apiKey = apiKey;
         }
 
-        public string BuildSearchUrl(string title)
+        public string BuildSearchByTitleUrl(string title)
         {
             return $"{BaseUrl}/search/{ContentMode}?api_key={apiKey}&language=en-US&query={title}&page=1&include_adult=false";
+        }
+
+        public string BuildSearchByKeywordsUrl(int[] keywordIds, int page)
+        {
+            var keywords = string.Join("%7C", keywordIds);
+            var today = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
+
+            return $"{BaseUrl}/discover/{ContentMode}?api_key={apiKey}&language=en-US&sort_by=vote_average.des&with_keywords={keywords}&page={page}&release_date.lte={today}&include_adult=false&vote_count.gte=15&vote_average.gte=5";
         }
 
         public string BuildTranslationUrl(string tmdbContentId)
@@ -57,13 +65,13 @@ namespace MoviesAPI.Services.Tmdb
         {
             var today = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
 
-            return $"{BaseUrl}/discover/{ContentMode}?api_key={apiKey}&sort_by={SortBy}.desc&include_adult=false&with_genres={genreId}&release_date.lte={today}&page={page}&vote_count.gte=15";
+            return $"{BaseUrl}/discover/{ContentMode}?api_key={apiKey}&sort_by={SortBy}.desc&include_adult=false&with_genres={genreId}&release_date.lte={today}&page={page}&vote_count.gte=15&vote_average.gte=5";
         }
 
         public string BuildCoverImageUrl(string imageName)
         {
 
-            return string.IsNullOrEmpty(imageName) ? null : $"{BaseImageUrl}/w300_and_h450_bestv2/{imageName.Replace("/","")}";
+            return string.IsNullOrEmpty(imageName) ? null : $"{BaseImageUrl}/w300_and_h450_bestv2/{imageName.Replace("/", "")}";
         }
 
         public string BuildBackgroundImageUrl(string imageName)
@@ -138,6 +146,11 @@ namespace MoviesAPI.Services.Tmdb
         public string BuildSerieGetExternalIds(string tmdbContentId)
         {
             return $"{BaseUrl}/tv/{tmdbContentId}/external_ids?api_key={apiKey}";
+        }
+
+        public string BuildSearchKeywordsUrl(string text)
+        {
+            return $"{BaseUrl}/search/keyword?api_key={apiKey}&query={text}&page=1";
         }
     }
 }

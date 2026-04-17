@@ -19,7 +19,8 @@ namespace MoviesApiSample.Samples
 
         public async Task Test()
         {
-            await SearchMovies("Encanto");
+            //await SearchMovies("Encanto");
+            await GetMoviesByTheme("heist");
             //await GetMoviesOfToday();
 
             //await GetPopularMovies();
@@ -34,6 +35,11 @@ namespace MoviesApiSample.Samples
             //await GetGenres();
             // await GetPlatforms();
             // await GetMoviesByPlatform(2);
+        }
+
+        private async Task GetMoviesByTheme(string theme)
+        {
+            ShowMoviesList(await movieSearcher.GetMoviesByThemeAsync(theme, 1), "Search for theme " + theme);
         }
         private async Task GetMoviesOfToday()
         {

@@ -17,9 +17,23 @@ namespace MoviesAPI.Services.Tmdb
             this.tmdbUrlBuilder = tmdbUrlBuilder;
         }
 
-        public async Task<IEnumerable<LiteContentDto>> SearchContentAsync(string contentName)
+        public async Task<IEnumerable<LiteContentDto>> SearchContentByNameAsync(string contentName)
         {
-            var response = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildSearchUrl(contentName));
+            var response = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildSearchByTitleUrl(contentName));
+
+            return ToLiteContentDtos(response);
+        }
+
+        public async Task<IEnumerable<LiteContentDto>> GetContentsByKeywordsAsync(string keywords, int page)
+        {
+            var response = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildSearchKeywordsUrl(keywords));
+
+            var keywordsIds = response?.Results.Select(r => r.Id);
+
+            if (keywordsIds?.Any() == false)
+                return [];
+
+            response = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildSearchByKeywordsUrl([.. keywordsIds], page));
 
             return ToLiteContentDtos(response);
         }
@@ -98,7 +112,7 @@ namespace MoviesAPI.Services.Tmdb
 
         protected async Task<string> GetIdAsync(string originalTitle, int year)
         {
-            var tmdbResults = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildSearchUrl(originalTitle));
+            var tmdbResults = await HttpRequester.GetAsync<TmdbSearchResults>(tmdbUrlBuilder.BuildSearchByTitleUrl(originalTitle));
 
             return tmdbResults?.Results?.FirstOrDefault(r => r.Title.Equals(originalTitle, StringComparison.OrdinalIgnoreCase) && r.Year == year)?.Id.ToString();
         }

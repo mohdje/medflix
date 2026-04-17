@@ -77,7 +77,7 @@ namespace MoviesAPI.Services.Content
 
         public async Task<IEnumerable<LiteContentDto>> SearchSeriesAsync(string serieName)
         {
-            return await SearchContentAsync(serieName);
+            return await SearchContentByNameAsync(serieName);
         }
 
         public async Task<IEnumerable<EpisodeDto>> GetEpisodes(string serieId, int seasonNumber)
@@ -135,6 +135,11 @@ namespace MoviesAPI.Services.Content
             var platformsIdsToKeep = new int[] { 2, 8, 9, 337 };//keep netflix, amazon, disney plus, appletv
 
             return platforms.Where(platform => platformsIdsToKeep.Contains(platform.Id));
+        }
+
+        public async Task<IEnumerable<LiteContentDto>> GetSeriesByThemeAsync(string theme, int page)
+        {
+            return await GetContentsByKeywordsAsync(theme, page);
         }
     }
 }
