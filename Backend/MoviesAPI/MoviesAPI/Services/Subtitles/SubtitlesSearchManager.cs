@@ -28,7 +28,7 @@ namespace MoviesAPI.Services.Subtitles
 
             var resultDtos = await Task.WhenAll(tasks);
 
-            return resultDtos?.Where(r => r != null).SelectMany(r => r);            
+            return resultDtos?.Where(r => r != null).SelectMany(r => r);
         }
 
         public async Task<IEnumerable<string>> GetAvailableSerieSubtitlesUrlsAsync(int seasonNumber, int episodeNumber, string imdbCode, SubtitlesLanguage subtitlesLanguage)
@@ -47,12 +47,17 @@ namespace MoviesAPI.Services.Subtitles
 
         public async Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitlesSourceUrl)
         {
-            var subtitlesSearcher = subtitlesMovieSearchers.SingleOrDefault(s => s.Match(subtitlesSourceUrl));
+            var subtitlesMoviesSearcher = subtitlesMovieSearchers.SingleOrDefault(s => s.Match(subtitlesSourceUrl));
 
-            if (subtitlesSearcher != null)
-                return await subtitlesSearcher.GetSubtitlesAsync(subtitlesSourceUrl);
-            else 
-                return Array.Empty<SubtitlesDto>();
+            if (subtitlesMoviesSearcher != null)
+                return await subtitlesMoviesSearcher.GetSubtitlesAsync(subtitlesSourceUrl);
+
+            var subtitlesSerieSearcher = subtitlesSerieSearchers.SingleOrDefault(s => s.Match(subtitlesSourceUrl));
+
+            if (subtitlesSerieSearcher != null)
+                return await subtitlesSerieSearcher.GetSubtitlesAsync(subtitlesSourceUrl);
+
+            return [];
         }
     }
 }
