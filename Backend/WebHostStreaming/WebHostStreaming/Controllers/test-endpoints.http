@@ -114,15 +114,14 @@ PUT {{baseUrl}}/Movies/bookmarks
 Content-Type: application/json
 
 {
-  "id": "movie123",
-  "title": "Inception",
-  "posterImageUrl": "https://example.com/poster.jpg",
-  "logoImageUrl": "https://example.com/logo.jpg"
+  "id": "126",
+  "title": "Titanic",
+  "year": 1997
 }
 
 ### Test 29: Delete Movie Bookmark
 ### DELETE /Movies/bookmarks?id=movieId
-DELETE {{baseUrl}}/Movies/bookmarks?id=1084242
+DELETE {{baseUrl}}/Movies/bookmarks?id=126
 Accept: application/json
 
 ### Test 30: Check If Movie Bookmark Exists
@@ -230,10 +229,13 @@ PUT {{baseUrl}}/Series/watchedmedia
 Content-Type: application/json
 
 {
-  "id": 1,
-  "mediaId": "series123",
-  "seasonNumber": 1,
-  "episodeNumber": 5,
+  "media": {
+    "id": "1396",
+    "title": "Brekang Bad",
+    "imdbId": "tt0285572"
+  },
+  "seasonNumber": 5,
+  "episodeNumber": 12,
   "watchedPercentage": 100.0,
   "lastWatchedDate": "2026-02-18T10:30:00"
 }
@@ -249,15 +251,13 @@ PUT {{baseUrl}}/Series/bookmarks
 Content-Type: application/json
 
 {
-  "id": "1399",
-  "title": "Breaking Bad",
-  "posterImageUrl": "https://example.com/poster.jpg",
-  "logoImageUrl": "https://example.com/logo.jpg"
+  "id": "1396",
+  "title": "Breaking Bad"
 }
 
 ### Test 52: Delete Series Bookmark
 ### DELETE /Series/bookmarks?id=serieId
-DELETE {{baseUrl}}/Series/bookmarks?id=1399
+DELETE {{baseUrl}}/Series/bookmarks?id=1396
 Accept: application/json
 
 ### Test 53: Check If Series Bookmark Exists

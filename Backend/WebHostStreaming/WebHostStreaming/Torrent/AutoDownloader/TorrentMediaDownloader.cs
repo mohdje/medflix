@@ -26,7 +26,8 @@ namespace WebHostStreaming.Torrent
                 { 1, "720p" },
                 { 2, "BDRIP" },
                 { 3, "WEBRIP" },
-                { 4, "DVDRIP" }
+                { 4, "DVDRIP" },
+                { 5, "HDTV" }
             };
 
         protected readonly ConcurrentDictionary<string, T> voDownloadList = [];
