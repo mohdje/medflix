@@ -13,7 +13,7 @@ namespace MoviesAPI.Services.Torrent
     {
         string listMovies = "list_movies.json";
 
-        string Url => "https://yts.bz/api/v2/";
+        string Url => "https://movies-api.accel.li/api/v2/";
 
         public async Task<IEnumerable<MediaTorrent>> GetTorrentLinksAsync(TorrentRequest torrentRequest)
         {

@@ -8,7 +8,7 @@ namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
 {
     internal class YtsRsWebScrapper : TorrentWebScrapper
     {
-        public override string Url => "https://yts.rs";
+        public override string Url => "https://yts.hn";
 
         protected override string SearchResultListIdentifier => "//div[@class='card']";
 

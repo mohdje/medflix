@@ -32,7 +32,7 @@ namespace MoviesAPI.Extensions
             foreach (var c in normalized)
             {
                 var uc = CharUnicodeInfo.GetUnicodeCategory(c);
-                if(Char.IsPunctuation(c))
+                if (Char.IsPunctuation(c))
                     sb.Append(' ');
                 else if (uc != UnicodeCategory.NonSpacingMark)
                     sb.Append(c);
@@ -51,7 +51,7 @@ namespace MoviesAPI.Extensions
             string cleanText = RemoveDiacritics(text);
             string cleanValue = RemoveDiacritics(value);
 
-            return cleanText.StartsWith(cleanValue, StringComparison.OrdinalIgnoreCase);
+            return cleanText.Trim().StartsWith(cleanValue.Trim(), StringComparison.OrdinalIgnoreCase);
         }
 
         public static int GetYear(this string date)
@@ -59,8 +59,7 @@ namespace MoviesAPI.Extensions
             if (string.IsNullOrEmpty(date))
                 return 0;
 
-            int year;
-            int.TryParse(date.Split('-')[0], out year);
+            _ = int.TryParse(date.Split('-')[0], out int year);
 
             return year;
         }

@@ -45,9 +45,10 @@ namespace MoviesAPI.Helpers
             }
         }
 
-        public static async Task<string> GetAsync(Uri url)
+        public static async Task<string> GetAsync(Uri url, NameValueCollection parameters = null)
         {
-            return await PerformGetStringCallAsync(url);
+            var uri = parameters == null ? url : BuildUri(url.ToString(), parameters);
+            return await PerformGetStringCallAsync(uri);
         }
 
         public static async Task<T> GetAsync<T>(string url, NameValueCollection parameters = null, JsonNamingPolicy jsonNamingPolicy = null) where T : class
