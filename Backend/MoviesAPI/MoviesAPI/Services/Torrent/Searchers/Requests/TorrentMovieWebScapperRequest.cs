@@ -19,11 +19,12 @@ namespace MoviesAPI.Services.Torrent
         public override bool MatchWithTorrentTitle(string torrentTitle)
         {
             return torrentTitle.StartsWithIgnoreDiactrics(MediaName)
-                    && (!FrenchVersion || torrentTitle.Contains("FRENCH") || torrentTitle.Contains("TRUEFRENCH") || torrentTitle.Contains("MULTI"))
-                    && torrentTitle.EndsWith(Year.ToString())
+                    && (!FrenchVersion || torrentTitle.Contains("FRENCH") || torrentTitle.Contains("TRUEFRENCH") || torrentTitle.Contains("MULTI") || torrentTitle.Contains("MULTi"))
+                    && torrentTitle.Contains(Year.ToString())
                     && !torrentTitle.Contains("MD")
                     && !torrentTitle.Contains("VOSTFR")
-                    && (!checkQuality || torrentTitle.Contains("720p") || torrentTitle.Contains("1080p") || torrentTitle.Contains("DVDRIP") || torrentTitle.Contains("WEBRIP"));
+                    && !torrentTitle.Contains("2160p")
+                    && (!checkQuality || torrentTitle.Contains("720p") || torrentTitle.Contains("1080p") || torrentTitle.Contains("DVDRIP") || torrentTitle.Contains("WEBRIP") || torrentTitle.Contains("WEB"));
         }
     }
 }

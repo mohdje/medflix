@@ -24,14 +24,14 @@ namespace MoviesAPI.Services
         public static TorrentSearchManager CreateTorrentSearchManager()
         {
             var torrent9Scrapper = new Torrent9WebScrapper();
-            var zoneTorrentScrapper = new ZoneTorrentScrapper();
+            var zeTorrentScrapper = new ZeTorrentsScrapper();
             var oxTorrentScrapper = new OxTorrentScrapper();
             var ytsDoWebScrapper = new YtsDoWebScrapper();
             var ytsRsWebScrapper = new YtsRsWebScrapper();
             var ytsApiSearcher = new YtsApiSearcher();
             var torrentDownloadInfoSearcher = new TorrentDownloadInfoSearcher();
 
-            IEnumerable<ITorrentSearcher> vfTorrentSearchers = [oxTorrentScrapper, torrent9Scrapper, zoneTorrentScrapper];
+            IEnumerable<ITorrentSearcher> vfTorrentSearchers = [zeTorrentScrapper, torrent9Scrapper, oxTorrentScrapper];
 
             return new TorrentSearchManager(
                 vfTorrentSearchers,

@@ -5,12 +5,12 @@ namespace MoviesAPI.Services.Torrent
 {
     internal class ZeTorrentsScrapper : TorrentWebScrapper
     {
-        public override string Url => "https://www.zetorrents2.com";
-        protected override string SearchResultListIdentifier => "//div[@class='content-list-torrent']//div[@class='maxi']";
-        protected override string TorrentLinkButtonsIdentifier => "//div[@class='btn-download']/a";
+        public override string Url => "https://www.workino.cc";
+        protected override string SearchResultListIdentifier => "//div[@class='listing-torrent']//table[@class='table table-hover']//div[@class='maxi']";
+        protected override string TorrentLinkButtonsIdentifier => "//a[starts-with(@href, '/get_torrents') or starts-with(@href, 'magnet:')]";
         protected override bool FrenchVersion => true;
         protected override bool CheckQuality => true;
-        protected override string MediaQualityIdentifier => "//div[@id='torrentsdesc']//div[@class='maximum']";
+        protected override string MediaQualityIdentifier => "//div[@id='torrentsimage']//div[@class='maximums']";
         protected override string TorrentLinkPageIdentifier => "//a";
 
         protected override string[] GetSearchUrls(TorrentWebScapperRequest torrentSearchRequest)
