@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Electron App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 1) 31%, rgba(38, 38, 38, 1) 79%, rgba(87, 87, 87, 1) 100%);
+      color: white;
+    }
+
+    .logo {
+      height: 50px;
+      width: auto;
+    }
+
+    #spinner {
+      display: none;
+      height: 50px;
+      width: auto;
+      animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    #user-input {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .message {
+      text-align: center;
+      font-weight: 600;
+    }
+
+    #host {
+      background-color: rgba(124, 124, 124, 0.212);
+      outline: none;
+      border: none;
+      height: 20px;
+      border-radius: 10px;
+      color: white;
+      padding: 10px;
+      font-size: medium;
+    }
+
+    #host:focus {
+      background-color: rgba(124, 124, 124, 0.212);
+      border: 1px solid red;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      background: red;
+      border-bottom: 3px solid rgb(194, 1, 1);
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: rgb(129, 2, 2);
+      border-bottom: 3px solid rgb(114, 0, 0);
+    }
+  </style>
+</head>
+
+<body onload="onLoaded()">
+  <img class="logo" src="./logo_full.svg" />
+  <img id="spinner" src="./spinner.svg" />
+  <div id="user-input">
+    <p class="message">No response from service. Enter the correct IP and port to access Medflix service</p>
+    <input id="host" placeholder="12.43.567.890:5000" />
+    <button onclick="tryPing(host.value)">OK</button>
+  </div>
+
+  <script>
+    const spinner = document.getElementById('spinner');
+    const inputSection = document.getElementById('user-input');
+    const host = document.getElementById('host');
+
+    function setLoadingState(isLoading) {
+      spinner.style.display = isLoading ? "block" : "none";
+      inputSection.style.display = isLoading ? "none" : "flex";
+    }
+
+    async function onLoaded() {
+      const hostAdress = await window.api.getHostAdress();
+      await tryPing(hostAdress)
+    }
+
+    async function tryPing(hostAdress) {
+      setLoadingState(true);
+
+      try {
+        const response = await fetch(`http://${hostAdress}/ping`, { signal: AbortSignal.timeout(5000) });
+        if (response.ok) {
+          window.api.updateHostAdress(hostAdress);
+          window.location.href = `http://${hostAdress}/home/index.html`;
+        }
+        else {
+          setLoadingState(false);
+        }
+      }
+      catch {
+        setLoadingState(false);
+      }
+    }
+  </script>
+</body>
+
+</html>

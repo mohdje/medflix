@@ -1,0 +1,42 @@
+{
+  "name": "Medflix",
+  "version": "3.2.0",
+  "main": "main.js",
+  "description": "Watch any movie and tv show",
+  "author": "djemoh <your.email@example.com>",
+  "homepage": "https://medflix.vercel.app/",
+  "license": "ISC",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "keywords": [],
+  "devDependencies": {
+    "electron": "^41.7.1",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.medflix.app",
+    "productName": "Medflix",
+    "directories": {
+      "output": "dist"
+    },
+    "extraFiles": [
+      "vlc_script.sh"
+    ],
+    "mac": {
+      "icon": "icon.icns",
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.utilities"
+    },
+    "linux": {
+      "target": [
+        "deb"
+      ],
+      "executableName": "medflix",
+      "icon": "icon.svg"
+    }
+  }
+}
