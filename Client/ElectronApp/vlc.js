@@ -3,6 +3,7 @@ const { exec, spawn } = require('child_process')
 const fs = require('fs')
 const path = require('path');
 const { getCliendId, getHostAdress } = require('./config.js');
+const { url } = require('inspector');
 
 async function launchVLC(mainWindow, parameters, callback) {
     const isVlcInstalled = await checkVlcInstalledAsync();
@@ -26,16 +27,28 @@ async function launchVLC(mainWindow, parameters, callback) {
 
     const subfiles = await buildSubtitlesCommandLine(mainWindow, hostUrl, parameters.subtitlesSources);
 
-    const command = `vlc --extraintf rc --rc-host=localhost:4212 --no-loop --no-repeat --no-rc-fake-tty --start-time=${parameters.watchMedia.currentTime} ${playListFile} ${subfiles} :http-user-agent="${getCliendId()}"`;
+    const openVlcCommand = process.platform === 'darwin' ? "open -a VLC --args" : "vlc";
+    const command = `${openVlcCommand} --extraintf rc --rc-host=localhost:4212 --no-loop --no-repeat --no-rc-fake-tty --start-time=${parameters.watchMedia.currentTime} ${playListFile} ${subfiles} :http-user-agent="${getCliendId()}"`;
 
-    const event = listenToPlaybackProgress(async (time, videoUrl) => onPlaybackProgress(hostUrl, parameters.watchMedia, time, videoUrl));
+    const event = listenToPlaybackProgress(async (time, videoUrl) => onPlaybackProgress(hostUrl, parameters.watchMedia, time, videoUrl)
+        , (error) => {
+            console.error(error);
+            onExitVlcPlayer();
+        });
+
+    const onExitVlcPlayer = () => {
+        clearInterval(event);
+        if (fs.existsSync(playListFile))
+            fs.rmSync(playListFile);
+        callback();
+    }
 
     exec(command, { shell: '/bin/bash' }, (error, stdout, stderr) => {
         if (error)
             console.log("error:", error);
 
-        clearInterval(event);
-        callback();
+        if (process.platform !== 'darwin')
+            onExitVlcPlayer();
     })
 }
 
@@ -45,17 +58,17 @@ async function buildPlaylist(hostUrl, sourcesList, watchMedia) {
         content += `#EXTINF:-1,${ms.language} – ${ms.quality}\n`;
         content += `${buildStreamUrl(hostUrl, ms, watchMedia.media.id, watchMedia.episodeNumber, watchMedia.seasonNumber)}\n`;
     });
-    const playListFile = path.join(app.getPath('userData'), "Medflix.m3u");
+    const playListFile = path.join(app.getPath('videos'), "Medflix.m3u");
     await fs.promises.writeFile(playListFile, content, 'utf-8');
     return playListFile;
 }
 
 function checkVlcInstalledAsync() {
     return new Promise((resolve, reject) => {
-        exec("which vlc", { shell: '/bin/bash' }, (error, stdout, stderr) => {
+        const command = process.platform === 'darwin' ? "mdfind \"kMDItemCFBundleIdentifier == 'org.videolan.vlc'\"" : "which vlc";
+        exec(command, { shell: '/bin/bash' }, (error, stdout, stderr) => {
             if (error)
                 resolve(false);
-
             resolve(Boolean(stdout));
         });
     });
@@ -64,12 +77,17 @@ function checkVlcInstalledAsync() {
 async function buildSubtitlesCommandLine(mainWindow, hostUrl, subtitlesSources) {
     const languages = subtitlesSources.map(ss => ss.language);
     if (languages?.length > 0) {
+        const none = "None";
+        if (process.platform === 'darwin')
+            languages.unshift(none);
+        else
+            languages.push(none);
+
         const result = await dialog.showMessageBox(mainWindow, {
-            buttons: [...languages, "None"],
+            buttons: languages,
             message: `Subtitles are available for this media. Pick the language of your choice.`
         });
-        if (result.response < languages.length) {
-
+        if (result.response !== languages.indexOf(none)) {
             var urls = subtitlesSources.find(ss => ss.language === languages[result.response]).urls.slice(0, 2);
             return `:input-slave=${urls.map((url) => `${hostUrl}/subtitles/file/${encodeToBase64(url)}.srt`).join("#")}`;
         }
@@ -106,30 +124,39 @@ function buildStreamUrl(hostUrl, mediaSource, mediaId, episodeNumber, seasonNumb
     }
 }
 
-function listenToPlaybackProgress(onProgress) {
-    const scriptFile = path.join(__dirname, "vlc_script.sh");
+function listenToPlaybackProgress(onProgress, onError) {
+    const containingFolder = process.platform === 'darwin' && app.isPackaged ? app.getAppPath().replace("Resources/app.asar", "scripts") : path.join(app.getAppPath(), "scripts");
+    const scriptFile = path.join(containingFolder, "vlc_script.sh");
     return setInterval(() => {
-        exec(scriptFile, { shell: '/bin/bash' }, (error, stdout, stderr) => {
-            if (error) {
-                console.error(error);
-                return;
-            }
+        const script = spawn("bash", [scriptFile]);
+        script.stdout.on('data', (stdout) => {
             try {
                 const data = JSON.parse(stdout);
-                if (data.time && data.url) {
+                if (data.status !== "playing")
+                    onError();
+                else if (data.time && data.url) {
                     onProgress(data.time, data.url);
                 }
-
             } catch (err) {
-                console.error(err);
+                if (onError)
+                    onError(err);
             }
+        });
+
+        script.stderr.on('data', (err) => {
+            if (onError)
+                onError(err);
+        });
+
+        script.on('exit', (code) => {
+            if (code !== 0 && onError)
+                onError("Exit code = " + code);
         });
     }, 15000);
 }
 
 async function onPlaybackProgress(hostUrl, watchMedia, time, videoUrl) {
     watchMedia.currentTime = time;
-
     const src = new URL(videoUrl);
     let base64torrentUrl = src.searchParams.get("base64TorrentUrl");
     let base64VideoPath = src.searchParams.get("base64VideoPath");

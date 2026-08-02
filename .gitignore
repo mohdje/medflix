@@ -15,9 +15,8 @@ Backend/MoviesAPI/MoviesApiSample/Tokens.cs
 Backend/WebHostStreaming/WebHostStreaming/Helpers/Tokens.cs
 Backend/WebHostStreaming/WebHostStreaming/wwwroot/home
 
-Client/WebApp/node_modules/
-Client/WebApp/build/
-Client/WebApp/.eslintcache
+Client/ElectronApp/node_modules/
+Client/ElectronApp/dist/
 Client/ReactApp/node_modules/
 Client/ReactApp/build/
 Client/ReactApp/.eslintcache
