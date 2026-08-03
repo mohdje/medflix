@@ -30,7 +30,7 @@ async function launchVLC(mainWindow, parameters, callback) {
     const openVlcCommand = process.platform === 'darwin' ? "open -a VLC --args" : "vlc";
     const command = `${openVlcCommand} --extraintf rc --rc-host=localhost:4212 --no-loop --no-repeat --no-rc-fake-tty --start-time=${parameters.watchMedia.currentTime} ${playListFile} ${subfiles} :http-user-agent="${getCliendId()}"`;
 
-    const event = listenToPlaybackProgress(async (time, videoUrl) => onPlaybackProgress(hostUrl, parameters.watchMedia, time, videoUrl)
+    const event = listenToPlaybackProgress(async (time, videoUrl, totalDuration) => onPlaybackProgress(hostUrl, parameters.watchMedia, time, videoUrl, totalDuration)
         , (error) => {
             console.error(error);
             onExitVlcPlayer();
@@ -45,7 +45,7 @@ async function launchVLC(mainWindow, parameters, callback) {
 
     exec(command, { shell: '/bin/bash' }, (error, stdout, stderr) => {
         if (error)
-            console.log("error:", error);
+            console.error("error:", error);
 
         if (process.platform !== 'darwin')
             onExitVlcPlayer();
@@ -125,7 +125,7 @@ function buildStreamUrl(hostUrl, mediaSource, mediaId, episodeNumber, seasonNumb
 }
 
 function listenToPlaybackProgress(onProgress, onError) {
-    const containingFolder = process.platform === 'darwin' && app.isPackaged ? app.getAppPath().replace("Resources/app.asar", "scripts") : path.join(app.getAppPath(), "scripts");
+    const containingFolder = path.join(__dirname, app.isPackaged ? "../.." : "", "scripts");
     const scriptFile = path.join(containingFolder, "vlc_script.sh");
     return setInterval(() => {
         const script = spawn("bash", [scriptFile]);
@@ -135,7 +135,7 @@ function listenToPlaybackProgress(onProgress, onError) {
                 if (data.status !== "playing")
                     onError();
                 else if (data.time && data.url) {
-                    onProgress(data.time, data.url);
+                    onProgress(data.time, data.url, data.totalDuration);
                 }
             } catch (err) {
                 if (onError)
@@ -155,8 +155,9 @@ function listenToPlaybackProgress(onProgress, onError) {
     }, 15000);
 }
 
-async function onPlaybackProgress(hostUrl, watchMedia, time, videoUrl) {
+async function onPlaybackProgress(hostUrl, watchMedia, time, videoUrl, totalDuration) {
     watchMedia.currentTime = time;
+    watchMedia.totalDuration = totalDuration;
     const src = new URL(videoUrl);
     let base64torrentUrl = src.searchParams.get("base64TorrentUrl");
     let base64VideoPath = src.searchParams.get("base64VideoPath");

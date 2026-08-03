@@ -21,6 +21,9 @@
     "directories": {
       "output": "dist"
     },
+    "asarUnpack": [
+      "**/scripts/**"
+    ],
     "extraFiles": [
       {
         "from": "scripts/",

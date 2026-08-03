@@ -9,7 +9,7 @@
 </linearGradient>
 </defs>
 <!-- Background rectangle with 40px corner radius -->
-<rect transform="matrix(1 0 0 1 0 0) translate(227,227.5)" x="-204.8675" y="-205.31875" width="409.735" height="410.6375" rx="40" ry="40" fill="url(#SVGID_104)"></rect>
+<rect transform="matrix(1 0 0 1 0 0) translate(227,227.5)" x="-166.342675" y="-166.0570875" width="332.68535" height="332.114175" rx="40" ry="40" fill="url(#SVGID_104)"></rect>
 <g transform="matrix(3.99 0 0 3.99 704.38 227.11)"  >
 <path style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1;"  transform=" translate(-139.45, -19.96)" d="M 31.953 38.5937 l 6.5625 0 l 0 -27.422 l -6.5625 9.6094 l 0 17.813 z M 38.516 1.4059999999999988 l -7.0313 0 l -11.484 17.813 l -11.406 -17.813 l -7.0313 0 l 0 37.188 l 6.5625 0 l 0 -26.406 l 11.719 17.578 l 0.23438 0 l 10.234 -15.156 c 0.052109 -0.20836 2.7865 -4.6094 8.2031 -13.203 " stroke-linecap="round" />
 </g>
