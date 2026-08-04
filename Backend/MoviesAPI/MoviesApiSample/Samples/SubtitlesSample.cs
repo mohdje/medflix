@@ -16,55 +16,19 @@ namespace MoviesApiSample.Samples
 
         public async Task Test()
         {
-            //await GetMovieSubtitlesAsync("tt1431045", SubtitlesLanguage.French);
-            await GetSerieSubtitlesAsync(1, 5, "tt19854762", SubtitlesLanguage.French);
-            //await DisplaySubtitles("https://yts-subs.com/subtitles/deadpool-2016-english-yify-280634");
-        }
-
-        private async Task GetMovieSubtitlesAsync(string imdbCode, SubtitlesLanguage language)
-        {
-            Console.WriteLine($"Search {language} subtitles for {imdbCode}");
-
-            var availableSubtitlesUrls = await subtitlesSearchManager.GetAvailableMovieSubtitlesUrlsAsync(imdbCode, language);
+            var language = SubtitlesLanguage.French;
+            var availableSubtitlesUrls = await subtitlesSearchManager.GetAvailableMovieSubtitlesUrlsAsync("tt1431045", language);
+            //var availableSubtitlesUrls = await subtitlesSearchManager.GetAvailableSerieSubtitlesUrlsAsync(1, 5, "tt19854762", language);
 
             if (availableSubtitlesUrls == null || !availableSubtitlesUrls.Any())
+            {
                 Console.WriteLine("No subtitles found");
-            else
-            {
-                Console.WriteLine($"subtitles found:{language} - {string.Join(',', availableSubtitlesUrls)}");
-
-                await DisplaySubtitles(availableSubtitlesUrls.First());
+                return;
             }
-        }
 
-
-        private async Task GetSerieSubtitlesAsync(int seasonNumber, int episodeNumber, string imdbCode, SubtitlesLanguage language)
-        {
-            Console.WriteLine($"Search {language} subtitles for {imdbCode}");
-
-            var availableSubtitlesUrls = await subtitlesSearchManager.GetAvailableSerieSubtitlesUrlsAsync(seasonNumber, episodeNumber, imdbCode, language);
-
-            if (availableSubtitlesUrls == null || !availableSubtitlesUrls.Any())
-                Console.WriteLine("No subtitles found");
-            else
-            {
-                Console.WriteLine($"subtitles found:{language} - {string.Join(',', availableSubtitlesUrls)}");
-
-                await DisplaySubtitles(availableSubtitlesUrls.First());
-            }
-        }
-
-        private async Task DisplaySubtitles(string subtitlesSourceUrl)
-        {
-            var subtitles = await subtitlesSearchManager.GetSubtitlesAsync(subtitlesSourceUrl);
-
-            if (subtitles == null || !subtitles.Any())
-                Console.WriteLine($"Enable to get subtitles from {subtitlesSourceUrl}");
-
-            foreach (var sub in subtitles.Take(15))
-            {
-                Console.WriteLine($"{sub.StartTime} - {sub.EndTime} : {sub.Text}");
-            }
+            Console.WriteLine($"subtitles found:{language} - {string.Join(',', availableSubtitlesUrls)}");
+            var file = await subtitlesSearchManager.DownloadSubtitlesFileAsync(availableSubtitlesUrls.FirstOrDefault());
+            Console.WriteLine("file downloaded: " + file);
         }
     }
 }

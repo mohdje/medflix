@@ -1,24 +1,38 @@
 ﻿
 using System;
 using System.Threading.Tasks;
-using MoviesAPI.Services.Subtitles;
 using MoviesApiSample.Samples;
 
 namespace MoviesApiSample
 {
     class Program
     {
-       
+
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Test started");
+            var test = args[0];
+            var tmdbToken = args[1];
 
-            // await new MoviesSample(Tokens.API_TOKEN).Test();
-            // await new SeriesSample(Tokens.API_TOKEN).Test();
-            //   await new TorrentSample().Test();
-            await new SubtitlesSample().Test();
-
-            Console.ReadKey();
+            if (test == "subtitles")
+            {
+                await new SubtitlesSample().Test();
+                return;
+            }
+            else if (test == "movies")
+            {
+                await new MoviesSample(tmdbToken).Test();
+                return;
+            }
+            else if (test == "series")
+            {
+                await new SeriesSample(tmdbToken).Test();
+                return;
+            }
+            else if (test == "torrent")
+            {
+                await new TorrentSample().Test();
+                return;
+            }
         }
     }
 }
