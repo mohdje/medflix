@@ -1,6 +1,4 @@
-﻿using MoviesAPI.Services.Subtitles.DTOs;
-using MoviesAPI.Services.Subtitles.Searchers;
-using System;
+﻿using MoviesAPI.Services.Subtitles.Searchers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,19 +43,19 @@ namespace MoviesAPI.Services.Subtitles
             return resultDtos?.Where(r => r != null).SelectMany(r => r);
         }
 
-        public async Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitlesSourceUrl)
+        public async Task<string> DownloadSubtitlesFileAsync(string subtitlesSourceUrl)
         {
             var subtitlesMoviesSearcher = subtitlesMovieSearchers.SingleOrDefault(s => s.Match(subtitlesSourceUrl));
 
             if (subtitlesMoviesSearcher != null)
-                return await subtitlesMoviesSearcher.GetSubtitlesAsync(subtitlesSourceUrl);
+                return await subtitlesMoviesSearcher.DownloadSubtitlesFileAsync(subtitlesSourceUrl);
 
             var subtitlesSerieSearcher = subtitlesSerieSearchers.SingleOrDefault(s => s.Match(subtitlesSourceUrl));
 
             if (subtitlesSerieSearcher != null)
-                return await subtitlesSerieSearcher.GetSubtitlesAsync(subtitlesSourceUrl);
+                return await subtitlesSerieSearcher.DownloadSubtitlesFileAsync(subtitlesSourceUrl);
 
-            return [];
+            return null;
         }
     }
 }

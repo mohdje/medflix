@@ -1,5 +1,4 @@
 ﻿using MoviesAPI.Helpers;
-using MoviesAPI.Services.Subtitles.DTOs;
 using MoviesAPI.Services.Subtitles.Searchers;
 using System;
 using System.Collections.Generic;
@@ -53,20 +52,20 @@ namespace MoviesAPI.Services.Subtitles
             return subtitlesSourceLinks;
         }
 
-        public async Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitlesSourceUrl)
+        public async Task<string> DownloadSubtitlesFileAsync(string subtitlesSourceUrl)
         {
             var doc = await HttpRequester.GetHtmlDocumentAsync(subtitlesSourceUrl);
 
             if (doc == null)
-                return Array.Empty<SubtitlesDto>();
+                return null;
 
             var base64dataLink = doc.DocumentNode.SelectSingleNode("//a[@id='btn-download-subtitle']")?.Attributes["data-link"]?.Value;
             var subtitlesDownloadUrl = Base64Decode(base64dataLink);
 
             if (string.IsNullOrEmpty(subtitlesDownloadUrl))
-                return Array.Empty<SubtitlesDto>();
+                return null;
 
-            return await subtitlesDownloader.DownloadSubtitlesAsync(subtitlesDownloadUrl);
+            return await subtitlesDownloader.DownloadSubtitlesFileAsync(subtitlesDownloadUrl);
         }
 
         public bool Match(string subtitlesSourceUrl)
@@ -92,5 +91,7 @@ namespace MoviesAPI.Services.Subtitles
             var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
             return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
+
+
     }
 }

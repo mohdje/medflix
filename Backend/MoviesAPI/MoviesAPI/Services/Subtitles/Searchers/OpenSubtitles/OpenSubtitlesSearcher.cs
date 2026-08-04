@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Linq;
 using MoviesAPI.Services.Subtitles.OpenSubtitlesHtml.DTOs;
 using MoviesAPI.Helpers;
-using MoviesAPI.Services.Subtitles.DTOs;
 using MoviesAPI.Services.Subtitles.Searchers;
 using System.Text.Json;
 
@@ -36,9 +35,9 @@ namespace MoviesAPI.Services.Subtitles
             return response != null ? response.Select(r => r.ZipDownloadLink).Where(l => !string.IsNullOrEmpty(l)) : Array.Empty<string>();
         }
 
-        public async Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitleSourceUrl)
+        public async Task<string> DownloadSubtitlesFileAsync(string subtitlesSourceUrl)
         {
-            return await subtitlesDownloader.DownloadSubtitlesAsync(subtitleSourceUrl);
+            return await subtitlesDownloader.DownloadSubtitlesFileAsync(subtitlesSourceUrl);
         }
 
         private string GetLanguageCode(SubtitlesLanguage subtitlesLanguage)
@@ -58,5 +57,6 @@ namespace MoviesAPI.Services.Subtitles
         {
             return subtitlesSourceUrl.StartsWith(subtitlesDownloadBaseUrl) || subtitlesSourceUrl.StartsWith(baseUrl);
         }
+
     }
 }

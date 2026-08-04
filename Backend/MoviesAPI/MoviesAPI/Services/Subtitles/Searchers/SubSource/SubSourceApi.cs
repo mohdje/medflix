@@ -1,11 +1,9 @@
 ﻿using MoviesAPI.Helpers;
-using MoviesAPI.Services.Subtitles.DTOs;
 using MoviesAPI.Services.Subtitles.Searchers.SubSource.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MoviesAPI.Services.Subtitles.Searchers
@@ -57,9 +55,9 @@ namespace MoviesAPI.Services.Subtitles.Searchers
             return await GetSubtitlesDownloadLinks(selelectedSubtitles);
         }
 
-        public async Task<IEnumerable<SubtitlesDto>> GetSubtitlesAsync(string subtitlesSourceUrl)
+        public async Task<string> DownloadSubtitlesFileAsync(string subtitlesSourceUrl)
         {
-            return await subtitlesDownloader.DownloadSubtitlesAsync(subtitlesSourceUrl);
+            return await subtitlesDownloader.DownloadSubtitlesFileAsync(subtitlesSourceUrl);
         }
 
         public bool Match(string subtitlesSourceUrl)
@@ -158,5 +156,6 @@ namespace MoviesAPI.Services.Subtitles.Searchers
                     return null;
             }
         }
+
     }
 }
