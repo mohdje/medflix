@@ -1,5 +1,4 @@
 using HtmlAgilityPack;
-using System;
 using System.Linq;
 
 namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
@@ -12,7 +11,7 @@ namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
 
         protected override string TorrentLinkPageIdentifier => "//a[contains(@href, '/torrent/')]";
 
-        protected override string TorrentLinkButtonsIdentifier => "//a[starts-with(@href, 'magnet:') or starts-with(@href, '/download/torrent/')]";
+        protected override string TorrentLinkButtonsIdentifier => "//a[starts-with(@href, '/download/torrent/')]";
 
         protected override string MediaQualityIdentifier => "//h1[contains(@class, 'text-lg')]";
 
