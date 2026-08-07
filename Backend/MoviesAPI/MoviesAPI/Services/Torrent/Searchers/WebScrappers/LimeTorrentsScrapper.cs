@@ -5,7 +5,7 @@ namespace MoviesAPI.Services.Torrent.Searchers.WebScrappers
 {
     internal class LimeTorrentsScrapper : TorrentWebScrapper
     {
-        public override string Url => "http://www.limetorrents.lol";
+        public override string Url => "http://www.limetorrents.fun";
 
         protected override string SearchResultListIdentifier => "//table[@class='table2']//div[@class='tt-name']";
 
