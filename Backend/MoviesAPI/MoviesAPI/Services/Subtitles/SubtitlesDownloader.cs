@@ -13,9 +13,6 @@ namespace MoviesAPI.Services.Subtitles
     internal class SubtitlesDownloader
     {
         private readonly string ExtractionFolder;
-        private static readonly Regex _rgxCueID = new Regex(@"^\d+$");
-        private static readonly Regex _rgxTimeFrame = new Regex(@"(\d\d:\d\d:\d\d(?:[,.]\d\d\d)?) --> (\d\d:\d\d:\d\d(?:[,.]\d\d\d)?)");
-
         internal SubtitlesDownloader(string extractionFolder) : base()
         {
             if (string.IsNullOrEmpty(extractionFolder))

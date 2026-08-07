@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebHostStreaming.Providers;
+using WebHostStreaming.Converters;
 using MoviesAPI.Services.Subtitles;
-using MoviesAPI.Services.Subtitles.DTOs;
+using System.IO;
+using WebHostStreaming.Extensions;
+using WebHostStreaming.Models;
 
 namespace WebHostStreaming.Controllers
 {
@@ -11,10 +14,13 @@ namespace WebHostStreaming.Controllers
     [ApiController]
     public class SubtitlesController : ControllerBase
     {
-        ISearchersProvider searchersProvider;
-        public SubtitlesController(ISearchersProvider searchersProvider)
+        private readonly ISearchersProvider searchersProvider;
+        private readonly ISubtitlesConverter subtitlesConverter;
+
+        public SubtitlesController(ISearchersProvider searchersProvider, ISubtitlesConverter subtitlesConverter)
         {
             this.searchersProvider = searchersProvider;
+            this.subtitlesConverter = subtitlesConverter;
         }
 
         [HttpGet("movies/fr")]
@@ -44,7 +50,32 @@ namespace WebHostStreaming.Controllers
         [HttpGet]
         public async Task<IEnumerable<SubtitlesDto>> GetSubtitles([FromQuery(Name = "sourceUrl")] string sourceUrl)
         {
-            return await searchersProvider.SubtitlesSearchManager.GetSubtitlesAsync(sourceUrl);
+            var filePath = await searchersProvider.SubtitlesSearchManager.DownloadSubtitlesFileAsync(sourceUrl);
+            if (!string.IsNullOrEmpty(filePath) && System.IO.File.Exists(filePath))
+            {
+                var subtitles = await subtitlesConverter.ToSubtitlesDtoAsync(filePath);
+                System.IO.File.Delete(filePath);
+                return subtitles;
+            }
+            return [];
+        }
+
+        [HttpGet("file/{subtitlesFileUrlBase64}.srt")]
+        public async Task<IActionResult> GetSubtitlesFile([FromRoute] string subtitlesFileUrlBase64)
+        {
+            var url = subtitlesFileUrlBase64.DecodeBase64();
+            var filePath = await searchersProvider.SubtitlesSearchManager.DownloadSubtitlesFileAsync(url);
+
+            if (string.IsNullOrEmpty(filePath))
+                return NotFound();
+
+            var bytes = await System.IO.File.ReadAllBytesAsync(filePath);
+            System.IO.File.Delete(filePath);
+
+            var fileName = Path.GetFileName(filePath);
+            Response.Headers.ContentDisposition = $"inline; filename=\"{fileName}\"";
+
+            return File(bytes, "application/x-subrip;", fileName);
         }
     }
 }

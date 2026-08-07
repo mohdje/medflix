@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using WebHostStreaming.Converters;
 using WebHostStreaming.Providers;
 using WebHostStreaming.Torrent;
 
@@ -17,6 +18,11 @@ namespace WebHostStreaming.StartupExtensions
             services.AddSingleton<IWatchedSeriesProvider, WatchedSeriesProvider>();
             services.AddSingleton<IRecommandationsProvider, RecommandationsProvider>();
             services.AddSingleton<ITorrentAutoDownloader, TorrentAutoDownloader>();
+        }
+
+        public static void AddConverters(this IServiceCollection services)
+        {
+            services.AddSingleton<ISubtitlesConverter, SubtitlesConverter>();
         }
     }
 }

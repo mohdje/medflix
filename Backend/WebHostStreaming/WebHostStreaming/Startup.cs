@@ -32,6 +32,7 @@ namespace WebHostStreaming
             services.AddControllers();
 
             services.AddProviders();
+            services.AddConverters();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
