@@ -21,62 +21,25 @@ namespace WebHostStreaming.Providers
         public async Task<IEnumerable<LiteContentDto>> GetMoviesRecommandationsAsync()
         {
             var watchedMovies = watchedMoviesProvider.GetWatchedMovies();
-            var recommandationsRequest = BuildRecommandationsRequest(watchedMovies);
-
-            if (recommandationsRequest == null)
-                return Array.Empty<LiteContentDto>();
-
-            return await searchersProvider.MovieSearcher.GetRecommandationsAsync(
-                recommandationsRequest.GenreIds,
-                recommandationsRequest.MinDate,
-                recommandationsRequest.MaxDate,
-                recommandationsRequest.ExcludedMediasIds);
+            return await GetRecommandationsAsync(watchedMovies, searchersProvider.MovieSearcher.GetSimilarMoviesAsync);
         }
 
         public async Task<IEnumerable<LiteContentDto>> GetSeriesRecommandationsAsync()
         {
             var watchedSeries = watchedSeriesProvider.GetWatchedSeries();
-            var recommandationsRequest = BuildRecommandationsRequest(watchedSeries);
-
-            if (recommandationsRequest == null)
-                return [];
-
-            return await searchersProvider.SeriesSearcher.GetRecommandationsAsync(
-                recommandationsRequest.GenreIds,
-                recommandationsRequest.MinDate,
-                recommandationsRequest.MaxDate,
-                recommandationsRequest.ExcludedMediasIds);
+            return await GetRecommandationsAsync(watchedSeries, searchersProvider.SeriesSearcher.GetSimilarSeriesAsync);
         }
 
-        private RecommandationsRequest BuildRecommandationsRequest(IEnumerable<WatchedMediaDto> watchedMedias)
+        private async Task<IEnumerable<LiteContentDto>> GetRecommandationsAsync(IEnumerable<WatchedMediaDto> watchedMedias, Func<string, Task<IEnumerable<LiteContentDto>>> GetSimilarMediasAsync)
         {
-            if (watchedMedias == null || !watchedMedias.Any())
-                return null;
-            else
-            {
-                var watchedMediasIds = watchedMedias.Select(w => w.Media.Id).Distinct();
-                var minDate = GetMinDate(watchedMedias);
-                var maxDate = GetMaxDate(watchedMedias);
+            var getSimilarMediasTasks = watchedMedias.DistinctBy(wm => wm.Media.Id).Take(3).Select(wm => GetSimilarMediasAsync(wm.Media.Id));
 
-                var allGenresIds = watchedMedias.Where(w => w.Media.Genres != null && w.Media.Genres.Any()).TakeLast(3).Reverse().SelectMany(w => w.Media.Genres.Select(genre => genre.Id));
-                var genresCount = allGenresIds.Distinct().Select(genreId => new { Id = genreId, Count = allGenresIds.Count(gId => genreId == gId) });
+            var similarMedias = await Task.WhenAll(getSimilarMediasTasks);
 
-                var selectedGenresIds = genresCount.OrderByDescending(g => g.Count).Select(g => g.Id.ToString()).Take(3);
-
-                return new RecommandationsRequest(selectedGenresIds.ToArray(), minDate, maxDate, watchedMediasIds.ToArray());
-            }
-        }
-
-        private string GetMinDate(IEnumerable<WatchedMediaDto> watchedMedias)
-        {
-            var year = watchedMedias.Min(w => w.Media.Year);
-            return $"{year}-01-01";
-        }
-        private string GetMaxDate(IEnumerable<WatchedMediaDto> watchedMedias)
-        {
-            var year = watchedMedias.Max(w => w.Media.Year);
-            return DateTime.Now.Year == year ? DateTime.Now.ToString("yyyy-MM-dd") : $"{year}-12-31";
-
+            return similarMedias.SelectMany(m => m)
+                .Where(m => watchedMedias.Any(wm => wm.Media.Id != m.Id))
+                .OrderByDescending(m => m.Rating)
+                .Take(15);
         }
     }
 }

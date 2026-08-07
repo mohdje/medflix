@@ -65,11 +65,6 @@ namespace MoviesAPI.Services.Content
             return await GetPopularAppleTvContentAsync();
         }
 
-        public async Task<IEnumerable<LiteContentDto>> GetRecommandationsAsync(string[] genreIds, string minDate, string maxDate, string[] excludedTmdbContentIds)
-        {
-            return await GetRecommandedContentAsync(genreIds, minDate, maxDate, excludedTmdbContentIds);
-        }
-
         public async Task<IEnumerable<LiteContentDto>> GetSimilarSeriesAsync(string serieId)
         {
             return await GetSimilarContentAsync(serieId);
