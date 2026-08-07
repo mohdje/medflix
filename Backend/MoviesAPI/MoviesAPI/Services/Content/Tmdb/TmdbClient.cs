@@ -121,7 +121,7 @@ namespace MoviesAPI.Services.Tmdb
         {
             var tmdbImages = await HttpRequester.GetAsync<TmdbImages>(tmdbUrlBuilder.BuildGetImagesUrl(tmdbContentId));
 
-            var filePath = tmdbImages?.Logos.Where(l => string.IsNullOrEmpty(l.CountryCode) || l.CountryCode == "en").OrderBy(l => l.VoteAverage).FirstOrDefault()?.FilePath;
+            var filePath = tmdbImages?.Logos.Where(l => l.CountryCode == "en").OrderBy(l => l.VoteAverage).FirstOrDefault()?.FilePath;
 
             return String.IsNullOrEmpty(filePath) ? null : tmdbUrlBuilder.BuildLogoImageUrl(filePath);
         }
