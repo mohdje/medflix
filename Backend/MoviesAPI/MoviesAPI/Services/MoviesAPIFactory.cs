@@ -30,6 +30,8 @@ namespace MoviesAPI.Services
             var ytsRsWebScrapper = new YtsRsWebScrapper();
             var ytsApiSearcher = new YtsApiSearcher();
             var bitSearchScrapper = new BitSearchScrapper();
+            var limeTorrentsScrapper = new LimeTorrentsScrapper();
+
 
             IEnumerable<ITorrentSearcher> vfTorrentSearchers = [zeTorrentScrapper, torrent9Scrapper, oxTorrentScrapper];
 
@@ -37,7 +39,7 @@ namespace MoviesAPI.Services
                 vfTorrentSearchers,
                 [ytsApiSearcher, ytsDoWebScrapper],
                 vfTorrentSearchers,
-                [bitSearchScrapper]);
+                [limeTorrentsScrapper]);
         }
 
         public static SubtitlesSearchManager CreateSubstitlesSearchManager(string subtitlesFolder)
