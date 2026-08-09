@@ -51,8 +51,8 @@ namespace WebHostStreaming.Converters
                     throw new FormatException($"Invalid timecode format in line: {timecodeLine}");
 
                 var subtitlesDto = new SubtitlesDto();
-                subtitlesDto.StartTime = TimeSpan.Parse(timecodes[0]).TotalSeconds;
-                subtitlesDto.EndTime = TimeSpan.Parse(timecodes[1]).TotalSeconds;
+                subtitlesDto.StartTime = ParseTimeToSeconds(timecodes[0]);
+                subtitlesDto.EndTime = ParseTimeToSeconds(timecodes[1]);
 
                 i++;
                 var subtitleText = string.Empty;

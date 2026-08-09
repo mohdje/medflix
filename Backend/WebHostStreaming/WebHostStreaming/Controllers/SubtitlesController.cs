@@ -48,7 +48,7 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<SubtitlesDto>> GetSubtitles([FromQuery(Name = "sourceUrl")] string sourceUrl)
+        public async Task<IEnumerable<SubtitlesDto>> GetSubtitles(string sourceUrl)
         {
             var filePath = await searchersProvider.SubtitlesSearchManager.DownloadSubtitlesFileAsync(sourceUrl);
             if (!string.IsNullOrEmpty(filePath) && System.IO.File.Exists(filePath))
