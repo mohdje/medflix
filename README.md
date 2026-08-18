@@ -39,7 +39,7 @@ Then run docker container
 docker run -p 5000:5000 -e ASPNETCORE_HTTP_PORT=5000 -e ASPNETCORE_URLS="http://+:5000" --mount source=medflixVol,target=/medflix-app/storage djemo/medflix:latest
 ```
 
-The web server is now running. Then donwload client application (for Andoird, Windows or Macos) from the Releases section and launch it. The first time the client application is launched the user will be asked to enter IP adress of the machine running the web server and the port (5000 by default).
+The web server is now running. Then donwload client application (for Andoird, Windows or Macos) from the Releases section (or from https://medflix.vercel.app/) and launch it. The first time the client application is launched the user will be asked to enter IP adress of the machine running the web server and the port (5000 by default).
 
 
 
