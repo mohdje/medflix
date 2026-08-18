@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MoviesAPI.Services.Torrent.Dtos;
+using MedflixAPI.Services.Torrent.Dtos;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

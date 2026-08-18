@@ -1,5 +1,5 @@
 ﻿
-using MoviesAPI.Services.Content.Dtos;
+using MedflixAPI.Services.Content.Dtos;
 using System;
 using System.Collections.Generic;
 

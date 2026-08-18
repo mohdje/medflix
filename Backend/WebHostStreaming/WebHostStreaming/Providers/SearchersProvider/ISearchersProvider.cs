@@ -1,7 +1,7 @@
 ﻿
-using MoviesAPI.Services.Content;
-using MoviesAPI.Services.Subtitles;
-using MoviesAPI.Services.Torrent;
+using MedflixAPI.Services.Content;
+using MedflixAPI.Services.Subtitles;
+using MedflixAPI.Services.Torrent;
 
 namespace WebHostStreaming.Providers
 {

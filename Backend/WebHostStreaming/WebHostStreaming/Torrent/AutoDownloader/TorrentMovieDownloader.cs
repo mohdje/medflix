@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MoviesAPI.Services.Torrent.Dtos;
+using MedflixAPI.Services.Torrent.Dtos;
 using WebHostStreaming.Models;
 using WebHostStreaming.Providers;
 

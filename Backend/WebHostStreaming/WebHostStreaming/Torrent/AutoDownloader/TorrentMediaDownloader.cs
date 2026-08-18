@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Threading;
 using WebHostStreaming.Models;
 using System.Collections.Concurrent;
-using MoviesAPI.Services.Torrent.Dtos;
+using MedflixAPI.Services.Torrent.Dtos;
 
 namespace WebHostStreaming.Torrent
 {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using WebHostStreaming.Providers;
 using WebHostStreaming.Models;
 using System.Net;
-using MoviesAPI.Services.Content.Dtos;
+using MedflixAPI.Services.Content.Dtos;
 
 namespace WebHostStreaming.Controllers
 {
@@ -112,7 +112,7 @@ namespace WebHostStreaming.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IEnumerable<LiteContentDto>> SearchMovies([FromQuery(Name ="t")] string text)
+        public async Task<IEnumerable<LiteContentDto>> SearchMovies([FromQuery(Name = "t")] string text)
         {
             return await searchersProvider.MovieSearcher.SearchMoviesAsync(text);
         }

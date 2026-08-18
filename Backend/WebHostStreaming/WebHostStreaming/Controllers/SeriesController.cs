@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using WebHostStreaming.Providers;
 using WebHostStreaming.Models;
 using System.Net;
-using MoviesAPI.Services.Content.Dtos;
+using MedflixAPI.Services.Content.Dtos;
 
 namespace WebHostStreaming.Controllers
 {

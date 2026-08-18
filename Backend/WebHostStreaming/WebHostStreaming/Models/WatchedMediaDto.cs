@@ -1,5 +1,5 @@
 ﻿
-using MoviesAPI.Services.Content.Dtos;
+using MedflixAPI.Services.Content.Dtos;
 
 namespace WebHostStreaming.Models
 {

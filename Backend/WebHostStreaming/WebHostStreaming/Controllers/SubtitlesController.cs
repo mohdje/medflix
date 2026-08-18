@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebHostStreaming.Providers;
 using WebHostStreaming.Converters;
-using MoviesAPI.Services.Subtitles;
+using MedflixAPI.Services.Subtitles;
 using System.IO;
 using WebHostStreaming.Extensions;
 using WebHostStreaming.Models;

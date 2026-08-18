@@ -1,10 +1,10 @@
-﻿using MoviesAPI.Services.Content.Dtos;
+﻿using MedflixAPI.Services.Content.Dtos;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace WebHostStreaming.Providers
 {
-    public abstract class BookmarkedMediaProvider : DataStoreProvider<LiteContentDto> 
+    public abstract class BookmarkedMediaProvider : DataStoreProvider<LiteContentDto>
     {
         protected override int MaxLimit => 30;
 
@@ -15,7 +15,7 @@ namespace WebHostStreaming.Providers
             if (mediaToDelete != null)
                 RemoveData(mediaToDelete);
 
-            return mediaToDelete;   
+            return mediaToDelete;
         }
 
         protected IEnumerable<LiteContentDto> GetBookmarks()
@@ -30,7 +30,7 @@ namespace WebHostStreaming.Providers
 
         protected void AddBookmark(LiteContentDto movieToBookmark)
         {
-            if(Data.Any(m => m.Id == movieToBookmark.Id))
+            if (Data.Any(m => m.Id == movieToBookmark.Id))
                 return;
 
             AddData(movieToBookmark);

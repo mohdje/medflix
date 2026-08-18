@@ -1,7 +1,7 @@
-﻿using MoviesAPI.Services;
-using MoviesAPI.Services.Content;
-using MoviesAPI.Services.Subtitles;
-using MoviesAPI.Services.Torrent;
+﻿using MedflixAPI.Services;
+using MedflixAPI.Services.Content;
+using MedflixAPI.Services.Subtitles;
+using MedflixAPI.Services.Torrent;
 using System.IO;
 using WebHostStreaming.Helpers;
 
@@ -19,11 +19,11 @@ namespace WebHostStreaming.Providers
             if (!Directory.Exists(AppFolders.SubtitlesFolder))
                 Directory.CreateDirectory(AppFolders.SubtitlesFolder);
 
-            SubtitlesSearchManager = MoviesAPIFactory.CreateSubstitlesSearchManager(AppFolders.SubtitlesFolder);
-            TorrentSearchManager = MoviesAPIFactory.CreateTorrentSearchManager();
+            SubtitlesSearchManager = MedflixAPIFactory.CreateSubstitlesSearchManager(AppFolders.SubtitlesFolder);
+            TorrentSearchManager = MedflixAPIFactory.CreateTorrentSearchManager();
 
-            MovieSearcher = MoviesAPIFactory.CreateMovieSearcher(Tokens.TmdbApiKey);
-            SeriesSearcher = MoviesAPIFactory.CreateSeriesSearcher(Tokens.TmdbApiKey);
+            MovieSearcher = MedflixAPIFactory.CreateMovieSearcher(Tokens.TmdbApiKey);
+            SeriesSearcher = MedflixAPIFactory.CreateSeriesSearcher(Tokens.TmdbApiKey);
         }
     }
 }

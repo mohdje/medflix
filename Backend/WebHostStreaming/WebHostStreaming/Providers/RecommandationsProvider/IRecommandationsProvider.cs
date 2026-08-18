@@ -1,4 +1,4 @@
-﻿using MoviesAPI.Services.Content.Dtos;
+﻿using MedflixAPI.Services.Content.Dtos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
