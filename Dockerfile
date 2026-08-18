@@ -16,8 +16,6 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS backendbuild
 
 WORKDIR /medflix-build
 
-#Copy dll with same path inside image because csproj is using this relative path
-COPY ./Backend/MoviesAPI/MoviesAPI/bin/Release/net10.0 /MoviesAPI/MoviesAPI/bin/Release/net10.0
 COPY ./Backend/WebHostStreaming /WebHostStreaming
 
 WORKDIR /WebHostStreaming/WebHostStreaming
