@@ -1,6 +1,25 @@
+# Backend build artifacts
 ./Backend/WebHostStreaming/WebHostStreaming/bin
 ./Backend/WebHostStreaming/WebHostStreaming/cache
 ./Backend/WebHostStreaming/WebHostStreaming/obj
 ./Backend/MovieAPI/MoviesApiSample
+
+# Client exclusions
 ./Client/MauiApp
+node_modules
+npm-debug.log
+
+# Documentation & misc
 ./Screenshots
+**/*.md
+.git
+.gitignore
+.env
+.env.local
+.DS_Store
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
