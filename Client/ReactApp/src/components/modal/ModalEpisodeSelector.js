@@ -6,7 +6,7 @@ import CircularProgressBar from "../common/CircularProgressBar";
 import ProgressionBar from "../common/ProgressionBar";
 import DropDown from "../common/DropDown";
 import { mediasInfoApi, watchHistoryApi } from "../../services/api";
-import { ToTimeFormat } from "../../helpers/timeFormatHelper";
+import { ToTimeFormat } from "../../helpers/formatHelper";
 
 import { useEffect, useState, useRef } from "react";
 

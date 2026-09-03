@@ -5,10 +5,9 @@ import CircularProgressBar from "../components/common/CircularProgressBar";
 import ModalLoadingMessage from "../components/modal/ModalLoadingMessage";
 import { getAvailableMediasVideos, deleteMediasVideos } from "../services/api/mediaVideosManagementApi";
 import { useToast } from "../helpers/customHooks";
-import { formatFileSize } from "../helpers/timeFormatHelper";
+import { formatFileSize } from "../helpers/formatHelper";
 
 import "../style/css/available-medias-videos-page.css";
-
 
 import { useEffect, useRef, useMemo, useState } from "react";
 

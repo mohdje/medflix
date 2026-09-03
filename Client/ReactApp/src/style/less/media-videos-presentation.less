@@ -1,121 +1,136 @@
+@import "variables.less";
+
 .medias-videos-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: @normal-space;
     width: 40%;
-    margin-top: 16px;
-    margin-bottom: 80px;
+    margin-top: @medium-space;
+    margin-bottom: 4 * @large-space;
+
+    @media(@mobile) {
+        width: 80%;
+    }
 }
 
 .media-videos-presentation {
     align-items: flex-start;
-    background-color: #181818;
-    border-radius: 20px;
+    background-color: @black-gray;
+    border-radius: @large-space;
     box-sizing: border-box;
     display: flex;
-    gap: 16px;
+    gap: @medium-space;
     overflow: hidden;
-    padding: 12px;
+    padding: @normal-space;
     width: 100%;
-    border: 1px solid #b6b6b66c;
+    border: 1px solid @gray;
 
     .cover {
-        border-radius: 12px;
-        flex: 0 0 96px;
-        height: 144px;
+        border-radius: @normal-space;
+        flex: 0 0 6 * @large-space - 24px;
+        height: 9 * @large-space - 36px;
         object-fit: cover;
-        width: 96px;
+        width: 6 * @large-space - 24px;
     }
 
     .details {
         min-width: 0;
-        padding-top: 2px;
+        padding-top: @x-small-space;
     }
 
     .title {
         color: white;
-        font-size: 1.15rem;
+        font-size: @large-font-size;
         line-height: 1.25;
         margin: 0;
         overflow-wrap: anywhere;
     }
 
     .year {
-        color: #b8b8b8;
-        margin: 6px 0 0;
+        color: @gray;
+        margin: @small-space 0 0;
     }
 
     .video-file {
-        background-color: #70616198;
-        border-radius: 8px;
-        color: #e5e5e5;
-        font-weight: 700;
-        margin: 8px 0;
-        padding: 8px;
+        background-color: @dark-gray;
+        border-radius: @small-border-radius;
+        color: @gray;
+        font-weight: @strong-semi-bold-font-weight;
+        margin: @normal-space 0;
+        padding: @normal-space;
         cursor: pointer;
         transition: background-color 0.2s ease-in-out;
 
         &:hover {
-            background-color: #97404098;
+            background-color: @dark-red;
         }
 
         &.selected {
-            background-color: rgba(255, 0, 0, 0.774);
+            background-color: @red;
         }
 
         &.margin-top {
-            margin-top: 8px;
+            margin-top: @small-space;
         }
 
         p {
             margin: 0;
+            color: white;
 
             .icon {
-                margin-right: 8px;
-                font-size: 1.5rem;
+                margin-right: @small-space;
+                font-size: @large-font-size;
             }
         }
     }
 
     .media-video-by-season {
-        margin-top: 10px;
+        margin-top: @normal-space;
 
-        .season {
-            display: flex;
-            margin-top: 8px;
+        .season-container {
+            margin: @normal-space 0;
 
-            .expand-icon {
-                margin-left: 8px;
-                cursor: pointer;
-                background-color: white;
-                border-radius: 50%;
-                height: 20px;
-                width: 20px;
-                color: black;
-                text-align: center;
-                box-shadow: 0px 0px 4px 3px rgba(141, 139, 139, 0.5);
-            }
-        }
-
-        .episodes-list {
-            display: none;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 8px;
-            background-color: rgb(48, 48, 48);
-            border-radius: 8px;
-
-            &.expanded {
+            .season-title {
                 display: flex;
+
+                .expand-icon {
+                    margin-left: @small-space;
+                    cursor: pointer;
+                    background-color: white;
+                    border-radius: @border-round;
+                    height: @large-space;
+                    width: @large-space;
+                    color: black;
+                    text-align: center;
+                    box-shadow: 0 0 4px 3px @gray;
+                }
+
+
             }
 
-            .episode-title {
-                margin: 8px 0 0 8px;
+
+            .episodes-list {
+                display: none;
+                flex-direction: column;
+                gap: @small-space;
+                margin-top: @small-space;
+                border: 1px solid @gray;
+                border-radius: @small-border-radius;
+
+                &.expanded {
+                    display: flex;
+                }
+
+                .episode-title {
+                    margin: @small-space 0 0 @small-space;
+                }
+
+                .episode-video-files {
+                    margin: 0 @medium-space @small-space;
+                }
             }
 
-            .episode-video-files {
-                margin: 0 16px 8px;
-            }
         }
+
     }
 }

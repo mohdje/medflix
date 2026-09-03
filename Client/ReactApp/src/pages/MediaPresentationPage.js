@@ -25,7 +25,7 @@ import {
     watchHistoryApi,
     bookmarkApi
 } from "../services/api";
-import { ToTimeFormat } from "../helpers/timeFormatHelper";
+import { ToTimeFormat } from "../helpers/formatHelper";
 import { eventsNames, raiseEvent } from "../helpers/eventHelper.js";
 
 import { useEffect, useState, useRef } from 'react';

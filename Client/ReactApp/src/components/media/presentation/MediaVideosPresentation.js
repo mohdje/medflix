@@ -1,5 +1,5 @@
 import "../../../style/css/media-videos-presentation.css";
-import { formatFileSize } from "../../../helpers/timeFormatHelper";
+import { formatFileSize } from "../../../helpers/formatHelper";
 import { useState } from "react";
 
 function MediaVideosPresentation({ mediaVideos, onVideoSelectionChanged }) {
@@ -65,8 +65,8 @@ function MediaVideosBySeason({ videos, onVideoSelectionChanged }) {
     return (
         <div className="media-video-by-season">
             {seasons.map(seasonNumber => (
-                <div key={seasonNumber} >
-                    <h3 className="season">Season {seasonNumber}<span className="expand-icon" onClick={() => toggleSeason(seasonNumber)}>{expandedSeasons.includes(seasonNumber) ? "-" : "+"}</span></h3>
+                <div key={seasonNumber} className="season-container">
+                    <h3 className="season-title">Season {seasonNumber}<span className="expand-icon" onClick={() => toggleSeason(seasonNumber)}>{expandedSeasons.includes(seasonNumber) ? "-" : "+"}</span></h3>
                     <div className={`episodes-list ${expandedSeasons.includes(seasonNumber) ? "expanded" : ""}`}>
                         <MediaVideosByEpisode videos={videos.filter(video => video.seasonNumber === seasonNumber)} onVideoSelectionChanged={onVideoSelectionChanged} />
                     </div>
