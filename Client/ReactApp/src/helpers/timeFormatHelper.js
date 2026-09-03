@@ -12,3 +12,10 @@ export function ToTimeFormat(totalMinutes) {
 
     return timeFormat;
 }
+
+export function formatFileSize(bytesLength) {
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    if (bytesLength === 0) return '0 Bytes';
+    const i = Math.floor(Math.log(bytesLength) / Math.log(1024));
+    return Math.round(bytesLength / Math.pow(1024, i), 2) + ' ' + sizes[i];
+}

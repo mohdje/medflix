@@ -1,0 +1,121 @@
+.medias-videos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 40%;
+    margin-top: 16px;
+    margin-bottom: 80px;
+}
+
+.media-videos-presentation {
+    align-items: flex-start;
+    background-color: #181818;
+    border-radius: 20px;
+    box-sizing: border-box;
+    display: flex;
+    gap: 16px;
+    overflow: hidden;
+    padding: 12px;
+    width: 100%;
+    border: 1px solid #b6b6b66c;
+
+    .cover {
+        border-radius: 12px;
+        flex: 0 0 96px;
+        height: 144px;
+        object-fit: cover;
+        width: 96px;
+    }
+
+    .details {
+        min-width: 0;
+        padding-top: 2px;
+    }
+
+    .title {
+        color: white;
+        font-size: 1.15rem;
+        line-height: 1.25;
+        margin: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .year {
+        color: #b8b8b8;
+        margin: 6px 0 0;
+    }
+
+    .video-file {
+        background-color: #70616198;
+        border-radius: 8px;
+        color: #e5e5e5;
+        font-weight: 700;
+        margin: 8px 0;
+        padding: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+
+        &:hover {
+            background-color: #97404098;
+        }
+
+        &.selected {
+            background-color: rgba(255, 0, 0, 0.774);
+        }
+
+        &.margin-top {
+            margin-top: 8px;
+        }
+
+        p {
+            margin: 0;
+
+            .icon {
+                margin-right: 8px;
+                font-size: 1.5rem;
+            }
+        }
+    }
+
+    .media-video-by-season {
+        margin-top: 10px;
+
+        .season {
+            display: flex;
+            margin-top: 8px;
+
+            .expand-icon {
+                margin-left: 8px;
+                cursor: pointer;
+                background-color: white;
+                border-radius: 50%;
+                height: 20px;
+                width: 20px;
+                color: black;
+                text-align: center;
+                box-shadow: 0px 0px 4px 3px rgba(141, 139, 139, 0.5);
+            }
+        }
+
+        .episodes-list {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+            background-color: rgb(48, 48, 48);
+            border-radius: 8px;
+
+            &.expanded {
+                display: flex;
+            }
+
+            .episode-title {
+                margin: 8px 0 0 8px;
+            }
+
+            .episode-video-files {
+                margin: 0 16px 8px;
+            }
+        }
+    }
+}

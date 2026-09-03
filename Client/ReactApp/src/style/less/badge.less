@@ -1,0 +1,24 @@
+@import "variables";
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: @small-space @normal-space;
+    margin: @small-space;
+    border-radius: @small-border-radius;
+    font-size: @normal-font-size;
+    font-weight: @semi-bold-font-weight;
+    line-height: 1;
+    cursor: pointer;
+
+    &.active {
+        background-color: @red;
+        color: white;
+    }
+
+    &.inactive {
+        background-color: @black-gray;
+        color: @gray;
+    }
+}

@@ -1,4 +1,5 @@
 import "../style/css/animations.css";
+import "../style/css/toast.css";
 import { useEffect } from 'react';
 
 function useOnClickOutside(ref, handler) {
@@ -71,4 +72,39 @@ function useFadeTransition(ref, visible) {
   }, [ref, visible])
 }
 
-export { useOnClickOutside, useRippleEffect, useFadeTransition };
+function useToast() {
+  useEffect(() => {
+    return () => {
+      document.querySelectorAll('.toast-message-container[data-use-toast="true"]').forEach(toast => {
+        toast.remove();
+      });
+    };
+  }, []);
+
+  return (toastMessage) => {
+    const toast = document.createElement('div');
+    toast.className = 'toast-message-container';
+    toast.dataset.useToast = 'true';
+
+    const messageHeading = document.createElement('h3');
+    messageHeading.textContent = toastMessage;
+    toast.appendChild(messageHeading);
+    document.body.appendChild(toast);
+
+    requestAnimationFrame(() => {
+      toast.classList.add('visible');
+    });
+
+    const hideTimeout = setTimeout(() => {
+      toast.classList.remove('visible');
+      setTimeout(() => toast.remove(), 500);
+    }, 3000);
+
+    return () => {
+      clearTimeout(hideTimeout);
+      toast.remove();
+    };
+  };
+}
+
+export { useOnClickOutside, useRippleEffect, useFadeTransition, useToast };
