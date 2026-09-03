@@ -1,7 +1,8 @@
-﻿
+﻿using System.IO;
+
 namespace WebHostStreaming.Models
 {
-    public partial class VideoInfo
+    public class VideoInfo
     {
         public string FilePath { get; set; }
         public string MediaId { get; set; }
@@ -9,6 +10,17 @@ namespace WebHostStreaming.Models
         public LanguageVersion Language { get; set; }
         public int SeasonNumber { get; set; }
         public int EpisodeNumber { get; set; }
+        private long? bytesLength;
+        public long? BytesLength
+        {
+            get
+            {
+                if (!bytesLength.HasValue && !string.IsNullOrEmpty(FilePath) && File.Exists(FilePath))
+                    bytesLength = new FileInfo(FilePath).Length;
+
+                return bytesLength;
+            }
+        }
         public string Id => $"{MediaId}_{Language}_{SeasonNumber}_{EpisodeNumber}_{Quality}";
         public bool IsSerie => SeasonNumber > 0 && EpisodeNumber > 0;
     }

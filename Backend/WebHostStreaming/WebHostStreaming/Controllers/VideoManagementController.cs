@@ -1,14 +1,12 @@
 ﻿
+using MedflixAPI.Services.Content.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Net.Http.Headers;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using WebHostStreaming.Extensions;
 using WebHostStreaming.Helpers;
 using WebHostStreaming.Models;
@@ -21,10 +19,17 @@ namespace WebHostStreaming.Controllers
     public class VideoManagementController : ControllerBase
     {
         IVideoInfoProvider videoInfoProvider;
-    
-        public VideoManagementController(IVideoInfoProvider videoInfoProvider)
+        ICacheProvider<ContentDto> mediaInfoCacheProvider;
+        ISearchersProvider searchersProvider;
+
+        public VideoManagementController(
+            IVideoInfoProvider videoInfoProvider,
+            ICacheProvider<ContentDto> mediaInfoCacheProvider,
+            ISearchersProvider searchersProvider)
         {
             this.videoInfoProvider = videoInfoProvider;
+            this.mediaInfoCacheProvider = mediaInfoCacheProvider;
+            this.searchersProvider = searchersProvider;
         }
 
         [HttpGet("stream")]
@@ -53,18 +58,17 @@ namespace WebHostStreaming.Controllers
 
                 var fileSection = await multipartReader.ReadNextSectionAsync();
 
-                if(fileSection?.GetContentDispositionHeader()?.Name.Value != "file")
+                if (fileSection?.GetContentDispositionHeader()?.Name.Value != "file")
                     throw new ArgumentException("File section is missing or has an invalid name");
 
                 var filePath = await SaveFileAsync(fileSection.AsFileSection());
 
                 videoInfo.FilePath = filePath;
-
                 videoInfoProvider.AddVideoInfo(videoInfo);
 
                 return CreatedAtAction(nameof(UploadFile), new { FilePath = filePath });
             }
-            catch(ArgumentException ex)
+            catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -82,13 +86,39 @@ namespace WebHostStreaming.Controllers
             if (System.IO.File.Exists(filePath))
                 return Ok(new FileInfo(filePath).Length);
             else
-                return NoContent();
+                return NotFound();
         }
 
         [HttpGet]
-        public IEnumerable<VideoInfo> GetVideos()
+        public async Task<IActionResult> GetVideos()
         {
-            return videoInfoProvider.AllVideosInfos;
+            var tasks = videoInfoProvider.AllVideosInfos.DistinctBy(videoInfo => videoInfo.MediaId).Select(videoInfo => BuildMediaVideosDto(videoInfo.MediaId, videoInfo.IsSerie));
+            var results = await Task.WhenAll(tasks);
+            return Ok(results);
+        }
+
+        private async Task<MediaVideosDto> BuildMediaVideosDto(string mediaId, bool isSerie)
+        {
+            ContentDto mediaInfo = mediaInfoCacheProvider.GetFromCache(mediaId);
+            if (mediaInfo == null)
+            {
+                if (isSerie)
+                    mediaInfo = await searchersProvider.SeriesSearcher.GetSerieDetailsAsync(mediaId);
+                else
+                    mediaInfo = await searchersProvider.MovieSearcher.GetMovieDetailsAsync(mediaId);
+
+                if (mediaInfo != null)
+                    mediaInfoCacheProvider.AddToCache(mediaId, mediaInfo);
+            }
+
+            return new MediaVideosDto
+            (
+                mediaInfo?.Title,
+                mediaInfo?.Year,
+                mediaInfo?.CoverImageUrl,
+                isSerie,
+                [.. videoInfoProvider.AllVideosInfos.Where(v => v.MediaId == mediaId)]
+            );
         }
 
         [HttpDelete]
@@ -101,10 +131,16 @@ namespace WebHostStreaming.Controllers
 
             foreach (var videoId in videosIds)
             {
-                var filePath = videoInfoProvider.AllVideosInfos.FirstOrDefault(v => v.Id == videoId)?.FilePath;
+                var videoInfo = videoInfoProvider.AllVideosInfos.FirstOrDefault(v => v.Id == videoId);
+                if (videoInfo == null)
+                    continue;
 
-                if(System.IO.File.Exists(filePath))
+                var filePath = videoInfo.FilePath;
+                if (System.IO.File.Exists(filePath))
                     System.IO.File.Delete(filePath);
+
+                if (videoInfo != null)
+                    mediaInfoCacheProvider.RemoveFromCache(videoInfo.MediaId);
 
                 if (videoInfoProvider.RemoveVideoInfo(videoId))
                     counter++;
@@ -132,7 +168,7 @@ namespace WebHostStreaming.Controllers
                 await fileSection.FileStream.CopyToAsync(fileStream);
             }
 
-            if(!System.IO.File.Exists(filePath))
+            if (!System.IO.File.Exists(filePath))
                 throw new Exception($"Saving {fileSection?.FileName} failed");
 
             return filePath;
