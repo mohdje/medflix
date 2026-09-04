@@ -17,6 +17,7 @@ function AvailableMediasVideosPage() {
     const [selectedVideosIds, setSelectedVideosIds] = useState([]);
     const [showDeletingModal, setShowDeletingModal] = useState(false);
     const [filterType, setFilterType] = useState(0);
+    const [videosListKey, setVideosListKey] = useState(0);
     const showToast = useToast();
 
     useEffect(() => {
@@ -24,7 +25,7 @@ function AvailableMediasVideosPage() {
     }, []);
 
     const filteredMediasVideos = useMemo(() => {
-        if (!Array.isArray(availableMediasVideos.current) || availableMediasVideos.current.length === 0) {
+        if (filterType < 0 || !Array.isArray(availableMediasVideos.current) || availableMediasVideos.current.length === 0) {
             return [];
         }
 
@@ -77,6 +78,11 @@ function AvailableMediasVideosPage() {
         loadAvailableMediasVideos();
     }
 
+    const handleCancelClick = () => {
+        setSelectedVideosIds([]);
+        setVideosListKey((key) => key + 1);
+    }
+
     return (
         <div className="available-medias-videos-page">
             <h1>Available Medias Videos</h1>
@@ -88,7 +94,7 @@ function AvailableMediasVideosPage() {
                         <Badge text="Movies" active={filterType === 1} onClick={() => setFilterType(1)} />
                         <Badge text="Series" active={filterType === 2} onClick={() => setFilterType(2)} />
                     </div>
-                    <MediaVideosPresentationList mediasVideos={filteredMediasVideos} onVideoSelectionChanged={(videoId, isSelected) => {
+                    <MediaVideosPresentationList key={videosListKey} mediasVideos={filteredMediasVideos} onVideoSelectionChanged={(videoId, isSelected) => {
                         setSelectedVideosIds(prev => {
                             if (isSelected) {
                                 return [...prev, videoId];
@@ -100,7 +106,7 @@ function AvailableMediasVideosPage() {
                 </>
             )}
             <CircularProgressBar visible={isLoading} position="center" size="large" />
-            <BottomBarActions visible={selectedVideosIds.length > 0} selectedVideosLength={selectedVideosIds.length} onDeleteClick={handleDeleteClick} />
+            <BottomBarActions visible={selectedVideosIds.length > 0} selectedVideosLength={selectedVideosIds.length} onDeleteClick={handleDeleteClick} onCancelClick={handleCancelClick} />
             <ModalLoadingMessage visible={showDeletingModal} loadingMessage={`Deleting ${selectedVideosIds.length} file(s)...`} />
         </div>
     );
@@ -108,10 +114,14 @@ function AvailableMediasVideosPage() {
 
 export default AvailableMediasVideosPage;
 
-function BottomBarActions({ visible, selectedVideosLength, onDeleteClick }) {
+function BottomBarActions({ visible, selectedVideosLength, onDeleteClick, onCancelClick }) {
     return (
         <div className={`bottom-bar-actions ${visible ? "visible" : ""}`}>
-            <Button text={`Delete ${selectedVideosLength} file(s)`} onClick={onDeleteClick} color="red" large />
+            <h3>{selectedVideosLength} video file(s) selected</h3>
+            <div className="actions">
+                <Button text="Delete" onClick={onDeleteClick} color="red" large />
+                <Button text="Cancel" onClick={onCancelClick} color="gray" large />
+            </div>
         </div>
     );
 }

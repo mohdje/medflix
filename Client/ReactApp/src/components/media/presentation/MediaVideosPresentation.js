@@ -33,7 +33,8 @@ function MediaVideoFile({ video, onSelectionChanged }) {
         if (video.filePath.includes('h265') || video.filePath.includes('x265'))
             infos.push("HEVC");
 
-        infos.push(formatFileSize(video.bytesLength));
+        if (video.bytesLength)
+            infos.push(formatFileSize(video.bytesLength));
 
         return infos.filter(Boolean).join(" | ");
     }
