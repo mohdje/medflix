@@ -59,17 +59,10 @@ namespace WebHostStreaming.Torrent
             if (downloadCancellationTokenSource?.Token.IsCancellationRequested == false)
                 episodeSuccess = await torrentEpisodeDownloader.DownloadAsync(TorrentAutoDownloaderIdentifier, downloadCancellationTokenSource.Token);
 
-            if (!movieSuccess || !episodeSuccess || torrentMovieDownloader.HasMediasToDownload || torrentEpisodeDownloader.HasMediasToDownload)
+            if (!movieSuccess || !episodeSuccess)
             {
                 retryTimer = new Timer(async _ => await StartAsync(), null, timeSpanBeforeRetry, Timeout.InfiniteTimeSpan);
-                var typesToDownloadList = new List<string>();
-                if (torrentMovieDownloader.HasMediasToDownload)
-                    typesToDownloadList.Add("movies");
-                if (torrentEpisodeDownloader.HasMediasToDownload)
-                    typesToDownloadList.Add("episodes");
-
-                var typesToDownload = string.Join(" and ", typesToDownloadList);
-                AppLogger.LogInfo($"TorrentAutoDownloader.StartAsync(): {typesToDownload} still need to be downloaded, will retry in {timeSpanBeforeRetry.TotalHours} hours");
+                AppLogger.LogInfo($"TorrentAutoDownloader.StartAsync(): Auto download will retry in {timeSpanBeforeRetry.TotalHours} hours");
             }
 
             started = false;

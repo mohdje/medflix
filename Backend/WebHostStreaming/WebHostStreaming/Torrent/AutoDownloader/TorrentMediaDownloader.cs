@@ -33,8 +33,6 @@ namespace WebHostStreaming.Torrent
         protected readonly ConcurrentDictionary<string, T> voDownloadList = [];
         protected readonly ConcurrentDictionary<string, T> vfDownloadList = [];
 
-        public bool HasMediasToDownload => !voDownloadList.IsEmpty || !vfDownloadList.IsEmpty;
-
         protected abstract Task<IEnumerable<T>> GetMediasToDownloadAsync();
         protected abstract bool VideoExists(T media, LanguageVersion languageVersion);
         protected abstract string GetMediaId(T media);
@@ -55,7 +53,7 @@ namespace WebHostStreaming.Torrent
             if (voDownloadList.IsEmpty && vfDownloadList.IsEmpty)
             {
                 AppLogger.LogInfo($"TorrentAutoDownloader.StartDownloadAsync(): No {MediaType} to download");
-                return false;
+                return true;
             }
 
             var downloadSuccess = await DownloadMediasAsync(clientId, cancellationToken);

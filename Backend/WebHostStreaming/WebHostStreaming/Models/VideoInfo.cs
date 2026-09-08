@@ -1,16 +1,30 @@
 ﻿using System.IO;
+using System.Text.Json.Serialization;
 
 namespace WebHostStreaming.Models
 {
     public class VideoInfo
     {
-        public string FilePath { get; set; }
+        private string filePath;
+        public string FilePath
+        {
+            get
+            {
+                return filePath;
+            }
+            set
+            {
+                bytesLength = null;
+                filePath = value;
+            }
+        }
         public string MediaId { get; set; }
         public string Quality { get; set; }
         public LanguageVersion Language { get; set; }
         public int SeasonNumber { get; set; }
         public int EpisodeNumber { get; set; }
         private long? bytesLength;
+        [JsonIgnore]
         public long? BytesLength
         {
             get
