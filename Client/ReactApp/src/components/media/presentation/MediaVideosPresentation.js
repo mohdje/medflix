@@ -28,8 +28,13 @@ function MediaVideoFile({ video, onSelectionChanged }) {
     const [isSelected, setIsSelected] = useState(false);
     const buildFileLabel = (video) => {
         const infos = [];
-        infos.push(video.language === 0 ? "EN" : "FR");
+        if (video.language === 0)
+            infos.push("EN");
+        else if (video.language === 1)
+            infos.push("FR");
+
         infos.push(video.quality);
+
         if (video.filePath.includes('h265') || video.filePath.includes('x265'))
             infos.push("HEVC");
 

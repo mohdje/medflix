@@ -49,14 +49,15 @@ export async function getSimilarMedias(mediaId) {
     return await httpGet(`${AppMode.getActiveMode().urlKey}/similar/${mediaId}`);
 }
 
-export async function searchMedias(text) {
+export async function searchMedias(text, appMode = null) {
     var parameters = [
         {
             name: 't',
             value: text
         }
     ]
-    return await httpGet(`${AppMode.getActiveMode().urlKey}/search`, parameters);
+    const baseUrlKey = appMode?.urlKey || AppMode.getActiveMode().urlKey;
+    return await httpGet(`${baseUrlKey}/search`, parameters);
 }
 
 export async function getMediaGenres() {

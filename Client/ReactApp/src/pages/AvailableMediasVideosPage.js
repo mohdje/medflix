@@ -3,7 +3,9 @@ import Button from "../components/common/Button";
 import Badge from "../components/common/Badge";
 import CircularProgressBar from "../components/common/CircularProgressBar";
 import ModalLoadingMessage from "../components/modal/ModalLoadingMessage";
-import { getAvailableMediasVideos, deleteMediasVideos } from "../services/api/mediaVideosManagementApi";
+import ModalAddMediaVideoFile from "../components/modal/ModalAddMediaVideoFile";
+
+import { getAvailableMediasVideos, deleteMediasVideos, uploadMediasVideos } from "../services/api/mediaVideosManagementApi";
 import { useToast } from "../helpers/customHooks";
 import { formatFileSize } from "../helpers/formatHelper";
 
@@ -15,7 +17,9 @@ function AvailableMediasVideosPage() {
     const availableMediasVideos = useRef([]);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedVideosIds, setSelectedVideosIds] = useState([]);
-    const [showDeletingModal, setShowDeletingModal] = useState(false);
+    const [showLoadingModal, setShowLoadingModal] = useState(false);
+    const [loadingMessage, setLoadingMessage] = useState('');
+    const [showAddMediaModal, setShowAddMediaModal] = useState(false);
     const [filterType, setFilterType] = useState(0);
     const [videosListKey, setVideosListKey] = useState(0);
     const showToast = useToast();
@@ -66,11 +70,12 @@ function AvailableMediasVideosPage() {
     };
 
     const handleDeleteClick = async () => {
-        setShowDeletingModal(true);
+        setLoadingMessage(`Deleting ${selectedVideosIds.length} file(s)...`);
+        setShowLoadingModal(true);
         const deletedFilesLength = await deleteMediasVideos(selectedVideosIds);
         setSelectedVideosIds([]);
 
-        setShowDeletingModal(false);
+        setShowLoadingModal(false);
         if (deletedFilesLength > 0) {
             var msg = deletedFilesLength === selectedVideosIds.length ? "All selected files have been deleted" : `${selectedVideosIds.length - deletedFilesLength} files have not been deleted`;
             showToast(msg);
@@ -83,12 +88,32 @@ function AvailableMediasVideosPage() {
         setVideosListKey((key) => key + 1);
     }
 
+    const handleUploadFileClick = async (mediaId, seasonNumber, episodeNumber, language, quality, file) => {
+        setShowAddMediaModal(false);
+        setLoadingMessage(`Uploading file... 0%`);
+        setShowLoadingModal(true);
+
+        const result = await uploadMediasVideos(mediaId, seasonNumber, episodeNumber, language, quality, file, (progress) => {
+            setLoadingMessage(`Uploading file... ${progress}%`);
+        });
+
+        setShowLoadingModal(false);
+        if (result) {
+            showToast("Video uploaded with success");
+            loadAvailableMediasVideos();
+        }
+        else {
+            showToast("An error occured during upload of the videoœ");
+        }
+    }
+
     return (
         <div className="available-medias-videos-page">
             <h1>Available Medias Videos</h1>
-            <h3>{totalFilesSize ? `Total size: ${totalFilesSize}` : ''}</h3>
             {!isLoading && (
                 <>
+                    <Button text="Add Video File" onClick={() => setShowAddMediaModal(true)} color="red" large />
+                    <h3>{totalFilesSize ? `Total size: ${totalFilesSize}` : ''}</h3>
                     <div>
                         <Badge text="All" active={filterType === 0} onClick={() => setFilterType(0)} />
                         <Badge text="Movies" active={filterType === 1} onClick={() => setFilterType(1)} />
@@ -107,7 +132,8 @@ function AvailableMediasVideosPage() {
             )}
             <CircularProgressBar visible={isLoading} position="center" size="large" />
             <BottomBarActions visible={selectedVideosIds.length > 0} selectedVideosLength={selectedVideosIds.length} onDeleteClick={handleDeleteClick} onCancelClick={handleCancelClick} />
-            <ModalLoadingMessage visible={showDeletingModal} loadingMessage={`Deleting ${selectedVideosIds.length} file(s)...`} />
+            <ModalLoadingMessage visible={showLoadingModal} loadingMessage={loadingMessage} />
+            <ModalAddMediaVideoFile visible={showAddMediaModal} onCloseClick={() => setShowAddMediaModal(false)} onUploadFileClick={handleUploadFileClick} />
         </div>
     );
 }

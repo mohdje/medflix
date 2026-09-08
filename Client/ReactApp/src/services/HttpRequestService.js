@@ -30,6 +30,19 @@ export async function httpDelete(url, queryStringParameters, payload, deserializ
     return await sendRequest(url, queryStringParameters, requestOptions, deserialize);
 }
 
+export async function httpPost(url, queryStringParameters, payload, deserialize = true) {
+    const formData = new FormData();
+    for (let key in payload) {
+        formData.append(key, payload[key]);
+    }
+    const requestOptions = {
+        method: 'POST',
+        body: formData
+    };
+
+    return await sendRequest(url, queryStringParameters, requestOptions, deserialize);
+}
+
 async function sendRequest(url, queryStringParameters, requestOptions, deserialize) {
     const response = await fetch(buildUrl(url, queryStringParameters), requestOptions);
     if (response.ok) {

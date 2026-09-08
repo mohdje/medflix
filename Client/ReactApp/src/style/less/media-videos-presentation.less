@@ -52,14 +52,14 @@
     }
 
     .video-file {
-        background-color: @dark-gray;
-        border-radius: @small-border-radius;
-        color: @gray;
+        background-color: black;
+        border-radius: @medium-border-radius;
+        border: 1px solid @gray;
         font-weight: @strong-semi-bold-font-weight;
         margin: @normal-space 0;
         padding: @normal-space;
         cursor: pointer;
-        transition: background-color 0.2s ease-in-out;
+        transition: background-color 0.4s ease-in-out;
 
         &:hover {
             background-color: @dark-red;
@@ -96,16 +96,14 @@
                 .expand-icon {
                     margin-left: @small-space;
                     cursor: pointer;
-                    background-color: white;
+                    background-color: @dark-gray;
                     border-radius: @border-round;
                     height: @large-space;
                     width: @large-space;
-                    color: black;
+                    color: white;
                     text-align: center;
-                    box-shadow: 0 0 4px 3px @gray;
+                    border: 1px solid @gray;
                 }
-
-
             }
 
 
@@ -115,7 +113,8 @@
                 gap: @small-space;
                 margin-top: @small-space;
                 border: 1px solid @gray;
-                border-radius: @small-border-radius;
+                background-color: @dark-gray;
+                border-radius: @medium-border-radius;
 
                 &.expanded {
                     display: flex;
