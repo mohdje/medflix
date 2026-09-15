@@ -153,8 +153,17 @@
                 .media-details {
                     background: linear-gradient(218deg, rgba(112, 112, 99, 0.09567577030812324) 24%, rgba(34, 33, 33, 0.4654236694677871) 88%);
                     border-radius: @border-radius;
-                    padding: @small-space @normal-space;
+                    padding: @normal-space;
                     margin: @normal-space 0;
+                    border: 1px solid @dark-gray;
+
+                    @media (@desktop) {
+                        max-width: 70%;
+                    }
+
+                    @media (@desktop-bigscreen) {
+                        max-width: 50%;
+                    }
 
                     display: flex;
                     flex-direction: column;
