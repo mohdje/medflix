@@ -29,7 +29,8 @@
     "dev-backoffice-start": "concurrently --kill-others \"npm run build-css\" \"npm run backoffice-start\"",
     "start": "react-scripts start",
     "backoffice-start": "REACT_APP_APP_MODE=backoffice react-scripts start",
-    "build": "less-watch-compiler --run-once src/style/less src/style/css  && react-scripts build",
+    "build": "less-watch-compiler --run-once src/style/less src/style/css && react-scripts build",
+    "backoffice-build": "less-watch-compiler --run-once src/style/less src/style/css && REACT_APP_APP_MODE=backoffice react-scripts build",
     "eject": "react-scripts eject",
     "build-css": "less-watch-compiler src/style/less src/style/css"
   },

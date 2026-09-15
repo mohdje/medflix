@@ -1,30 +1,34 @@
-#Build react app
-FROM node:18-alpine AS frontbuild 
+#Build react client and backoffice apps
+FROM node:22-alpine AS frontend 
 
 WORKDIR /medflix-frontend
 
-COPY ./Client/ReactApp/package*.json .
-
-RUN npm install
-
 COPY ./Client/ReactApp .
 
+RUN npm ci
+
 RUN npm run build
+RUN mv build client_build
+
+RUN npm run backoffice-build
+RUN mv build backoffice_build
 
 #Build .Net App
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS backendbuild
 
 WORKDIR /medflix-build
 
-COPY ./Backend/WebHostStreaming /WebHostStreaming
+COPY ./Backend/WebHostStreaming/WebHostStreaming /WebHostStreaming
 
-WORKDIR /WebHostStreaming/WebHostStreaming
+WORKDIR /WebHostStreaming
 
 RUN rm -rf ./wwwroot/home/*
-COPY --from=frontbuild /medflix-frontend/build ./wwwroot/home
+COPY --from=frontend /medflix-frontend/client_build ./wwwroot/home
 
-RUN dotnet restore "./WebHostStreaming.csproj" --disable-parallel 
-RUN dotnet publish "./WebHostStreaming.csproj"  -c release -o /release --no-restore
+RUN rm -rf ./wwwroot/backoffice/*
+COPY --from=frontend /medflix-frontend/backoffice_build ./wwwroot/backoffice
+
+RUN dotnet publish "./WebHostStreaming.csproj" -c Release -o /release
 
 #Serve .Net App
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
