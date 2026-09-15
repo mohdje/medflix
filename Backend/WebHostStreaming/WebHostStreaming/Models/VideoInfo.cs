@@ -24,7 +24,6 @@ namespace WebHostStreaming.Models
         public int SeasonNumber { get; set; }
         public int EpisodeNumber { get; set; }
         private long? bytesLength;
-        [JsonIgnore]
         public long? BytesLength
         {
             get
