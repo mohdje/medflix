@@ -5,7 +5,6 @@ import HomeIcon from '../../assets/home.svg';
 import CategoriesIcon from '../../assets/categories.svg';
 import EyeIcon from '../../assets/eye.svg';
 import BookmarkIcon from '../../assets/bookmark.svg';
-import LinkIcon from '../../assets/link.svg';
 import BurgerMenuIcon from '../../assets/burger_menu.svg';
 
 import { useOnClickOutside } from '../../helpers/customHooks';

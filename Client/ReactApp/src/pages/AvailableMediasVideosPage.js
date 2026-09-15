@@ -65,8 +65,16 @@ function AvailableMediasVideosPage() {
 
     const loadAvailableMediasVideos = async () => {
         setIsLoading(true);
-        availableMediasVideos.current = await getAvailableMediasVideos();
-        setIsLoading(false);
+        try {
+            availableMediasVideos.current = await getAvailableMediasVideos();
+        }
+        catch {
+            availableMediasVideos.current = [];
+            showToast("An error occured during loading of medias videos list");
+        }
+        finally {
+            setIsLoading(false);
+        }
     };
 
     const handleDeleteClick = async () => {

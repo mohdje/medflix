@@ -12,7 +12,6 @@ import RestartIcon from "../assets/restart.svg";
 import CircularProgressBar from "../components/common/CircularProgressBar";
 import ProgressionBar from "../components/common/ProgressionBar";
 import Button from "../components/common/Button.js";
-import Toast from "../components/common/Toast.js";
 
 import ModalMediaTrailer from '../components/modal/ModalMediaTrailer';
 import ModalEpisodeSelector from '../components/modal/ModalEpisodeSelector';
@@ -27,6 +26,7 @@ import {
 } from "../services/api";
 import { ToTimeFormat } from "../helpers/formatHelper";
 import { eventsNames, raiseEvent } from "../helpers/eventHelper.js";
+import { useToast } from "../helpers/customHooks";
 
 import { useEffect, useState, useRef } from 'react';
 
@@ -46,8 +46,6 @@ export default function MediaFullPresentation({ mediaId, onSimilarMediaClick, on
     const [showMediaPlayer, setShowMediaPlayer] = useState(false);
     const [showMediaTrailer, setShowMediaTrailer] = useState(false);
     const [showEpisodeSelection, setShowEpisodeSelection] = useState(false);
-    const [showToastMessage, setShowToastMessage] = useState(false);
-    const [toastMessage, setToastMessage] = useState(null);
 
     const [mediaIsBookmarked, setMediaIsBookmarked] = useState(true);
     const [changingBookmark, setChangingBookmark] = useState(false);
@@ -58,6 +56,7 @@ export default function MediaFullPresentation({ mediaId, onSimilarMediaClick, on
         seasonNumber: 1,
         episodeNumber: 1
     })
+    const showToast = useToast();
 
     useEffect(() => {
         const loadPage = async () => {
@@ -126,12 +125,12 @@ export default function MediaFullPresentation({ mediaId, onSimilarMediaClick, on
         setChangingBookmark(true);
         const result = mediaIsBookmarked ? await bookmarkApi.unbookmarkMedia(mediaDetails) : await bookmarkApi.bookmarkMedia(mediaDetails);
         if (result) {
-            displayToastMessage(mediaIsBookmarked ? "Removed from your list with success" : "Added to your list with success");
+            showToast(mediaIsBookmarked ? "Removed from your list with success" : "Added to your list with success");
             setMediaIsBookmarked(!mediaIsBookmarked);
             raiseEvent(eventsNames.bookmarkUpdated);
         }
         else {
-            displayToastMessage("Failing to add/remove from your list");
+            showToast("Failing to add/remove from your list");
         }
 
         setChangingBookmark(false);
@@ -167,12 +166,6 @@ export default function MediaFullPresentation({ mediaId, onSimilarMediaClick, on
         raiseEvent(eventsNames.watchProgressUpdated);
     };
 
-    const displayToastMessage = (message) => {
-        setToastMessage(message);
-        setShowToastMessage(true);
-        setTimeout(() => setShowToastMessage(false), 3000);
-    }
-
     const enablePlayButton = mediaVersionsSources?.length > 0;
     const enableTrailerButton = mediaDetails?.youtubeTrailerUrl;
     const selectedEpisodeIndentifier = `Season ${selectedEpisode.current.seasonNumber} Episode ${selectedEpisode.current.episodeNumber}`;
@@ -206,7 +199,6 @@ export default function MediaFullPresentation({ mediaId, onSimilarMediaClick, on
                 defaultSeasonNumber={selectedEpisode.current.seasonNumber}
                 onEpisodeSelected={(seasonNumber, episodeNumber, watchProgress) => onEpisodeSelected(seasonNumber, episodeNumber, watchProgress)}
                 onCloseClick={() => setShowEpisodeSelection(false)} /> : null}
-            <Toast message={toastMessage} visible={showToastMessage} />
             <div style={noInfoMessageStyle}>
                 <h3>No info found for this media</h3>
                 <Button color="red" text="Back" onClick={() => onCloseClick()} />

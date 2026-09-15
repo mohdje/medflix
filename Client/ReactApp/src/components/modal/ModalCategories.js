@@ -3,22 +3,29 @@ import ModalWindow from "./ModalWindow";
 import CircularProgressBar from "../common/CircularProgressBar";
 import { mediasInfoApi } from "../../services/api";
 import AppMode from "../../services/appMode";
+import { useToast } from "../../helpers/customHooks";
 
 import { useEffect, useState } from 'react';
 
 function ModalCategories({ visible, onCloseClick, onGenreClick, onPlatformClick }) {
     const [listGenres, setListGenres] = useState([]);
     const [listPlatforms, setListPlatforms] = useState([]);
+    const showToast = useToast();
 
     const loadCategories = async () => {
         setListGenres([]);
-        const genres = await mediasInfoApi.getMediaGenres();
-        if (genres && genres.length > 0)
-            setListGenres(genres);
+        try {
+            const genres = await mediasInfoApi.getMediaGenres();
+            if (genres && genres.length > 0)
+                setListGenres(genres);
 
-        const platforms = await mediasInfoApi.getMediaPlatforms();
-        if (platforms && platforms.length > 0)
-            setListPlatforms(platforms);
+            const platforms = await mediasInfoApi.getMediaPlatforms();
+            if (platforms && platforms.length > 0)
+                setListPlatforms(platforms);
+        }
+        catch {
+            showToast("An error occured");
+        }
     };
 
     useEffect(() => {

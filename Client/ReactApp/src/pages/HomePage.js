@@ -8,11 +8,13 @@ import CircularProgressBar from "../components/common/CircularProgressBar";
 import { mediasInfoApi } from "../services/api";
 import { setCache, getCache } from "../services/cacheService";
 import AppMode from "../services/appMode";
+import { useToast } from "../helpers/customHooks";
 
 import { useState, useEffect, useRef } from 'react';
 
 function HomePage({ onMediaClick, onReady, onFail }) {
     const [dataLoaded, setDataLoaded] = useState(false);
+    const showToast = useToast();
 
     const mediaListref = useRef([]);
     const cacheIdRef = useRef("");
@@ -51,15 +53,21 @@ function HomePage({ onMediaClick, onReady, onFail }) {
             setDataLoaded(true);
         }
         else {
-            await Promise.all([
-                mediasInfoApi.getMediasOfToday().then((medias) => addMedias(todayTrendingTitle, medias)),
-                mediasInfoApi.getPopularMedias().then((medias) => addMedias("Popular " + AppMode.getActiveMode().label.toLocaleLowerCase(), medias, true)),
-                mediasInfoApi.getRecommandedMedias().then((medias) => addMedias("Recommanded for you", medias, true)),
-                mediasInfoApi.getPopularNetflixMedias().then((medias) => addMedias("Popular on Netflix", medias)),
-                mediasInfoApi.getPopularDisneyPlusMedias().then((medias) => addMedias("Popular on Disney Plus", medias)),
-                mediasInfoApi.getPopularAmazonPrimeMedias().then((medias) => addMedias("Popular on Amazon Prime", medias)),
-                mediasInfoApi.getPopularAppleTvMedias().then((medias) => addMedias("Popular on AppleTv", medias)),
-            ]);
+            try {
+                await Promise.all([
+                    mediasInfoApi.getMediasOfToday().then((medias) => addMedias(todayTrendingTitle, medias)),
+                    mediasInfoApi.getPopularMedias().then((medias) => addMedias("Popular " + AppMode.getActiveMode().label.toLocaleLowerCase(), medias, true)),
+                    mediasInfoApi.getRecommandedMedias().then((medias) => addMedias("Recommanded for you", medias, true)),
+                    mediasInfoApi.getPopularNetflixMedias().then((medias) => addMedias("Popular on Netflix", medias)),
+                    mediasInfoApi.getPopularDisneyPlusMedias().then((medias) => addMedias("Popular on Disney Plus", medias)),
+                    mediasInfoApi.getPopularAmazonPrimeMedias().then((medias) => addMedias("Popular on Amazon Prime", medias)),
+                    mediasInfoApi.getPopularAppleTvMedias().then((medias) => addMedias("Popular on AppleTv", medias)),
+                ]);
+            }
+            catch {
+                showToast("An error occured");
+            }
+
             setDataLoaded(true);
 
             if (mediaListref.current?.length > 0)
