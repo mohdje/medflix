@@ -18,6 +18,7 @@ namespace WebHostStreaming.StartupExtensions
             services.AddSingleton<IWatchedMoviesProvider, WatchedMoviesProvider>();
             services.AddSingleton<IWatchedSeriesProvider, WatchedSeriesProvider>();
             services.AddSingleton<IRecommandationsProvider, RecommandationsProvider>();
+            services.AddSingleton<IErrorLogsProvider, ErrorLogsProvider>();
             services.AddSingleton<ITorrentAutoDownloader, TorrentAutoDownloader>();
             services.AddSingleton<ICacheProvider<ContentDto>, CacheProvider<ContentDto>>();
         }

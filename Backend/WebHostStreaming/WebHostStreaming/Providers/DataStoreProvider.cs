@@ -69,6 +69,15 @@ namespace WebHostStreaming.Providers
             }, "Remove data from store");
         }
 
+        protected void RemoveAllData()
+        {
+            ExecuteInLockedContext(async () =>
+            {
+                dataStore.Clear();
+                await SaveDataAsync();
+            }, "Remove all data from store");
+        }
+
         protected void UpdateData(T data)
         {
             ExecuteInLockedContext(async () =>
@@ -81,7 +90,7 @@ namespace WebHostStreaming.Providers
 
                     await SaveDataAsync();
                 }
-                
+
             }, "Update data in store");
         }
 

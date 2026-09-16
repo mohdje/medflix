@@ -1,22 +1,20 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using WebHostStreaming.Helpers;
+using WebHostStreaming.Models;
+using WebHostStreaming.Providers;
 
 namespace WebHostStreaming.Middlewares
 {
     public class ErrorLoggingMiddleware
     {
         private readonly RequestDelegate _next;
-        private string _loggingFile = Path.Combine(AppFolders.StorageFolder, "error.txt");
+        private readonly IErrorLogsProvider _errorLogsProvider;
 
-        public ErrorLoggingMiddleware(RequestDelegate next)
+        public ErrorLoggingMiddleware(RequestDelegate next, IErrorLogsProvider errorLogsProvider)
         {
             _next = next;
+            _errorLogsProvider = errorLogsProvider;
         }
 
         public async Task Invoke(HttpContext context)
@@ -27,42 +25,15 @@ namespace WebHostStreaming.Middlewares
             }
             catch (Exception e)
             {
-                using (StreamWriter sw = new StreamWriter(_loggingFile, true))
+                _errorLogsProvider.AddErrorLog(new ErrorInfo
                 {
-                    await sw.WriteAsync(BuildErrorMessage(e, context));
-                }
+                    DateTime = DateTime.Now,
+                    Message = e.Message,
+                    StackTrace = e.ToString(),
+                    RequestUrl = $"{context.Request.Scheme}://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}",
+                    RequestHeaders = context.Request.Headers.ToString()
+                });
             }
-        }
-
-        private string BuildErrorMessage(Exception e, HttpContext context)
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-
-            stringBuilder.Append(Environment.NewLine);
-
-            stringBuilder.Append($"########################### Exception ##################################");
-
-            stringBuilder.Append(Environment.NewLine);
-
-            stringBuilder.Append($"-{DateTime.Now.ToString("MM/dd/yyyy H:mm")} : ");
-
-            stringBuilder.Append(Environment.NewLine);
-
-            stringBuilder.Append($"ERROR = {e.ToString()}");
-
-            stringBuilder.Append(Environment.NewLine);
-
-            stringBuilder.Append($"CONTEXT = ");
-
-            if(context?.Request?.QueryString != null)
-                stringBuilder.Append($"query: {context.Request.QueryString}");
-
-            stringBuilder.Append(Environment.NewLine);
-
-            stringBuilder.Append($"########################### End of Exception ##################################");
-
-
-            return stringBuilder.ToString();
         }
     }
 }
