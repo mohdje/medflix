@@ -1,0 +1,35 @@
+@import "variables.less";
+
+.modal-error-log-infos {
+    width: 80%;
+    max-width: 900px;
+    margin-top: 10%;
+    padding: @large-space;
+    background-color: @black-gray;
+    border: 1px solid @dark-gray;
+    border-radius: @border-radius;
+    text-align: left;
+    overflow-y: auto;
+
+    >div {
+        display: flex;
+        flex-direction: column;
+        gap: @small-space;
+        margin-bottom: @medium-space;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    strong {
+        color: @gray;
+    }
+
+    span,
+    pre {
+        margin: 0;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+    }
+}

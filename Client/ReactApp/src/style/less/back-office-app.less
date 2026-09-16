@@ -12,6 +12,9 @@
         border-right: 1px solid @dark-gray;
 
         h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             padding: @normal-space;
             color: @gray;
             font-weight: @semi-bold-font-weight;
@@ -19,6 +22,17 @@
 
             &.selected {
                 color: white;
+            }
+
+            .menu-item-icon {
+                width: @menu-size-img;
+                height: @menu-size-img;
+                flex-shrink: 0;
+                opacity: 0.5;
+            }
+
+            &.selected .menu-item-icon {
+                opacity: 1;
             }
         }
     }
@@ -35,15 +49,16 @@
 
         .back-office-menu {
             display: flex;
+            align-items: center;
+            justify-content: space-evenly;
             gap: @small-space;
             overflow-x: auto;
             padding: @normal-space;
             border-right: 0;
             border-bottom: 1px solid @dark-gray;
 
-            h3 {
-                flex: 0 0 auto;
-                padding: @small-space @normal-space;
+            h3 span {
+                display: none;
             }
         }
     }
