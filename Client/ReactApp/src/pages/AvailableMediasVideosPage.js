@@ -63,6 +63,8 @@ function AvailableMediasVideosPage() {
         return formatFileSize(totalSize);
     }, [filteredMediasVideos]);
 
+    const selectedVideosTotalSize = filteredMediasVideos.flatMap((media) => media.videos).filter(v => selectedVideosIds.includes(v.id)).reduce((acc, video) => acc + video.bytesLength, 0);
+
     const loadAvailableMediasVideos = async () => {
         setIsLoading(true);
         try {
@@ -138,8 +140,8 @@ function AvailableMediasVideosPage() {
                     }} />
                 </>
             )}
-            <CircularProgressBar visible={isLoading} position="center" size="large" />
-            <BottomBarActions visible={selectedVideosIds.length > 0} selectedVideosLength={selectedVideosIds.length} onDeleteClick={handleDeleteClick} onCancelClick={handleCancelClick} />
+            <CircularProgressBar visible={isLoading} size="large" />
+            <BottomBarActions visible={selectedVideosIds.length > 0} selectedVideosLength={selectedVideosIds.length} selectedVideosTotalSize={selectedVideosTotalSize} onDeleteClick={handleDeleteClick} onCancelClick={handleCancelClick} />
             <ModalLoadingMessage visible={showLoadingModal} loadingMessage={loadingMessage} />
             <ModalAddMediaVideoFile visible={showAddMediaModal} onCloseClick={() => setShowAddMediaModal(false)} onUploadFileClick={handleUploadFileClick} />
         </div>
@@ -148,10 +150,10 @@ function AvailableMediasVideosPage() {
 
 export default AvailableMediasVideosPage;
 
-function BottomBarActions({ visible, selectedVideosLength, onDeleteClick, onCancelClick }) {
+function BottomBarActions({ visible, selectedVideosLength, selectedVideosTotalSize, onDeleteClick, onCancelClick }) {
     return (
         <div className={`bottom-bar-actions ${visible ? "visible" : ""}`}>
-            <h3>{selectedVideosLength} video file(s) selected</h3>
+            <h3>{selectedVideosLength} file(s) selected ({formatFileSize(selectedVideosTotalSize)})</h3>
             <div className="actions">
                 <Button text="Delete" onClick={onDeleteClick} color="red" large />
                 <Button text="Cancel" onClick={onCancelClick} color="gray" large />
