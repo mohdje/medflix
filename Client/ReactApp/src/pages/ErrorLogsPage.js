@@ -1,5 +1,5 @@
 import "../style/css/error-logs-page.css";
-import { getErrorLogs, deleteErrorLogs } from "../services/api/errorLogsApi";
+import { getErrorLogs, deleteErrorLogs } from "../services/api/logsApi";
 import ModalErrorLogInfos from "../components/modal/ModalErrorLogInfos";
 import Button from "../components/common/Button";
 import CircularProgressBar from "../components/common/CircularProgressBar";
