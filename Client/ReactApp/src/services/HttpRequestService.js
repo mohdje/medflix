@@ -1,9 +1,9 @@
 
-const hostAdress = process.env.NODE_ENV === "production" ? "" : "http://localhost:5000";
+export const HOST_ADRESS = process.env.NODE_ENV === "production" ? "" : "http://localhost:5000";
 
 function buildUrl(url, queryStringParameters) {
     const queryString = queryStringParameters?.map(param => `${param.name}=${param.value}`).join('&');
-    return `${hostAdress}/${url}${queryString ? `?${queryString}` : ""}`;
+    return `${HOST_ADRESS}/${url}${queryString ? `?${queryString}` : ""}`;
 }
 
 export async function httpGet(url, queryStringParameters, deserialize = true) {

@@ -1,0 +1,33 @@
+@import "variables.less";
+
+.live-logs-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: @large-space;
+    gap: @normal-space;
+
+    .live-logs-container {
+        width: 100%;
+        height: 80vh;
+        overflow-y: auto;
+        border: 1px solid @dark-gray;
+        border-radius: @small-border-radius;
+        padding: @normal-space;
+        background: black;
+        color: white;
+        text-align: left;
+        white-space: pre-wrap;
+        font-family: monospace;
+
+        @media @mobile {
+            height: 70vh;
+        }
+    }
+
+    .live-log-line {
+        white-space: pre-wrap;
+        word-break: break-word;
+        line-height: 1.5;
+    }
+}
